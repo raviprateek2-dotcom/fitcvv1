@@ -8,8 +8,6 @@ import {
   GoogleAuthProvider,
   signOut as firebaseSignOut,
 } from 'firebase/auth';
-import { errorEmitter } from './error-emitter';
-import { FirestorePermissionError } from './errors';
 
 /** Initiate anonymous sign-in (non-blocking). */
 export function initiateAnonymousSignIn(authInstance: Auth): void {
@@ -23,19 +21,22 @@ export function initiateAnonymousSignIn(authInstance: Auth): void {
 
 /** Initiate email/password sign-up (non-blocking). */
 export function initiateEmailSignUp(authInstance: Auth, email: string, password: string): Promise<void> {
+  // We return the promise here to allow the calling component to handle specific errors (e.g., email-already-in-use)
+  // and update its UI state (e.g., stop a loading spinner).
   return new Promise((resolve, reject) => {
     createUserWithEmailAndPassword(authInstance, email, password)
-        .then(() => resolve())
-        .catch(reject)
+      .then(() => resolve()) // Resolve on success, auth state change will handle the rest.
+      .catch(reject); // Reject with the error for the component to handle.
   });
 }
 
 /** Initiate email/password sign-in (non-blocking). */
 export function initiateEmailSignIn(authInstance: Auth, email: string, password: string): Promise<void> {
+    // Similar to sign-up, returning the promise for error handling.
     return new Promise((resolve, reject) => {
         signInWithEmailAndPassword(authInstance, email, password)
-            .then(() => resolve())
-            .catch(reject)
+            .then(() => resolve()) // On success, the onAuthStateChanged listener will take over.
+            .catch(reject); // On failure, let the component show a specific message.
     });
 }
 

@@ -52,7 +52,7 @@ export default function SignupPage() {
     }
   }, [user, isUserLoading, router]);
 
-  const handleSignup = async (e: React.FormEvent) => {
+  const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
       toast({
@@ -89,7 +89,7 @@ export default function SignupPage() {
     });
   };
   
-  const handleGoogleSignIn = async () => {
+  const handleGoogleSignIn = () => {
     setIsLoading(true);
     initiateGoogleSignIn(auth).catch(() => {
         toast({
