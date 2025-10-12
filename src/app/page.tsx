@@ -3,7 +3,7 @@
 
 import { Button } from '@/components/ui/button';
 import { blogPosts } from '@/lib/blog-posts';
-import { ArrowRight, CheckCircle2, DraftingCompass, FileText, Sparkles, Zap, PenTool, Users, FileSignature, Search, BrainCircuit, Star } from 'lucide-react';
+import { ArrowRight, CheckCircle2, DraftingCompass, FileText, Sparkles, Zap, PenTool, FileSignature, BrainCircuit, Star } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,8 +11,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import Autoplay from "embla-carousel-autoplay";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Image from 'next/image';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { motion, AnimatePresence, useAnimate } from 'framer-motion';
+import { motion, AnimatePresence, useAnimate, useScroll, useTransform } from 'framer-motion';
 
 
 const features = [
@@ -208,6 +207,37 @@ const blogPostIcons: { [key: string]: React.FC<React.ComponentProps<'svg'>> } = 
   'how-to-beat-ats': BrainCircuit,
 };
 
+const GridPatternBackground = () => {
+    const { scrollYProgress } = useScroll();
+    const y = useTransform(scrollYProgress, [0, 1], [0, 300]);
+
+    return (
+        <motion.div
+            style={{ y }}
+            className="absolute inset-0 z-0 h-full w-full"
+        >
+            <div className="absolute inset-0 z-0 h-full w-full bg-background" />
+            <svg
+                className="absolute inset-0 h-full w-full opacity-20"
+                xmlns="http://www.w3.org/2000/svg"
+            >
+                <defs>
+                    <pattern
+                        id="grid"
+                        width="40"
+                        height="40"
+                        patternUnits="userSpaceOnUse"
+                    >
+                        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="hsl(var(--foreground) / 0.2)" strokeWidth="0.5" />
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#grid)" />
+            </svg>
+            <div className="absolute inset-0 z-10 bg-gradient-to-b from-background via-transparent to-background" />
+        </motion.div>
+    );
+}
+
 export default function Home() {
   const [sentenceIndex, setSentenceIndex] = useState(0);
 
@@ -219,10 +249,11 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center bg-background text-foreground overflow-x-hidden">
+    <div className="relative flex flex-col items-center bg-background text-foreground overflow-x-hidden">
+      <GridPatternBackground />
       
       {/* Hero Section */}
-      <section className="w-full py-20 md:py-32 relative">
+      <section className="relative w-full py-20 md:py-32">
         <div className="container mx-auto px-4 md:px-6">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div 
@@ -272,7 +303,7 @@ export default function Home() {
       </section>
 
       {/* How It Works Section */}
-      <section id="how-it-works" className="w-full py-20 md:py-32 bg-secondary">
+      <section id="how-it-works" className="relative w-full py-20 md:py-32 bg-secondary/30 backdrop-blur-sm">
           <div className="container mx-auto px-4 md:px-6">
               <motion.div 
                 initial="hidden"
@@ -281,7 +312,7 @@ export default function Home() {
                 variants={containerVariants}
                 className="flex flex-col items-center justify-center space-y-4 text-center mb-12"
               >
-                  <motion.div variants={itemVariants} className="inline-block rounded-lg bg-background px-3 py-1 text-sm font-medium">How It Works</motion.div>
+                  <motion.div variants={itemVariants} className="inline-block rounded-lg bg-background/50 backdrop-blur-sm px-3 py-1 text-sm font-medium border">How It Works</motion.div>
                   <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Three Simple Steps to Your Dream Job</motion.h2>
               </motion.div>
               <motion.div 
@@ -317,7 +348,7 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-       <section id="features" className="w-full py-20 md:py-32">
+       <section id="features" className="relative w-full py-20 md:py-32">
         <div className="container mx-auto px-4 md:px-6">
             <div className="grid md:grid-cols-2 gap-16 items-center">
                 <motion.div 
@@ -359,7 +390,7 @@ export default function Home() {
       </section>
 
       {/* Testimonials Section */}
-      <section id="testimonials" className="w-full py-20 md:py-32 bg-secondary">
+      <section id="testimonials" className="relative w-full py-20 md:py-32 bg-secondary/30 backdrop-blur-sm">
         <div className="container mx-auto px-4 md:px-6">
           <motion.div 
             initial="hidden"
@@ -368,7 +399,7 @@ export default function Home() {
             variants={containerVariants}
             className="flex flex-col items-center justify-center space-y-4 text-center mb-12"
           >
-            <motion.div variants={itemVariants} className="inline-block rounded-lg bg-background px-3 py-1 text-sm font-medium">What Our Users Say</motion.div>
+            <motion.div variants={itemVariants} className="inline-block rounded-lg bg-background/50 backdrop-blur-sm border px-3 py-1 text-sm font-medium">What Our Users Say</motion.div>
             <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Loved by Job Seekers Worldwide</motion.h2>
           </motion.div>
           <Carousel
@@ -417,7 +448,7 @@ export default function Home() {
       </section>
 
       {/* Why Us Section */}
-      <section className="w-full py-20 md:py-32">
+      <section className="relative w-full py-20 md:py-32">
           <div className="container mx-auto px-4 md:px-6">
                <motion.div 
                 initial="hidden"
@@ -437,7 +468,7 @@ export default function Home() {
       </section>
 
       {/* Blog Section */}
-      <section id="blog" className="w-full py-20 md:py-32 bg-secondary">
+      <section id="blog" className="relative w-full py-20 md:py-32 bg-secondary/30 backdrop-blur-sm">
         <div className="container mx-auto px-4 md:px-6">
           <motion.div 
             initial="hidden"
@@ -446,7 +477,7 @@ export default function Home() {
             variants={containerVariants}
             className="flex flex-col items-center justify-center space-y-4 text-center mb-12"
           >
-            <motion.div variants={itemVariants} className="inline-block rounded-lg bg-background px-3 py-1 text-sm font-medium">From Our Blog</motion.div>
+            <motion.div variants={itemVariants} className="inline-block rounded-lg bg-background/50 backdrop-blur-sm border px-3 py-1 text-sm font-medium">From Our Blog</motion.div>
             <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Career Advice & Resume Tips</motion.h2>
             <motion.p variants={itemVariants} className="max-w-[600px] text-muted-foreground md:text-lg">
               Get the latest insights from our career experts to help you land your dream job.
@@ -502,7 +533,7 @@ export default function Home() {
       </section>
 
       {/* Final CTA */}
-      <section className="w-full py-20 md:py-32">
+      <section className="relative w-full py-20 md:py-32">
         <motion.div 
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -527,3 +558,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
