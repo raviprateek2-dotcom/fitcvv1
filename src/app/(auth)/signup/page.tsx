@@ -39,6 +39,7 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
 export default function SignupPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const auth = useAuth();
   const { toast } = useToast();
   const router = useRouter();
@@ -50,7 +51,7 @@ export default function SignupPage() {
     }
   }, [user, router]);
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
       toast({
@@ -60,11 +61,49 @@ export default function SignupPage() {
       });
       return;
     }
-    initiateEmailSignUp(auth, email, password);
+    if (password.length < 6) {
+        toast({
+            variant: 'destructive',
+            title: 'Weak Password',
+            description: 'Password must be at least 6 characters long.',
+        });
+        return;
+    }
+    setIsLoading(true);
+    try {
+      await initiateEmailSignUp(auth, email, password);
+      // Navigation will be handled by the useEffect watching the user state
+    } catch (error: any) {
+      console.error(error.code, error.message);
+      let description = 'An unexpected error occurred. Please try again.';
+      if (error.code === 'auth/email-already-in-use') {
+        description = 'An account with this email address already exists.';
+      } else if (error.code === 'auth/invalid-email') {
+        description = 'The email address is not valid.';
+      }
+      toast({
+        variant: 'destructive',
+        title: 'Signup Failed',
+        description,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
   
-  const handleGoogleSignIn = () => {
-    initiateGoogleSignIn(auth);
+  const handleGoogleSignIn = async () => {
+    setIsLoading(true);
+    try {
+        await initiateGoogleSignIn(auth);
+    } catch (error: any) {
+        toast({
+            variant: 'destructive',
+            title: 'Sign-in Failed',
+            description: 'Could not sign in with Google. Please try again.',
+        });
+    } finally {
+        setIsLoading(false);
+    }
   };
 
   return (
@@ -77,7 +116,7 @@ export default function SignupPage() {
         <CardDescription>Start your journey to a perfect resume.</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
-        <Button variant="outline" className="w-full" onClick={handleGoogleSignIn}>
+        <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading}>
           <GoogleIcon className="mr-2 h-4 w-4" />
           Continue with Google
         </Button>
@@ -92,13 +131,15 @@ export default function SignupPage() {
         <form onSubmit={handleSignup} className="grid gap-4">
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" placeholder="m@example.com" required value={email} onChange={(e) => setEmail(e.target.value)} />
+            <Input id="email" type="email" placeholder="m@example.com" required value={email} onChange={(e) => setEmail(e.target.value)} disabled={isLoading} />
           </div>
           <div className="grid gap-2">
             <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
+            <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} disabled={isLoading} />
           </div>
-          <Button className="w-full" type="submit">Create Account</Button>
+          <Button className="w-full" type="submit" disabled={isLoading}>
+            {isLoading ? 'Creating Account...' : 'Create Account'}
+          </Button>
         </form>
       </CardContent>
       <CardFooter className="flex flex-col gap-4">

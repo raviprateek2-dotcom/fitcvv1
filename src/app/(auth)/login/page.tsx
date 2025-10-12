@@ -38,6 +38,7 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const auth = useAuth();
   const { toast } = useToast();
   const router = useRouter();
@@ -49,7 +50,7 @@ export default function LoginPage() {
     }
   }, [user, router]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
       toast({
@@ -59,11 +60,39 @@ export default function LoginPage() {
       });
       return;
     }
-    initiateEmailSignIn(auth, email, password);
+    setIsLoading(true);
+    try {
+      await initiateEmailSignIn(auth, email, password);
+      // Navigation will be handled by the useEffect watching the user state
+    } catch (error: any) {
+      console.error(error.code, error.message);
+      let description = 'An unexpected error occurred. Please try again.';
+      if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+        description = 'Invalid email or password. Please check your credentials.';
+      }
+      toast({
+        variant: 'destructive',
+        title: 'Login Failed',
+        description,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
   
-  const handleGoogleSignIn = () => {
-    initiateGoogleSignIn(auth);
+  const handleGoogleSignIn = async () => {
+    setIsLoading(true);
+    try {
+      await initiateGoogleSignIn(auth);
+    } catch (error: any) {
+      toast({
+        variant: 'destructive',
+        title: 'Sign-in Failed',
+        description: 'Could not sign in with Google. Please try again.',
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -76,7 +105,7 @@ export default function LoginPage() {
         <CardDescription>Enter your credentials to access your account.</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
-        <Button variant="outline" className="w-full" onClick={handleGoogleSignIn}>
+        <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading}>
           <GoogleIcon className="mr-2 h-4 w-4" />
           Continue with Google
         </Button>
@@ -91,13 +120,15 @@ export default function LoginPage() {
         <form onSubmit={handleLogin} className="grid gap-4">
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" placeholder="m@example.com" required value={email} onChange={(e) => setEmail(e.target.value)} />
+            <Input id="email" type="email" placeholder="m@example.com" required value={email} onChange={(e) => setEmail(e.target.value)} disabled={isLoading} />
           </div>
           <div className="grid gap-2">
             <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
+            <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} disabled={isLoading} />
           </div>
-          <Button className="w-full" type="submit">Log In</Button>
+          <Button className="w-full" type="submit" disabled={isLoading}>
+            {isLoading ? 'Logging In...' : 'Log In'}
+          </Button>
         </form>
       </CardContent>
       <CardFooter className="flex flex-col gap-4">
