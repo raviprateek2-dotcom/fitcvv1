@@ -96,7 +96,7 @@ const itemVariants = {
 };
 
 const AnimatedResumeCarousel = () => {
-    const images = ['template-modern', 'template-professional', 'template-creative'].map(id => 
+    const images = ['template-modern', 'template-professional', 'template-creative', 'template-minimalist'].map(id => 
         PlaceHolderImages.find(img => img.id === id)
     ).filter(Boolean);
 
@@ -110,16 +110,16 @@ const AnimatedResumeCarousel = () => {
     }, [images.length]);
 
     return (
-        <div className="relative w-full max-w-md h-[450px] sm:h-[550px] perspective-1000">
+        <div className="relative w-full max-w-md h-[450px] sm:h-[550px] [perspective:1000px]">
             <AnimatePresence>
                 {images.map((image, i) => (
                     index === i && image && (
                         <motion.div
                             key={image.id}
                             className="absolute w-full h-full"
-                            initial={{ opacity: 0, transform: 'rotateY(30deg) scale(0.9)', x: 100 }}
-                            animate={{ opacity: 1, transform: 'rotateY(0deg) scale(1)', x: 0 }}
-                            exit={{ opacity: 0, transform: 'rotateY(-30deg) scale(0.9)', x: -100 }}
+                            initial={{ opacity: 0, transform: 'rotateY(180deg)' }}
+                            animate={{ opacity: 1, transform: 'rotateY(0deg)' }}
+                            exit={{ opacity: 0, transform: 'rotateY(-180deg)' }}
                             transition={{ duration: 0.8, ease: 'easeInOut' }}
                         >
                             <Image
