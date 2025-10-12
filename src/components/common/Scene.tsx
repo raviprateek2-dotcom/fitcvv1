@@ -1,10 +1,10 @@
 'use client';
 
-import { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Canvas, useFrame } from "@react-three/fiber";
 import { TorusKnot } from "@react-three/drei";
 
-export function Scene() {
+function ClientScene() {
   const ref = useRef<any>();
 
   useFrame((_, delta) => {
@@ -21,4 +21,14 @@ export function Scene() {
       </TorusKnot>
     </Canvas>
   );
+}
+
+export function Scene() {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  return isClient ? <ClientScene /> : null;
 }
