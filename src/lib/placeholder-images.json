@@ -3,7 +3,7 @@
     {
       "id": "hero-image",
       "description": "A person working on a laptop in a modern workspace.",
-      "imageUrl": "https://picsum.photos/seed/new-hero/800/600",
+      "imageUrl": "https://picsum.photos/seed/hero-image/800/600",
       "imageHint": "professional workspace computer"
     },
     {

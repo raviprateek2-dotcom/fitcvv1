@@ -30,6 +30,7 @@ const features = [
 
 const featuresImage = PlaceHolderImages.find((img) => img.id === 'features-image');
 const whyUsImage = PlaceHolderImages.find((img) => img.id === 'why-us-image');
+const heroImage = PlaceHolderImages.find((img) => img.id === 'hero-image');
 
 export default function Home() {
   return (
@@ -37,15 +38,15 @@ export default function Home() {
       {/* Hero Section */}
       <section className="w-full py-20 md:py-32">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center">
-            <div className="space-y-6">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+             <div className="space-y-6">
               <h1 className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl animate-fade-in-up">
-                The fastest way to create a resume that gets you hired.
+                Build a resume that gets you hired.
               </h1>
-              <p className="max-w-[600px] mx-auto text-muted-foreground md:text-xl animate-fade-in-up animation-delay-200">
+              <p className="max-w-[600px] text-muted-foreground md:text-xl animate-fade-in-up animation-delay-200">
                 Our AI-powered resume builder helps you create a professional, ATS-friendly resume in minutes. No more writer's block, no more formatting nightmares.
               </p>
-              <div className="flex flex-col gap-4 sm:flex-row justify-center animate-fade-in-up animation-delay-400">
+              <div className="flex flex-col gap-4 sm:flex-row animate-fade-in-up animation-delay-400">
                 <Button asChild size="lg" className="group" variant="neuro">
                   <Link href="/templates">
                     Create My Resume
@@ -53,6 +54,18 @@ export default function Home() {
                   </Link>
                 </Button>
               </div>
+            </div>
+             <div className="flex justify-center animate-fade-in animation-delay-300 rounded-lg overflow-hidden">
+                {heroImage && (
+                    <Image
+                    src={heroImage.imageUrl}
+                    width={800}
+                    height={600}
+                    alt={heroImage.description}
+                    data-ai-hint={heroImage.imageHint}
+                    className="rounded-2xl shadow-cyber-dark object-cover w-full h-full"
+                    />
+                )}
             </div>
           </div>
         </div>
@@ -65,22 +78,22 @@ export default function Home() {
                   <div className="inline-block rounded-lg bg-background px-3 py-1 text-sm font-medium animate-fade-in">How It Works</div>
                   <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl animate-fade-in-up animation-delay-200">Three Simple Steps to Your Dream Job</h2>
               </div>
-              <div className="mx-auto grid items-start gap-8 sm:max-w-4xl md:grid-cols-3 md:gap-12">
-                  <div className="flex flex-col gap-4 items-center text-center p-6 rounded-2xl bg-background shadow-cyber-dark animate-fade-in-up animation-delay-200">
+              <div className="mx-auto grid items-start gap-8 sm:max-w-4xl sm:grid-cols-3 md:gap-12">
+                  <div className="flex flex-col gap-4 items-center text-center p-6 rounded-2xl bg-background/50 backdrop-blur-sm shadow-cyber-dark animate-fade-in-up animation-delay-200">
                       <div className="bg-primary/10 p-4 rounded-full">
                          <FileText className="w-8 h-8 text-primary"/>
                       </div>
                       <h3 className="text-xl font-bold font-headline">1. Select a Template</h3>
                       <p className="text-muted-foreground">Choose from our library of professionally designed and ATS-friendly resume templates.</p>
                   </div>
-                   <div className="flex flex-col gap-4 items-center text-center p-6 rounded-2xl bg-background shadow-cyber-dark animate-fade-in-up animation-delay-400">
+                   <div className="flex flex-col gap-4 items-center text-center p-6 rounded-2xl bg-background/50 backdrop-blur-sm shadow-cyber-dark animate-fade-in-up animation-delay-400">
                       <div className="bg-primary/10 p-4 rounded-full">
                          <Sparkles className="w-8 h-8 text-primary"/>
                       </div>
                       <h3 className="text-xl font-bold font-headline">2. Perfect with AI</h3>
                       <p className="text-muted-foreground">Use our AI assistant to write compelling bullet points, summaries, and cover letters.</p>
                   </div>
-                   <div className="flex flex-col gap-4 items-center text-center p-6 rounded-2xl bg-background shadow-cyber-dark animate-fade-in-up animation-delay-600">
+                   <div className="flex flex-col gap-4 items-center text-center p-6 rounded-2xl bg-background/50 backdrop-blur-sm shadow-cyber-dark animate-fade-in-up animation-delay-600">
                       <div className="bg-primary/10 p-4 rounded-full">
                          <Zap className="w-8 h-8 text-primary"/>
                       </div>
