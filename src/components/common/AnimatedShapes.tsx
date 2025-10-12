@@ -2,7 +2,7 @@
 'use client';
 
 import * as THREE from 'three';
-import { useRef, useState, useMemo, useEffect } from 'react';
+import { useRef, useState, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Icosahedron, useCursor } from '@react-three/drei';
 
@@ -38,17 +38,6 @@ function Shape({ ...props }) {
 }
 
 export function AnimatedShapes() {
-    const [isClient, setIsClient] = useState(false);
-
-    useEffect(() => {
-        setIsClient(true);
-    }, []);
-
-    // Render nothing on the server
-    if (!isClient) {
-        return null;
-    }
-
   return (
     <Canvas
       camera={{ position: [0, 0, 25], fov: 75 }}
@@ -64,3 +53,5 @@ export function AnimatedShapes() {
     </Canvas>
   );
 }
+
+    

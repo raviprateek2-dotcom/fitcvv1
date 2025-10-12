@@ -10,7 +10,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import Autoplay from "embla-carousel-autoplay";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { AnimatedShapes } from '@/components/common/AnimatedShapes';
+import dynamic from 'next/dynamic';
+
+const AnimatedShapes = dynamic(() => import('@/components/common/AnimatedShapes').then(mod => mod.AnimatedShapes), {
+  ssr: false,
+});
 
 
 const features = [
@@ -308,3 +312,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
