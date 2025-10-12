@@ -1,9 +1,12 @@
 
+'use client';
+
 import { Button } from '@/components/ui/button';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { ArrowRight, Bot, DraftingCompass, FileText, Sparkles, Zap, CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
 
 const features = [
   {
@@ -30,20 +33,65 @@ const features = [
 
 const featuresImage = PlaceHolderImages.find((img) => img.id === 'features-image');
 const whyUsImage = PlaceHolderImages.find((img) => img.id === 'why-us-image');
-const heroImage = PlaceHolderImages.find((img) => img.id === 'hero-image');
+
+const sentences = [
+    "gets you hired.",
+    "lands you interviews.",
+    "builds your future.",
+    "showcases your skills."
+];
 
 export default function Home() {
+  const [sentenceIndex, setSentenceIndex] = useState(0);
+  const [charIndex, setCharIndex] = useState(0);
+  const [typedText, setTypedText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const handleTyping = () => {
+      const currentSentence = sentences[sentenceIndex];
+      const typingSpeed = isDeleting ? 75 : 150;
+      
+      if (isDeleting) {
+        setTypedText(currentSentence.substring(0, charIndex - 1));
+        setCharIndex(charIndex - 1);
+      } else {
+        setTypedText(currentSentence.substring(0, charIndex + 1));
+        setCharIndex(charIndex + 1);
+      }
+
+      if (!isDeleting && charIndex === currentSentence.length) {
+        // Pause at end of sentence
+        setTimeout(() => setIsDeleting(true), 2000);
+      } else if (isDeleting && charIndex === 0) {
+        setIsDeleting(false);
+        setSentenceIndex((prev) => (prev + 1) % sentences.length);
+      }
+    };
+
+    const typingTimeout = setTimeout(handleTyping, charIndex === sentences[sentenceIndex].length ? 2000 : (isDeleting ? 75 : 150));
+    return () => clearTimeout(typingTimeout);
+  }, [charIndex, isDeleting, sentenceIndex]);
+
+
   return (
     <div className="flex flex-col items-center bg-background text-foreground">
       {/* Hero Section */}
       <section className="w-full py-20 md:py-32">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="grid md:grid-cols-1 text-center gap-12 items-center">
              <div className="space-y-6">
               <h1 className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl animate-fade-in-up">
-                Build a resume that gets you hired.
+                Build a resume that <br className="md:hidden"/>
+                <span className="text-primary transition-all duration-300 min-h-[60px] sm:min-h-[70px] md:min-h-[80px] inline-block">
+                    {typedText}
+                    <span className="animate-ping">|</span>
+                </span>
               </h1>
-              <div className="flex flex-col gap-4 sm:flex-row animate-fade-in-up animation-delay-400">
+              <p className="max-w-2xl mx-auto text-muted-foreground md:text-xl animate-fade-in-up animation-delay-200">
+                Our AI-powered resume builder helps you create a professional, ATS-friendly resume in minutes. No more writer's block, no more formatting nightmares.
+              </p>
+              <div className="flex flex-col gap-4 sm:flex-row animate-fade-in-up animation-delay-400 justify-center">
                 <Button asChild size="lg" className="group" variant="neuro">
                   <Link href="/templates">
                     Create My Resume
@@ -51,18 +99,6 @@ export default function Home() {
                   </Link>
                 </Button>
               </div>
-            </div>
-             <div className="flex justify-center animate-fade-in animation-delay-300 rounded-lg overflow-hidden">
-                {heroImage && (
-                    <Image
-                    src={heroImage.imageUrl}
-                    width={800}
-                    height={600}
-                    alt={heroImage.description}
-                    data-ai-hint={heroImage.imageHint}
-                    className="rounded-2xl shadow-cyber-dark object-cover w-full h-full"
-                    />
-                )}
             </div>
           </div>
         </div>
