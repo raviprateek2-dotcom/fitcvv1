@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -11,8 +10,12 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import Autoplay from "embla-carousel-autoplay";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { motion, AnimatePresence, useAnimate, useScroll, useTransform } from 'framer-motion';
-import { Canvas, useFrame } from "@react-three/fiber";
-import { TorusKnot, Environment } from "@react-three/drei";
+import dynamic from 'next/dynamic';
+
+const Scene = dynamic(() => import('@/components/common/Scene').then(mod => mod.Scene), {
+  ssr: false,
+  loading: () => <div className="absolute inset-0 z-0 h-full w-full" />,
+});
 
 
 const features = [
@@ -99,22 +102,6 @@ const itemVariants = {
   },
 };
 
-function Scene() {
-  const meshRef = useRef<any>();
-  useFrame((state, delta) => {
-    if (meshRef.current) {
-        meshRef.current.rotation.x += delta * 0.1;
-        meshRef.current.rotation.y += delta * 0.1;
-    }
-  });
-
-  return (
-    <TorusKnot ref={meshRef} args={[1, 0.4, 256, 32]}>
-        <meshNormalMaterial />
-    </TorusKnot>
-  )
-}
-
 const blogPostIcons: { [key: string]: React.FC<React.ComponentProps<'svg'>> } = {
   'ultimate-resume-guide-2024': PenTool,
   '5-common-resume-mistakes': FileSignature,
@@ -137,13 +124,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="w-full py-20 md:py-32 relative">
        <div className="absolute inset-0 z-0 h-full w-full">
-            <Suspense fallback={null}>
-                <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
-                    <ambientLight intensity={0.5} />
-                    <pointLight position={[10, 10, 10]} />
-                    <Scene />
-                </Canvas>
-            </Suspense>
+            <Scene />
              <div className="absolute inset-0 z-10 bg-gradient-to-b from-background via-transparent to-background" />
         </div>
         <div className="container mx-auto px-4 md:px-6 relative z-10">
