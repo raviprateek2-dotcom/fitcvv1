@@ -1,3 +1,46 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero-image",
+      "description": "A person working on a laptop in a modern workspace.",
+      "imageUrl": "https://picsum.photos/seed/resume-hero/600/400",
+      "imageHint": "professional workspace"
+    },
+    {
+      "id": "template-modern",
+      "description": "A preview of a modern resume template.",
+      "imageUrl": "https://picsum.photos/seed/template-modern/400/566",
+      "imageHint": "resume design"
+    },
+    {
+      "id": "template-classic",
+      "description": "A preview of a classic resume template.",
+      "imageUrl": "https://picsum.photos/seed/template-classic/400/566",
+      "imageHint": "document layout"
+    },
+    {
+      "id": "template-creative",
+      "description": "A preview of a creative resume template.",
+      "imageUrl": "https://picsum.photos/seed/template-creative/400/566",
+      "imageHint": "graphic design"
+    },
+    {
+      "id": "dashboard-resume-1",
+      "description": "Thumbnail of a software engineer resume.",
+      "imageUrl": "https://picsum.photos/seed/dash-resume1/300/200",
+      "imageHint": "resume thumbnail"
+    },
+    {
+      "id": "dashboard-resume-2",
+      "description": "Thumbnail of a marketing manager resume.",
+      "imageUrl": "https://picsum.photos/seed/dash-resume2/300/200",
+      "imageHint": "document preview"
+    },
+    {
+      "id": "dashboard-resume-3",
+      "description": "Thumbnail of a graphic designer resume.",
+      "imageUrl": "https://picsum.photos/seed/dash-resume3/300/200",
+      "imageHint": "portfolio preview"
+    }
+  ]
 }
