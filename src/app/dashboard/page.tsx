@@ -24,6 +24,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { motion } from 'framer-motion';
 
 
 type Resume = {
@@ -35,6 +36,12 @@ type Resume = {
   };
   content?: any;
 };
+
+const itemVariants = {
+  hidden: { opacity: 0, scale: 0.95, y: 20 },
+  visible: { opacity: 1, scale: 1, y: 0 },
+};
+
 
 const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDuplicate: (resume: Resume) => void; onDelete: (resumeId: string) => void; }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -57,54 +64,56 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
   };
 
   return (
-    <Card className="overflow-hidden group flex flex-col" variant="neuro">
-      <CardHeader>
-        <CardTitle className="text-lg font-semibold truncate">
-          <Link href={`/editor/${resume.id}`} className="hover:underline">
-            {resume.title || 'Untitled Resume'}
-          </Link>
-        </CardTitle>
-        <CardDescription>Template: {resume.templateId}</CardDescription>
-      </CardHeader>
-      <CardContent className="flex-grow">
-        {/* Can add a small preview or stats here in the future */}
-      </CardContent>
-      <CardFooter className="p-4 pt-0 flex justify-between items-center text-sm text-muted-foreground">
-        <span>Updated {updatedAt}</span>
-        <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <MoreHorizontal className="h-4 w-4" />
-              <span className="sr-only">More options</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem asChild>
-              <Link href={`/editor/${resume.id}`}>Edit</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onDuplicate(resume)}>Duplicate</DropdownMenuItem>
-            <DropdownMenuItem onClick={handleDownloadPdf}>Download PDF</DropdownMenuItem>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                 <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:bg-destructive/90 focus:text-destructive-foreground">Delete</DropdownMenuItem>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete your resume.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel onClick={() => setIsMenuOpen(false)}>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={() => { onDelete(resume.id); setIsMenuOpen(false); }} className="bg-destructive hover:bg-destructive/90">Delete</AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </CardFooter>
-    </Card>
+    <motion.div variants={itemVariants}>
+      <Card className="overflow-hidden group flex flex-col h-full" variant="neuro">
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold truncate">
+            <Link href={`/editor/${resume.id}`} className="hover:underline">
+              {resume.title || 'Untitled Resume'}
+            </Link>
+          </CardTitle>
+          <CardDescription>Template: {resume.templateId}</CardDescription>
+        </CardHeader>
+        <CardContent className="flex-grow">
+          {/* Can add a small preview or stats here in the future */}
+        </CardContent>
+        <CardFooter className="p-4 pt-0 flex justify-between items-center text-sm text-muted-foreground">
+          <span>Updated {updatedAt}</span>
+          <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-8 w-8">
+                <MoreHorizontal className="h-4 w-4" />
+                <span className="sr-only">More options</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem asChild>
+                <Link href={`/editor/${resume.id}`}>Edit</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onDuplicate(resume)}>Duplicate</DropdownMenuItem>
+              <DropdownMenuItem onClick={handleDownloadPdf}>Download PDF</DropdownMenuItem>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:bg-destructive/90 focus:text-destructive-foreground">Delete</DropdownMenuItem>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete your resume.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel onClick={() => setIsMenuOpen(false)}>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => { onDelete(resume.id); setIsMenuOpen(false); }} className="bg-destructive hover:bg-destructive/90">Delete</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </CardFooter>
+      </Card>
+    </motion.div>
   );
 };
 
@@ -225,6 +234,16 @@ export default function DashboardPage() {
     deleteDocumentNonBlocking(docRef);
   };
   
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
   if (isUserLoading || !user) {
     return (
         <div className="container mx-auto px-4 md:px-6 py-12">
@@ -257,11 +276,16 @@ export default function DashboardPage() {
       {(isLoading) && <LoadingState />}
 
       {!isLoading && resumes && resumes.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        <motion.div
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
           {resumes.map((resume) => (
             <ResumeCard key={resume.id} resume={resume} onDuplicate={handleDuplicate} onDelete={handleDelete} />
           ))}
-        </div>
+        </motion.div>
       ) : !isLoading && (
         <EmptyState />
       )}
