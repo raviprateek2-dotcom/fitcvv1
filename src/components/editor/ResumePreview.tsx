@@ -206,7 +206,6 @@ export function ResumePreview({ resumeData, templateId = 'modern' }: ResumePrevi
   }
 
   const { personalInfo, summary, experience, education, skills, projects } = resumeData;
-  const skillList = Array.isArray(skills) ? skills.map(s => s.name) : (typeof skills === 'string' ? skills.split(',').map(s => s.trim()).filter(Boolean) : []);
   const templateStyles = templates[templateId] || templates.modern;
 
 
@@ -284,8 +283,8 @@ export function ResumePreview({ resumeData, templateId = 'modern' }: ResumePrevi
       <section>
         <h3 className={templateStyles.sectionTitle}>Skills</h3>
         <div className="flex flex-wrap gap-2">
-            {skillList.map((skill, index) => (
-                <Badge key={index} variant="secondary">{skill}</Badge>
+            {(skills || []).map((skill, index) => (
+                <Badge key={index} variant="secondary">{skill.name}</Badge>
             ))}
         </div>
       </section>
