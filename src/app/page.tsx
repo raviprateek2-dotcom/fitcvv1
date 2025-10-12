@@ -89,7 +89,7 @@ export default function Home() {
               </h1>
               
               <div className="flex flex-col gap-4 sm:flex-row animate-fade-in-up animation-delay-400 justify-center">
-                <Button asChild size="lg" className="group" variant="neuro">
+                <Button asChild size="lg" className="group transition-transform duration-300 hover:scale-105" variant="neuro">
                   <Link href="/templates">
                     Create My Resume
                     <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
