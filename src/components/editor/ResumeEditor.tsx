@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Download, Eye, PlusCircle, Share2, Trash2, Sparkles, Bot, FileText, Newspaper, PanelLeft, ArrowLeft } from 'lucide-react';
+import { Download, Eye, PlusCircle, Share2, Trash2, Sparkles, Bot, FileText, Newspaper, PanelLeft, ArrowLeft, Brush } from 'lucide-react';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import AIContentDialog from './AIContentDialog';
 import AISectionWriterDialog from './AISectionWriterDialog';
@@ -21,6 +21,7 @@ import Link from 'next/link';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { writeCoverLetter as writeCoverLetterAction } from '@/app/actions/ai-cover-letter';
+import { Slider } from '../ui/slider';
 
 // Define types for resume structure
 type PersonalInfo = {
@@ -60,6 +61,12 @@ type Project = {
   link: string;
 };
 
+type Styling = {
+  bodyFontSize: number;
+  headingFontSize: number;
+  titleFontSize: number;
+};
+
 type ResumeData = {
   title?: string;
   personalInfo: PersonalInfo;
@@ -75,6 +82,7 @@ type ResumeData = {
     name: string;
     jobTitle: string;
   };
+  styling?: Styling;
 };
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
@@ -180,6 +188,8 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
         if (!Array.isArray(updatedData.projects)) updatedData.projects = [];
         if (typeof updatedData.coverLetter !== 'string') updatedData.coverLetter = '';
         if (typeof updatedData.companyInfo !== 'object' || updatedData.companyInfo === null) updatedData.companyInfo = { name: '', jobTitle: '' };
+        if (typeof updatedData.styling !== 'object' || updatedData.styling === null) updatedData.styling = { bodyFontSize: 14, headingFontSize: 18, titleFontSize: 36 };
+
 
         setResumeData(updatedData);
         initialDataRef.current = updatedData;
@@ -206,7 +216,6 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
       setSaveStatus('saved');
       setTimeout(() => setSaveStatus('idle'), 2000);
     } catch (error) {
-      console.error('Failed to save resume:', error);
       setSaveStatus('error');
       toast({
         variant: 'destructive',
@@ -249,6 +258,11 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     const { name, value } = e.target;
     handleFieldChange('companyInfo', { ...resumeData.companyInfo, [name]: value });
   }
+
+  const handleStylingChange = (field: keyof Styling, value: number) => {
+    if (!resumeData || !resumeData.styling) return;
+    handleFieldChange('styling', { ...resumeData.styling, [field]: value });
+  };
 
   const handleNestedChange = (
     section: 'experience' | 'education' | 'skills' | 'projects', 
@@ -368,7 +382,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   if (isPrintMode) {
       return (
         <div className="bg-white print:p-0">
-          <ResumePreview resumeData={resumeData} templateId={resumeData.templateId}/>
+          <ResumePreview resumeData={resumeData} />
         </div>
       );
   }
@@ -415,6 +429,36 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                 <TabsContent value="resume" className="p-6">
                   <div className="space-y-6">
                     <Accordion type="multiple" defaultValue={['personal-info', 'summary']} className="w-full">
+                        <AccordionItem value="design">
+                          <AccordionTrigger className="font-semibold">Design</AccordionTrigger>
+                          <AccordionContent className="space-y-4 pt-4">
+                            <div className="space-y-2">
+                              <Label>Title Font Size: {resumeData.styling?.titleFontSize}px</Label>
+                              <Slider
+                                value={[resumeData.styling?.titleFontSize || 36]}
+                                onValueChange={([val]) => handleStylingChange('titleFontSize', val)}
+                                min={24} max={60} step={1}
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label>Heading Font Size: {resumeData.styling?.headingFontSize}px</Label>
+                              <Slider
+                                value={[resumeData.styling?.headingFontSize || 18]}
+                                onValueChange={([val]) => handleStylingChange('headingFontSize', val)}
+                                min={14} max={32} step={1}
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label>Body Font Size: {resumeData.styling?.bodyFontSize}px</Label>
+                              <Slider
+                                value={[resumeData.styling?.bodyFontSize || 14]}
+                                onValueChange={([val]) => handleStylingChange('bodyFontSize', val)}
+                                min={10} max={18} step={0.5}
+                              />
+                            </div>
+                          </AccordionContent>
+                        </AccordionItem>
+
                         <AccordionItem value="job-description">
                         <AccordionTrigger className="font-semibold">Job Description (Optional)</AccordionTrigger>
                         <AccordionContent className="space-y-2 pt-4">
@@ -643,9 +687,9 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
         <main className="flex-grow bg-secondary/50 p-6 h-full print:bg-white print:p-0">
           <ScrollArea className="h-full">
             {activeTab === 'resume' ? (
-              <ResumePreview resumeData={resumeData} templateId={resumeData.templateId} />
+              <ResumePreview resumeData={resumeData} />
             ) : (
-              <CoverLetterPreview resumeData={resumeData} templateId={resumeData.templateId} />
+              <CoverLetterPreview resumeData={resumeData} />
             )}
           </ScrollArea>
         </main>

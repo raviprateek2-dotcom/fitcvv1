@@ -95,6 +95,11 @@ export default function NewResumePage() {
             companyInfo: {
                 name: '',
                 jobTitle: ''
+            },
+            styling: {
+              bodyFontSize: 14,
+              headingFontSize: 18,
+              titleFontSize: 36,
             }
           };
 

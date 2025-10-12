@@ -46,6 +46,12 @@ type Project = {
   link: string;
 };
 
+type Styling = {
+  bodyFontSize: number;
+  headingFontSize: number;
+  titleFontSize: number;
+};
+
 type ResumeData = {
   personalInfo: PersonalInfo;
   summary: string;
@@ -60,11 +66,11 @@ type ResumeData = {
     name: string;
     jobTitle: string;
   };
+  styling?: Styling;
 };
 
 interface ResumePreviewProps {
   resumeData: ResumeData;
-  templateId?: string;
 }
 
 const templates: Record<string, { header: string, sectionTitle: string }> = {
@@ -98,20 +104,26 @@ const skillLevelToValue = {
 };
 
 const ProfessionalTemplatePreview = ({ resumeData }: { resumeData: ResumeData }) => {
-    const { personalInfo, summary, experience, education, skills, projects } = resumeData;
+    const { personalInfo, summary, experience, education, skills, projects, styling } = resumeData;
     const templateStyles = templates.professional;
     
+    const dynamicStyles = {
+        '--title-font-size': `${styling?.titleFontSize || 36}px`,
+        '--heading-font-size': `${styling?.headingFontSize || 18}px`,
+        '--body-font-size': `${styling?.bodyFontSize || 14}px`,
+    } as React.CSSProperties;
+
     return (
-        <div className="bg-slate-800 text-slate-300 shadow-2xl rounded-lg w-full h-full mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-hidden print:shadow-none print:rounded-none print:max-h-full font-body flex">
+        <div style={dynamicStyles} className="bg-slate-800 text-slate-300 shadow-2xl rounded-lg w-full h-full mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-hidden print:shadow-none print:rounded-none print:max-h-full font-body flex text-[var(--body-font-size)]">
             {/* Left Sidebar */}
             <aside className="w-1/3 bg-slate-900/50 text-slate-200 p-8 space-y-8 flex flex-col">
                 <header className="text-center">
-                    <h1 className="text-3xl font-bold text-white font-headline">{personalInfo.name}</h1>
-                    <h2 className="text-md font-semibold text-primary">{personalInfo.title}</h2>
+                    <h1 style={{ fontSize: 'var(--title-font-size)'}} className="font-bold text-white font-headline leading-tight">{personalInfo.name}</h1>
+                    <h2 style={{ fontSize: 'var(--heading-font-size)'}} className="font-semibold text-primary">{personalInfo.title}</h2>
                 </header>
 
                 <div className="space-y-4 text-sm">
-                    <h3 className="text-lg font-bold text-white uppercase tracking-wider font-headline border-b border-slate-600 pb-1">Contact</h3>
+                    <h3 style={{ fontSize: 'var(--heading-font-size)'}} className="font-bold text-white uppercase tracking-wider font-headline border-b border-slate-600 pb-1">Contact</h3>
                      <div className="flex items-center gap-2"><AtSign size={14} className="text-primary"/><span>{personalInfo.email}</span></div>
                     <div className="flex items-center gap-2"><Phone size={14} className="text-primary"/><span>{personalInfo.phone}</span></div>
                     <div className="flex items-center gap-2"><MapPin size={14} className="text-primary"/><span>{personalInfo.location}</span></div>
@@ -119,7 +131,7 @@ const ProfessionalTemplatePreview = ({ resumeData }: { resumeData: ResumeData })
                 </div>
 
                 <div className="space-y-4">
-                     <h3 className="text-lg font-bold text-white uppercase tracking-wider font-headline border-b border-slate-600 pb-1">Skills</h3>
+                     <h3 style={{ fontSize: 'var(--heading-font-size)'}} className="font-bold text-white uppercase tracking-wider font-headline border-b border-slate-600 pb-1">Skills</h3>
                      <div className="space-y-3">
                         {(skills || []).map(skill => (
                             <div key={skill.id} className="text-sm">
@@ -131,10 +143,10 @@ const ProfessionalTemplatePreview = ({ resumeData }: { resumeData: ResumeData })
                 </div>
 
                 <div className="space-y-4">
-                     <h3 className="text-lg font-bold text-white uppercase tracking-wider font-headline border-b border-slate-600 pb-1">Education</h3>
+                     <h3 style={{ fontSize: 'var(--heading-font-size)'}} className="font-bold text-white uppercase tracking-wider font-headline border-b border-slate-600 pb-1">Education</h3>
                      <div className="space-y-3">
                         {education.map(edu => (
-                            <div key={edu.id} className="text-sm">
+                            <div key={edu.id}>
                                 <h4 className="font-bold text-slate-100 font-headline">{edu.degree}</h4>
                                 <p className="italic text-slate-400">{edu.institution}</p>
                                 <p className="text-xs text-slate-500">{edu.date}</p>
@@ -147,12 +159,12 @@ const ProfessionalTemplatePreview = ({ resumeData }: { resumeData: ResumeData })
             {/* Main Content */}
             <main className="w-2/3 p-8 overflow-y-auto">
                 <section>
-                    <h3 className={templateStyles.sectionTitle}><Star className="inline-block mr-2 text-primary" size={18}/>Summary</h3>
-                    <p className="text-sm leading-relaxed">{summary}</p>
+                    <h3 className={templateStyles.sectionTitle} style={{ fontSize: 'var(--heading-font-size)'}}><Star className="inline-block mr-2 text-primary" size={18}/>Summary</h3>
+                    <p className="leading-relaxed">{summary}</p>
                 </section>
                 <Separator className="my-6 bg-slate-700" />
                 <section>
-                    <h3 className={templateStyles.sectionTitle}><Briefcase className="inline-block mr-2 text-primary" size={18}/>Experience</h3>
+                    <h3 className={templateStyles.sectionTitle} style={{ fontSize: 'var(--heading-font-size)'}}><Briefcase className="inline-block mr-2 text-primary" size={18}/>Experience</h3>
                     <div className="space-y-5">
                     {experience.map((exp) => (
                         <div key={exp.id}>
@@ -160,8 +172,8 @@ const ProfessionalTemplatePreview = ({ resumeData }: { resumeData: ResumeData })
                             <h4 className="font-bold text-md text-slate-100 font-headline">{exp.role}</h4>
                             <p className="text-xs text-slate-400">{exp.date}</p>
                         </div>
-                        <p className="text-sm italic text-slate-300 mb-2">{exp.company}</p>
-                        <ul className="list-disc pl-5 space-y-1 text-sm leading-relaxed">
+                        <p className="italic text-slate-300 mb-2">{exp.company}</p>
+                        <ul className="list-disc pl-5 space-y-1 leading-relaxed">
                             {exp.description.split('\n').map((line, index) => {
                                 const trimmedLine = line.trim();
                                 if (!trimmedLine) return null;
@@ -175,7 +187,7 @@ const ProfessionalTemplatePreview = ({ resumeData }: { resumeData: ResumeData })
                 </section>
                 <Separator className="my-6 bg-slate-700" />
                 <section>
-                    <h3 className={templateStyles.sectionTitle}><Code className="inline-block mr-2 text-primary" size={18}/>Projects</h3>
+                    <h3 className={templateStyles.sectionTitle} style={{ fontSize: 'var(--heading-font-size)'}}><Code className="inline-block mr-2 text-primary" size={18}/>Projects</h3>
                     <div className="space-y-5">
                     {(projects || []).map((proj) => (
                         <div key={proj.id}>
@@ -183,7 +195,7 @@ const ProfessionalTemplatePreview = ({ resumeData }: { resumeData: ResumeData })
                             <h4 className="font-bold text-md text-slate-100 font-headline">{proj.name}</h4>
                             {proj.link && <a href={proj.link} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">View Project</a>}
                         </div>
-                        <ul className="list-disc pl-5 space-y-1 text-sm leading-relaxed mt-1">
+                        <ul className="list-disc pl-5 space-y-1 leading-relaxed mt-1">
                             {proj.description.split('\n').map((line, index) => {
                                 const trimmedLine = line.trim();
                                 if (!trimmedLine) return null;
@@ -200,20 +212,28 @@ const ProfessionalTemplatePreview = ({ resumeData }: { resumeData: ResumeData })
     )
 }
 
-export function ResumePreview({ resumeData, templateId = 'modern' }: ResumePreviewProps) {
+export function ResumePreview({ resumeData }: ResumePreviewProps) {
+  const { templateId = 'modern' } = resumeData;
+
   if (templateId === 'professional') {
       return <ProfessionalTemplatePreview resumeData={resumeData} />;
   }
 
-  const { personalInfo, summary, experience, education, skills, projects } = resumeData;
+  const { personalInfo, summary, experience, education, skills, projects, styling } = resumeData;
   const templateStyles = templates[templateId] || templates.modern;
+  
+  const dynamicStyles = {
+    '--title-font-size': `${styling?.titleFontSize || 36}px`,
+    '--heading-font-size': `${styling?.headingFontSize || 18}px`,
+    '--body-font-size': `${styling?.bodyFontSize || 14}px`,
+  } as React.CSSProperties;
 
 
   return (
-    <div className="bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full p-8 mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-auto print:shadow-none print:rounded-none print:max-h-full font-body">
+    <div style={dynamicStyles} className="bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full p-8 mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-auto print:shadow-none print:rounded-none print:max-h-full font-body text-[var(--body-font-size)]">
       <header className={templateStyles.header}>
-        <h1 className="text-4xl font-bold text-gray-900 font-headline">{personalInfo.name}</h1>
-        <h2 className="text-xl font-semibold text-primary font-headline">{personalInfo.title}</h2>
+        <h1 style={{ fontSize: 'var(--title-font-size)'}} className="font-bold text-gray-900 font-headline leading-tight">{personalInfo.name}</h1>
+        <h2 style={{ fontSize: 'var(--heading-font-size)'}} className="font-semibold text-primary font-headline">{personalInfo.title}</h2>
         <div className="flex justify-center items-center gap-4 text-sm text-gray-600 mt-2 flex-wrap">
           <div className="flex items-center gap-1.5"><AtSign size={14} />{personalInfo.email}</div>
           <div className="flex items-center gap-1.5"><Phone size={14} />{personalInfo.phone}</div>
@@ -225,14 +245,14 @@ export function ResumePreview({ resumeData, templateId = 'modern' }: ResumePrevi
       <Separator className="my-6" />
 
       <section>
-        <h3 className={templateStyles.sectionTitle}>Summary</h3>
-        <p className="text-sm leading-relaxed">{summary}</p>
+        <h3 className={templateStyles.sectionTitle} style={{ fontSize: 'var(--heading-font-size)'}}>Summary</h3>
+        <p className="leading-relaxed">{summary}</p>
       </section>
 
       <Separator className="my-6" />
 
       <section>
-        <h3 className={templateStyles.sectionTitle}>Experience</h3>
+        <h3 className={templateStyles.sectionTitle} style={{ fontSize: 'var(--heading-font-size)'}}>Experience</h3>
         <div className="space-y-4">
           {experience.map((exp) => (
             <div key={exp.id}>
@@ -257,7 +277,7 @@ export function ResumePreview({ resumeData, templateId = 'modern' }: ResumePrevi
       <Separator className="my-6" />
 
       <section>
-        <h3 className={templateStyles.sectionTitle}>Projects</h3>
+        <h3 className={templateStyles.sectionTitle} style={{ fontSize: 'var(--heading-font-size)'}}>Projects</h3>
         <div className="space-y-4">
           {(projects || []).map((proj) => (
             <div key={proj.id}>
@@ -281,7 +301,7 @@ export function ResumePreview({ resumeData, templateId = 'modern' }: ResumePrevi
       <Separator className="my-6" />
 
       <section>
-        <h3 className={templateStyles.sectionTitle}>Skills</h3>
+        <h3 className={templateStyles.sectionTitle} style={{ fontSize: 'var(--heading-font-size)'}}>Skills</h3>
         <div className="flex flex-wrap gap-2">
             {(skills || []).map((skill, index) => (
                 <Badge key={skill.id} variant="secondary">{skill.name}</Badge>
@@ -292,7 +312,7 @@ export function ResumePreview({ resumeData, templateId = 'modern' }: ResumePrevi
       <Separator className="my-6" />
 
       <section>
-        <h3 className={templateStyles.sectionTitle}>Education</h3>
+        <h3 className={templateStyles.sectionTitle} style={{ fontSize: 'var(--heading-font-size)'}}>Education</h3>
         <div className="space-y-2">
             {education.map(edu => (
                 <div key={edu.id} className="flex justify-between items-baseline">
@@ -309,15 +329,22 @@ export function ResumePreview({ resumeData, templateId = 'modern' }: ResumePrevi
   );
 }
 
-export function CoverLetterPreview({ resumeData, templateId = 'modern' }: ResumePreviewProps) {
-  const { personalInfo, coverLetter, companyInfo } = resumeData;
+export function CoverLetterPreview({ resumeData }: ResumePreviewProps) {
+  const { personalInfo, coverLetter, companyInfo, templateId = 'modern', styling } = resumeData;
   const templateStyles = templates[templateId] || templates.modern;
   const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
+  const dynamicStyles = {
+    '--title-font-size': `${styling?.titleFontSize || 36}px`,
+    '--heading-font-size': `${styling?.headingFontSize || 18}px`,
+    '--body-font-size': `${styling?.bodyFontSize || 14}px`,
+  } as React.CSSProperties;
+
+
   const renderHeader = () => (
     <header className={templateStyles.header}>
-        <h1 className="text-4xl font-bold text-gray-900 font-headline">{personalInfo.name}</h1>
-        <h2 className="text-xl font-semibold text-primary font-headline">{personalInfo.title}</h2>
+        <h1 style={{ fontSize: 'var(--title-font-size)'}} className="font-bold text-gray-900 font-headline leading-tight">{personalInfo.name}</h1>
+        <h2 style={{ fontSize: 'var(--heading-font-size)'}} className="font-semibold text-primary font-headline">{personalInfo.title}</h2>
         <div className="flex justify-center items-center gap-4 text-sm text-gray-600 mt-2 flex-wrap">
           <div className="flex items-center gap-1.5"><AtSign size={14} />{personalInfo.email}</div>
           <div className="flex items-center gap-1.5"><Phone size={14} />{personalInfo.phone}</div>
@@ -328,12 +355,12 @@ export function CoverLetterPreview({ resumeData, templateId = 'modern' }: Resume
   );
 
   const ProfessionalCoverLetter = () => (
-     <div className="bg-slate-800 text-slate-300 shadow-2xl rounded-lg w-full h-full mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-hidden print:shadow-none print:rounded-none print:max-h-full font-body flex flex-col p-8">
+     <div style={dynamicStyles} className="bg-slate-800 text-slate-300 shadow-2xl rounded-lg w-full h-full mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-hidden print:shadow-none print:rounded-none print:max-h-full font-body flex flex-col p-8 text-[var(--body-font-size)]">
         <header className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-white font-headline">{personalInfo.name}</h1>
-            <h2 className="text-md font-semibold text-primary">{personalInfo.title}</h2>
+            <h1 style={{ fontSize: 'var(--title-font-size)'}} className="font-bold text-white font-headline leading-tight">{personalInfo.name}</h1>
+            <h2 style={{ fontSize: 'var(--heading-font-size)'}} className="font-semibold text-primary">{personalInfo.title}</h2>
         </header>
-        <main className="text-sm leading-relaxed space-y-4 whitespace-pre-wrap">
+        <main className="leading-relaxed space-y-4 whitespace-pre-wrap">
           <p>{date}</p>
           <p>Hiring Manager<br/>{companyInfo?.name}</p>
           <br/>
@@ -351,10 +378,10 @@ export function CoverLetterPreview({ resumeData, templateId = 'modern' }: Resume
   }
 
   return (
-     <div className="bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full p-8 mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-auto print:shadow-none print:rounded-none print:max-h-full font-body">
+     <div style={dynamicStyles} className="bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full p-8 mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-auto print:shadow-none print:rounded-none print:max-h-full font-body text-[var(--body-font-size)]">
       {renderHeader()}
       <Separator className="my-6" />
-      <main className="text-sm leading-relaxed space-y-4 whitespace-pre-wrap">
+      <main className="leading-relaxed space-y-4 whitespace-pre-wrap">
           <p>{date}</p>
           <p>Hiring Manager<br/>{companyInfo?.name}</p>
           <br/>
