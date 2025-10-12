@@ -2,8 +2,7 @@
 
 import { useCollection, useUser } from '@/firebase';
 import { useMemo, useEffect } from 'react';
-import { addDocumentNonBlocking, deleteDocumentNonBlocking } from '@/firebase/non-blocking-updates';
-import { collection, doc, serverTimestamp } from 'firebase/firestore';
+import { addDoc, doc, serverTimestamp } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,6 +14,8 @@ import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useMemoFirebase } from '@/firebase/provider';
 import { useRouter } from 'next/navigation';
+import { collection } from 'firebase/firestore';
+import { deleteDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 
 type Resume = {
   id: string;
@@ -23,6 +24,7 @@ type Resume = {
   updatedAt: {
     toDate: () => Date;
   };
+  content?: any;
 };
 
 const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDuplicate: (resume: Resume) => void; onDelete: (resumeId: string) => void; }) => {
@@ -32,8 +34,8 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
   }, [resume.templateId]);
   
   const updatedAt = useMemo(() => {
-    const date = resume.updatedAt?.toDate();
-    if (!date) return 'recently';
+    if (!resume.updatedAt) return 'never';
+    const date = resume.updatedAt.toDate();
     const diff = new Date().getTime() - date.getTime();
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     if (days < 1) return 'today';
@@ -136,22 +138,15 @@ export default function DashboardPage() {
   const handleDuplicate = async (resumeToDuplicate: Resume) => {
     if (!user || !resumesQuery) return;
     
-    // In a real app, you would fetch the full resume document content
+    const { id, ...resumeContent } = resumeToDuplicate;
+    
     const newResumeData = {
+      ...resumeContent,
       title: `${resumeToDuplicate.title} (Copy)`,
-      templateId: resumeToDuplicate.templateId,
-      // content: resumeToDuplicate.content, // This would be the full content
-      content: { // Placeholder content for now
-         personalInfo: { name: 'Copy Of User' },
-         summary: 'This is a copied summary.',
-         experience: [],
-         education: [],
-         skills: ''
-      },
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     };
-    const newDocRef = await addDocumentNonBlocking(resumesQuery, newResumeData);
+    const newDocRef = await addDoc(resumesQuery, newResumeData);
     if (newDocRef) {
       router.push(`/editor/${newDocRef.id}`);
     }
