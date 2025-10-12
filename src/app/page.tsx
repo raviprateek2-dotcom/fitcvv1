@@ -83,7 +83,7 @@ export default function Home() {
           <div className="mx-auto grid items-start gap-8 sm:max-w-4xl sm:grid-cols-2 md:gap-12 lg:max-w-5xl lg:grid-cols-4">
             {features.map((feature, index) => (
               <div key={index} className={`animate-fade-in-up animation-delay-${600 + index * 100}`}>
-                <Card className="bg-background shadow-lg hover:shadow-xl transition-shadow duration-300 h-full flex flex-col">
+                <Card className="bg-background shadow-lg hover:shadow-xl transition-transform duration-300 h-full flex flex-col hover:-translate-y-2">
                   <CardHeader className="flex flex-col items-center text-center gap-4">
                     {feature.icon}
                     <CardTitle className="font-headline text-2xl">{feature.title}</CardTitle>
