@@ -5,6 +5,10 @@ import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useToast } from '@/hooks/use-toast';
+
+
+const premiumTemplates = ['minimalist', 'professional'];
 
 // A simple loading state while the resume is being created and we redirect.
 const CreatingResumeLoading = () => {
@@ -21,20 +25,40 @@ const CreatingResumeLoading = () => {
 };
 
 export default function NewResumePage() {
-  const { user, isUserLoading } = useUser();
+  const { user, userProfile, isUserLoading, isProfileLoading } = useUser();
   const firestore = useFirestore();
   const router = useRouter();
   const searchParams = useSearchParams();
   const templateId = searchParams.get('template') || 'modern';
+  const { toast } = useToast();
 
   useEffect(() => {
-    // If user is not logged in, redirect to login page.
-    if (!isUserLoading && !user) {
-      router.push(`/login?redirect=/templates`);
+    const isProUser = userProfile?.subscription === 'premium';
+    const isPremiumTemplate = premiumTemplates.includes(templateId);
+
+    // Wait until we know the user's status
+    if (isUserLoading || isProfileLoading) {
       return;
     }
 
-    // Once we have a user, create the new resume.
+    // If user is not logged in, redirect to login page.
+    if (!user) {
+      router.push(`/login?redirect=/templates`);
+      return;
+    }
+    
+    // If a free user tries to access a premium template, block them.
+    if (isPremiumTemplate && !isProUser) {
+        toast({
+            variant: 'destructive',
+            title: 'Upgrade Required',
+            description: 'You need a Pro plan to use this template.',
+        });
+        router.push('/pricing');
+        return;
+    }
+
+    // Once we have a user and all checks have passed, create the new resume.
     if (user && firestore) {
       const createResume = async () => {
         try {
@@ -64,14 +88,18 @@ export default function NewResumePage() {
           router.replace(`/editor/${docRef.id}`);
         } catch (error) {
           console.error('Error creating new resume:', error);
-          // Optionally, show a toast notification to the user.
+          toast({
+            variant: 'destructive',
+            title: 'Error',
+            description: 'Could not create a new resume. Please try again.'
+          });
           router.push('/dashboard'); // Redirect to dashboard on error.
         }
       };
 
       createResume();
     }
-  }, [user, isUserLoading, firestore, router, templateId]);
+  }, [user, isUserLoading, userProfile, isProfileLoading, firestore, router, templateId, toast]);
 
   // Show a loading indicator while the async operations are in progress.
   return <CreatingResumeLoading />;

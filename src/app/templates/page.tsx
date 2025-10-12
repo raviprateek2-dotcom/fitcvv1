@@ -1,41 +1,61 @@
+'use client';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Eye, Plus } from 'lucide-react';
+import { Eye, Plus, Sparkles, Lock } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useUser } from '@/firebase';
+import { useRouter } from 'next/navigation';
 
 const templates = [
   {
     id: 'modern',
     name: 'Modern',
     image: PlaceHolderImages.find((img) => img.id === 'template-modern'),
+    isPremium: false,
   },
   {
     id: 'classic',
     name: 'Classic',
     image: PlaceHolderImages.find((img) => img.id === 'template-classic'),
+    isPremium: false,
   },
   {
     id: 'creative',
     name: 'Creative',
     image: PlaceHolderImages.find((img) => img.id === 'template-creative'),
+    isPremium: false,
   },
   {
     id: 'minimalist',
     name: 'Minimalist',
     image: PlaceHolderImages.find((img) => img.id === 'template-minimalist'),
+    isPremium: true,
   },
   {
     id: 'professional',
     name: 'Professional',
     image: PlaceHolderImages.find((img) => img.id === 'template-professional'),
+    isPremium: true,
   },
 ];
 
 export default function TemplatesPage() {
+  const { userProfile } = useUser();
+  const router = useRouter();
+  const isProUser = userProfile?.subscription === 'premium';
+
+  const handleUseTemplate = (templateId: string, isPremium: boolean) => {
+    if (isPremium && !isProUser) {
+      router.push('/pricing');
+    } else {
+      router.push(`/editor/new?template=${templateId}`);
+    }
+  };
+
   return (
     <div className="bg-secondary">
       <div className="container mx-auto px-4 md:px-6 py-12 md:py-20">
@@ -48,6 +68,14 @@ export default function TemplatesPage() {
           {templates.filter(t => t.image).map((template) => (
             <Card key={template.id} className="group overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300">
               <CardContent className="p-0 relative">
+                {template.isPremium && (
+                    <div className="absolute top-2 right-2 z-10">
+                        <div className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg">
+                           <Sparkles className="w-3 h-3" />
+                           Pro
+                        </div>
+                    </div>
+                )}
                 {template.image && (
                   <Image
                     src={template.image.imageUrl}
@@ -58,11 +86,11 @@ export default function TemplatesPage() {
                     className="w-full h-auto object-contain transition-transform duration-500 ease-in-out group-hover:scale-105"
                   />
                 )}
-                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
+                <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
                   <Dialog>
                     <DialogTrigger asChild>
-                      <Button variant="secondary" size="icon">
-                        <Eye className="h-5 w-5" />
+                      <Button variant="secondary" size="icon" className="h-12 w-12 rounded-full">
+                        <Eye className="h-6 w-6" />
                         <span className="sr-only">Preview</span>
                       </Button>
                     </DialogTrigger>
@@ -83,11 +111,9 @@ export default function TemplatesPage() {
                       )}
                     </DialogContent>
                   </Dialog>
-                  <Button asChild>
-                    <Link href={`/editor/new?template=${template.id}`}>
-                      <Plus className="mr-2 h-4 w-4" />
-                      Use Template
-                    </Link>
+                  <Button size="lg" onClick={() => handleUseTemplate(template.id, template.isPremium)}>
+                      {template.isPremium && !isProUser ? <Lock className="mr-2 h-4 w-4" /> : <Plus className="mr-2 h-4 w-4" />}
+                      {template.isPremium && !isProUser ? 'Upgrade to Use' : 'Use Template'}
                   </Button>
                 </div>
               </CardContent>
