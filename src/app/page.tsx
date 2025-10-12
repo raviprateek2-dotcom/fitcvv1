@@ -6,33 +6,33 @@ import { blogPosts } from '@/lib/blog-posts';
 import { ArrowRight, CheckCircle2, DraftingCompass, FileText, Sparkles, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import Autoplay from "embla-carousel-autoplay";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 
 const features = [
   {
-    icon: <DraftingCompass className="w-6 h-6 text-primary" />,
+    icon: <DraftingCompass className="w-8 h-8 text-primary" />,
     title: 'Intuitive Editor',
     description: 'Effortlessly build and customize your resume with our user-friendly drag and drop editor.',
   },
   {
-    icon: <FileText className="w-6 h-6 text-primary" />,
+    icon: <FileText className="w-8 h-8 text-primary" />,
     title: 'Professional Templates',
     description: 'Choose from a variety of modern, classic, and creative templates designed by experts.',
   },
   {
-    icon: <Sparkles className="w-6 h-6 text-primary" />,
+    icon: <Sparkles className="w-8 h-8 text-primary" />,
     title: 'AI Content Writer',
     description: 'Let our AI write compelling resume content tailored to your target job in seconds.',
   },
   {
-    icon: <Zap className="w-6 h-6 text-primary" />,
+    icon: <Zap className="w-8 h-8 text-primary" />,
     title: 'ATS-Optimized',
     description: 'Craft a resume that is optimized to pass through Applicant Tracking Systems and get seen by recruiters.',
   },
@@ -72,63 +72,132 @@ const testimonials = [
   },
 ];
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+      delayChildren: 0.3,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.5,
+      ease: [0.6, -0.05, 0.01, 0.99],
+    },
+  },
+};
+
+const AnimatedResumeCarousel = () => {
+    const images = ['template-modern', 'template-professional', 'template-creative'].map(id => 
+        PlaceHolderImages.find(img => img.id === id)
+    ).filter(Boolean);
+
+    const [index, setIndex] = useState(0);
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setIndex(prev => (prev + 1) % images.length);
+        }, 3000);
+        return () => clearInterval(timer);
+    }, [images.length]);
+
+    return (
+        <div className="relative w-full max-w-md h-[450px] sm:h-[550px] perspective-1000">
+            <AnimatePresence>
+                {images.map((image, i) => (
+                    index === i && image && (
+                        <motion.div
+                            key={image.id}
+                            className="absolute w-full h-full"
+                            initial={{ opacity: 0, transform: 'rotateY(30deg) scale(0.9)', x: 100 }}
+                            animate={{ opacity: 1, transform: 'rotateY(0deg) scale(1)', x: 0 }}
+                            exit={{ opacity: 0, transform: 'rotateY(-30deg) scale(0.9)', x: -100 }}
+                            transition={{ duration: 0.8, ease: 'easeInOut' }}
+                        >
+                            <Image
+                                src={image.imageUrl}
+                                alt={image.description}
+                                layout="fill"
+                                objectFit="contain"
+                                data-ai-hint={image.imageHint}
+                                className="rounded-2xl shadow-2xl"
+                            />
+                        </motion.div>
+                    )
+                ))}
+            </AnimatePresence>
+        </div>
+    );
+}
 
 export default function Home() {
   const [sentenceIndex, setSentenceIndex] = useState(0);
-  const [charIndex, setCharIndex] = useState(0);
-  const [typedText, setTypedText] = useState('');
-  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    const handleTyping = () => {
-      const currentSentence = sentences[sentenceIndex];
-      
-      if (isDeleting) {
-        setTypedText(currentSentence.substring(0, charIndex - 1));
-        setCharIndex(charIndex - 1);
-      } else {
-        setTypedText(currentSentence.substring(0, charIndex + 1));
-        setCharIndex(charIndex + 1);
-      }
-
-      if (!isDeleting && charIndex === currentSentence.length) {
-        // Pause at end of sentence
-        setTimeout(() => setIsDeleting(true), 2000);
-      } else if (isDeleting && charIndex === 0) {
-        setIsDeleting(false);
-        setSentenceIndex((prev) => (prev + 1) % sentences.length);
-      }
-    };
-
-    const typingTimeout = setTimeout(handleTyping, charIndex === sentences[sentenceIndex].length ? 2000 : (isDeleting ? 75 : 150));
-    return () => clearTimeout(typingTimeout);
-  }, [charIndex, isDeleting, sentenceIndex]);
+    const timer = setInterval(() => {
+      setSentenceIndex(prev => (prev + 1) % sentences.length);
+    }, 2500);
+    return () => clearInterval(timer);
+  }, []);
 
 
   return (
-    <div className="flex flex-col items-center bg-background text-foreground">
+    <div className="flex flex-col items-center bg-background text-foreground overflow-x-hidden">
+      
       {/* Hero Section */}
-      <section className="w-full py-20 md:py-32 relative overflow-hidden">
-        <div className="container mx-auto px-4 md:px-6 relative z-10">
-          <div className="grid md:grid-cols-1 text-center gap-12 items-center">
-             <div className="space-y-6">
-              <h1 className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl animate-fade-in-up">
-                Build a resume that <br className="md:hidden"/>
-                <span className="text-primary transition-all duration-300 min-h-[60px] sm:min-h-[70px] md:min-h-[80px] inline-block">
-                    {typedText}
-                    <span className="animate-ping">|</span>
+      <section className="w-full py-20 md:py-32 relative">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <motion.div 
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              className="space-y-6 text-center md:text-left"
+            >
+              <h1 className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl">
+                Build a resume that <br />
+                <span className="text-primary transition-all duration-300 inline-block min-h-[60px] sm:min-h-[70px] md:min-h-[80px]">
+                  <AnimatePresence mode="wait">
+                    <motion.span
+                      key={sentenceIndex}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      {sentences[sentenceIndex]}
+                    </motion.span>
+                  </AnimatePresence>
                 </span>
               </h1>
-              
-              <div className="flex flex-col gap-4 sm:flex-row animate-fade-in-up animation-delay-400 justify-center">
+              <p className="max-w-lg mx-auto md:mx-0 text-muted-foreground md:text-xl">
+                Create a professional, ATS-optimized resume in minutes. Let our AI guide you to landing your dream job.
+              </p>
+              <div className="flex flex-col gap-4 sm:flex-row justify-center md:justify-start">
                 <Button asChild size="lg" className="group transition-transform duration-300 hover:scale-105" variant="neuro">
                   <Link href="/templates">
-                    Create My Resume
+                    Create My Resume for Free
                     <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </Button>
               </div>
-            </div>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="hidden md:flex items-center justify-center"
+            >
+              <AnimatedResumeCarousel />
+            </motion.div>
           </div>
         </div>
       </section>
@@ -136,57 +205,95 @@ export default function Home() {
       {/* How It Works Section */}
       <section id="how-it-works" className="w-full py-20 md:py-32 bg-secondary">
           <div className="container mx-auto px-4 md:px-6">
-              <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
-                  <div className="inline-block rounded-lg bg-background px-3 py-1 text-sm font-medium animate-fade-in">How It Works</div>
-                  <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl animate-fade-in-up animation-delay-200">Three Simple Steps to Your Dream Job</h2>
-              </div>
-              <div className="mx-auto grid items-stretch gap-8 sm:max-w-4xl sm:grid-cols-3 md:gap-12">
-                  <div className="flex flex-col gap-4 items-center text-center p-6 rounded-2xl bg-background/50 backdrop-blur-sm shadow-cyber-dark animate-fade-in-up animation-delay-200 transition-all duration-300 hover:scale-105 hover:shadow-xl">
+              <motion.div 
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.3 }}
+                variants={containerVariants}
+                className="flex flex-col items-center justify-center space-y-4 text-center mb-12"
+              >
+                  <motion.div variants={itemVariants} className="inline-block rounded-lg bg-background px-3 py-1 text-sm font-medium">How It Works</motion.div>
+                  <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Three Simple Steps to Your Dream Job</motion.h2>
+              </motion.div>
+              <motion.div 
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.3 }}
+                variants={containerVariants}
+                className="mx-auto grid items-start gap-8 sm:max-w-4xl sm:grid-cols-3 md:gap-12"
+              >
+                  <motion.div variants={itemVariants} className="flex flex-col gap-4 items-center text-center p-6">
                       <div className="bg-primary/10 p-4 rounded-full">
                          <FileText className="w-8 h-8 text-primary"/>
                       </div>
                       <h3 className="text-xl font-bold font-headline">1. Select a Template</h3>
                       <p className="text-muted-foreground">Choose from our library of professionally designed and ATS-friendly resume templates.</p>
-                  </div>
-                   <div className="flex flex-col gap-4 items-center text-center p-6 rounded-2xl bg-background/50 backdrop-blur-sm shadow-cyber-dark animate-fade-in-up animation-delay-400 transition-all duration-300 hover:scale-105 hover:shadow-xl">
+                  </motion.div>
+                   <motion.div variants={itemVariants} className="flex flex-col gap-4 items-center text-center p-6">
                       <div className="bg-primary/10 p-4 rounded-full">
                          <Sparkles className="w-8 h-8 text-primary"/>
                       </div>
                       <h3 className="text-xl font-bold font-headline">2. Perfect with AI</h3>
                       <p className="text-muted-foreground">Use our AI assistant to write compelling bullet points, summaries, and cover letters.</p>
-                  </div>
-                   <div className="flex flex-col gap-4 items-center text-center p-6 rounded-2xl bg-background/50 backdrop-blur-sm shadow-cyber-dark animate-fade-in-up animation-delay-600 transition-all duration-300 hover:scale-105 hover:shadow-xl">
+                  </motion.div>
+                   <motion.div variants={itemVariants} className="flex flex-col gap-4 items-center text-center p-6">
                       <div className="bg-primary/10 p-4 rounded-full">
                          <Zap className="w-8 h-8 text-primary"/>
                       </div>
                       <h3 className="text-xl font-bold font-headline">3. Download & Apply</h3>
                       <p className="text-muted-foreground">Export your pixel-perfect resume as a PDF and start landing interviews.</p>
-                  </div>
-              </div>
+                  </motion.div>
+              </motion.div>
           </div>
       </section>
 
       {/* Features Section */}
        <section id="features" className="w-full py-20 md:py-32">
         <div className="container mx-auto px-4 md:px-6">
-            <div className="grid md:grid-cols-1 gap-16 items-center">
-                 <div className="space-y-8 max-w-3xl mx-auto text-center animate-fade-in-up">
-                    <div className="inline-block rounded-lg bg-secondary px-3 py-1 text-sm font-medium">Everything You Need</div>
-                    <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl animation-delay-200">Features that help you stand out</h2>
-                    <ul className="grid sm:grid-cols-2 gap-6 animation-delay-400 text-left">
+            <div className="grid md:grid-cols-2 gap-16 items-center">
+                <motion.div 
+                  initial={{ opacity: 0, x: -50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, amount: 0.5 }}
+                  transition={{ duration: 0.8 }}
+                  className="hidden md:block"
+                 >
+                    {PlaceHolderImages.find(img => img.id === 'features-image') && 
+                      <Image 
+                        src={PlaceHolderImages.find(img => img.id === 'features-image')!.imageUrl}
+                        alt="ResumeAI Features"
+                        width={600}
+                        height={700}
+                        data-ai-hint="resume examples"
+                        className="rounded-2xl shadow-2xl"
+                      />
+                    }
+                 </motion.div>
+                 <motion.div 
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.3 }}
+                    variants={containerVariants}
+                    className="space-y-8"
+                  >
+                    <div className="space-y-4">
+                      <motion.div variants={itemVariants} className="inline-block rounded-lg bg-secondary px-3 py-1 text-sm font-medium">Everything You Need</motion.div>
+                      <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Features that help you stand out</motion.h2>
+                    </div>
+                    <ul className="grid sm:grid-cols-1 gap-8">
                         {features.map((feature, index) => (
-                          <li key={index} className="flex items-start gap-4">
-                              <div className="bg-primary/10 p-2 rounded-full mt-1">
+                          <motion.li key={index} variants={itemVariants} className="flex items-start gap-4">
+                              <div className="bg-primary/10 p-3 rounded-full mt-1">
                                 {feature.icon}
                               </div>
                               <div>
-                                <h3 className="font-semibold text-lg">{feature.title}</h3>
-                                <p className="text-muted-foreground">{feature.description}</p>
+                                <h3 className="font-semibold text-xl">{feature.title}</h3>
+                                <p className="text-muted-foreground text-lg">{feature.description}</p>
                               </div>
-                          </li>
+                          </motion.li>
                         ))}
                     </ul>
-                </div>
+                </motion.div>
             </div>
         </div>
       </section>
@@ -194,36 +301,42 @@ export default function Home() {
       {/* Testimonials Section */}
       <section id="testimonials" className="w-full py-20 md:py-32 bg-secondary">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
-            <div className="inline-block rounded-lg bg-background px-3 py-1 text-sm font-medium animate-fade-in">What Our Users Say</div>
-            <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl animate-fade-in-up animation-delay-200">Loved by Job Seekers Worldwide</h2>
-          </div>
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={containerVariants}
+            className="flex flex-col items-center justify-center space-y-4 text-center mb-12"
+          >
+            <motion.div variants={itemVariants} className="inline-block rounded-lg bg-background px-3 py-1 text-sm font-medium">What Our Users Say</motion.div>
+            <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Loved by Job Seekers Worldwide</motion.h2>
+          </motion.div>
           <Carousel
             opts={{ align: "start", loop: true }}
             plugins={[Autoplay({ delay: 5000 })]}
-            className="w-full max-w-4xl mx-auto animate-fade-in-up animation-delay-400"
+            className="w-full max-w-6xl mx-auto"
           >
             <CarouselContent>
               {testimonials.map((testimonial, index) => (
                 <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
                   <motion.div 
                     className="p-1 h-full"
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 50 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1, duration: 0.5 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
                     viewport={{ once: true }}
                   >
-                    <Card className="flex flex-col justify-between h-full" variant="neuro">
-                      <CardContent className="p-6 flex flex-col gap-4">
-                        <p className="text-muted-foreground">"{testimonial.quote}"</p>
-                        <div className="flex items-center gap-4 pt-4">
+                    <Card className="flex flex-col justify-between h-full p-6" variant="neuro">
+                      <CardContent className="p-0 flex flex-col gap-6">
+                        <p className="text-lg text-muted-foreground flex-grow">"{testimonial.quote}"</p>
+                        <div className="flex items-center gap-4 pt-4 border-t">
                           <Avatar>
                             <AvatarImage src={testimonial.avatar} alt={testimonial.author} />
                             <AvatarFallback>{testimonial.author.charAt(0)}</AvatarFallback>
                           </Avatar>
                           <div>
-                            <p className="font-semibold">{testimonial.author}</p>
-                            <p className="text-sm text-muted-foreground">{testimonial.title}</p>
+                            <p className="font-semibold text-lg">{testimonial.author}</p>
+                            <p className="text-md text-muted-foreground">{testimonial.title}</p>
                           </div>
                         </div>
                       </CardContent>
@@ -238,77 +351,105 @@ export default function Home() {
         </div>
       </section>
 
-
       {/* Why Us Section */}
       <section className="w-full py-20 md:py-32">
           <div className="container mx-auto px-4 md:px-6">
-               <div className="grid md:grid-cols-1 gap-16 items-center">
-                   <div className="space-y-6 max-w-3xl mx-auto text-center animate-fade-in-up">
-                      <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Don't just write a resume. Design your future.</h2>
-                      <ul className="space-y-4 text-lg animation-delay-300 inline-flex flex-col items-start">
-                        <li className="flex items-center gap-3"><CheckCircle2 className="text-primary h-6 w-6"/><span>AI-powered content suggestions.</span></li>
-                        <li className="flex items-center gap-3"><CheckCircle2 className="text-primary h-6 w-6"/><span>Professionally designed templates.</span></li>
-                        <li className="flex items-center gap-3"><CheckCircle2 className="text-primary h-6 w-6"/><span>Intuitive real-time editor.</span></li>
-                      </ul>
-                  </div>
-              </div>
+               <motion.div 
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.5 }}
+                variants={containerVariants}
+                className="space-y-8 max-w-3xl mx-auto text-center"
+              >
+                  <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Don't just write a resume. Design your future.</motion.h2>
+                  <ul className="space-y-4 text-xl inline-flex flex-col items-start text-left">
+                    <motion.li variants={itemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-primary h-6 w-6"/><span>AI-powered content suggestions.</span></motion.li>
+                    <motion.li variants={itemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-primary h-6 w-6"/><span>Professionally designed templates.</span></motion.li>
+                    <motion.li variants={itemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-primary h-6 w-6"/><span>Intuitive real-time editor.</span></motion.li>
+                  </ul>
+              </motion.div>
           </div>
       </section>
 
       {/* Blog Section */}
       <section id="blog" className="w-full py-20 md:py-32 bg-secondary">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
-            <div className="inline-block rounded-lg bg-background px-3 py-1 text-sm font-medium animate-fade-in">From Our Blog</div>
-            <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl animate-fade-in-up animation-delay-200">Career Advice & Resume Tips</h2>
-            <p className="max-w-[600px] text-muted-foreground md:text-lg animation-delay-300">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={containerVariants}
+            className="flex flex-col items-center justify-center space-y-4 text-center mb-12"
+          >
+            <motion.div variants={itemVariants} className="inline-block rounded-lg bg-background px-3 py-1 text-sm font-medium">From Our Blog</motion.div>
+            <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Career Advice & Resume Tips</motion.h2>
+            <motion.p variants={itemVariants} className="max-w-[600px] text-muted-foreground md:text-lg">
               Get the latest insights from our career experts to help you land your dream job.
-            </p>
-          </div>
-          <div className="grid gap-8 md:grid-cols-3 animate-fade-in-up animation-delay-400">
+            </motion.p>
+          </motion.div>
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={containerVariants}
+            className="grid gap-8 md:grid-cols-3"
+          >
             {blogPosts.slice(0, 3).map((post) => {
                 const image = PlaceHolderImages.find(img => img.id === post.imageId);
                 return (
-                    <Card key={post.slug} className="group overflow-hidden flex flex-col" variant="neuro">
-                        {image && (
-                        <Link href={`/blog/${post.slug}`} className="block overflow-hidden">
-                            <Image
-                                src={image.imageUrl}
-                                alt={post.title}
-                                width={400}
-                                height={200}
-                                data-ai-hint={image.imageHint}
-                                className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                            />
-                        </Link>
-                        )}
-                        <CardContent className="p-6 flex flex-col flex-grow">
-                        <h3 className="text-xl font-bold font-headline mb-2 group-hover:text-primary transition-colors">
-                            <Link href={`/blog/${post.slug}`}>{post.title}</Link>
-                        </h3>
-                        <p className="text-muted-foreground text-sm mb-4 flex-grow">{post.description}</p>
-                        <Button variant="link" asChild className="p-0 h-auto self-start">
-                            <Link href={`/blog/${post.slug}`}>
-                            Read More <ArrowRight className="ml-2 h-4 w-4" />
-                            </Link>
-                        </Button>
-                        </CardContent>
-                    </Card>
+                    <motion.div variants={itemVariants} key={post.slug}>
+                      <Card className="group overflow-hidden flex flex-col h-full" variant="neuro">
+                          {image && (
+                          <Link href={`/blog/${post.slug}`} className="block overflow-hidden">
+                              <Image
+                                  src={image.imageUrl}
+                                  alt={post.title}
+                                  width={400}
+                                  height={200}
+                                  data-ai-hint={image.imageHint}
+                                  className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                              />
+                          </Link>
+                          )}
+                          <CardContent className="p-6 flex flex-col flex-grow">
+                          <h3 className="text-xl font-bold font-headline mb-2 group-hover:text-primary transition-colors">
+                              <Link href={`/blog/${post.slug}`}>{post.title}</Link>
+                          </h3>
+                          <p className="text-muted-foreground text-sm mb-4 flex-grow">{post.description}</p>
+                          <Button variant="link" asChild className="p-0 h-auto self-start">
+                              <Link href={`/blog/${post.slug}`}>
+                              Read More <ArrowRight className="ml-2 h-4 w-4" />
+                              </Link>
+                          </Button>
+                          </CardContent>
+                      </Card>
+                    </motion.div>
                 )
             })}
-          </div>
-           <div className="text-center mt-12 animate-fade-in-up animation-delay-600">
+          </motion.div>
+           <motion.div 
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+            className="text-center mt-12"
+           >
                 <Button asChild size="lg" variant="outline">
                     <Link href="/blog">View All Articles</Link>
                 </Button>
-            </div>
+            </motion.div>
         </div>
       </section>
 
-
       {/* Final CTA */}
       <section className="w-full py-20 md:py-32">
-        <div className="container mx-auto px-4 md:px-6 text-center animate-fade-in-up">
+        <motion.div 
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.5 }}
+          transition={{ duration: 0.8 }}
+          className="container mx-auto px-4 md:px-6 text-center"
+        >
           <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Ready to Build Your Future?</h2>
           <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl mt-4">
             Start for free and see how ResumeAI can transform your job search. No credit card required.
@@ -321,8 +462,10 @@ export default function Home() {
               </Link>
             </Button>
           </div>
-        </div>
+        </motion.div>
       </section>
     </div>
   );
 }
+
+    
