@@ -16,7 +16,7 @@ interface FirebaseProviderProps {
 }
 
 // User profile type
-type UserProfile = {
+export type UserProfile = {
   email: string;
   subscription: 'free' | 'premium';
 };
@@ -203,13 +203,3 @@ export function useMemoFirebase<T>(factory: () => T, deps: DependencyList): T | 
   
   return memoized;
 }
-
-/**
- * Hook specifically for accessing the authenticated user's state.
- * This provides the User object, loading status, and any auth errors.
- * @returns {UserHookResult} Object with user, isUserLoading, userError.
- */
-export const useUser = (): UserHookResult => {
-  const { user, isUserLoading, userError, userProfile, isProfileLoading } = useFirebase();
-  return { user, isUserLoading, userError, userProfile, isProfileLoading };
-};

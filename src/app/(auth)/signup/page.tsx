@@ -90,40 +90,35 @@ export default function SignupPage() {
         return;
     }
     setIsLoading(true);
-    try {
-      await initiateEmailSignUp(auth, email, password);
-      // Navigation will be handled by the useEffect watching the user state
-    } catch (error: any) {
-      console.error(error.code, error.message);
-      let description = 'An unexpected error occurred. Please try again.';
-      if (error.code === 'auth/email-already-in-use') {
-        description = 'An account with this email address already exists.';
-      } else if (error.code === 'auth/invalid-email') {
-        description = 'The email address is not valid.';
-      }
-      toast({
-        variant: 'destructive',
-        title: 'Signup Failed',
-        description,
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    initiateEmailSignUp(auth, email, password).catch((error: any) => {
+        console.error(error.code, error.message);
+        let description = 'An unexpected error occurred. Please try again.';
+        if (error.code === 'auth/email-already-in-use') {
+            description = 'An account with this email address already exists.';
+        } else if (error.code === 'auth/invalid-email') {
+            description = 'The email address is not valid.';
+        }
+        toast({
+            variant: 'destructive',
+            title: 'Signup Failed',
+            description,
+        });
+    }).finally(() => {
+        setIsLoading(false);
+    });
   };
   
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
-    try {
-        await initiateGoogleSignIn(auth);
-    } catch (error: any) {
+    initiateGoogleSignIn(auth).catch(() => {
         toast({
             variant: 'destructive',
             title: 'Sign-in Failed',
             description: 'Could not sign in with Google. Please try again.',
         });
-    } finally {
+    }).finally(() => {
         setIsLoading(false);
-    }
+    });
   };
 
   return (

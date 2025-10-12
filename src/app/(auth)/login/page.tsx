@@ -61,38 +61,33 @@ export default function LoginPage() {
       return;
     }
     setIsLoading(true);
-    try {
-      await initiateEmailSignIn(auth, email, password);
-      // Navigation will be handled by the useEffect watching the user state
-    } catch (error: any) {
-      console.error(error.code, error.message);
-      let description = 'An unexpected error occurred. Please try again.';
-      if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
-        description = 'Invalid email or password. Please check your credentials.';
-      }
-      toast({
-        variant: 'destructive',
-        title: 'Login Failed',
-        description,
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    initiateEmailSignIn(auth, email, password).catch((error: any) => {
+        console.error(error.code, error.message);
+        let description = 'An unexpected error occurred. Please try again.';
+        if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+            description = 'Invalid email or password. Please check your credentials.';
+        }
+        toast({
+            variant: 'destructive',
+            title: 'Login Failed',
+            description,
+        });
+    }).finally(() => {
+        setIsLoading(false)
+    });
   };
   
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
-    try {
-      await initiateGoogleSignIn(auth);
-    } catch (error: any) {
-      toast({
-        variant: 'destructive',
-        title: 'Sign-in Failed',
-        description: 'Could not sign in with Google. Please try again.',
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    initiateGoogleSignIn(auth).catch(() => {
+        toast({
+            variant: 'destructive',
+            title: 'Sign-in Failed',
+            description: 'Could not sign in with Google. Please try again.',
+        });
+    }).finally(() => {
+        setIsLoading(false);
+    });
   };
 
   return (
