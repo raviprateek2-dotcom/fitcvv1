@@ -4,9 +4,8 @@ import { suggestResumeImprovements } from '@/app/actions/ai';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
-import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
-import { Sparkles } from 'lucide-react';
+import { Bot, Lightbulb, Sparkles } from 'lucide-react';
 import React, { useState } from 'react';
 
 interface AIContentDialogProps {
@@ -124,22 +123,13 @@ export default function AIContentDialog({ sectionName, currentContent, jobDescri
 }
 
 const LoadingState = () => (
-    <div className="space-y-4 py-4">
-        <div>
-            <h3 className="font-semibold mb-2">Suggested Improvement:</h3>
-            <div className="space-y-2">
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-3/4" />
-            </div>
+    <div className="py-10 flex flex-col items-center justify-center text-center">
+        <div className="relative mb-4">
+            <Bot className="h-16 w-16 text-primary animate-pulse" />
+            <Sparkles className="h-6 w-6 text-yellow-400 absolute -top-2 -right-2 animate-ping" />
+            <Lightbulb className="h-5 w-5 text-accent absolute bottom-0 -left-2 animate-pulse delay-500" />
         </div>
-        <Separator />
-        <div>
-            <h3 className="font-semibold mb-2">Reasoning:</h3>
-            <div className="space-y-2">
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-5/6" />
-            </div>
-        </div>
+        <p className="text-lg font-semibold animate-pulse">Our AI is thinking...</p>
+        <p className="text-muted-foreground mt-1">Analyzing your content to provide the best suggestions.</p>
     </div>
 );
