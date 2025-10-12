@@ -1,7 +1,7 @@
 'use client';
 
 import { useCollection, useUser } from '@/firebase';
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import { addDoc, doc, serverTimestamp, collection } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
 import { Button } from '@/components/ui/button';
@@ -37,7 +37,8 @@ type Resume = {
 };
 
 const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDuplicate: (resume: Resume) => void; onDelete: (resumeId: string) => void; }) => {
-
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
   const updatedAt = useMemo(() => {
     if (!resume.updatedAt) return 'never';
     const date = resume.updatedAt.toDate();
@@ -70,7 +71,7 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
       </CardContent>
       <CardFooter className="p-4 pt-0 flex justify-between items-center text-sm text-muted-foreground">
         <span>Updated {updatedAt}</span>
-        <DropdownMenu>
+        <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="h-8 w-8">
               <MoreHorizontal className="h-4 w-4" />
@@ -95,8 +96,8 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={() => onDelete(resume.id)} className="bg-destructive hover:bg-destructive/90">Delete</AlertDialogAction>
+                  <AlertDialogCancel onClick={() => setIsMenuOpen(false)}>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={() => { onDelete(resume.id); setIsMenuOpen(false); }} className="bg-destructive hover:bg-destructive/90">Delete</AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
