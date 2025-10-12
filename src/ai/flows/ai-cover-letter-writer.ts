@@ -39,9 +39,9 @@ const prompt = ai.definePrompt({
 
   Use the provided resume content to highlight the most relevant skills and experiences for this specific role.
 
-  - The first paragraph should be a strong opening that introduces the user and expresses enthusiasm for the role and company.
-  - The second paragraph should connect the user's key experiences and achievements from their resume to the requirements of the job.
-  - The third paragraph should be a confident closing that reiterates interest and includes a clear call to action (e.g., "I am eager to discuss how my background in...").
+  - The first paragraph must be a highly specific and strong opening that immediately grabs the reader's attention. It should introduce the user and express genuine, specific enthusiasm for the role and the company.
+  - The second paragraph should connect the user's key experiences and achievements from their resume directly to the requirements of the job.
+  - The third paragraph must be a confident closing that reiterates interest and includes a clear, customized call to action (e.g., "I am eager to discuss how my background in... can bring value to your team.").
 
   Do not include contact information, dates, or salutations like "Dear Hiring Manager," or "Sincerely,". Only generate the three body paragraphs of the letter.
 

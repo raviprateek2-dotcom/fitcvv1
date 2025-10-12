@@ -4,13 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useAuth, useFirestore, useUser } from '@/firebase';
+import { useAuth, useUser } from '@/firebase';
 import { initiateEmailSignUp, initiateGoogleSignIn } from '@/firebase/non-blocking-login';
 import { useToast } from '@/hooks/use-toast';
-import { doc, updateDoc } from 'firebase/firestore';
 import { Rocket } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 
@@ -42,34 +41,16 @@ export default function SignupPage() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const auth = useAuth();
-  const firestore = useFirestore();
   const { toast } = useToast();
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { user, isUserLoading } = useUser();
-
-  const plan = searchParams.get('plan');
 
   useEffect(() => {
     if (isUserLoading) return;
-    if (user && firestore) {
-      if (plan === 'pro' && firestore) {
-        const userDocRef = doc(firestore, `users/${user.uid}`);
-        updateDoc(userDocRef, { subscription: 'premium' }).then(() => {
-          toast({
-            title: 'Upgrade Successful!',
-            description: "Welcome to Pro! You now have access to all premium features.",
-          });
-          router.push('/dashboard');
-        }).catch(err => {
-            console.error(err);
-            router.push('/dashboard');
-        })
-      } else {
-        router.push('/dashboard');
-      }
+    if (user) {
+      router.push('/dashboard');
     }
-  }, [user, isUserLoading, router, plan, firestore, toast]);
+  }, [user, isUserLoading, router]);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
