@@ -6,7 +6,7 @@ import { Firestore, doc, getDoc } from 'firebase/firestore';
 import { Auth, User, onAuthStateChanged } from 'firebase/auth';
 import { FirebaseErrorListener } from '@/components/FirebaseErrorListener'
 import { useDoc } from './firestore/use-doc';
-import { setDocumentNonBlocking } from './non-blocking-updates';
+import { setDocumentNonBlocking } from '@/firebase';
 
 interface FirebaseProviderProps {
   children: ReactNode;
@@ -100,19 +100,20 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
 
     const unsubscribe = onAuthStateChanged(
       auth,
-      async (firebaseUser) => { // Auth state determined
+      (firebaseUser) => { // Auth state determined
         if (firebaseUser) {
           // Check if user profile exists before setting auth state
           const userDocRef = doc(firestore, `users/${firebaseUser.uid}`);
-          const docSnap = await getDoc(userDocRef);
-          if (!docSnap.exists()) {
-             const newUserProfile: UserProfile = {
-              email: firebaseUser.email || '',
-              subscription: 'free',
-            };
-            // Set the doc non-blockingly, don't wait for it to complete.
-            setDocumentNonBlocking(userDocRef, newUserProfile, { merge: false });
-          }
+          getDoc(userDocRef).then(docSnap => {
+            if (!docSnap.exists()) {
+              const newUserProfile: UserProfile = {
+                email: firebaseUser.email || '',
+                subscription: 'free',
+              };
+              // Set the doc non-blockingly, don't wait for it to complete.
+              setDocumentNonBlocking(userDocRef, newUserProfile, { merge: false });
+            }
+          });
         }
         setUserAuthState({ user: firebaseUser, isUserLoading: false, userError: null });
       },
@@ -168,7 +169,7 @@ export const useFirebase = (): FirebaseServicesAndUser => {
     firestore: context.firestore,
     auth: context.auth,
     user: context.user,
-isUserLoading: context.isUserLoading,
+    isUserLoading: context.isUserLoading,
     userError: context.userError,
     userProfile: context.userProfile,
     isProfileLoading: context.isProfileLoading,
