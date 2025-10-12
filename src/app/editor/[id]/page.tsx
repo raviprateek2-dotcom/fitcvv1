@@ -1,13 +1,13 @@
 import { ResumeEditor } from '@/components/editor/ResumeEditor';
 import { Button } from '@/components/ui/button';
-import { Download, Eye, Save, Share2 } from 'lucide-react';
+import { Download, Eye, Share2 } from 'lucide-react';
 
 export default function EditorPage({ params }: { params: { id: string } }) {
   // In a real app, you would fetch resume data based on params.id
   // For this example, we'll pass a placeholder or let the editor handle its initial state.
 
   return (
-    <div className="flex flex-col h-full bg-secondary">
+    <div className="flex flex-col h-screen bg-secondary">
       <header className="bg-background border-b sticky top-0 z-10">
         <div className="container mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
           <div>
@@ -27,14 +27,10 @@ export default function EditorPage({ params }: { params: { id: string } }) {
               <Download className="mr-2 h-4 w-4" />
               Download PDF
             </Button>
-            <Button size="sm">
-              <Save className="mr-2 h-4 w-4" />
-              Save
-            </Button>
           </div>
         </div>
       </header>
-      <div className="flex-grow">
+      <div className="flex-grow overflow-hidden">
         <ResumeEditor resumeId={params.id} />
       </div>
     </div>
