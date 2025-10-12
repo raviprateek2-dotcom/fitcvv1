@@ -6,14 +6,14 @@ import { Button } from '@/components/ui/button';
 import { blogPosts } from '@/lib/blog-posts';
 import { ArrowRight, CheckCircle2, DraftingCompass, FileText, Sparkles, Zap, PenTool, Users, FileSignature, Search, BrainCircuit } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import Autoplay from "embla-carousel-autoplay";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useAnimate } from 'framer-motion';
 
 
 const features = [
@@ -97,51 +97,107 @@ const itemVariants = {
 };
 
 const AnimatedFeatureIcons = () => {
-    const featureIcons = [
-        { icon: DraftingCompass, initial: 'top' },
-        { icon: FileText, initial: 'left' },
-        { icon: Sparkles, initial: 'right' },
-        { icon: Zap, initial: 'bottom' },
+    const [scope, animate] = useAnimate();
+
+    const icons = [
+        { icon: DraftingCompass, className: 'icon-1' },
+        { icon: FileText, className: 'icon-2' },
+        { icon: Sparkles, className: 'icon-3' },
+        { icon: Zap, className: 'icon-4' },
     ];
     
-    const iconVariants = {
-        top: { x: 0, y: -100, scale: 1 },
-        left: { x: -100, y: 0, scale: 1 },
-        right: { x: 100, y: 0, scale: 1 },
-        bottom: { x: 0, y: 100, scale: 1 },
-        center: { x: 0, y: 0, scale: 0.8 },
-    };
-    
-    const animationSequence = ['top', 'left', 'bottom', 'right'];
+    useEffect(() => {
+        const animation = async () => {
+            while (true) {
+                await animate(scope.current, { rotate: 360 }, { duration: 8, ease: 'linear'});
+                await animate(scope.current, { rotate: 0 }, { duration: 0 });
+            }
+        };
+
+        const iconAnimation = async () => {
+            const sequence = [
+                // initial state is a diamond
+                ['.icon-1', { x: 0, y: -100, scale: 1, rotate: -45 }],
+                ['.icon-2', { x: -100, y: 0, scale: 1, rotate: -45 }],
+                ['.icon-3', { x: 100, y: 0, scale: 1, rotate: -45 }],
+                ['.icon-4', { x: 0, y: 100, scale: 1, rotate: -45 }],
+            ];
+            await animate(sequence, { duration: 0 });
+            
+            while(true) {
+                 await animate([
+                    ['.icon-1', { x: -100, y: 0, scale: 1.1 }, { duration: 1.5, ease: 'easeInOut' }],
+                    ['.icon-2', { x: 0, y: 100, scale: 1.1 }, { at: '-1.5', duration: 1.5, ease: 'easeInOut' }],
+                    ['.icon-3', { x: 0, y: -100, scale: 1.1 }, { at: '-1.5', duration: 1.5, ease: 'easeInOut' }],
+                    ['.icon-4', { x: 100, y: 0, scale: 1.1 }, { at: '-1.5', duration: 1.5, ease: 'easeInOut' }],
+                ]);
+                await animate([
+                    ['.icon-1', { scale: 1 }, { duration: 0.5 }],
+                    ['.icon-2', { scale: 1 }, { at: '-0.5' }],
+                    ['.icon-3', { scale: 1 }, { at: '-0.5' }],
+                    ['.icon-4', { scale: 1 }, { at: '-0.5' }],
+                ]);
+
+                await animate([
+                    ['.icon-1', { x: 0, y: 100, scale: 1.1 }, { duration: 1.5, ease: 'easeInOut' }],
+                    ['.icon-2', { x: 100, y: 0, scale: 1.1 }, { at: '-1.5', duration: 1.5, ease: 'easeInOut' }],
+                    ['.icon-3', { x: -100, y: 0, scale: 1.1 }, { at: '-1.5', duration: 1.5, ease: 'easeInOut' }],
+                    ['.icon-4', { x: 0, y: -100, scale: 1.1 }, { at: '-1.5', duration: 1.5, ease: 'easeInOut' }],
+                ]);
+                await animate([
+                    ['.icon-1', { scale: 1 }, { duration: 0.5 }],
+                    ['.icon-2', { scale: 1 }, { at: '-0.5' }],
+                    ['.icon-3', { scale: 1 }, { at: '-0.5' }],
+                    ['.icon-4', { scale: 1 }, { at: '-0.5' }],
+                ]);
+
+                await animate([
+                    ['.icon-1', { x: 100, y: 0, scale: 1.1 }, { duration: 1.5, ease: 'easeInOut' }],
+                    ['.icon-2', { x: 0, y: -100, scale: 1.1 }, { at: '-1.5', duration: 1.5, ease: 'easeInOut' }],
+                    ['.icon-3', { x: 0, y: 100, scale: 1.1 }, { at: '-1.5', duration: 1.5, ease: 'easeInOut' }],
+                    ['.icon-4', { x: -100, y: 0, scale: 1.1 }, { at: '-1.5', duration: 1.5, ease: 'easeInOut' }],
+                ]);
+                await animate([
+                    ['.icon-1', { scale: 1 }, { duration: 0.5 }],
+                    ['.icon-2', { scale: 1 }, { at: '-0.5' }],
+                    ['.icon-3', { scale: 1 }, { at: '-0.5' }],
+                    ['.icon-4', { scale: 1 }, { at: '-0.5' }],
+                ]);
+                
+                 await animate([
+                    ['.icon-1', { x: 0, y: -100, scale: 1.1 }, { duration: 1.5, ease: 'easeInOut' }],
+                    ['.icon-2', { x: -100, y: 0, scale: 1.1 }, { at: '-1.5', duration: 1.5, ease: 'easeInOut' }],
+                    ['.icon-3', { x: 100, y: 0, scale: 1.1 }, { at: '-1.5', duration: 1.5, ease: 'easeInOut' }],
+                    ['.icon-4', { x: 0, y: 100, scale: 1.1 }, { at: '-1.5', duration: 1.5, ease: 'easeInOut' }],
+                ]);
+                await animate([
+                    ['.icon-1', { scale: 1 }, { duration: 0.5 }],
+                    ['.icon-2', { scale: 1 }, { at: '-0.5' }],
+                    ['.icon-3', { scale: 1 }, { at: '-0.5' }],
+                    ['.icon-4', { scale: 1 }, { at: '-0.5' }],
+                ]);
+            }
+        }
+        
+        animation();
+        iconAnimation();
+
+    }, [animate, scope]);
 
     return (
-        <div className="relative w-[300px] h-[300px] md:w-[400px] md:h-[400px] flex items-center justify-center">
-             <motion.div
-                className="relative w-full h-full"
-                 animate={{ rotate: 360 }}
-                 transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
-            >
-                {featureIcons.map((item, index) => (
-                    <motion.div
-                        key={index}
-                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center bg-background rounded-2xl shadow-cyber-dark w-28 h-28 md:w-32 md:h-32"
-                        variants={iconVariants}
-                        initial={item.initial}
-                        animate={animationSequence}
-                        transition={{
-                            duration: 8,
-                            repeat: Infinity,
-                            ease: 'easeInOut',
-                            delay: index * -2,
-                        }}
-                    >
-                        <item.icon className="w-12 h-12 md:w-16 md:h-16 text-primary" />
-                    </motion.div>
-                ))}
-            </motion.div>
+        <div ref={scope} className="relative w-[300px] h-[300px] md:w-[400px] md:h-[400px] flex items-center justify-center">
+            {icons.map((item, index) => (
+                <div
+                    key={index}
+                    className={`${item.className} absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center bg-background rounded-2xl shadow-cyber-dark w-28 h-28 md:w-32 md:h-32`}
+                >
+                    <item.icon className="w-12 h-12 md:w-16 md:h-16 text-primary" />
+                </div>
+            ))}
         </div>
     );
 };
+
 
 const blogPostIcons: { [key: string]: React.FC<React.ComponentProps<'svg'>> } = {
   'ultimate-resume-guide-2024': PenTool,
@@ -464,3 +520,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
