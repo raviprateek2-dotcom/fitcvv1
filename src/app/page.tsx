@@ -170,9 +170,6 @@ export default function Home() {
                  <div className="space-y-8 max-w-3xl mx-auto text-center animate-fade-in-up">
                     <div className="inline-block rounded-lg bg-secondary px-3 py-1 text-sm font-medium">Everything You Need</div>
                     <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl animation-delay-200">Features that help you stand out</h2>
-                    <p className="text-muted-foreground md:text-lg animation-delay-300">
-                        ResumeCraft AI provides all the tools you need to create a professional resume that gets noticed by both recruiters and automated systems.
-                    </p>
                     <ul className="grid sm:grid-cols-2 gap-6 animation-delay-400 text-left">
                         {features.map((feature, index) => (
                           <li key={index} className="flex items-start gap-4">
@@ -239,9 +236,6 @@ export default function Home() {
                <div className="grid md:grid-cols-1 gap-16 items-center">
                    <div className="space-y-6 max-w-3xl mx-auto text-center animate-fade-in-up">
                       <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Don't just write a resume. Design your future.</h2>
-                      <p className="max-w-[600px] text-muted-foreground md:text-xl animation-delay-200">
-                          We blend beautiful design with powerful AI to give you an unfair advantage in your job search. Go beyond boring templates and create a resume that truly reflects your skills and personality.
-                      </p>
                       <ul className="space-y-4 text-lg animation-delay-300 inline-flex flex-col items-start">
                         <li className="flex items-center gap-3"><CheckCircle2 className="text-primary h-6 w-6"/><span>AI-powered content suggestions.</span></li>
                         <li className="flex items-center gap-3"><CheckCircle2 className="text-primary h-6 w-6"/><span>Professionally designed templates.</span></li>
@@ -308,5 +302,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
