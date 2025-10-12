@@ -108,6 +108,13 @@ const ResumeSkeleton = () => {
     )
 }
 
+const LoadingState = () => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {[...Array(4)].map((_, i) => <ResumeSkeleton key={i} />)}
+    </div>
+);
+
+
 export default function DashboardPage() {
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
@@ -168,9 +175,7 @@ export default function DashboardPage() {
                 </Link>
                 </Button>
             </div>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {[...Array(4)].map((_, i) => <ResumeSkeleton key={i} />)}
-            </div>
+            <LoadingState />
         </div>
     );
   }
@@ -187,14 +192,10 @@ export default function DashboardPage() {
         </Button>
       </div>
 
-      {(isLoading) && (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {[...Array(4)].map((_, i) => <ResumeSkeleton key={i} />)}
-        </div>
-      )}
+      {(isLoading) && <LoadingState />}
 
       {!isLoading && resumes && resumes.length > 0 ? (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {resumes.map((resume) => (
             <ResumeCard key={resume.id} resume={resume} onDuplicate={handleDuplicate} onDelete={handleDelete} />
           ))}
