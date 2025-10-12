@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -8,11 +7,11 @@ import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Download, Eye, PlusCircle, Share2, Trash2, Sparkles, Bot } from 'lucide-react';
+import { Download, Eye, PlusCircle, Share2, Trash2, Sparkles, Bot, FileText, Newspaper } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import AIContentDialog from './AIContentDialog';
 import AISectionWriterDialog from './AISectionWriterDialog';
-import { ResumePreview } from './ResumePreview';
+import { ResumePreview, CoverLetterPreview } from './ResumePreview';
 import { useDoc, useUser, useFirestore, useMemoFirebase } from '@/firebase';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { Skeleton } from '../ui/skeleton';
@@ -20,6 +19,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import Link from 'next/link';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { writeCoverLetter as writeCoverLetterAction } from '@/app/actions/ai-cover-letter';
 
 // Define types for resume structure
 type PersonalInfo = {
@@ -69,9 +70,15 @@ type ResumeData = {
   projects: Project[];
   jobDescription: string;
   templateId?: string;
+  coverLetter?: string;
+  companyInfo?: {
+    name: string;
+    jobTitle: string;
+  };
 };
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
+type EditorTab = 'resume' | 'cover-letter';
 
 const EditorLoadingSkeleton = () => {
     return (
@@ -158,6 +165,8 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
 
   const [resumeData, setResumeData] = useState<ResumeData | null>(null);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
+  const [activeTab, setActiveTab] = useState<EditorTab>('resume');
+  const [isAiLoading, setIsAiLoading] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -169,10 +178,9 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
             updatedData.skills = skillsFromString.map(name => ({ id: Date.now() + Math.random(), name, level: 'Advanced' }));
         }
 
-        // Initialize projects array if it doesn't exist
-        if (!initialResumeData.projects) {
-            updatedData.projects = [];
-        }
+        if (!initialResumeData.projects) updatedData.projects = [];
+        if (!initialResumeData.coverLetter) updatedData.coverLetter = '';
+        if (!initialResumeData.companyInfo) updatedData.companyInfo = { name: '', jobTitle: '' };
 
         setResumeData(updatedData);
     }
@@ -217,9 +225,9 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
         const skillsFromString = initialResumeData.skills.split(',').map(s => s.trim()).filter(Boolean);
         comparableInitial.skills = skillsFromString.map(name => ({ id: Date.now() + Math.random(), name, level: 'Advanced' }))
     }
-    if (!initialResumeData.projects) {
-        comparableInitial.projects = [];
-    }
+    if (!initialResumeData.projects) comparableInitial.projects = [];
+    if (!initialResumeData.coverLetter) comparableInitial.coverLetter = '';
+    if (!initialResumeData.companyInfo) comparableInitial.companyInfo = { name: '', jobTitle: '' };
 
     if (JSON.stringify(resumeData) === JSON.stringify(comparableInitial)) {
       return;
@@ -245,6 +253,12 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     handleFieldChange('personalInfo', { ...resumeData.personalInfo, [name]: value });
   };
   
+  const handleCompanyInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!resumeData) return;
+    const { name, value } = e.target;
+    handleFieldChange('companyInfo', { ...resumeData.companyInfo, [name]: value });
+  }
+
   const handleNestedChange = (
     section: 'experience' | 'education' | 'skills' | 'projects', 
     id: number, 
@@ -320,6 +334,39 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   const handlePrint = () => {
     window.print();
   };
+
+  const handleWriteCoverLetter = async () => {
+    if (!resumeData?.companyInfo?.jobTitle || !resumeData?.companyInfo?.name) {
+      toast({
+        variant: 'destructive',
+        title: 'Missing Information',
+        description: 'Please provide both a Job Title and Company Name.',
+      });
+      return;
+    }
+    
+    setIsAiLoading(true);
+    const resumeText = JSON.stringify(resumeData); // Simple serialization for now
+    
+    try {
+      const result = await writeCoverLetterAction({
+        jobTitle: resumeData.companyInfo.jobTitle,
+        companyName: resumeData.companyInfo.name,
+        resumeContent: resumeText,
+      });
+
+      if (result.success && result.data) {
+        handleFieldChange('coverLetter', result.data.coverLetterText);
+        toast({ title: 'Cover Letter Generated!' });
+      } else {
+        toast({ variant: 'destructive', title: 'Error', description: result.error });
+      }
+    } catch (error: any) {
+      toast({ variant: 'destructive', title: 'Error', description: error.message });
+    } finally {
+      setIsAiLoading(false);
+    }
+  };
   
   const isProUser = userProfile?.subscription === 'premium';
 
@@ -365,199 +412,247 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
         </div>
       </header>
       <div className="grid print:block md:grid-cols-2 h-[calc(100vh-8rem)]">
-        <ScrollArea className="h-full bg-background p-6 no-print">
-          <div className="space-y-6">
-            <Accordion type="multiple" defaultValue={['personal-info', 'summary']} className="w-full">
-              <AccordionItem value="job-description">
-                <AccordionTrigger className="font-semibold">Job Description (Optional)</AccordionTrigger>
-                <AccordionContent className="space-y-2 pt-4">
-                  <Label>Paste the job description here to get tailored AI suggestions.</Label>
-                  <Textarea 
-                    value={resumeData.jobDescription} 
-                    onChange={e => handleFieldChange('jobDescription', e.target.value)} 
-                    rows={6} 
-                  />
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="personal-info">
-                <AccordionTrigger className="font-semibold">Personal Information</AccordionTrigger>
-                <AccordionContent className="space-y-4 pt-4">
-                  <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2"><Label>Full Name</Label><Input name="name" value={resumeData.personalInfo.name} onChange={handlePersonalInfoChange} /></div>
-                      <div className="space-y-2"><Label>Job Title</Label><Input name="title" value={resumeData.personalInfo.title} onChange={handlePersonalInfoChange} /></div>
-                  </div>
-                  <div className="space-y-2"><Label>Email</Label><Input name="email" type="email" value={resumeData.personalInfo.email} onChange={handlePersonalInfoChange} /></div>
-                  <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2"><Label>Phone</Label><Input name="phone" value={resumeData.personalInfo.phone} onChange={handlePersonalInfoChange} /></div>
-                      <div className="space-y-2"><Label>Location</Label><Input name="location" value={resumeData.personalInfo.location} onChange={handlePersonalInfoChange} /></div>
-                  </div>
-                   <div className="space-y-2"><Label>Website/Portfolio</Label><Input name="website" value={resumeData.personalInfo.website} onChange={handlePersonalInfoChange} /></div>
-                </AccordionContent>
-              </AccordionItem>
-              
-              <AccordionItem value="summary">
-                <AccordionTrigger className="font-semibold">Professional Summary</AccordionTrigger>
-                <AccordionContent className="space-y-2 pt-4">
-                  <Textarea value={resumeData.summary} onChange={e => handleFieldChange('summary', e.target.value)} rows={5} />
-                  <div className="flex gap-2">
-                    <ProFeatureWrapper isPro={isProUser}>
-                      <AISectionWriterDialog
-                        sectionName="Professional Summary"
-                        jobDescription={resumeData.jobDescription}
-                        existingContent={resumeData.summary}
-                        onApply={(newContent) => handleFieldChange('summary', newContent)}
-                      >
-                        <Button variant="outline" size="sm">
-                          <Bot className="mr-2 h-4 w-4" />
-                          AI Writer
-                        </Button>
-                      </AISectionWriterDialog>
-                    </ProFeatureWrapper>
-                    <ProFeatureWrapper isPro={isProUser}>
-                       <AIContentDialog 
-                        sectionName="Professional Summary" 
-                        currentContent={resumeData.summary}
-                        jobDescription={resumeData.jobDescription}
-                        onApply={(newContent) => handleFieldChange('summary', newContent)}
+        <ScrollArea className="h-full bg-background no-print">
+          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as EditorTab)} className="w-full">
+            <div className="p-4 border-b">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="resume"><FileText className="mr-2"/>Resume</TabsTrigger>
+                <TabsTrigger value="cover-letter"><Newspaper className="mr-2"/>Cover Letter</TabsTrigger>
+              </TabsList>
+            </div>
+            
+            <TabsContent value="resume" className="p-6">
+              <div className="space-y-6">
+                <Accordion type="multiple" defaultValue={['personal-info', 'summary']} className="w-full">
+                  <AccordionItem value="job-description">
+                    <AccordionTrigger className="font-semibold">Job Description (Optional)</AccordionTrigger>
+                    <AccordionContent className="space-y-2 pt-4">
+                      <Label>Paste the job description here to get tailored AI suggestions.</Label>
+                      <Textarea 
+                        value={resumeData.jobDescription} 
+                        onChange={e => handleFieldChange('jobDescription', e.target.value)} 
+                        rows={6} 
                       />
-                    </ProFeatureWrapper>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
+                    </AccordionContent>
+                  </AccordionItem>
 
-              <AccordionItem value="experience">
-                <AccordionTrigger className="font-semibold">Work Experience</AccordionTrigger>
-                <AccordionContent className="space-y-4 pt-4">
-                  {resumeData.experience.map((exp) => (
-                      <div key={exp.id} className="p-4 border rounded-lg space-y-4 relative">
-                          <div className="grid grid-cols-2 gap-4">
-                              <div className="space-y-2"><Label>Company</Label><Input value={exp.company} onChange={e => handleNestedChange('experience', exp.id, 'company', e.target.value)} /></div>
-                              <div className="space-y-2"><Label>Role</Label><Input value={exp.role} onChange={e => handleNestedChange('experience', exp.id, 'role', e.target.value)} /></div>
-                          </div>
-                          <div className="space-y-2"><Label>Date</Label><Input value={exp.date} onChange={e => handleNestedChange('experience', exp.id, 'date', e.target.value)} /></div>
-                          <div className="space-y-2"><Label>Description</Label><Textarea rows={4} value={exp.description} onChange={e => handleNestedChange('experience', exp.id, 'description', e.target.value)} /></div>
-                          <div className="flex justify-between items-center">
-                            <div className="flex gap-2">
-                                <ProFeatureWrapper isPro={isProUser}>
-                                  <AISectionWriterDialog
-                                      sectionName={`Work Experience at ${exp.company}`}
-                                      jobDescription={resumeData.jobDescription}
-                                      existingContent={exp.description}
-                                      onApply={(newContent) => handleNestedChange('experience', exp.id, 'description', newContent)}
-                                  >
-                                      <Button variant="outline" size="sm">
-                                          <Bot className="mr-2 h-4 w-4" />
-                                          AI Writer
-                                      </Button>
-                                  </AISectionWriterDialog>
-                                </ProFeatureWrapper>
-                                <ProFeatureWrapper isPro={isProUser}>
-                                  <AIContentDialog 
-                                      sectionName={`Experience at ${exp.company}`}
-                                      currentContent={exp.description}
-                                      jobDescription={resumeData.jobDescription}
-                                      onApply={(newContent) => handleNestedChange('experience', exp.id, 'description', newContent)}
-                                  />
-                                </ProFeatureWrapper>
-                            </div>
-                            <Button variant="ghost" size="icon" onClick={() => removeExperience(exp.id)} className="text-destructive hover:text-destructive-foreground hover:bg-destructive">
-                              <Trash2 className="h-4 w-4" />
+                  <AccordionItem value="personal-info">
+                    <AccordionTrigger className="font-semibold">Personal Information</AccordionTrigger>
+                    <AccordionContent className="space-y-4 pt-4">
+                      <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2"><Label>Full Name</Label><Input name="name" value={resumeData.personalInfo.name} onChange={handlePersonalInfoChange} /></div>
+                          <div className="space-y-2"><Label>Job Title</Label><Input name="title" value={resumeData.personalInfo.title} onChange={handlePersonalInfoChange} /></div>
+                      </div>
+                      <div className="space-y-2"><Label>Email</Label><Input name="email" type="email" value={resumeData.personalInfo.email} onChange={handlePersonalInfoChange} /></div>
+                      <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2"><Label>Phone</Label><Input name="phone" value={resumeData.personalInfo.phone} onChange={handlePersonalInfoChange} /></div>
+                          <div className="space-y-2"><Label>Location</Label><Input name="location" value={resumeData.personalInfo.location} onChange={handlePersonalInfoChange} /></div>
+                      </div>
+                       <div className="space-y-2"><Label>Website/Portfolio</Label><Input name="website" value={resumeData.personalInfo.website} onChange={handlePersonalInfoChange} /></div>
+                    </AccordionContent>
+                  </AccordionItem>
+                  
+                  <AccordionItem value="summary">
+                    <AccordionTrigger className="font-semibold">Professional Summary</AccordionTrigger>
+                    <AccordionContent className="space-y-2 pt-4">
+                      <Textarea value={resumeData.summary} onChange={e => handleFieldChange('summary', e.target.value)} rows={5} />
+                      <div className="flex gap-2">
+                        <ProFeatureWrapper isPro={isProUser}>
+                          <AISectionWriterDialog
+                            sectionName="Professional Summary"
+                            jobDescription={resumeData.jobDescription}
+                            existingContent={resumeData.summary}
+                            onApply={(newContent) => handleFieldChange('summary', newContent)}
+                          >
+                            <Button variant="outline" size="sm">
+                              <Bot className="mr-2 h-4 w-4" />
+                              AI Writer
                             </Button>
-                          </div>
+                          </AISectionWriterDialog>
+                        </ProFeatureWrapper>
+                        <ProFeatureWrapper isPro={isProUser}>
+                           <AIContentDialog 
+                            sectionName="Professional Summary" 
+                            currentContent={resumeData.summary}
+                            jobDescription={resumeData.jobDescription}
+                            onApply={(newContent) => handleFieldChange('summary', newContent)}
+                          />
+                        </ProFeatureWrapper>
                       </div>
-                  ))}
-                  <Button variant="outline" onClick={addExperience} className="w-full">
-                    <PlusCircle className="mr-2 h-4 w-4" /> Add Experience
-                  </Button>
-                </AccordionContent>
-              </AccordionItem>
+                    </AccordionContent>
+                  </AccordionItem>
 
-              <AccordionItem value="projects">
-                <AccordionTrigger className="font-semibold">Projects</AccordionTrigger>
-                <AccordionContent className="space-y-4 pt-4">
-                  {(resumeData.projects || []).map((proj) => (
-                      <div key={proj.id} className="p-4 border rounded-lg space-y-4 relative">
-                          <div className="space-y-2"><Label>Project Name</Label><Input value={proj.name} onChange={e => handleNestedChange('projects', proj.id, 'name', e.target.value)} /></div>
-                          <div className="space-y-2"><Label>Description</Label><Textarea rows={3} value={proj.description} onChange={e => handleNestedChange('projects', proj.id, 'description', e.target.value)} /></div>
-                          <div className="space-y-2"><Label>Link (Optional)</Label><Input value={proj.link} onChange={e => handleNestedChange('projects', proj.id, 'link', e.target.value)} /></div>
-                           <div className="flex justify-end">
-                              <Button variant="ghost" size="icon" onClick={() => removeProject(proj.id)} className="text-destructive hover:text-destructive-foreground hover:bg-destructive">
+                  <AccordionItem value="experience">
+                    <AccordionTrigger className="font-semibold">Work Experience</AccordionTrigger>
+                    <AccordionContent className="space-y-4 pt-4">
+                      {resumeData.experience.map((exp) => (
+                          <div key={exp.id} className="p-4 border rounded-lg space-y-4 relative">
+                              <div className="grid grid-cols-2 gap-4">
+                                  <div className="space-y-2"><Label>Company</Label><Input value={exp.company} onChange={e => handleNestedChange('experience', exp.id, 'company', e.target.value)} /></div>
+                                  <div className="space-y-2"><Label>Role</Label><Input value={exp.role} onChange={e => handleNestedChange('experience', exp.id, 'role', e.target.value)} /></div>
+                              </div>
+                              <div className="space-y-2"><Label>Date</Label><Input value={exp.date} onChange={e => handleNestedChange('experience', exp.id, 'date', e.target.value)} /></div>
+                              <div className="space-y-2"><Label>Description</Label><Textarea rows={4} value={exp.description} onChange={e => handleNestedChange('experience', exp.id, 'description', e.target.value)} /></div>
+                              <div className="flex justify-between items-center">
+                                <div className="flex gap-2">
+                                    <ProFeatureWrapper isPro={isProUser}>
+                                      <AISectionWriterDialog
+                                          sectionName={`Work Experience at ${exp.company}`}
+                                          jobDescription={resumeData.jobDescription}
+                                          existingContent={exp.description}
+                                          onApply={(newContent) => handleNestedChange('experience', exp.id, 'description', newContent)}
+                                      >
+                                          <Button variant="outline" size="sm">
+                                              <Bot className="mr-2 h-4 w-4" />
+                                              AI Writer
+                                          </Button>
+                                      </AISectionWriterDialog>
+                                    </ProFeatureWrapper>
+                                    <ProFeatureWrapper isPro={isProUser}>
+                                      <AIContentDialog 
+                                          sectionName={`Experience at ${exp.company}`}
+                                          currentContent={exp.description}
+                                          jobDescription={resumeData.jobDescription}
+                                          onApply={(newContent) => handleNestedChange('experience', exp.id, 'description', newContent)}
+                                      />
+                                    </ProFeatureWrapper>
+                                </div>
+                                <Button variant="ghost" size="icon" onClick={() => removeExperience(exp.id)} className="text-destructive hover:text-destructive-foreground hover:bg-destructive">
                                   <Trash2 className="h-4 w-4" />
-                              </Button>
+                                </Button>
+                              </div>
                           </div>
-                      </div>
-                  ))}
-                  <Button variant="outline" onClick={addProject} className="w-full">
-                      <PlusCircle className="mr-2 h-4 w-4" /> Add Project
-                  </Button>
-                </AccordionContent>
-              </AccordionItem>
+                      ))}
+                      <Button variant="outline" onClick={addExperience} className="w-full">
+                        <PlusCircle className="mr-2 h-4 w-4" /> Add Experience
+                      </Button>
+                    </AccordionContent>
+                  </AccordionItem>
 
-              <AccordionItem value="education">
-                <AccordionTrigger className="font-semibold">Education</AccordionTrigger>
-                <AccordionContent className="space-y-4 pt-4">
-                  {resumeData.education.map((edu) => (
-                      <div key={edu.id} className="p-4 border rounded-lg space-y-4 relative">
-                          <div className="grid grid-cols-2 gap-4">
-                              <div className="space-y-2"><Label>Institution</Label><Input value={edu.institution} onChange={e => handleNestedChange('education', edu.id, 'institution', e.target.value)} /></div>
-                              <div className="space-y-2"><Label>Degree/Certificate</Label><Input value={edu.degree} onChange={e => handleNestedChange('education', edu.id, 'degree', e.target.value)} /></div>
+                  <AccordionItem value="projects">
+                    <AccordionTrigger className="font-semibold">Projects</AccordionTrigger>
+                    <AccordionContent className="space-y-4 pt-4">
+                      {(resumeData.projects || []).map((proj) => (
+                          <div key={proj.id} className="p-4 border rounded-lg space-y-4 relative">
+                              <div className="space-y-2"><Label>Project Name</Label><Input value={proj.name} onChange={e => handleNestedChange('projects', proj.id, 'name', e.target.value)} /></div>
+                              <div className="space-y-2"><Label>Description</Label><Textarea rows={3} value={proj.description} onChange={e => handleNestedChange('projects', proj.id, 'description', e.target.value)} /></div>
+                              <div className="space-y-2"><Label>Link (Optional)</Label><Input value={proj.link} onChange={e => handleNestedChange('projects', proj.id, 'link', e.target.value)} /></div>
+                               <div className="flex justify-end">
+                                  <Button variant="ghost" size="icon" onClick={() => removeProject(proj.id)} className="text-destructive hover:text-destructive-foreground hover:bg-destructive">
+                                      <Trash2 className="h-4 w-4" />
+                                  </Button>
+                              </div>
                           </div>
-                          <div className="space-y-2"><Label>Date</Label><Input value={edu.date} onChange={e => handleNestedChange('education', edu.id, 'date', e.target.value)} /></div>
-                           <div className="flex justify-end">
-                              <Button variant="ghost" size="icon" onClick={() => removeEducation(edu.id)} className="text-destructive hover:text-destructive-foreground hover:bg-destructive">
-                                  <Trash2 className="h-4 w-4" />
-                              </Button>
-                          </div>
-                      </div>
-                  ))}
-                  <Button variant="outline" onClick={addEducation} className="w-full">
-                      <PlusCircle className="mr-2 h-4 w-4" /> Add Education
-                  </Button>
-                </AccordionContent>
-              </AccordionItem>
+                      ))}
+                      <Button variant="outline" onClick={addProject} className="w-full">
+                          <PlusCircle className="mr-2 h-4 w-4" /> Add Project
+                      </Button>
+                    </AccordionContent>
+                  </AccordionItem>
 
-              <AccordionItem value="skills">
-                <AccordionTrigger className="font-semibold">Skills</AccordionTrigger>
-                <AccordionContent className="space-y-4 pt-4">
-                  {(resumeData.skills || []).map((skill) => (
-                    <div key={skill.id} className="p-4 border rounded-lg space-y-4">
-                        <div className="flex items-center gap-4">
-                            <div className="flex-grow space-y-2">
-                                <Label>Skill</Label>
-                                <Input value={skill.name} onChange={e => handleNestedChange('skills', skill.id, 'name', e.target.value)} />
+                  <AccordionItem value="education">
+                    <AccordionTrigger className="font-semibold">Education</AccordionTrigger>
+                    <AccordionContent className="space-y-4 pt-4">
+                      {resumeData.education.map((edu) => (
+                          <div key={edu.id} className="p-4 border rounded-lg space-y-4 relative">
+                              <div className="grid grid-cols-2 gap-4">
+                                  <div className="space-y-2"><Label>Institution</Label><Input value={edu.institution} onChange={e => handleNestedChange('education', edu.id, 'institution', e.target.value)} /></div>
+                                  <div className="space-y-2"><Label>Degree/Certificate</Label><Input value={edu.degree} onChange={e => handleNestedChange('education', edu.id, 'degree', e.target.value)} /></div>
+                              </div>
+                              <div className="space-y-2"><Label>Date</Label><Input value={edu.date} onChange={e => handleNestedChange('education', edu.id, 'date', e.target.value)} /></div>
+                               <div className="flex justify-end">
+                                  <Button variant="ghost" size="icon" onClick={() => removeEducation(edu.id)} className="text-destructive hover:text-destructive-foreground hover:bg-destructive">
+                                      <Trash2 className="h-4 w-4" />
+                                  </Button>
+                              </div>
+                          </div>
+                      ))}
+                      <Button variant="outline" onClick={addEducation} className="w-full">
+                          <PlusCircle className="mr-2 h-4 w-4" /> Add Education
+                      </Button>
+                    </AccordionContent>
+                  </AccordionItem>
+
+                  <AccordionItem value="skills">
+                    <AccordionTrigger className="font-semibold">Skills</AccordionTrigger>
+                    <AccordionContent className="space-y-4 pt-4">
+                      {(resumeData.skills || []).map((skill) => (
+                        <div key={skill.id} className="p-4 border rounded-lg space-y-4">
+                            <div className="flex items-center gap-4">
+                                <div className="flex-grow space-y-2">
+                                    <Label>Skill</Label>
+                                    <Input value={skill.name} onChange={e => handleNestedChange('skills', skill.id, 'name', e.target.value)} />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Level</Label>
+                                    <Select value={skill.level} onValueChange={value => handleNestedChange('skills', skill.id, 'level', value)}>
+                                        <SelectTrigger className="w-[180px]">
+                                            <SelectValue placeholder="Select level" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="Beginner">Beginner</SelectItem>
+                                            <SelectItem value="Intermediate">Intermediate</SelectItem>
+                                            <SelectItem value="Advanced">Advanced</SelectItem>
+                                            <SelectItem value="Expert">Expert</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <Button variant="ghost" size="icon" onClick={() => removeSkill(skill.id)} className="text-destructive hover:text-destructive-foreground hover:bg-destructive self-end">
+                                    <Trash2 className="h-4 w-4" />
+                                </Button>
                             </div>
-                            <div className="space-y-2">
-                                <Label>Level</Label>
-                                <Select value={skill.level} onValueChange={value => handleNestedChange('skills', skill.id, 'level', value)}>
-                                    <SelectTrigger className="w-[180px]">
-                                        <SelectValue placeholder="Select level" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="Beginner">Beginner</SelectItem>
-                                        <SelectItem value="Intermediate">Intermediate</SelectItem>
-                                        <SelectItem value="Advanced">Advanced</SelectItem>
-                                        <SelectItem value="Expert">Expert</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <Button variant="ghost" size="icon" onClick={() => removeSkill(skill.id)} className="text-destructive hover:text-destructive-foreground hover:bg-destructive self-end">
-                                <Trash2 className="h-4 w-4" />
-                            </Button>
                         </div>
-                    </div>
-                  ))}
-                   <Button variant="outline" onClick={addSkill} className="w-full">
-                      <PlusCircle className="mr-2 h-4 w-4" /> Add Skill
-                  </Button>
-                </AccordionContent>
-              </AccordionItem>
+                      ))}
+                       <Button variant="outline" onClick={addSkill} className="w-full">
+                          <PlusCircle className="mr-2 h-4 w-4" /> Add Skill
+                      </Button>
+                    </AccordionContent>
+                  </AccordionItem>
 
-            </Accordion>
-          </div>
+                </Accordion>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="cover-letter" className="p-6">
+              <div className="space-y-6">
+                <div className="p-4 border rounded-lg space-y-4">
+                   <h3 className="font-semibold text-lg">Target Role</h3>
+                   <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                          <Label>Company Name</Label>
+                          <Input name="name" value={resumeData.companyInfo?.name} onChange={handleCompanyInfoChange} />
+                      </div>
+                      <div className="space-y-2">
+                          <Label>Job Title</Label>
+                          <Input name="jobTitle" value={resumeData.companyInfo?.jobTitle} onChange={handleCompanyInfoChange} />
+                      </div>
+                  </div>
+                </div>
+                 <div className="p-4 border rounded-lg space-y-4">
+                     <h3 className="font-semibold text-lg">Cover Letter Content</h3>
+                     <Textarea 
+                      value={resumeData.coverLetter}
+                      onChange={e => handleFieldChange('coverLetter', e.target.value)}
+                      rows={15}
+                      placeholder="Your generated cover letter will appear here..."
+                    />
+                    <ProFeatureWrapper isPro={isProUser}>
+                      <Button onClick={handleWriteCoverLetter} disabled={isAiLoading}>
+                        <Bot className="mr-2" />
+                        {isAiLoading ? 'Generating...' : 'AI Generate'}
+                      </Button>
+                    </ProFeatureWrapper>
+                 </div>
+              </div>
+            </TabsContent>
+          </Tabs>
         </ScrollArea>
         <div className="bg-background p-6 h-full overflow-auto print:bg-white print:p-0">
-          <ResumePreview resumeData={resumeData} templateId={resumeData.templateId} />
+          {activeTab === 'resume' ? (
+            <ResumePreview resumeData={resumeData} templateId={resumeData.templateId} />
+          ) : (
+            <CoverLetterPreview resumeData={resumeData} templateId={resumeData.templateId} />
+          )}
         </div>
       </div>
     </>

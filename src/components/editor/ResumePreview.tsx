@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Badge } from '@/components/ui/badge';
@@ -56,6 +55,11 @@ type ResumeData = {
   projects: Project[];
   jobDescription?: string;
   templateId?: string;
+  coverLetter?: string;
+  companyInfo?: {
+    name: string;
+    jobTitle: string;
+  };
 };
 
 interface ResumePreviewProps {
@@ -304,4 +308,63 @@ export function ResumePreview({ resumeData, templateId = 'modern' }: ResumePrevi
       </section>
     </div>
   );
+}
+
+export function CoverLetterPreview({ resumeData, templateId = 'modern' }: ResumePreviewProps) {
+  const { personalInfo, coverLetter, companyInfo } = resumeData;
+  const templateStyles = templates[templateId] || templates.modern;
+  const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+  const renderHeader = () => (
+    <header className={templateStyles.header}>
+        <h1 className="text-4xl font-bold text-gray-900 font-headline">{personalInfo.name}</h1>
+        <h2 className="text-xl font-semibold text-primary font-headline">{personalInfo.title}</h2>
+        <div className="flex justify-center items-center gap-4 text-sm text-gray-600 mt-2 flex-wrap">
+          <div className="flex items-center gap-1.5"><AtSign size={14} />{personalInfo.email}</div>
+          <div className="flex items-center gap-1.5"><Phone size={14} />{personalInfo.phone}</div>
+          <div className="flex items-center gap-1.5"><MapPin size={14} />{personalInfo.location}</div>
+          {personalInfo.website && <div className="flex items-center gap-1.5"><Globe size={14} />{personalInfo.website}</div>}
+        </div>
+      </header>
+  );
+
+  const ProfessionalCoverLetter = () => (
+     <div className="bg-slate-800 text-slate-300 shadow-2xl rounded-lg w-full h-full mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-hidden print:shadow-none print:rounded-none print:max-h-full font-body flex flex-col p-8">
+        <header className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-white font-headline">{personalInfo.name}</h1>
+            <h2 className="text-md font-semibold text-primary">{personalInfo.title}</h2>
+        </header>
+        <main className="text-sm leading-relaxed space-y-4 whitespace-pre-wrap">
+          <p>{date}</p>
+          <p>Hiring Manager<br/>{companyInfo?.name}</p>
+          <br/>
+          <p>Dear Hiring Manager,</p>
+          <p>{coverLetter}</p>
+          <br/>
+          <p>Sincerely,</p>
+          <p>{personalInfo.name}</p>
+        </main>
+    </div>
+  );
+
+  if (templateId === 'professional') {
+    return <ProfessionalCoverLetter />;
+  }
+
+  return (
+     <div className="bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full p-8 mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-auto print:shadow-none print:rounded-none print:max-h-full font-body">
+      {renderHeader()}
+      <Separator className="my-6" />
+      <main className="text-sm leading-relaxed space-y-4 whitespace-pre-wrap">
+          <p>{date}</p>
+          <p>Hiring Manager<br/>{companyInfo?.name}</p>
+          <br/>
+          <p>Dear Hiring Manager,</p>
+          <p>{coverLetter}</p>
+          <br/>
+          <p>Sincerely,</p>
+          <p>{personalInfo.name}</p>
+        </main>
+    </div>
+  )
 }
