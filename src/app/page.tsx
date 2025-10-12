@@ -11,6 +11,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import Autoplay from "embla-carousel-autoplay";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { TypingAnimation } from '@/components/common/TypingAnimation';
 
 const features = [
   {
@@ -33,13 +34,6 @@ const features = [
     title: 'ATS-Optimized',
     description: 'Craft a resume that is optimized to pass through Applicant Tracking Systems and get seen by recruiters.',
   },
-];
-
-const sentences = [
-    "gets you hired.",
-    "lands you interviews.",
-    "builds your future.",
-    "showcases your skills."
 ];
 
 const testimonials = [
@@ -133,15 +127,6 @@ const itemVariants = {
 };
 
 export default function Home() {
-  const [sentenceIndex, setSentenceIndex] = useState(0);
-  
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setSentenceIndex(prev => (prev + 1) % sentences.length);
-    }, 2500);
-    return () => clearInterval(timer);
-  }, []);
-  
   return (
     <div className="flex flex-col items-center bg-card text-card-foreground overflow-x-hidden">
       
@@ -159,19 +144,14 @@ export default function Home() {
               className="space-y-6 text-center md:text-left"
             >
               <h1 className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl">
-                Build a resume that <br />
+                Design your future.
+                <br />
                 <span className="text-primary transition-all duration-300 inline-block min-h-[60px] sm:min-h-[70px] md:min-h-[80px]">
-                  <AnimatePresence mode="wait">
-                    <motion.span
-                      key={sentenceIndex}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
-                      transition={{ duration: 0.5 }}
-                    >
-                      {sentences[sentenceIndex]}
-                    </motion.span>
-                  </AnimatePresence>
+                  <TypingAnimation phrases={[
+                    "Build your career.",
+                    "Land your dream job.",
+                    "Showcase your skills."
+                  ]} />
                 </span>
               </h1>
               <p className="max-w-lg mx-auto md:mx-0 text-muted-foreground md:text-xl">
@@ -449,3 +429,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
