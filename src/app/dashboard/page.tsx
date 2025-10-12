@@ -22,6 +22,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 
 
@@ -36,7 +37,6 @@ type Resume = {
 };
 
 const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDuplicate: (resume: Resume) => void; onDelete: (resumeId: string) => void; }) => {
-  const router = useRouter();
 
   const updatedAt = useMemo(() => {
     if (!resume.updatedAt) return 'never';
@@ -84,9 +84,9 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
             <DropdownMenuItem onClick={() => onDuplicate(resume)}>Duplicate</DropdownMenuItem>
             <DropdownMenuItem onClick={handleDownloadPdf}>Download PDF</DropdownMenuItem>
             <AlertDialog>
-              <DropdownMenuTrigger asChild>
+              <AlertDialogTrigger asChild>
                  <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:bg-destructive/90 focus:text-destructive-foreground">Delete</DropdownMenuItem>
-              </DropdownMenuTrigger>
+              </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>Are you sure?</AlertDialogTitle>
@@ -110,14 +110,15 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
 const ResumeSkeleton = () => {
     return (
         <Card className="overflow-hidden" variant="neuro">
-            <CardHeader className="p-0">
-                <Skeleton className="aspect-[3/2] w-full" />
+            <CardHeader className="p-4">
+                 <Skeleton className="h-6 w-3/4 mb-2" />
+                 <Skeleton className="h-4 w-1/2" />
             </CardHeader>
             <CardContent className="p-4">
-                <Skeleton className="h-6 w-3/4" />
+               
             </CardContent>
             <CardFooter className="p-4 pt-0 flex justify-between items-center">
-                <Skeleton className="h-4 w-1/2" />
+                <Skeleton className="h-4 w-1/3" />
                 <Skeleton className="h-8 w-8 rounded-full" />
             </CardFooter>
         </Card>
@@ -266,5 +267,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    
