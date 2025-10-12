@@ -126,14 +126,11 @@ export default function Home() {
   }, []);
   
   const sectionVariants = {
-    hidden: { opacity: 0, scale: 0.95, rotateY: -15 },
+    hidden: { opacity: 0 },
     visible: { 
         opacity: 1, 
-        scale: 1, 
-        rotateY: 0,
         transition: { 
-            duration: 0.8,
-            ease: [0.6, 0.05, -0.01, 0.9],
+            duration: 0.5,
             staggerChildren: 0.2 
         }
     },
@@ -213,7 +210,8 @@ export default function Home() {
                   <div className="inline-block rounded-lg bg-background/50 backdrop-blur-sm px-3 py-1 text-sm font-medium border">How It Works</div>
                   <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Three Simple Steps to Your Dream Job</h2>
               </motion.div>
-              <div
+              <motion.div
+                 variants={sectionVariants}
                  className="mx-auto grid items-start gap-8 sm:max-w-4xl sm:grid-cols-3 md:gap-12"
               >
                   <motion.div variants={itemVariants} className="flex flex-col gap-4 items-center text-center p-6">
@@ -237,7 +235,7 @@ export default function Home() {
                       <h3 className="text-xl font-bold font-headline">3. Download & Apply</h3>
                       <p className="text-muted-foreground">Export your pixel-perfect resume as a PDF and start landing interviews.</p>
                   </motion.div>
-              </div>
+              </motion.div>
           </div>
       </motion.section>
 
@@ -251,7 +249,8 @@ export default function Home() {
         variants={sectionVariants}
        >
         <div className="container mx-auto px-4 md:px-6">
-            <div
+            <motion.div
+              variants={sectionVariants}
               className="grid md:grid-cols-2 gap-16 items-center"
             >
                 <motion.div variants={itemVariants} className="space-y-8">
@@ -259,7 +258,7 @@ export default function Home() {
                       <div className="inline-block rounded-lg bg-secondary px-3 py-1 text-sm font-medium">Everything You Need</div>
                       <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Features that help you stand out</h2>
                     </div>
-                    <ul className="grid sm:grid-cols-1 gap-8">
+                    <motion.ul variants={sectionVariants} className="grid sm:grid-cols-1 gap-8">
                         {features.map((feature, index) => (
                           <motion.li key={index} variants={itemVariants} className="flex items-start gap-4">
                               <div className="bg-primary/10 p-3 rounded-full mt-1">
@@ -271,11 +270,11 @@ export default function Home() {
                               </div>
                           </motion.li>
                         ))}
-                    </ul>
+                    </motion.ul>
                 </motion.div>
                  <motion.div variants={itemVariants} className="hidden md:flex justify-center">
                  </motion.div>
-            </div>
+            </motion.div>
         </div>
       </motion.section>
 
@@ -352,13 +351,13 @@ export default function Home() {
           <div
             className="container mx-auto px-4 md:px-6"
           >
-               <motion.div variants={itemVariants} className="space-y-8 max-w-3xl mx-auto text-center">
-                  <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Don't just write a resume. Design your future.</h2>
-                  <ul className="space-y-4 text-xl inline-flex flex-col items-start text-left">
+               <motion.div variants={sectionVariants} className="space-y-8 max-w-3xl mx-auto text-center">
+                  <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Don't just write a resume. Design your future.</motion.h2>
+                  <motion.ul variants={sectionVariants} className="space-y-4 text-xl inline-flex flex-col items-start text-left">
                     <motion.li variants={itemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>AI-powered content suggestions.</span></motion.li>
                     <motion.li variants={itemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>Professionally designed templates.</span></motion.li>
                     <motion.li variants={itemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>Intuitive real-time editor.</span></motion.li>
-                  </ul>
+                  </motion.ul>
               </motion.div>
           </div>
       </motion.section>
@@ -384,7 +383,8 @@ export default function Home() {
                 Get the latest insights from our career experts to help you land your dream job.
               </p>
             </motion.div>
-            <div
+            <motion.div
+              variants={sectionVariants}
               className="grid gap-8 md:grid-cols-3"
             >
               {blogPosts.slice(0, 3).map((post) => {
@@ -414,7 +414,7 @@ export default function Home() {
                       </motion.div>
                   )
               })}
-            </div>
+            </motion.div>
              <motion.div
               variants={itemVariants}
               className="text-center mt-12"
@@ -438,18 +438,18 @@ export default function Home() {
         <div
           className="container mx-auto px-4 md:px-6 text-center"
         >
-          <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Ready to Build Your Future?</h2>
-          <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl mt-4">
+          <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Ready to Build Your Future?</motion.h2>
+          <motion.p variants={itemVariants} className="mx-auto max-w-[600px] text-muted-foreground md:text-xl mt-4">
             Start for free and see how ResumeAI can transform your job search. No credit card required.
-          </p>
-          <div className="mt-8">
+          </motion.p>
+          <motion.div variants={itemVariants} className="mt-8">
             <Button asChild size="lg" className="group">
               <Link href="/templates">
                 Create Your Resume Now
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
-          </div>
+          </motion.div>
         </div>
       </motion.section>
     </div>
