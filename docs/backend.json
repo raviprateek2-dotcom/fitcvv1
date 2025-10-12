@@ -1,0 +1,241 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user profile in the application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user."
+        },
+        "email": {
+          "type": "string",
+          "description": "User's email address.",
+          "format": "email"
+        },
+        "subscriptionStatus": {
+          "type": "string",
+          "description": "The user's subscription status (e.g., 'free', 'premium')."
+        },
+        "preferences": {
+          "type": "string",
+          "description": "User's preferences (e.g., UI settings, notification preferences). Stored as a JSON string."
+        },
+        "profilePhotoUrl": {
+          "type": "string",
+          "description": "URL of the user's profile photo stored in Cloud Storage.",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "id",
+        "email",
+        "subscriptionStatus"
+      ]
+    },
+    "Resume": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Resume",
+      "type": "object",
+      "description": "Represents a user's resume.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the resume."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N Resume)"
+        },
+        "title": {
+          "type": "string",
+          "description": "The title or name of the resume (e.g., 'Software Engineer Resume')."
+        },
+        "templateId": {
+          "type": "string",
+          "description": "Reference to Template. (Relationship: Template 1:N Resume)"
+        },
+        "content": {
+          "type": "string",
+          "description": "Resume content, stored as a JSON string."
+        },
+        "creationDate": {
+          "type": "string",
+          "description": "Date the resume was created",
+          "format": "date-time"
+        },
+        "lastModifiedDate": {
+          "type": "string",
+          "description": "Date the resume was last modified",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "templateId",
+        "content"
+      ]
+    },
+    "Template": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Template",
+      "type": "object",
+      "description": "Represents a resume template.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the template."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the template (e.g., 'Modern', 'Classic')."
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of the template's style and features."
+        },
+        "styling": {
+          "type": "string",
+          "description": "Styling information for the template (e.g., CSS rules), stored as a JSON string."
+        },
+        "layout": {
+          "type": "string",
+          "description": "Layout information for the template (e.g., section arrangements), stored as a JSON string."
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "URL of the template's preview image.",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "styling",
+        "layout"
+      ]
+    },
+    "Feedback": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Feedback",
+      "type": "object",
+      "description": "Represents user feedback and collaboration comments.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the feedback entry."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N Feedback)"
+        },
+        "resumeId": {
+          "type": "string",
+          "description": "Reference to Resume. (Relationship: Resume 1:N Feedback)"
+        },
+        "comment": {
+          "type": "string",
+          "description": "The feedback comment or message."
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "Timestamp of when the feedback was submitted.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "comment",
+        "timestamp"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profiles, subscription status, and preferences.  User ID is used for path-based ownership of user-specific data.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/resumes/{resumeId}",
+        "definition": {
+          "entityName": "Resume",
+          "schema": {
+            "$ref": "#/backend/entities/Resume"
+          },
+          "description": "Stores resume data for a specific user. Path-based ownership is enforced via the /users/{userId} path. Denormalized 'userId' for authorization independence.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user (owner of the resume)."
+            },
+            {
+              "name": "resumeId",
+              "description": "The unique identifier for the resume."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/templates/{templateId}",
+        "definition": {
+          "entityName": "Template",
+          "schema": {
+            "$ref": "#/backend/entities/Template"
+          },
+          "description": "Stores available resume templates. These are globally accessible, so no specific authorization fields are needed.",
+          "params": [
+            {
+              "name": "templateId",
+              "description": "The unique identifier for the template."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/feedback/{feedbackId}",
+        "definition": {
+          "entityName": "Feedback",
+          "schema": {
+            "$ref": "#/backend/entities/Feedback"
+          },
+          "description": "Stores user feedback and collaboration comments related to a specific resume. Path-based ownership is enforced via the /users/{userId} path. Denormalized 'userId' for authorization independence.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user (owner of the feedback)."
+            },
+            {
+              "name": "feedbackId",
+              "description": "The unique identifier for the feedback entry."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore data structure is designed to ensure data ownership and access control.  The primary strategy is to leverage path-based ownership for user-specific data (resumes, feedback) stored under `/users/{userId}`. This approach simplifies security rules and avoids complex authorization logic. Templates are stored in a top-level collection as they are global and not user-specific.\n\nAuthorization Independence is achieved by using path-based ownership (`/users/{userId}/resumes/{resumeId}`) for resumes and feedback, eliminating the need for `get()` calls in security rules. User roles (free/premium) are stored directly in the user document. This denormalization strategy ensures atomic operations.\n\nTo support required QAPs:\n\n*   **List Resumes:** Listing resumes is secured via path-based ownership.  A user can only list resumes under their own `/users/{userId}/resumes` collection.\n*   **List Feedback:**  Listing feedback is also secured via path-based ownership at `/users/{userId}/feedback`. Only the associated user has read access.\n*   **Templates:** Templates are public, therefore they are kept in a separate top level collection, that does not require any authorization.\n\n"
+  }
+}
