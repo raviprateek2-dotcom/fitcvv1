@@ -215,7 +215,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     let comparableInitial = {...initialResumeData};
     if (typeof initialResumeData.skills === 'string') {
         const skillsFromString = initialResumeData.skills.split(',').map(s => s.trim()).filter(Boolean);
-        comparableInitial.skills = skillsFromString.map(name => ({ id: Date.now() + Math.random(), name, level: 'Advanced' }));
+        comparableInitial.skills = skillsFromString.map(name => ({ id: Date.now() + Math.random(), name, level: 'Advanced' }))
     }
     if (!initialResumeData.projects) {
         comparableInitial.projects = [];
