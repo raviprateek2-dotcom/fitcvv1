@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Badge } from '@/components/ui/badge';
@@ -80,7 +81,13 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
               </div>
               <p className="text-sm italic text-gray-700 mb-1">{exp.company}</p>
               <ul className="list-disc pl-5 space-y-1 text-sm">
-                 {exp.description.split('\n').map((line, index) => line.trim() && <li key={index}>{line.replace(/^- /, '')}</li>)}
+                 {exp.description.split('\n').map((line, index) => {
+                    const trimmedLine = line.trim();
+                    if (!trimmedLine) return null;
+                    // Strip leading hyphens or asterisks, which are common for bullet points
+                    const cleanedLine = trimmedLine.replace(/^[-*]\s*/, '');
+                    return <li key={index}>{cleanedLine}</li>;
+                  })}
               </ul>
             </div>
           ))}
