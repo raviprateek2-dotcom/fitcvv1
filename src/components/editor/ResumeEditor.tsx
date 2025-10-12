@@ -7,15 +7,15 @@ import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Download, Eye, PlusCircle, Share2, Trash2, Sparkles, Bot, Lock } from 'lucide-react';
-import React, { useCallback, useEffect, useState, useMemo } from 'react';
+import { Download, Eye, PlusCircle, Share2, Trash2, Sparkles, Bot } from 'lucide-react';
+import React, { useCallback, useEffect, useState } from 'react';
 import AIContentDialog from './AIContentDialog';
 import AISectionWriterDialog from './AISectionWriterDialog';
 import { ResumePreview } from './ResumePreview';
 import { useDoc, useUser, useFirestore, useMemoFirebase } from '@/firebase';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { Skeleton } from '../ui/skeleton';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import Link from 'next/link';
 
@@ -52,6 +52,7 @@ type ResumeData = {
   education: Education[];
   skills: string;
   jobDescription: string;
+  templateId?: string;
 };
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
@@ -130,8 +131,8 @@ const ProFeatureWrapper: React.FC<{ isPro: boolean; children: React.ReactNode }>
 export function ResumeEditor({ resumeId }: { resumeId: string }) {
   const { user, userProfile } = useUser();
   const firestore = useFirestore();
-  const router = useRouter();
-  const isProUser = userProfile?.subscription === 'premium';
+  const searchParams = useSearchParams();
+  const isPrintMode = searchParams.get('print') === 'true';
 
   const resumeDocRef = useMemoFirebase(
     () => (user ? doc(firestore, `users/${user.uid}/resumes`, resumeId) : null),
@@ -148,6 +149,12 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
       setResumeData(initialResumeData);
     }
   }, [initialResumeData]);
+
+  useEffect(() => {
+    if (isPrintMode && resumeData) {
+      setTimeout(() => window.print(), 1000); // Wait for render
+    }
+  }, [isPrintMode, resumeData]);
 
   // Debounced save function
   const handleSave = useCallback(async (data: ResumeData) => {
@@ -174,7 +181,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
 
   // Auto-save useEffect
   useEffect(() => {
-    if (!resumeData || !initialResumeData) return;
+    if (!resumeData || !initialResumeData || isPrintMode) return;
 
     // Check if there are actual changes
     if (JSON.stringify(resumeData) === JSON.stringify(initialResumeData)) {
@@ -188,7 +195,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     return () => {
       clearTimeout(handler);
     };
-  }, [resumeData, initialResumeData, handleSave]);
+  }, [resumeData, initialResumeData, handleSave, isPrintMode]);
 
 
   const handleFieldChange = <T extends keyof ResumeData>(field: T, value: ResumeData[T]) => {
@@ -248,9 +255,19 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   const handlePrint = () => {
     window.print();
   };
+  
+  const isProUser = userProfile?.subscription === 'premium';
 
   if (isResumeLoading || !resumeData) {
     return <EditorLoadingSkeleton />;
+  }
+
+  if (isPrintMode) {
+      return (
+        <div className="bg-white print:p-0">
+          <ResumePreview resumeData={resumeData} templateId={resumeData.templateId}/>
+        </div>
+      );
   }
 
   return (
@@ -426,9 +443,11 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
           </div>
         </ScrollArea>
         <div className="bg-background p-6 h-full overflow-auto print:bg-white print:p-0">
-          <ResumePreview resumeData={resumeData} />
+          <ResumePreview resumeData={resumeData} templateId={resumeData.templateId} />
         </div>
       </div>
     </>
   );
 }
+
+    

@@ -1,20 +1,17 @@
 'use client';
 
 import { useCollection, useUser } from '@/firebase';
-import { useMemo, useEffect, useState } from 'react';
-import { addDoc, doc, serverTimestamp } from 'firebase/firestore';
+import { useMemo, useEffect } from 'react';
+import { addDoc, doc, serverTimestamp, collection } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { MoreHorizontal, PlusCircle, ArrowRight } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useMemoFirebase } from '@/firebase/provider';
 import { useRouter } from 'next/navigation';
-import { collection } from 'firebase/firestore';
 import { deleteDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import {
   AlertDialog,
@@ -25,7 +22,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 
 
@@ -40,11 +36,8 @@ type Resume = {
 };
 
 const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDuplicate: (resume: Resume) => void; onDelete: (resumeId: string) => void; }) => {
-  const image = useMemo(() => {
-    const templateImage = PlaceHolderImages.find(p => p.id.includes(resume.templateId));
-    return templateImage || PlaceHolderImages[Math.floor(Math.random() * PlaceHolderImages.length)];
-  }, [resume.templateId]);
-  
+  const router = useRouter();
+
   const updatedAt = useMemo(() => {
     if (!resume.updatedAt) return 'never';
     const date = resume.updatedAt.toDate();
@@ -56,31 +49,24 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
     return date.toLocaleDateString();
   }, [resume.updatedAt]);
 
+  const handleDownloadPdf = () => {
+    // Navigate to the editor and trigger print from there
+    const printUrl = `/editor/${resume.id}?print=true`;
+    window.open(printUrl, '_blank');
+  };
 
   return (
-    <Card className="overflow-hidden group" variant="neuro">
-      <CardHeader className="p-0">
-        <Link href={`/editor/${resume.id}`}>
-          <div className="aspect-[3/2] overflow-hidden">
-            {image && (
-              <Image
-                src={image.imageUrl.replace('/400/566', '/300/200')} // Adjust image size for dashboard
-                width={300}
-                height={200}
-                alt={image.description}
-                data-ai-hint={image.imageHint}
-                className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
-              />
-            )}
-          </div>
-        </Link>
-      </CardHeader>
-      <CardContent className="p-4">
+    <Card className="overflow-hidden group flex flex-col" variant="neuro">
+      <CardHeader>
         <CardTitle className="text-lg font-semibold truncate">
           <Link href={`/editor/${resume.id}`} className="hover:underline">
             {resume.title || 'Untitled Resume'}
           </Link>
         </CardTitle>
+        <CardDescription>Template: {resume.templateId}</CardDescription>
+      </CardHeader>
+      <CardContent className="flex-grow">
+        {/* Can add a small preview or stats here in the future */}
       </CardContent>
       <CardFooter className="p-4 pt-0 flex justify-between items-center text-sm text-muted-foreground">
         <span>Updated {updatedAt}</span>
@@ -96,11 +82,11 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
               <Link href={`/editor/${resume.id}`}>Edit</Link>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => onDuplicate(resume)}>Duplicate</DropdownMenuItem>
-            <DropdownMenuItem>Download PDF</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleDownloadPdf}>Download PDF</DropdownMenuItem>
             <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:bg-destructive/90 focus:text-destructive-foreground">Delete</DropdownMenuItem>
-              </AlertDialogTrigger>
+              <DropdownMenuTrigger asChild>
+                 <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:bg-destructive/90 focus:text-destructive-foreground">Delete</DropdownMenuItem>
+              </DropdownMenuTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>Are you sure?</AlertDialogTitle>
@@ -280,3 +266,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
