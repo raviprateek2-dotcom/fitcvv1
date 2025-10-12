@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -97,36 +98,47 @@ const itemVariants = {
 
 const AnimatedFeatureIcons = () => {
     const featureIcons = [
-        { icon: DraftingCompass, className: 'col-start-2 row-start-1' },
-        { icon: FileText, className: 'col-start-1 row-start-2' },
-        { icon: Sparkles, className: 'col-start-3 row-start-2' },
-        { icon: Zap, className: 'col-start-2 row-start-3' },
+        { icon: DraftingCompass, initial: 'top' },
+        { icon: FileText, initial: 'left' },
+        { icon: Sparkles, initial: 'right' },
+        { icon: Zap, initial: 'bottom' },
     ];
+    
+    const iconVariants = {
+        top: { x: 0, y: -100, scale: 1 },
+        left: { x: -100, y: 0, scale: 1 },
+        right: { x: 100, y: 0, scale: 1 },
+        bottom: { x: 0, y: 100, scale: 1 },
+        center: { x: 0, y: 0, scale: 0.8 },
+    };
+    
+    const animationSequence = ['top', 'left', 'bottom', 'right'];
 
     return (
-        <div className="grid grid-cols-3 grid-rows-3 gap-4 w-[300px] h-[300px] md:w-[400px] md:h-[400px]">
-            {featureIcons.map((item, index) => (
-                <motion.div
-                    key={index}
-                    className={`flex items-center justify-center bg-background rounded-2xl shadow-cyber-dark ${item.className}`}
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.5 + index * 0.2, type: 'spring', stiffness: 120 }}
-                >
-                     <motion.div
-                        animate={{
-                            y: [0, -10, 0],
-                        }}
+        <div className="relative w-[300px] h-[300px] md:w-[400px] md:h-[400px] flex items-center justify-center">
+             <motion.div
+                className="relative w-full h-full"
+                 animate={{ rotate: 360 }}
+                 transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+            >
+                {featureIcons.map((item, index) => (
+                    <motion.div
+                        key={index}
+                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center bg-background rounded-2xl shadow-cyber-dark w-28 h-28 md:w-32 md:h-32"
+                        variants={iconVariants}
+                        initial={item.initial}
+                        animate={animationSequence}
                         transition={{
-                            duration: 2 + index * 0.5,
+                            duration: 8,
                             repeat: Infinity,
                             ease: 'easeInOut',
+                            delay: index * -2,
                         }}
                     >
                         <item.icon className="w-12 h-12 md:w-16 md:h-16 text-primary" />
                     </motion.div>
-                </motion.div>
-            ))}
+                ))}
+            </motion.div>
         </div>
     );
 };
