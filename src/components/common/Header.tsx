@@ -18,6 +18,7 @@ import { cn } from '@/lib/utils';
 import React from 'react';
 import { useUser, useAuth } from '@/firebase';
 import { signOut } from 'firebase/auth';
+import { ThemeToggleButton } from './ThemeToggleButton';
 
 const navLinks = [
   { href: '/dashboard', label: 'Dashboard' },
@@ -56,6 +57,7 @@ export function Header() {
         </nav>
 
         <div className="ml-auto flex items-center gap-4">
+          <ThemeToggleButton />
           {!isUserLoading && (
             <>
               {isAuthenticated ? (
