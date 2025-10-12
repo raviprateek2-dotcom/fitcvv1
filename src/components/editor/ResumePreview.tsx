@@ -100,7 +100,7 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
         <h3 className="text-lg font-bold text-primary mb-3 uppercase tracking-wider">Skills</h3>
         <div className="flex flex-wrap gap-2">
             {skillList.map((skill, index) => (
-                <Badge key={index} variant="secondary" className="bg-blue-100 text-primary-dark font-medium">{skill}</Badge>
+                <Badge key={index} variant="secondary">{skill}</Badge>
             ))}
         </div>
       </section>
