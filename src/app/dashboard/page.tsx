@@ -1,9 +1,9 @@
 'use client';
 
 import { useCollection, useUser } from '@/firebase';
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import { addDocumentNonBlocking, deleteDocumentNonBlocking } from '@/firebase/non-blocking-updates';
-import { collection, serverTimestamp } from 'firebase/firestore';
+import { collection, doc, serverTimestamp } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -113,6 +113,12 @@ export default function DashboardPage() {
   const firestore = useFirestore();
   const router = useRouter();
 
+  useEffect(() => {
+    if (!isUserLoading && !user) {
+      router.push('/login');
+    }
+  }, [isUserLoading, user, router]);
+
   const resumesQuery = useMemoFirebase(
     () => (user ? collection(firestore, `users/${user.uid}/resumes`) : null),
     [firestore, user]
@@ -140,19 +146,33 @@ export default function DashboardPage() {
     };
     const newDocRef = await addDocumentNonBlocking(resumesQuery, newResumeData);
     if (newDocRef) {
-      router.push(`/editor/${newDocCref.id}`);
+      router.push(`/editor/${newDocRef.id}`);
     }
   };
 
   const handleDelete = (resumeId: string) => {
-    if (!user) return;
-    const docRef = useMemoFirebase(() => collection(firestore, `users/${user.uid}/resumes`, resumeId), []);
-    if(docRef) deleteDocumentNonBlocking(docRef);
+    if (!user || !firestore) return;
+    const docRef = doc(firestore, `users/${user.uid}/resumes`, resumeId);
+    deleteDocumentNonBlocking(docRef);
   };
   
-  if (!isUserLoading && !user) {
-    router.push('/login');
-    return null;
+  if (isUserLoading || !user) {
+    return (
+        <div className="container mx-auto px-4 md:px-6 py-8">
+            <div className="flex items-center justify-between mb-8">
+                <h1 className="text-3xl font-headline font-bold">My Resumes</h1>
+                <Button asChild>
+                <Link href="/templates">
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Create New Resume
+                </Link>
+                </Button>
+            </div>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {[...Array(4)].map((_, i) => <ResumeSkeleton key={i} />)}
+            </div>
+        </div>
+    );
   }
 
   return (
@@ -167,19 +187,19 @@ export default function DashboardPage() {
         </Button>
       </div>
 
-      {(isLoading || isUserLoading) && (
+      {(isLoading) && (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {[...Array(4)].map((_, i) => <ResumeSkeleton key={i} />)}
         </div>
       )}
 
-      {!isLoading && !isUserLoading && resumes && resumes.length > 0 ? (
+      {!isLoading && resumes && resumes.length > 0 ? (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {resumes.map((resume) => (
             <ResumeCard key={resume.id} resume={resume} onDuplicate={handleDuplicate} onDelete={handleDelete} />
           ))}
         </div>
-      ) : !isLoading && !isUserLoading && (
+      ) : !isLoading && (
         <div className="text-center py-20 border-2 border-dashed rounded-lg">
           <h2 className="text-2xl font-semibold mb-2">No Resumes Yet</h2>
           <p className="text-muted-foreground mb-4">Click below to create your first professional resume.</p>
