@@ -4,12 +4,19 @@ import { Button } from '@/components/ui/button';
 import { blogPosts } from '@/lib/blog-posts';
 import { ArrowRight, CheckCircle2, DraftingCompass, FileText, Sparkles, Zap, PenTool, FileSignature, BrainCircuit, Star } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useState, useRef } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Suspense, useEffect, useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import Autoplay from "embla-carousel-autoplay";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { motion, AnimatePresence, useAnimate, useScroll, useTransform } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import dynamic from 'next/dynamic';
+
+
+const Scene = dynamic(() => import('@/components/common/Scene').then(mod => mod.Scene), { 
+  ssr: false,
+  loading: () => <div className="absolute inset-0 z-0" style={{ height: '500px', width: '500px' }}/>
+});
 
 
 const features = [
@@ -96,6 +103,7 @@ const itemVariants = {
   },
 };
 
+
 const blogPostIcons: { [key: string]: React.FC<React.ComponentProps<'svg'>> } = {
   'ultimate-resume-guide-2024': PenTool,
   '5-common-resume-mistakes': FileSignature,
@@ -137,79 +145,13 @@ const GridPatternBackground = () => {
 };
 
 
-const AnimatedFeatureIcons = () => {
-  const [scope, animate] = useAnimate();
-
-  const iconVariants = {
-    top: { x: '0%', y: '-60%', scale: 1.1, zIndex: 10 },
-    left: { x: '-60%', y: '0%', scale: 0.9, zIndex: 5 },
-    right: { x: '60%', y: '0%', scale: 0.9, zIndex: 5 },
-    bottom: { x: '0%', y: '60%', scale: 0.7, zIndex: 1 },
-  };
-
-  useEffect(() => {
-    const runAnimation = async () => {
-      while (true) {
-        await animate([
-          ['#icon-1', iconVariants.left, { duration: 1.2, ease: 'easeInOut' }],
-          ['#icon-2', iconVariants.bottom, { duration: 1.2, ease: 'easeInOut', at: '-0.9' }],
-          ['#icon-3', iconVariants.right, { duration: 1.2, ease: 'easeInOut', at: '-0.9' }],
-          ['#icon-4', iconVariants.top, { duration: 1.2, ease: 'easeInOut', at: '-0.9' }],
-        ]);
-        await new Promise(res => setTimeout(res, 300));
-        await animate([
-          ['#icon-1', iconVariants.bottom, { duration: 1.2, ease: 'easeInOut' }],
-          ['#icon-2', iconVariants.right, { duration: 1.2, ease: 'easeInOut', at: '-0.9' }],
-          ['#icon-3', iconVariants.top, { duration: 1.2, ease: 'easeInOut', at: '-0.9' }],
-          ['#icon-4', iconVariants.left, { duration: 1.2, ease: 'easeInOut', at: '-0.9' }],
-        ]);
-        await new Promise(res => setTimeout(res, 300));
-        await animate([
-          ['#icon-1', iconVariants.right, { duration: 1.2, ease: 'easeInOut' }],
-          ['#icon-2', iconVariants.top, { duration: 1.2, ease: 'easeInOut', at: '-0.9' }],
-          ['#icon-3', iconVariants.left, { duration: 1.2, ease: 'easeInOut', at: '-0.9' }],
-          ['#icon-4', iconVariants.bottom, { duration: 1.2, ease: 'easeInOut', at: '-0.9' }],
-        ]);
-        await new Promise(res => setTimeout(res, 300));
-        await animate([
-          ['#icon-1', iconVariants.top, { duration: 1.2, ease: 'easeInOut' }],
-          ['#icon-2', iconVariants.left, { duration: 1.2, ease: 'easeInOut', at: '-0.9' }],
-          ['#icon-3', iconVariants.bottom, { duration: 1.2, ease: 'easeInOut', at: '-0.9' }],
-          ['#icon-4', iconVariants.right, { duration: 1.2, ease: 'easeInOut', at: '-0.9' }],
-        ]);
-        await new Promise(res => setTimeout(res, 300));
-      }
-    };
-    runAnimation();
-  }, [animate]);
-
-  const featureIcons = [
-    { id: 'icon-1', icon: DraftingCompass, initial: 'top' },
-    { id: 'icon-2', icon: FileText, initial: 'left' },
-    { id: 'icon-3', icon: Sparkles, initial: 'bottom' },
-    { id: 'icon-4', icon: Zap, initial: 'right' },
-  ];
-
-  return (
-    <div ref={scope} className="relative w-48 h-48">
-      {featureIcons.map(({ id, icon: Icon, initial }) => (
-        <motion.div
-          key={id}
-          id={id}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-4 bg-background/50 border rounded-full shadow-lg backdrop-blur-md"
-          // @ts-ignore
-          initial={iconVariants[initial]}
-        >
-          <Icon className="w-8 h-8 text-primary" />
-        </motion.div>
-      ))}
-    </div>
-  )
-};
-
-
 export default function Home() {
   const [sentenceIndex, setSentenceIndex] = useState(0);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -261,12 +203,18 @@ export default function Home() {
               </div>
             </motion.div>
              <motion.div 
-                  initial={{ opacity: 0, x: 50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.8 }}
-                  className="hidden md:flex justify-center items-center"
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.8, delay: 0.2 }}
+                  className="hidden md:flex justify-center items-center h-full"
                  >
-                 <AnimatedFeatureIcons />
+                   <div className="relative w-full h-full min-h-[300px]">
+                      {mounted && (
+                         <Suspense fallback={null}>
+                           <Scene />
+                         </Suspense>
+                      )}
+                  </div>
             </motion.div>
           </div>
         </div>
@@ -347,7 +295,7 @@ export default function Home() {
                     </ul>
                 </motion.div>
                  <motion.div 
-                  initial={{ opacity: 0, x: -50 }}
+                  initial={{ opacity: 0, x: 50 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true, amount: 0.5 }}
                   transition={{ duration: 0.8 }}
