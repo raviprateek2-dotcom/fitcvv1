@@ -284,7 +284,7 @@ export function ResumePreview({ resumeData, templateId = 'modern' }: ResumePrevi
         <h3 className={templateStyles.sectionTitle}>Skills</h3>
         <div className="flex flex-wrap gap-2">
             {(skills || []).map((skill, index) => (
-                <Badge key={index} variant="secondary">{skill.name}</Badge>
+                <Badge key={skill.id} variant="secondary">{skill.name}</Badge>
             ))}
         </div>
       </section>

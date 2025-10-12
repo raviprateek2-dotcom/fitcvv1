@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Download, Eye, PlusCircle, Share2, Trash2, Sparkles, Bot, FileText, Newspaper, PanelLeft } from 'lucide-react';
+import { Download, Eye, PlusCircle, Share2, Trash2, Sparkles, Bot, FileText, Newspaper, PanelLeft, ArrowLeft } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import AIContentDialog from './AIContentDialog';
 import AISectionWriterDialog from './AISectionWriterDialog';
@@ -82,8 +82,8 @@ type EditorTab = 'resume' | 'cover-letter';
 
 const EditorLoadingSkeleton = () => {
     return (
-        <div className="grid md:grid-cols-2 h-[calc(100vh-4rem)]">
-            <div className="p-6 space-y-6">
+        <div className="flex h-[calc(100vh-4rem)]">
+            <div className="w-1/3 p-6 space-y-6 border-r">
                  <Skeleton className="h-10 w-1/2" />
                  <div className="space-y-4">
                     <Skeleton className="h-12 w-full" />
@@ -92,7 +92,7 @@ const EditorLoadingSkeleton = () => {
                     <Skeleton className="h-12 w-full" />
                  </div>
             </div>
-            <div className="p-6">
+            <div className="w-2/3 p-6">
                 <Skeleton className="w-full h-full" />
             </div>
         </div>
@@ -174,10 +174,12 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     if (initialResumeData) {
         let updatedData = { ...initialResumeData };
         // Migration for skills from string to Skill[]
-        if (typeof initialResumeData.skills === 'string') {
-            const skillsFromString = initialResumeData.skills.split(',').map(s => s.trim()).filter(Boolean);
-            updatedData.skills = skillsFromString.map(name => ({ id: Date.now() + Math.random(), name, level: 'Advanced' }));
+        if (Array.isArray(initialResumeData.skills) && initialResumeData.skills.length > 0 && typeof initialResumeData.skills[0] === 'string') {
+             updatedData.skills = (initialResumeData.skills as any[]).map(name => ({ id: Date.now() + Math.random(), name, level: 'Advanced' }));
+        } else if (!Array.isArray(initialResumeData.skills)) {
+            updatedData.skills = [];
         }
+
 
         if (!initialResumeData.projects) updatedData.projects = [];
         if (!initialResumeData.coverLetter) updatedData.coverLetter = '';
@@ -221,14 +223,17 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   useEffect(() => {
     if (!resumeData || !initialResumeData || isPrintMode) return;
     
+    // Create a comparable version of initial data to avoid saving on first load
     let comparableInitial = {...initialResumeData};
-    if (typeof initialResumeData.skills === 'string') {
-        const skillsFromString = initialResumeData.skills.split(',').map(s => s.trim()).filter(Boolean);
-        comparableInitial.skills = skillsFromString.map(name => ({ id: Date.now() + Math.random(), name, level: 'Advanced' }))
+    if (Array.isArray(initialResumeData.skills) && initialResumeData.skills.length > 0 && typeof initialResumeData.skills[0] === 'string') {
+        comparableInitial.skills = (initialResumeData.skills as any[]).map(name => ({ id: Date.now() + Math.random(), name, level: 'Advanced' }));
+    } else if (!Array.isArray(initialResumeData.skills)) {
+        comparableInitial.skills = [];
     }
     if (!initialResumeData.projects) comparableInitial.projects = [];
     if (!initialResumeData.coverLetter) comparableInitial.coverLetter = '';
     if (!initialResumeData.companyInfo) comparableInitial.companyInfo = { name: '', jobTitle: '' };
+
 
     if (JSON.stringify(resumeData) === JSON.stringify(comparableInitial)) {
       return;
@@ -255,7 +260,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   };
   
   const handleCompanyInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!resumeData) return;
+    if (!resumeData || !resumeData.companyInfo) return;
     const { name, value } = e.target;
     handleFieldChange('companyInfo', { ...resumeData.companyInfo, [name]: value });
   }
@@ -387,35 +392,30 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     <>
       <header className="bg-background border-b sticky top-0 z-10 no-print">
         <div className="container mx-auto px-4 md:px-6 h-16 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4 flex-grow min-w-0">
-             <Button variant="ghost" size="icon" onClick={() => setIsFormVisible(!isFormVisible)} className="h-8 w-8">
+          <div className="flex items-center gap-2 flex-grow min-w-0">
+             <Button variant="outline" size="icon" onClick={() => setIsFormVisible(!isFormVisible)} className="h-8 w-8">
                 <PanelLeft />
              </Button>
-            <Input 
-                value={resumeData.title || ''}
-                onChange={(e) => handleFieldChange('title', e.target.value)}
-                placeholder="Untitled Resume"
-                className="text-xl font-headline font-semibold h-10 border-none shadow-none focus-visible:ring-0 p-0 flex-grow"
-            />
-            <SaveStatusIndicator status={saveStatus} />
+              <Input 
+                  value={resumeData.title || ''}
+                  onChange={(e) => handleFieldChange('title', e.target.value)}
+                  placeholder="Untitled Resume"
+                  className="text-xl font-headline font-semibold h-10 border-none shadow-none focus-visible:ring-0 p-0 flex-grow"
+              />
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm">
-              <Eye className="mr-2 h-4 w-4" />
-              Preview
-            </Button>
-            <Button variant="outline" size="sm">
-              <Share2 className="mr-2 h-4 w-4" />
-              Share
-            </Button>
-             <Button variant="outline" size="sm" onClick={handlePrint}>
+           <div className="flex items-center gap-4">
+             <SaveStatusIndicator status={saveStatus} />
+            <Button variant="outline" size="sm" onClick={handlePrint}>
               <Download className="mr-2 h-4 w-4" />
               Download PDF
+            </Button>
+            <Button variant="outline" size="icon" asChild>
+                <Link href="/dashboard"><ArrowLeft/></Link>
             </Button>
           </div>
         </div>
       </header>
-       <div className="flex-grow flex h-[calc(100vh-4rem)]">
+       <div className="flex flex-grow h-[calc(100vh-4rem)]">
         {isFormVisible && (
           <aside className="w-1/3 border-r bg-background no-print">
             <ScrollArea className="h-full">
@@ -644,7 +644,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                         />
                         <ProFeatureWrapper isPro={isProUser}>
                             <Button onClick={handleWriteCoverLetter} disabled={isAiLoading}>
-                            <Bot className="mr-2" />
+                            <Bot className="mr-2 h-4 w-4" />
                             {isAiLoading ? 'Generating...' : 'AI Generate'}
                             </Button>
                         </ProFeatureWrapper>
@@ -655,7 +655,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
             </ScrollArea>
           </aside>
         )}
-        <main className="flex-grow bg-secondary/50 p-6 h-full print:bg-white print:p-0">
+        <main className="w-2/3 bg-secondary/50 p-6 h-full print:bg-white print:p-0">
           <ScrollArea className="h-full">
             {activeTab === 'resume' ? (
               <ResumePreview resumeData={resumeData} templateId={resumeData.templateId} />
