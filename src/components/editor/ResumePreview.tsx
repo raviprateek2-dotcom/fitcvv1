@@ -48,7 +48,7 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
   const skillList = skills.split(',').map(s => s.trim()).filter(Boolean);
 
   return (
-    <div className="bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full p-8 mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-auto">
+    <div className="bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full p-8 mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-auto print:shadow-none print:rounded-none print:max-h-full">
       <header className="text-center mb-6">
         <h1 className="text-4xl font-bold text-gray-900">{personalInfo.name}</h1>
         <h2 className="text-xl font-semibold text-primary">{personalInfo.title}</h2>

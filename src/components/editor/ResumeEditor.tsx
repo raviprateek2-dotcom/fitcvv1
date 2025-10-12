@@ -208,6 +208,10 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
         education: prev.education.filter(edu => edu.id !== id)
     } : null));
   };
+  
+  const handlePrint = () => {
+    window.print();
+  };
 
   if (isResumeLoading || !resumeData) {
     return <EditorLoadingSkeleton />;
@@ -215,7 +219,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
 
   return (
     <>
-      <header className="bg-background border-b sticky top-0 z-10">
+      <header className="bg-background border-b sticky top-0 z-10 no-print">
         <div className="container mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
           <div>
             <h1 className="text-xl font-headline font-semibold truncate max-w-xs md:max-w-md">{resumeData.title || 'Untitled Resume'}</h1>
@@ -230,15 +234,15 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
               <Share2 className="mr-2 h-4 w-4" />
               Share
             </Button>
-             <Button variant="outline" size="sm">
+             <Button variant="outline" size="sm" onClick={handlePrint}>
               <Download className="mr-2 h-4 w-4" />
               Download PDF
             </Button>
           </div>
         </div>
       </header>
-      <div className="grid md:grid-cols-2 h-[calc(100vh-4rem)]">
-        <ScrollArea className="h-full bg-background p-6">
+      <div className="grid print:block md:grid-cols-2 h-[calc(100vh-4rem)]">
+        <ScrollArea className="h-full bg-background p-6 no-print">
           <div className="space-y-6">
             <Accordion type="multiple" defaultValue={['personal-info', 'summary']} className="w-full">
               <AccordionItem value="job-description">
@@ -346,7 +350,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
             </Accordion>
           </div>
         </ScrollArea>
-        <div className="bg-secondary p-6 h-full overflow-auto">
+        <div className="bg-secondary p-6 h-full overflow-auto print:bg-white print:p-0">
           <ResumePreview resumeData={resumeData} />
         </div>
       </div>
