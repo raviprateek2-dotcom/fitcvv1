@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import type { Metadata } from 'next';
+import Image from 'next/image';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export const metadata: Metadata = {
   title: 'Blog - Career Advice & Resume Tips',
@@ -24,8 +26,22 @@ export default function BlogPage() {
         </div>
 
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {blogPosts.map((post) => (
-            <Card key={post.slug} className="group overflow-hidden flex flex-col" variant="neuro">
+          {blogPosts.map((post) => {
+            const image = PlaceHolderImages.find(img => img.id === post.imageId);
+            return (
+              <Card key={post.slug} className="group overflow-hidden flex flex-col" variant="neuro">
+                {image && (
+                  <Link href={`/blog/${post.slug}`} className="block overflow-hidden">
+                    <Image
+                        src={image.imageUrl}
+                        alt={post.title}
+                        width={400}
+                        height={200}
+                        data-ai-hint={image.imageHint}
+                        className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </Link>
+                )}
                <CardHeader>
                     <h2 className="text-xl font-bold font-headline group-hover:text-primary transition-colors">
                         <Link href={`/blog/${post.slug}`}>{post.title}</Link>
@@ -40,7 +56,8 @@ export default function BlogPage() {
                 </Button>
               </CardContent>
             </Card>
-          ))}
+            )
+          })}
         </div>
       </div>
     </div>

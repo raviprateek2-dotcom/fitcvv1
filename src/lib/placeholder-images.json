@@ -65,6 +65,66 @@
       "description": "Thumbnail of a graphic designer resume.",
       "imageUrl": "https://picsum.photos/seed/dash-resume3/300/200",
       "imageHint": "portfolio preview"
+    },
+    {
+      "id": "blog-resume-guide",
+      "description": "A person writing on a document with a pen.",
+      "imageUrl": "https://picsum.photos/seed/blog-resume-guide/800/400",
+      "imageHint": "resume writing"
+    },
+    {
+      "id": "blog-resume-mistakes",
+      "description": "A document with red crosses and correction marks.",
+      "imageUrl": "https://picsum.photos/seed/blog-resume-mistakes/800/400",
+      "imageHint": "document error"
+    },
+    {
+      "id": "blog-ats-bots",
+      "description": "A robot looking at a computer screen with resumes.",
+      "imageUrl": "https://picsum.photos/seed/blog-ats-bots/800/400",
+      "imageHint": "robot computer"
+    },
+    {
+      "id": "blog-action-verbs",
+      "description": "A list of powerful words on a piece of paper.",
+      "imageUrl": "https://picsum.photos/seed/blog-action-verbs/800/400",
+      "imageHint": "writing text"
+    },
+    {
+      "id": "blog-summary",
+      "description": "A close-up of a professional summary on a resume.",
+      "imageUrl": "https://picsum.photos/seed/blog-summary/800/400",
+      "imageHint": "resume profile"
+    },
+    {
+      "id": "blog-cv-resume",
+      "description": "Two documents side-by-side, one a resume and one a CV.",
+      "imageUrl": "https://picsum.photos/seed/blog-cv-resume/800/400",
+      "imageHint": "document comparison"
+    },
+    {
+      "id": "blog-skills",
+      "description": "A checklist of skills on a clipboard.",
+      "imageUrl": "https://picsum.photos/seed/blog-skills/800/400",
+      "imageHint": "skills checklist"
+    },
+    {
+      "id": "blog-cover-letter",
+      "description": "A person writing a letter at a desk.",
+      "imageUrl": "https://picsum.photos/seed/blog-cover-letter/800/400",
+      "imageHint": "writing letter"
+    },
+    {
+      "id": "blog-networking",
+      "description": "A group of people talking and connecting at an event.",
+      "imageUrl": "https://picsum.photos/seed/blog-networking/800/400",
+      "imageHint": "people connecting"
+    },
+    {
+      "id": "blog-interview-prep",
+      "description": "A person preparing for an interview with notes and a laptop.",
+      "imageUrl": "https://picsum.photos/seed/blog-interview-prep/800/400",
+      "imageHint": "interview preparation"
     }
   ]
 }

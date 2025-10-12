@@ -1,4 +1,5 @@
 
+
 import { blogPosts, type BlogPost } from '@/lib/blog-posts';
 import { notFound } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import type { Metadata, ResolvingMetadata } from 'next';
+import Image from 'next/image';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 type Props = {
   params: { slug: string };
@@ -20,6 +23,8 @@ export async function generateMetadata({ params }: Props, parent: ResolvingMetad
       description: 'The page you are looking for does not exist.',
     };
   }
+  
+  const image = PlaceHolderImages.find(img => img.id === post.imageId);
 
   return {
     title: post.title,
@@ -28,6 +33,7 @@ export async function generateMetadata({ params }: Props, parent: ResolvingMetad
         title: post.title,
         description: post.description,
         type: 'article',
+        images: image ? [image.imageUrl] : [],
     }
   };
 }
@@ -85,17 +91,32 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
   if (!post) {
     notFound();
   }
+  
+  const image = PlaceHolderImages.find(img => img.id === post.imageId);
 
   return (
     <div className="container mx-auto px-4 md:px-6 py-12 md:py-20">
       <Card className="max-w-4xl mx-auto" variant="neuro">
         <CardHeader>
-          <Button variant="ghost" asChild className="mb-4">
+          <Button variant="ghost" asChild className="mb-4 self-start">
             <Link href="/blog">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Blog
             </Link>
           </Button>
+          {image && (
+              <div className="mb-8 overflow-hidden rounded-lg">
+                  <Image
+                      src={image.imageUrl}
+                      alt={post.title}
+                      width={800}
+                      height={400}
+                      data-ai-hint={image.imageHint}
+                      className="w-full h-auto object-cover"
+                      priority
+                  />
+              </div>
+          )}
           <CardTitle className="text-3xl lg:text-4xl font-headline">{post.title}</CardTitle>
           <p className="text-muted-foreground pt-2">{post.description}</p>
         </CardHeader>

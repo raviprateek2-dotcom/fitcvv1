@@ -3,6 +3,7 @@ export type BlogPost = {
   title: string;
   slug: string;
   description: string;
+  imageId: string;
   content: string;
 };
 
@@ -11,6 +12,7 @@ export const blogPosts: BlogPost[] = [
     title: "The Ultimate Guide to Writing a Resume That Gets Noticed in 2024",
     slug: "ultimate-resume-guide-2024",
     description: "Learn the essential strategies to craft a resume that stands out to recruiters and hiring managers in today's competitive job market.",
+    imageId: "blog-resume-guide",
     content: `
 # The Ultimate Guide to Writing a Resume That Gets Noticed in 2024
 
@@ -60,6 +62,7 @@ By following these tips, you can create a powerful resume that not only gets pas
     title: "5 Common Resume Mistakes and How to Avoid Them",
     slug: "5-common-resume-mistakes",
     description: "Don't let these simple mistakes cost you your dream job. Learn how to identify and fix the most common resume pitfalls.",
+    imageId: "blog-resume-mistakes",
     content: `
 # 5 Common Resume Mistakes and How to Avoid Them
 
@@ -102,6 +105,7 @@ Avoiding these common mistakes will significantly improve your chances of landin
     title: "How to Beat the Bots: Optimizing Your Resume for ATS",
     slug: "how-to-beat-ats",
     description: "Learn the secrets to creating an Applicant Tracking System (ATS) friendly resume that ensures your application gets seen by a human.",
+    imageId: "blog-ats-bots",
     content: `
 # How to Beat the Bots: Optimizing Your Resume for ATS
 
@@ -150,6 +154,7 @@ By optimizing your resume for the ATS, you're not just 'beating the bots'—you'
     title: "Action Verbs That Will Make Your Resume Stand Out",
     slug: "resume-action-verbs",
     description: "Tired of 'responsible for'? Supercharge your resume with our list of powerful action verbs that command attention and showcase your impact.",
+    imageId: "blog-action-verbs",
     content: `
 # Action Verbs That Will Make Your Resume Stand Out
 
@@ -203,6 +208,7 @@ By swapping out weak, passive phrases for powerful action verbs, you can transfo
     title: "How to Write a Killer Professional Summary (With Examples)",
     slug: "writing-professional-summary",
     description: "Your professional summary is your resume's headline. Learn how to write a compelling summary that hooks the recruiter in seconds.",
+    imageId: "blog-summary",
     content: `
 # How to Write a Killer Professional Summary (With Examples)
 
@@ -243,6 +249,7 @@ Struggling to find the right words? ResumeCraft AI's **AI Writer** can generate 
     title: "The Difference Between a CV and a Resume",
     slug: "cv-vs-resume",
     description: "Are you applying for a job or an academic position? Understanding the key differences between a CV and a resume is crucial.",
+    imageId: "blog-cv-resume",
     content: `
 # The Difference Between a CV and a Resume
 
@@ -290,6 +297,7 @@ When in doubt, the job description will often specify what kind of document is r
     title: "How to List Skills on Your Resume (With Examples)",
     slug: "how-to-list-skills-on-resume",
     description: "Your skills section is a crucial part of your resume. Learn how to organize and present your skills to impress recruiters.",
+    imageId: "blog-skills",
     content: `
 # How to List Skills on Your Resume (With Examples)
 
@@ -348,6 +356,7 @@ A well-crafted skills section is a powerful tool in your job search arsenal. Use
     title: "How to Write a Cover Letter That Gets Read",
     slug: "how-to-write-cover-letter",
     description: "A great cover letter can be the difference between getting an interview and being ignored. Learn the formula for a compelling cover letter.",
+    imageId: "blog-cover-letter",
     content: `
 # How to Write a Cover Letter That Gets Read
 
@@ -400,6 +409,7 @@ Feeling stuck? The **AI Cover Letter Writer** in ResumeCraft AI can generate a t
     title: "Networking for Job Seekers: A Practical Guide",
     slug: "networking-for-job-seekers",
     description: "Networking can feel intimidating, but it's one of the most effective ways to find a job. Here are practical tips to get started.",
+    imageId: "blog-networking",
     content: `
 # Networking for Job Seekers: A Practical Guide
 
@@ -449,6 +459,7 @@ Networking is a long-term game. By focusing on building real relationships, you'
     title: "Preparing for a Job Interview: The Ultimate Checklist",
     slug: "job-interview-checklist",
     description: "You landed the interview! Now what? Follow our comprehensive checklist to prepare thoroughly and walk into your interview with confidence.",
+    imageId: "blog-interview-prep",
     content: `
 # Preparing for a Job Interview: The Ultimate Checklist
 

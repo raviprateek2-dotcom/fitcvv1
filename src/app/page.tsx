@@ -5,11 +5,13 @@ import { Button } from '@/components/ui/button';
 import { blogPosts } from '@/lib/blog-posts';
 import { ArrowRight, CheckCircle2, DraftingCompass, FileText, Sparkles, Zap } from 'lucide-react';
 import Link from 'next/link';
-import { Suspense, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import Autoplay from "embla-carousel-autoplay";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import Image from 'next/image';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 
 const features = [
@@ -257,21 +259,36 @@ export default function Home() {
             </p>
           </div>
           <div className="grid gap-8 md:grid-cols-3 animate-fade-in-up animation-delay-400">
-            {blogPosts.slice(0, 3).map((post) => (
-              <Card key={post.slug} className="group overflow-hidden" variant="neuro">
-                <CardContent className="p-6">
-                  <h3 className="text-xl font-bold font-headline mb-2 group-hover:text-primary transition-colors">
-                    <Link href={`/blog/${post.slug}`}>{post.title}</Link>
-                  </h3>
-                  <p className="text-muted-foreground text-sm mb-4">{post.description}</p>
-                  <Button variant="link" asChild className="p-0 h-auto">
-                     <Link href={`/blog/${post.slug}`}>
-                      Read More <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+            {blogPosts.slice(0, 3).map((post) => {
+                const image = PlaceHolderImages.find(img => img.id === post.imageId);
+                return (
+                    <Card key={post.slug} className="group overflow-hidden flex flex-col" variant="neuro">
+                        {image && (
+                        <Link href={`/blog/${post.slug}`} className="block overflow-hidden">
+                            <Image
+                                src={image.imageUrl}
+                                alt={post.title}
+                                width={400}
+                                height={200}
+                                data-ai-hint={image.imageHint}
+                                className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                        </Link>
+                        )}
+                        <CardContent className="p-6 flex flex-col flex-grow">
+                        <h3 className="text-xl font-bold font-headline mb-2 group-hover:text-primary transition-colors">
+                            <Link href={`/blog/${post.slug}`}>{post.title}</Link>
+                        </h3>
+                        <p className="text-muted-foreground text-sm mb-4 flex-grow">{post.description}</p>
+                        <Button variant="link" asChild className="p-0 h-auto self-start">
+                            <Link href={`/blog/${post.slug}`}>
+                            Read More <ArrowRight className="ml-2 h-4 w-4" />
+                            </Link>
+                        </Button>
+                        </CardContent>
+                    </Card>
+                )
+            })}
           </div>
            <div className="text-center mt-12 animate-fade-in-up animation-delay-600">
                 <Button asChild size="lg" variant="outline">
@@ -302,3 +319,4 @@ export default function Home() {
     </div>
   );
 }
+
