@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -205,7 +206,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
         const skillsFromString = initialResumeData.skills.split(',').map(s => s.trim()).filter(Boolean);
         comparableInitial = {
             ...initialResumeData,
-            skills: skillsFromString.map(name => ({ id: expect.any(Number), name, level: 'Advanced' }))
+            skills: skillsFromString.map(name => ({ id: Date.now() + Math.random(), name, level: 'Advanced' }))
         }
     }
 
