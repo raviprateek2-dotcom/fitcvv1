@@ -5,13 +5,14 @@ import { Button } from '@/components/ui/button';
 import { blogPosts } from '@/lib/blog-posts';
 import { ArrowRight, CheckCircle2, DraftingCompass, FileText, Sparkles, Zap, PenTool, FileSignature, BrainCircuit, Star } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, Suspense } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import Autoplay from "embla-carousel-autoplay";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import Image from 'next/image';
 import { motion, AnimatePresence, useAnimate, useScroll, useTransform } from 'framer-motion';
+import { Canvas, useFrame } from "@react-three/fiber";
+import { TorusKnot, Environment } from "@react-three/drei";
 
 
 const features = [
@@ -98,145 +99,27 @@ const itemVariants = {
   },
 };
 
-const AnimatedFeatureIcons = () => {
-    const [scope, animate] = useAnimate();
+function Scene() {
+  const meshRef = useRef<any>();
+  useFrame((state, delta) => {
+    if (meshRef.current) {
+        meshRef.current.rotation.x += delta * 0.1;
+        meshRef.current.rotation.y += delta * 0.1;
+    }
+  });
 
-    const icons = [
-        { icon: DraftingCompass, className: 'icon-1' },
-        { icon: FileText, className: 'icon-2' },
-        { icon: Sparkles, className: 'icon-3' },
-        { icon: Zap, className: 'icon-4' },
-    ];
-    
-    useEffect(() => {
-        const animation = async () => {
-            while (true) {
-                await animate(scope.current, { rotate: 360 }, { duration: 8, ease: 'linear'});
-                await animate(scope.current, { rotate: 0 }, { duration: 0 });
-            }
-        };
-
-        const iconAnimation = async () => {
-            const sequence = [
-                // initial state is a diamond
-                ['.icon-1', { x: 0, y: -100, scale: 1, rotate: -45 }],
-                ['.icon-2', { x: -100, y: 0, scale: 1, rotate: -45 }],
-                ['.icon-3', { x: 100, y: 0, scale: 1, rotate: -45 }],
-                ['.icon-4', { x: 0, y: 100, scale: 1, rotate: -45 }],
-            ];
-            await animate(sequence, { duration: 0 });
-            
-            while(true) {
-                 await animate([
-                    ['.icon-1', { x: -100, y: 0, scale: 1.1 }, { duration: 1.5, ease: 'easeInOut' }],
-                    ['.icon-2', { x: 0, y: 100, scale: 1.1 }, { at: '-1.5', duration: 1.5, ease: 'easeInOut' }],
-                    ['.icon-3', { x: 0, y: -100, scale: 1.1 }, { at: '-1.5', duration: 1.5, ease: 'easeInOut' }],
-                    ['.icon-4', { x: 100, y: 0, scale: 1.1 }, { at: '-1.5', duration: 1.5, ease: 'easeInOut' }],
-                ]);
-                await animate([
-                    ['.icon-1', { scale: 1 }, { duration: 0.5 }],
-                    ['.icon-2', { scale: 1 }, { at: '-0.5' }],
-                    ['.icon-3', { scale: 1 }, { at: '-0.5' }],
-                    ['.icon-4', { scale: 1 }, { at: '-0.5' }],
-                ]);
-
-                await animate([
-                    ['.icon-1', { x: 0, y: 100, scale: 1.1 }, { duration: 1.5, ease: 'easeInOut' }],
-                    ['.icon-2', { x: 100, y: 0, scale: 1.1 }, { at: '-1.5', duration: 1.5, ease: 'easeInOut' }],
-                    ['.icon-3', { x: -100, y: 0, scale: 1.1 }, { at: '-1.5', duration: 1.5, ease: 'easeInOut' }],
-                    ['.icon-4', { x: 0, y: -100, scale: 1.1 }, { at: '-1.5', duration: 1.5, ease: 'easeInOut' }],
-                ]);
-                await animate([
-                    ['.icon-1', { scale: 1 }, { duration: 0.5 }],
-                    ['.icon-2', { scale: 1 }, { at: '-0.5' }],
-                    ['.icon-3', { scale: 1 }, { at: '-0.5' }],
-                    ['.icon-4', { scale: 1 }, { at: '-0.5' }],
-                ]);
-
-                await animate([
-                    ['.icon-1', { x: 100, y: 0, scale: 1.1 }, { duration: 1.5, ease: 'easeInOut' }],
-                    ['.icon-2', { x: 0, y: -100, scale: 1.1 }, { at: '-1.5', duration: 1.5, ease: 'easeInOut' }],
-                    ['.icon-3', { x: 0, y: 100, scale: 1.1 }, { at: '-1.5', duration: 1.5, ease: 'easeInOut' }],
-                    ['.icon-4', { x: -100, y: 0, scale: 1.1 }, { at: '-1.5', duration: 1.5, ease: 'easeInOut' }],
-                ]);
-                await animate([
-                    ['.icon-1', { scale: 1 }, { duration: 0.5 }],
-                    ['.icon-2', { scale: 1 }, { at: '-0.5' }],
-                    ['.icon-3', { scale: 1 }, { at: '-0.5' }],
-                    ['.icon-4', { scale: 1 }, { at: '-0.5' }],
-                ]);
-                
-                 await animate([
-                    ['.icon-1', { x: 0, y: -100, scale: 1.1 }, { duration: 1.5, ease: 'easeInOut' }],
-                    ['.icon-2', { x: -100, y: 0, scale: 1.1 }, { at: '-1.5', duration: 1.5, ease: 'easeInOut' }],
-                    ['.icon-3', { x: 100, y: 0, scale: 1.1 }, { at: '-1.5', duration: 1.5, ease: 'easeInOut' }],
-                    ['.icon-4', { x: 0, y: 100, scale: 1.1 }, { at: '-1.5', duration: 1.5, ease: 'easeInOut' }],
-                ]);
-                await animate([
-                    ['.icon-1', { scale: 1 }, { duration: 0.5 }],
-                    ['.icon-2', { scale: 1 }, { at: '-0.5' }],
-                    ['.icon-3', { scale: 1 }, { at: '-0.5' }],
-                    ['.icon-4', { scale: 1 }, { at: '-0.5' }],
-                ]);
-            }
-        }
-        
-        animation();
-        iconAnimation();
-
-    }, [animate, scope]);
-
-    return (
-        <div ref={scope} className="relative w-[300px] h-[300px] md:w-[400px] md:h-[400px] flex items-center justify-center">
-            {icons.map((item, index) => (
-                <div
-                    key={index}
-                    className={`${item.className} absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center bg-background rounded-2xl shadow-cyber-dark w-28 h-28 md:w-32 md:h-32`}
-                >
-                    <item.icon className="w-12 h-12 md:w-16 md:h-16 text-primary" />
-                </div>
-            ))}
-        </div>
-    );
-};
-
+  return (
+    <TorusKnot ref={meshRef} args={[1, 0.4, 256, 32]}>
+        <meshNormalMaterial />
+    </TorusKnot>
+  )
+}
 
 const blogPostIcons: { [key: string]: React.FC<React.ComponentProps<'svg'>> } = {
   'ultimate-resume-guide-2024': PenTool,
   '5-common-resume-mistakes': FileSignature,
   'how-to-beat-ats': BrainCircuit,
 };
-
-const GridPatternBackground = () => {
-    const { scrollYProgress } = useScroll();
-    const y = useTransform(scrollYProgress, [0, 1], [0, 300]);
-
-    return (
-        <motion.div
-            style={{ y }}
-            className="absolute inset-0 z-0 h-full w-full"
-        >
-            <div className="absolute inset-0 z-0 h-full w-full bg-background" />
-            <svg
-                className="absolute inset-0 h-full w-full opacity-20"
-                xmlns="http://www.w3.org/2000/svg"
-            >
-                <defs>
-                    <pattern
-                        id="grid"
-                        width="40"
-                        height="40"
-                        patternUnits="userSpaceOnUse"
-                    >
-                        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="hsl(var(--foreground) / 0.2)" strokeWidth="0.5" />
-                    </pattern>
-                </defs>
-                <rect width="100%" height="100%" fill="url(#grid)" />
-            </svg>
-            <div className="absolute inset-0 z-10 bg-gradient-to-b from-background via-transparent to-background" />
-        </motion.div>
-    );
-}
 
 export default function Home() {
   const [sentenceIndex, setSentenceIndex] = useState(0);
@@ -249,12 +132,21 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="relative flex flex-col items-center bg-background text-foreground overflow-x-hidden">
-      <GridPatternBackground />
+    <div className="flex flex-col items-center bg-background text-foreground overflow-x-hidden">
       
       {/* Hero Section */}
-      <section className="relative w-full py-20 md:py-32">
-        <div className="container mx-auto px-4 md:px-6">
+      <section className="w-full py-20 md:py-32 relative">
+       <div className="absolute inset-0 z-0 h-full w-full">
+            <Suspense fallback={null}>
+                <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
+                    <ambientLight intensity={0.5} />
+                    <pointLight position={[10, 10, 10]} />
+                    <Scene />
+                </Canvas>
+            </Suspense>
+             <div className="absolute inset-0 z-10 bg-gradient-to-b from-background via-transparent to-background" />
+        </div>
+        <div className="container mx-auto px-4 md:px-6 relative z-10">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div 
               initial={{ opacity: 0, x: -50 }}
@@ -282,21 +174,13 @@ export default function Home() {
                 Create a professional, ATS-optimized resume in minutes. Let our AI guide you to landing your dream job.
               </p>
               <div className="flex flex-col gap-4 sm:flex-row justify-center md:justify-start">
-                <Button asChild size="lg" className="group">
+                <Button asChild size="lg" className="group" variant="default">
                   <Link href="/templates">
-                    Create My Resume for Free
+                    Create My Resume
                     <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </Button>
               </div>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="hidden md:flex items-center justify-center"
-            >
-              <AnimatedFeatureIcons />
             </motion.div>
           </div>
         </div>
@@ -352,15 +236,6 @@ export default function Home() {
         <div className="container mx-auto px-4 md:px-6">
             <div className="grid md:grid-cols-2 gap-16 items-center">
                 <motion.div 
-                  initial={{ opacity: 0, x: -50 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true, amount: 0.5 }}
-                  transition={{ duration: 0.8 }}
-                  className="hidden md:flex justify-center"
-                 >
-                    <AnimatedFeatureIcons />
-                 </motion.div>
-                 <motion.div 
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, amount: 0.3 }}
@@ -385,6 +260,14 @@ export default function Home() {
                         ))}
                     </ul>
                 </motion.div>
+                 <motion.div 
+                  initial={{ opacity: 0, x: -50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, amount: 0.5 }}
+                  transition={{ duration: 0.8 }}
+                  className="hidden md:flex justify-center"
+                 >
+                 </motion.div>
             </div>
         </div>
       </section>
@@ -546,7 +429,7 @@ export default function Home() {
             Start for free and see how ResumeAI can transform your job search. No credit card required.
           </p>
           <div className="mt-8">
-            <Button asChild size="lg" className="group">
+            <Button asChild size="lg" className="group" variant="default">
               <Link href="/templates">
                 Create Your Resume Now
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
@@ -558,5 +441,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
