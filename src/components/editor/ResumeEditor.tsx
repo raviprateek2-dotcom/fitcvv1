@@ -18,6 +18,7 @@ import { Skeleton } from '../ui/skeleton';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import Link from 'next/link';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
 // Define types for resume structure
 type PersonalInfo = {
@@ -44,13 +45,19 @@ type Education = {
   date: string;
 };
 
+type Skill = {
+  id: number;
+  name: string;
+  level: 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert';
+};
+
 type ResumeData = {
   title?: string;
   personalInfo: PersonalInfo;
   summary: string;
   experience: Experience[];
   education: Education[];
-  skills: string;
+  skills: Skill[];
   jobDescription: string;
   templateId?: string;
 };
@@ -146,7 +153,16 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
 
   useEffect(() => {
     if (initialResumeData) {
-      setResumeData(initialResumeData);
+        // Migration for skills from string to Skill[]
+        if (typeof initialResumeData.skills === 'string') {
+            const skillsFromString = initialResumeData.skills.split(',').map(s => s.trim()).filter(Boolean);
+            setResumeData({
+                ...initialResumeData,
+                skills: skillsFromString.map(name => ({ id: Date.now() + Math.random(), name, level: 'Advanced' }))
+            });
+        } else {
+            setResumeData(initialResumeData);
+        }
     }
   }, [initialResumeData]);
 
@@ -182,9 +198,19 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   // Auto-save useEffect
   useEffect(() => {
     if (!resumeData || !initialResumeData || isPrintMode) return;
+    
+    // Create a comparable version of initial data to handle the migration
+    let comparableInitial = initialResumeData;
+    if (typeof initialResumeData.skills === 'string') {
+        const skillsFromString = initialResumeData.skills.split(',').map(s => s.trim()).filter(Boolean);
+        comparableInitial = {
+            ...initialResumeData,
+            skills: skillsFromString.map(name => ({ id: expect.any(Number), name, level: 'Advanced' }))
+        }
+    }
 
-    // Check if there are actual changes
-    if (JSON.stringify(resumeData) === JSON.stringify(initialResumeData)) {
+    // A simple deep-enough comparison to check for changes
+    if (JSON.stringify(resumeData) === JSON.stringify(comparableInitial)) {
       return;
     }
 
@@ -209,15 +235,15 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   };
   
   const handleNestedChange = (
-    section: 'experience' | 'education', 
+    section: 'experience' | 'education' | 'skills', 
     id: number, 
-    field: keyof Experience | keyof Education, 
+    field: keyof Experience | keyof Education | keyof Skill, 
     value: string
   ) => {
     setResumeData(prev => {
         if (!prev) return null;
         const list = prev[section];
-        const updatedList = list.map(item => 
+        const updatedList = (list as any[]).map(item => 
             item.id === id ? { ...item, [field]: value } : item
         );
         return { ...prev, [section]: updatedList };
@@ -250,6 +276,20 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
         ...prev,
         education: prev.education.filter(edu => edu.id !== id)
     } : null));
+  };
+
+  const addSkill = () => {
+    setResumeData(prev => (prev ? {
+        ...prev,
+        skills: [...(prev.skills || []), { id: Date.now(), name: '', level: 'Advanced' }]
+    } : null));
+  };
+
+  const removeSkill = (id: number) => {
+      setResumeData(prev => (prev ? {
+          ...prev,
+          skills: prev.skills.filter(skill => skill.id !== id)
+      } : null));
   };
   
   const handlePrint = () => {
@@ -433,9 +473,37 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
 
               <AccordionItem value="skills">
                 <AccordionTrigger className="font-semibold">Skills</AccordionTrigger>
-                <AccordionContent className="space-y-2 pt-4">
-                  <Label>Enter skills separated by commas</Label>
-                  <Textarea value={resumeData.skills} onChange={e => handleFieldChange('skills', e.target.value)} rows={3} />
+                <AccordionContent className="space-y-4 pt-4">
+                  {resumeData.skills.map((skill) => (
+                    <div key={skill.id} className="p-4 border rounded-lg space-y-4">
+                        <div className="flex items-center gap-4">
+                            <div className="flex-grow space-y-2">
+                                <Label>Skill</Label>
+                                <Input value={skill.name} onChange={e => handleNestedChange('skills', skill.id, 'name', e.target.value)} />
+                            </div>
+                            <div className="space-y-2">
+                                <Label>Level</Label>
+                                <Select value={skill.level} onValueChange={value => handleNestedChange('skills', skill.id, 'level', value)}>
+                                    <SelectTrigger className="w-[180px]">
+                                        <SelectValue placeholder="Select level" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="Beginner">Beginner</SelectItem>
+                                        <SelectItem value="Intermediate">Intermediate</SelectItem>
+                                        <SelectItem value="Advanced">Advanced</SelectItem>
+                                        <SelectItem value="Expert">Expert</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <Button variant="ghost" size="icon" onClick={() => removeSkill(skill.id)} className="text-destructive hover:text-destructive-foreground hover:bg-destructive self-end">
+                                <Trash2 className="h-4 w-4" />
+                            </Button>
+                        </div>
+                    </div>
+                  ))}
+                   <Button variant="outline" onClick={addSkill} className="w-full">
+                      <PlusCircle className="mr-2 h-4 w-4" /> Add Skill
+                  </Button>
                 </AccordionContent>
               </AccordionItem>
 
