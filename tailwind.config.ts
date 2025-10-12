@@ -1,3 +1,4 @@
+
 import type { Config } from 'tailwindcss';
 
 const config = {
@@ -90,6 +91,13 @@ const config = {
         'fade-in': 'fade-in 0.6s ease-out forwards',
         'fade-in-up': 'fade-in-up 0.6s ease-out forwards',
         shimmer: 'shimmer 2s infinite linear',
+      },
+      animationDelay: {
+        '100': '100ms',
+        '200': '200ms',
+        '300': '300ms',
+        '400': '400ms',
+        '500': '500ms',
       },
     },
   },
