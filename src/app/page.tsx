@@ -194,7 +194,7 @@ export default function Home() {
       </section>
 
       {/* How It Works Section */}
-      <motion.section 
+      <motion.section
         id="how-it-works"
         className="relative w-full py-20 md:py-32 bg-secondary/30 backdrop-blur-sm"
         variants={sectionVariants}
@@ -205,7 +205,7 @@ export default function Home() {
         <div
             className="container mx-auto px-4 md:px-6"
         >
-              <motion.div 
+              <motion.div
                  variants={itemVariants}
                 className="flex flex-col items-center justify-center space-y-4 text-center mb-12"
               >
@@ -214,6 +214,9 @@ export default function Home() {
               </motion.div>
               <motion.div
                  variants={sectionVariants}
+                 initial="hidden"
+                 whileInView="visible"
+                 viewport={{ once: true, amount: 0.2 }}
                  className="mx-auto grid items-start gap-8 sm:max-w-4xl sm:grid-cols-3 md:gap-12"
               >
                   <motion.div variants={itemVariants} className="flex flex-col gap-4 items-center text-center p-6">
@@ -242,8 +245,8 @@ export default function Home() {
       </motion.section>
 
       {/* Features Section */}
-       <motion.section 
-        id="features" 
+       <motion.section
+        id="features"
         className="relative w-full py-20 md:py-32"
         variants={sectionVariants}
         initial="hidden"
@@ -253,6 +256,9 @@ export default function Home() {
         <div className="container mx-auto px-4 md:px-6">
             <motion.div
               variants={sectionVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.2 }}
               className="grid md:grid-cols-2 gap-16 items-center"
             >
                 <motion.div variants={itemVariants} className="space-y-8">
@@ -260,7 +266,13 @@ export default function Home() {
                       <div className="inline-block rounded-lg bg-secondary px-3 py-1 text-sm font-medium">Everything You Need</div>
                       <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Features that help you stand out</h2>
                     </div>
-                    <motion.ul variants={sectionVariants} className="grid sm:grid-cols-1 gap-8">
+                    <motion.ul
+                      variants={sectionVariants}
+                      initial="hidden"
+                      whileInView="visible"
+                      viewport={{ once: true, amount: 0.2 }}
+                      className="grid sm:grid-cols-1 gap-8"
+                    >
                         {features.map((feature, index) => (
                           <motion.li key={index} variants={itemVariants} className="flex items-start gap-4">
                               <div className="bg-primary/10 p-3 rounded-full mt-1">
@@ -281,8 +293,8 @@ export default function Home() {
       </motion.section>
 
       {/* Testimonials Section */}
-      <motion.section 
-        id="testimonials" 
+      <motion.section
+        id="testimonials"
         className="relative w-full py-20 md:py-32 bg-secondary/30 backdrop-blur-sm"
         variants={sectionVariants}
         initial="hidden"
@@ -343,7 +355,7 @@ export default function Home() {
       </motion.section>
 
       {/* Why Us Section */}
-      <motion.section 
+      <motion.section
         className="relative w-full py-20 md:py-32"
         variants={sectionVariants}
         initial="hidden"
@@ -353,9 +365,21 @@ export default function Home() {
           <div
             className="container mx-auto px-4 md:px-6"
           >
-               <motion.div variants={sectionVariants} className="space-y-8 max-w-3xl mx-auto text-center">
+               <motion.div
+                variants={sectionVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.2 }}
+                className="space-y-8 max-w-3xl mx-auto text-center"
+               >
                   <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Don't just write a resume. Design your future.</motion.h2>
-                  <motion.ul variants={sectionVariants} className="space-y-4 text-xl inline-flex flex-col items-start text-left">
+                  <motion.ul
+                    variants={sectionVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.2 }}
+                    className="space-y-4 text-xl inline-flex flex-col items-start text-left"
+                  >
                     <motion.li variants={itemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>AI-powered content suggestions.</span></motion.li>
                     <motion.li variants={itemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>Professionally designed templates.</span></motion.li>
                     <motion.li variants={itemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>Intuitive real-time editor.</span></motion.li>
@@ -365,8 +389,8 @@ export default function Home() {
       </motion.section>
 
       {/* Blog Section */}
-      <motion.section 
-        id="blog" 
+      <motion.section
+        id="blog"
         className="relative w-full py-20 md:py-32 bg-secondary/30 backdrop-blur-sm"
         variants={sectionVariants}
         initial="hidden"
@@ -387,6 +411,9 @@ export default function Home() {
             </motion.div>
             <motion.div
               variants={sectionVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.2 }}
               className="grid gap-8 md:grid-cols-3"
             >
               {blogPosts.slice(0, 3).map((post) => {
@@ -430,7 +457,7 @@ export default function Home() {
       </motion.section>
 
       {/* Final CTA */}
-      <motion.section 
+      <motion.section
         className="relative w-full py-20 md:py-32"
         variants={sectionVariants}
         initial="hidden"
