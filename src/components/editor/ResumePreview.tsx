@@ -50,6 +50,7 @@ type Styling = {
   bodyFontSize: number;
   headingFontSize: number;
   titleFontSize: number;
+  accentColor: string;
 };
 
 type ResumeData = {
@@ -76,15 +77,15 @@ interface ResumePreviewProps {
 const templates: Record<string, { header: string, sectionTitle: string }> = {
     modern: {
         header: 'text-center mb-6',
-        sectionTitle: 'text-lg font-bold text-primary mb-2 uppercase tracking-wider font-headline'
+        sectionTitle: 'text-lg font-bold text-[var(--accent-color)] mb-2 uppercase tracking-wider font-headline'
     },
     classic: {
-        header: 'mb-6 border-b-2 pb-4 border-gray-800',
+        header: 'mb-6 border-b-2 pb-4',
         sectionTitle: 'text-sm font-extrabold text-gray-700 mb-2 uppercase tracking-widest font-serif'
     },
     creative: {
-        header: 'text-center mb-8 p-4 bg-primary/10 rounded-lg',
-        sectionTitle: 'text-xl font-bold text-primary mb-3 font-headline'
+        header: 'text-center mb-8 p-4 rounded-lg',
+        sectionTitle: 'text-xl font-bold text-[var(--accent-color)] mb-3 font-headline'
     },
     minimalist: {
         header: 'text-left mb-8',
@@ -106,11 +107,13 @@ const skillLevelToValue = {
 const ProfessionalTemplatePreview = ({ resumeData }: { resumeData: ResumeData }) => {
     const { personalInfo, summary, experience, education, skills, projects, styling } = resumeData;
     const templateStyles = templates.professional;
+    const accentColor = styling?.accentColor || 'hsl(262.1 83.3% 57.8%)';
     
     const dynamicStyles = {
         '--title-font-size': `${styling?.titleFontSize || 36}px`,
         '--heading-font-size': `${styling?.headingFontSize || 18}px`,
         '--body-font-size': `${styling?.bodyFontSize || 14}px`,
+        '--accent-color': accentColor,
     } as React.CSSProperties;
 
     return (
@@ -119,15 +122,15 @@ const ProfessionalTemplatePreview = ({ resumeData }: { resumeData: ResumeData })
             <aside className="w-1/3 bg-slate-900/50 text-slate-200 p-8 space-y-8 flex flex-col">
                 <header className="text-center">
                     <h1 style={{ fontSize: 'var(--title-font-size)'}} className="font-bold text-white font-headline leading-tight">{personalInfo.name}</h1>
-                    <h2 style={{ fontSize: 'var(--heading-font-size)'}} className="font-semibold text-primary">{personalInfo.title}</h2>
+                    <h2 style={{ fontSize: 'var(--heading-font-size)', color: 'var(--accent-color)'}} className="font-semibold">{personalInfo.title}</h2>
                 </header>
 
                 <div className="space-y-4 text-sm">
                     <h3 style={{ fontSize: 'var(--heading-font-size)'}} className="font-bold text-white uppercase tracking-wider font-headline border-b border-slate-600 pb-1">Contact</h3>
-                     <div className="flex items-center gap-2"><AtSign size={14} className="text-primary"/><span>{personalInfo.email}</span></div>
-                    <div className="flex items-center gap-2"><Phone size={14} className="text-primary"/><span>{personalInfo.phone}</span></div>
-                    <div className="flex items-center gap-2"><MapPin size={14} className="text-primary"/><span>{personalInfo.location}</span></div>
-                    {personalInfo.website && <div className="flex items-center gap-2"><Globe size={14} className="text-primary"/><span>{personalInfo.website}</span></div>}
+                     <div className="flex items-center gap-2"><AtSign size={14} style={{ color: 'var(--accent-color)' }}/><span>{personalInfo.email}</span></div>
+                    <div className="flex items-center gap-2"><Phone size={14} style={{ color: 'var(--accent-color)' }}/><span>{personalInfo.phone}</span></div>
+                    <div className="flex items-center gap-2"><MapPin size={14} style={{ color: 'var(--accent-color)' }}/><span>{personalInfo.location}</span></div>
+                    {personalInfo.website && <div className="flex items-center gap-2"><Globe size={14} style={{ color: 'var(--accent-color)' }}/><span>{personalInfo.website}</span></div>}
                 </div>
 
                 <div className="space-y-4">
@@ -136,7 +139,7 @@ const ProfessionalTemplatePreview = ({ resumeData }: { resumeData: ResumeData })
                         {(skills || []).map(skill => (
                             <div key={skill.id} className="text-sm">
                                 <p className="font-semibold mb-1">{skill.name}</p>
-                                <Progress value={skillLevelToValue[skill.level]} className="h-2 bg-slate-700" />
+                                <Progress value={skillLevelToValue[skill.level]} className="h-2 bg-slate-700" indicatorClassName="bg-[var(--accent-color)]" />
                             </div>
                         ))}
                      </div>
@@ -159,12 +162,12 @@ const ProfessionalTemplatePreview = ({ resumeData }: { resumeData: ResumeData })
             {/* Main Content */}
             <main className="w-2/3 p-8 overflow-y-auto">
                 <section>
-                    <h3 className={templateStyles.sectionTitle} style={{ fontSize: 'var(--heading-font-size)'}}><Star className="inline-block mr-2 text-primary" size={18}/>Summary</h3>
+                    <h3 className={templateStyles.sectionTitle} style={{ fontSize: 'var(--heading-font-size)'}}><Star className="inline-block mr-2 text-[var(--accent-color)]" size={18}/>Summary</h3>
                     <p className="leading-relaxed">{summary}</p>
                 </section>
                 <Separator className="my-6 bg-slate-700" />
                 <section>
-                    <h3 className={templateStyles.sectionTitle} style={{ fontSize: 'var(--heading-font-size)'}}><Briefcase className="inline-block mr-2 text-primary" size={18}/>Experience</h3>
+                    <h3 className={templateStyles.sectionTitle} style={{ fontSize: 'var(--heading-font-size)'}}><Briefcase className="inline-block mr-2 text-[var(--accent-color)]" size={18}/>Experience</h3>
                     <div className="space-y-5">
                     {experience.map((exp) => (
                         <div key={exp.id}>
@@ -173,12 +176,12 @@ const ProfessionalTemplatePreview = ({ resumeData }: { resumeData: ResumeData })
                             <p className="text-xs text-slate-400">{exp.date}</p>
                         </div>
                         <p className="italic text-slate-300 mb-2">{exp.company}</p>
-                        <ul className="list-disc pl-5 space-y-1 leading-relaxed">
+                        <ul className="list-disc pl-5 space-y-1 leading-relaxed" style={{ '--accent-color': accentColor } as React.CSSProperties}>
                             {exp.description.split('\n').map((line, index) => {
                                 const trimmedLine = line.trim();
                                 if (!trimmedLine) return null;
                                 const cleanedLine = trimmedLine.replace(/^[-*]\s*/, '');
-                                return <li key={index}>{cleanedLine}</li>;
+                                return <li key={index} className="marker:text-[var(--accent-color)]">{cleanedLine}</li>;
                             })}
                         </ul>
                         </div>
@@ -187,20 +190,20 @@ const ProfessionalTemplatePreview = ({ resumeData }: { resumeData: ResumeData })
                 </section>
                 <Separator className="my-6 bg-slate-700" />
                 <section>
-                    <h3 className={templateStyles.sectionTitle} style={{ fontSize: 'var(--heading-font-size)'}}><Code className="inline-block mr-2 text-primary" size={18}/>Projects</h3>
+                    <h3 className={templateStyles.sectionTitle} style={{ fontSize: 'var(--heading-font-size)'}}><Code className="inline-block mr-2 text-[var(--accent-color)]" size={18}/>Projects</h3>
                     <div className="space-y-5">
                     {(projects || []).map((proj) => (
                         <div key={proj.id}>
                         <div className="flex justify-between items-baseline">
                             <h4 className="font-bold text-md text-slate-100 font-headline">{proj.name}</h4>
-                            {proj.link && <a href={proj.link} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">View Project</a>}
+                            {proj.link && <a href={proj.link} target="_blank" rel="noopener noreferrer" className="text-xs text-[var(--accent-color)] hover:underline">View Project</a>}
                         </div>
-                        <ul className="list-disc pl-5 space-y-1 leading-relaxed mt-1">
+                        <ul className="list-disc pl-5 space-y-1 leading-relaxed mt-1" style={{ '--accent-color': accentColor } as React.CSSProperties}>
                             {proj.description.split('\n').map((line, index) => {
                                 const trimmedLine = line.trim();
                                 if (!trimmedLine) return null;
                                 const cleanedLine = trimmedLine.replace(/^[-*]\s*/, '');
-                                return <li key={index}>{cleanedLine}</li>;
+                                return <li key={index} className="marker:text-[var(--accent-color)]">{cleanedLine}</li>;
                             })}
                         </ul>
                         </div>
@@ -221,11 +224,13 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
 
   const { personalInfo, summary, experience, education, skills, projects, styling } = resumeData;
   const templateStyles = templates[templateId] || templates.modern;
+  const accentColor = styling?.accentColor || 'hsl(262.1 83.3% 57.8%)';
   
   const dynamicStyles = {
     '--title-font-size': `${styling?.titleFontSize || 36}px`,
     '--heading-font-size': `${styling?.headingFontSize || 18}px`,
     '--body-font-size': `${styling?.bodyFontSize || 14}px`,
+    '--accent-color': accentColor
   } as React.CSSProperties;
 
 
@@ -233,7 +238,7 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
     <div style={dynamicStyles} className="bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full p-8 mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-auto print:shadow-none print:rounded-none print:max-h-full font-body text-[var(--body-font-size)]">
       <header className={templateStyles.header}>
         <h1 style={{ fontSize: 'var(--title-font-size)'}} className="font-bold text-gray-900 font-headline leading-tight">{personalInfo.name}</h1>
-        <h2 style={{ fontSize: 'var(--heading-font-size)'}} className="font-semibold text-primary font-headline">{personalInfo.title}</h2>
+        <h2 style={{ fontSize: 'var(--heading-font-size)', color: 'var(--accent-color)'}} className="font-semibold font-headline">{personalInfo.title}</h2>
         <div className="flex justify-center items-center gap-4 text-sm text-gray-600 mt-2 flex-wrap">
           <div className="flex items-center gap-1.5"><AtSign size={14} />{personalInfo.email}</div>
           <div className="flex items-center gap-1.5"><Phone size={14} />{personalInfo.phone}</div>
@@ -261,7 +266,7 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
                 <p className="text-sm text-gray-600">{exp.date}</p>
               </div>
               <p className="text-sm italic text-gray-700 mb-1">{exp.company}</p>
-              <ul className="list-disc pl-5 space-y-1 text-sm">
+              <ul className="list-disc pl-5 space-y-1 text-sm marker:text-[var(--accent-color)]">
                  {exp.description.split('\n').map((line, index) => {
                     const trimmedLine = line.trim();
                     if (!trimmedLine) return null;
@@ -283,9 +288,9 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
             <div key={proj.id}>
               <div className="flex justify-between items-baseline">
                 <h4 className="font-bold text-md font-headline">{proj.name}</h4>
-                 {proj.link && <a href={proj.link} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline">View Project</a>}
+                 {proj.link && <a href={proj.link} target="_blank" rel="noopener noreferrer" className="text-sm text-[var(--accent-color)] hover:underline">View Project</a>}
               </div>
-              <ul className="list-disc pl-5 space-y-1 text-sm mt-1">
+              <ul className="list-disc pl-5 space-y-1 text-sm mt-1 marker:text-[var(--accent-color)]">
                  {proj.description.split('\n').map((line, index) => {
                     const trimmedLine = line.trim();
                     if (!trimmedLine) return null;
@@ -304,7 +309,7 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
         <h3 className={templateStyles.sectionTitle} style={{ fontSize: 'var(--heading-font-size)'}}>Skills</h3>
         <div className="flex flex-wrap gap-2">
             {(skills || []).map((skill, index) => (
-                <Badge key={skill.id} variant="secondary">{skill.name}</Badge>
+                <Badge key={skill.id} variant="secondary" style={{ backgroundColor: `${accentColor}1A`, color: accentColor, borderColor: `${accentColor}40` }}>{skill.name}</Badge>
             ))}
         </div>
       </section>
@@ -333,18 +338,20 @@ export function CoverLetterPreview({ resumeData }: ResumePreviewProps) {
   const { personalInfo, coverLetter, companyInfo, templateId = 'modern', styling } = resumeData;
   const templateStyles = templates[templateId] || templates.modern;
   const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  const accentColor = styling?.accentColor || 'hsl(262.1 83.3% 57.8%)';
 
   const dynamicStyles = {
     '--title-font-size': `${styling?.titleFontSize || 36}px`,
     '--heading-font-size': `${styling?.headingFontSize || 18}px`,
     '--body-font-size': `${styling?.bodyFontSize || 14}px`,
+    '--accent-color': accentColor,
   } as React.CSSProperties;
 
 
   const renderHeader = () => (
     <header className={templateStyles.header}>
         <h1 style={{ fontSize: 'var(--title-font-size)'}} className="font-bold text-gray-900 font-headline leading-tight">{personalInfo.name}</h1>
-        <h2 style={{ fontSize: 'var(--heading-font-size)'}} className="font-semibold text-primary font-headline">{personalInfo.title}</h2>
+        <h2 style={{ fontSize: 'var(--heading-font-size)', color: 'var(--accent-color)'}} className="font-semibold font-headline">{personalInfo.title}</h2>
         <div className="flex justify-center items-center gap-4 text-sm text-gray-600 mt-2 flex-wrap">
           <div className="flex items-center gap-1.5"><AtSign size={14} />{personalInfo.email}</div>
           <div className="flex items-center gap-1.5"><Phone size={14} />{personalInfo.phone}</div>
@@ -358,7 +365,7 @@ export function CoverLetterPreview({ resumeData }: ResumePreviewProps) {
      <div style={dynamicStyles} className="bg-slate-800 text-slate-300 shadow-2xl rounded-lg w-full h-full mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-hidden print:shadow-none print:rounded-none print:max-h-full font-body flex flex-col p-8 text-[var(--body-font-size)]">
         <header className="text-center mb-8">
             <h1 style={{ fontSize: 'var(--title-font-size)'}} className="font-bold text-white font-headline leading-tight">{personalInfo.name}</h1>
-            <h2 style={{ fontSize: 'var(--heading-font-size)'}} className="font-semibold text-primary">{personalInfo.title}</h2>
+            <h2 style={{ fontSize: 'var(--heading-font-size)', color: 'var(--accent-color)'}} className="font-semibold">{personalInfo.title}</h2>
         </header>
         <main className="leading-relaxed space-y-4 whitespace-pre-wrap">
           <p>{date}</p>

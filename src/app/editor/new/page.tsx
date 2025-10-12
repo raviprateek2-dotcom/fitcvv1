@@ -100,6 +100,7 @@ export default function NewResumePage() {
               bodyFontSize: 14,
               headingFontSize: 18,
               titleFontSize: 36,
+              accentColor: 'hsl(262.1 83.3% 57.8%)', // Default accent color
             }
           };
 

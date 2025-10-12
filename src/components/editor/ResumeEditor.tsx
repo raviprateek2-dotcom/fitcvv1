@@ -22,6 +22,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { writeCoverLetter as writeCoverLetterAction } from '@/app/actions/ai-cover-letter';
 import { Slider } from '../ui/slider';
+import { cn } from '@/lib/utils';
 
 // Define types for resume structure
 type PersonalInfo = {
@@ -65,6 +66,7 @@ type Styling = {
   bodyFontSize: number;
   headingFontSize: number;
   titleFontSize: number;
+  accentColor: string;
 };
 
 type ResumeData = {
@@ -87,6 +89,16 @@ type ResumeData = {
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 type EditorTab = 'resume' | 'cover-letter';
+
+const colorSwatches = [
+  'hsl(262.1 83.3% 57.8%)', // Default Purple
+  'hsl(217.2 91.2% 59.8%)', // Blue
+  'hsl(142.1 76.2% 36.3%)', // Green
+  'hsl(346.8 77.2% 49.8%)', // Red
+  'hsl(24.6 95% 53.1%)',   // Orange
+  'hsl(0 0% 9%)',          // Black
+];
+
 
 const EditorLoadingSkeleton = () => {
     return (
@@ -188,7 +200,17 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
         if (!Array.isArray(updatedData.projects)) updatedData.projects = [];
         if (typeof updatedData.coverLetter !== 'string') updatedData.coverLetter = '';
         if (typeof updatedData.companyInfo !== 'object' || updatedData.companyInfo === null) updatedData.companyInfo = { name: '', jobTitle: '' };
-        if (typeof updatedData.styling !== 'object' || updatedData.styling === null) updatedData.styling = { bodyFontSize: 14, headingFontSize: 18, titleFontSize: 36 };
+        if (typeof updatedData.styling !== 'object' || updatedData.styling === null) {
+            updatedData.styling = { 
+                bodyFontSize: 14, 
+                headingFontSize: 18, 
+                titleFontSize: 36,
+                accentColor: 'hsl(262.1 83.3% 57.8%)'
+            };
+        }
+        if (typeof updatedData.styling.accentColor !== 'string') {
+            updatedData.styling.accentColor = 'hsl(262.1 83.3% 57.8%)';
+        }
 
 
         setResumeData(updatedData);
@@ -259,7 +281,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     handleFieldChange('companyInfo', { ...resumeData.companyInfo, [name]: value });
   }
 
-  const handleStylingChange = (field: keyof Styling, value: number) => {
+  const handleStylingChange = (field: keyof Styling, value: string | number) => {
     if (!resumeData || !resumeData.styling) return;
     handleFieldChange('styling', { ...resumeData.styling, [field]: value });
   };
@@ -428,10 +450,29 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                 
                 <TabsContent value="resume" className="p-6">
                   <div className="space-y-6">
-                    <Accordion type="multiple" defaultValue={['personal-info', 'summary']} className="w-full">
+                    <Accordion type="multiple" defaultValue={['personal-info', 'summary', 'design']} className="w-full">
                         <AccordionItem value="design">
                           <AccordionTrigger className="font-semibold">Design</AccordionTrigger>
                           <AccordionContent className="space-y-4 pt-4">
+                            <div className="space-y-2">
+                              <Label>Color Palette</Label>
+                              <div className="flex flex-wrap gap-2">
+                                {colorSwatches.map(color => (
+                                  <button
+                                    key={color}
+                                    type="button"
+                                    onClick={() => handleStylingChange('accentColor', color)}
+                                    className={cn(
+                                      "w-8 h-8 rounded-full border-2 transition-all",
+                                      resumeData.styling?.accentColor === color ? 'border-primary ring-2 ring-primary' : 'border-transparent'
+                                    )}
+                                    style={{ backgroundColor: color }}
+                                  >
+                                    <span className="sr-only">Set color to {color}</span>
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
                             <div className="space-y-2">
                               <Label>Title Font Size: {resumeData.styling?.titleFontSize}px</Label>
                               <Slider
