@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth, useUser } from '@/firebase';
-import { initiateEmailSignIn } from '@/firebase/non-blocking-login';
+import { initiateEmailSignIn, initiateGoogleSignIn } from '@/firebase/non-blocking-login';
 import { useToast } from '@/hooks/use-toast';
 import { Rocket } from 'lucide-react';
 import Link from 'next/link';
@@ -61,6 +61,10 @@ export default function LoginPage() {
     }
     initiateEmailSignIn(auth, email, password);
   };
+  
+  const handleGoogleSignIn = () => {
+    initiateGoogleSignIn(auth);
+  };
 
   return (
     <Card className="w-full max-w-sm">
@@ -72,7 +76,7 @@ export default function LoginPage() {
         <CardDescription>Enter your credentials to access your account.</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
-        <Button variant="outline" className="w-full">
+        <Button variant="outline" className="w-full" onClick={handleGoogleSignIn}>
           <GoogleIcon className="mr-2 h-4 w-4" />
           Continue with Google
         </Button>
