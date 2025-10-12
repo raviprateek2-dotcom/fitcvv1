@@ -13,12 +13,6 @@ import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import dynamic from 'next/dynamic';
 
 
-const Scene = dynamic(() => import('@/components/common/Scene').then(mod => mod.Scene), { 
-  ssr: false,
-  loading: () => <div className="absolute inset-0 z-0" style={{ height: '500px', width: '500px' }}/>
-});
-
-
 const features = [
   {
     icon: <DraftingCompass className="w-8 h-8 text-primary" />,
@@ -209,11 +203,7 @@ export default function Home() {
                   className="hidden md:flex justify-center items-center h-full"
                  >
                    <div className="relative w-full h-full min-h-[300px]">
-                      {mounted && (
-                         <Suspense fallback={null}>
-                           <Scene />
-                         </Suspense>
-                      )}
+                      
                   </div>
             </motion.div>
           </div>
