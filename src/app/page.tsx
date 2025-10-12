@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { blogPosts } from '@/lib/blog-posts';
 import { ArrowRight, CheckCircle2, DraftingCompass, FileText, Sparkles, Zap, PenTool, FileSignature, BrainCircuit, Star } from 'lucide-react';
 import Link from 'next/link';
-import { Suspense, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import Autoplay from "embla-carousel-autoplay";
@@ -117,12 +117,7 @@ const GridPatternBackground = () => {
 
 export default function Home() {
   const [sentenceIndex, setSentenceIndex] = useState(0);
-  const { scrollYProgress } = useScroll();
-  const heroY = useTransform(scrollYProgress, [0, 0.1], ['0%', '-20%']);
   
-  const sectionHeaderY = useTransform(scrollYProgress, [0.1, 0.2], ['20px', '0px']);
-  const sectionHeaderOpacity = useTransform(scrollYProgress, [0.1, 0.2], [0, 1]);
-
   useEffect(() => {
     const timer = setInterval(() => {
       setSentenceIndex(prev => (prev + 1) % sentences.length);
@@ -156,12 +151,17 @@ export default function Home() {
     <div className="flex flex-col items-center bg-background text-foreground overflow-x-hidden">
       
       {/* Hero Section */}
-      <section className="w-full py-20 md:py-32 relative h-[80vh] md:h-auto">
+      <section className="w-full py-20 md:py-32 relative h-auto">
         <GridPatternBackground />
         <div className="container mx-auto px-4 md:px-6 relative z-10">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={sectionVariants}
+            className="grid md:grid-cols-2 gap-12 items-center"
+          >
             <motion.div 
-              style={{ y: heroY }}
+              variants={itemVariants}
               className="space-y-6 text-center md:text-left"
             >
               <h1 className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl">
@@ -192,7 +192,7 @@ export default function Home() {
                 </Button>
               </div>
             </motion.div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -200,7 +200,10 @@ export default function Home() {
       <section id="how-it-works" className="relative w-full py-20 md:py-32 bg-secondary/30 backdrop-blur-sm">
           <div className="container mx-auto px-4 md:px-6">
               <motion.div 
-                style={{ opacity: sectionHeaderOpacity, y: sectionHeaderY }}
+                 initial={{ opacity: 0, y: 20 }}
+                 whileInView={{ opacity: 1, y: 0 }}
+                 viewport={{ once: true, amount: 0.3 }}
+                 transition={{ duration: 0.5 }}
                 className="flex flex-col items-center justify-center space-y-4 text-center mb-12"
               >
                   <div className="inline-block rounded-lg bg-background/50 backdrop-blur-sm px-3 py-1 text-sm font-medium border">How It Works</div>
@@ -442,5 +445,4 @@ export default function Home() {
       </section>
     </div>
   );
-
-    
+}
