@@ -5,11 +5,12 @@ import { Button } from '@/components/ui/button';
 import { blogPosts } from '@/lib/blog-posts';
 import { ArrowRight, CheckCircle2, DraftingCompass, FileText, Sparkles, Zap } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import Autoplay from "embla-carousel-autoplay";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { AnimatedShapes } from '@/components/common/AnimatedShapes';
 
 
 const features = [
@@ -105,8 +106,8 @@ export default function Home() {
   return (
     <div className="flex flex-col items-center bg-background text-foreground">
       {/* Hero Section */}
-      <section className="w-full py-20 md:py-32">
-        <div className="container mx-auto px-4 md:px-6">
+      <section className="w-full py-20 md:py-32 relative overflow-hidden">
+        <div className="container mx-auto px-4 md:px-6 relative z-10">
           <div className="grid md:grid-cols-1 text-center gap-12 items-center">
              <div className="space-y-6">
               <h1 className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl animate-fade-in-up">
@@ -127,6 +128,11 @@ export default function Home() {
               </div>
             </div>
           </div>
+        </div>
+        <div className="absolute inset-0 z-0">
+            <Suspense fallback={null}>
+                <AnimatedShapes />
+            </Suspense>
         </div>
       </section>
 

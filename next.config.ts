@@ -85,6 +85,7 @@ const nextConfig: NextConfig = {
       }
     ],
   },
+  transpilePackages: ['three'],
   async headers() {
     return [
       {
