@@ -88,9 +88,7 @@ export default function Home() {
                     <span className="animate-ping">|</span>
                 </span>
               </h1>
-              <p className="max-w-2xl mx-auto text-muted-foreground md:text-xl animate-fade-in-up animation-delay-200">
-                Our AI-powered resume builder helps you create a professional, ATS-friendly resume in minutes. No more writer's block, no more formatting nightmares.
-              </p>
+              
               <div className="flex flex-col gap-4 sm:flex-row animate-fade-in-up animation-delay-400 justify-center">
                 <Button asChild size="lg" className="group" variant="neuro">
                   <Link href="/templates">
