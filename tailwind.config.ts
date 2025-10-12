@@ -19,6 +19,9 @@ const config = {
       },
     },
     extend: {
+      backgroundImage: {
+        'gradient-glass': 'linear-gradient(135deg, rgba(192, 192, 192, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%)',
+      },
       fontFamily: {
         body: ['var(--font-inter)', 'sans-serif'],
         headline: ['var(--font-space-grotesk)', 'sans-serif'],
@@ -99,6 +102,12 @@ const config = {
         '400': '400ms',
         '500': '500ms',
       },
+      backdropBlur: {
+        '2xl': '40px',
+      },
+      saturate: {
+        '180': '1.8',
+      }
     },
   },
   plugins: [require('tailwindcss-animate')],
