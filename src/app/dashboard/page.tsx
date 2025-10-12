@@ -1,7 +1,7 @@
 'use client';
 
 import { useCollection, useUser } from '@/firebase';
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import { addDoc, doc, serverTimestamp } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
 import { Button } from '@/components/ui/button';
@@ -58,7 +58,7 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
 
 
   return (
-    <Card className="overflow-hidden group">
+    <Card className="overflow-hidden group" variant="neuro">
       <CardHeader className="p-0">
         <Link href={`/editor/${resume.id}`}>
           <div className="aspect-[3/2] overflow-hidden">
@@ -78,7 +78,7 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
       <CardContent className="p-4">
         <CardTitle className="text-lg font-semibold truncate">
           <Link href={`/editor/${resume.id}`} className="hover:underline">
-            {resume.title}
+            {resume.title || 'Untitled Resume'}
           </Link>
         </CardTitle>
       </CardContent>
@@ -123,7 +123,7 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
 
 const ResumeSkeleton = () => {
     return (
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden" variant="neuro">
             <CardHeader className="p-0">
                 <Skeleton className="aspect-[3/2] w-full" />
             </CardHeader>
@@ -139,49 +139,52 @@ const ResumeSkeleton = () => {
 }
 
 const LoadingState = () => (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {[...Array(4)].map((_, i) => <ResumeSkeleton key={i} />)}
     </div>
 );
 
 const EmptyState = () => (
-    <div className="text-center py-16 md:py-24 border-2 border-dashed rounded-lg bg-background">
-      <div className="max-w-2xl mx-auto">
+    <Card variant="neuro" className="text-center py-16 md:py-24">
+      <CardContent>
         <h2 className="text-3xl font-headline font-bold mb-4">Welcome to ResumeCraft AI!</h2>
-        <p className="text-muted-foreground mb-8 text-lg">Let's create a resume that gets you hired. Follow these simple steps to get started.</p>
+        <p className="text-muted-foreground mb-8 text-lg max-w-2xl mx-auto">Let's create a resume that gets you hired. Follow these simple steps to get started.</p>
         
-        <div className="grid md:grid-cols-3 gap-8 text-left mb-10">
-            <div className="flex gap-4">
-                <div className="flex-shrink-0 bg-primary/10 text-primary rounded-full h-10 w-10 flex items-center justify-center font-bold text-lg">1</div>
-                <div>
-                    <h3 className="font-semibold">Choose a Template</h3>
+        <div className="grid md:grid-cols-3 gap-8 text-left mb-10 max-w-4xl mx-auto">
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-3"><div className="flex-shrink-0 bg-primary/10 text-primary rounded-full h-8 w-8 flex items-center justify-center font-bold">1</div>Choose a Template</CardTitle>
+                </CardHeader>
+                <CardContent>
                     <p className="text-sm text-muted-foreground">Pick a design that matches your style and industry.</p>
-                </div>
-            </div>
-            <div className="flex gap-4">
-                <div className="flex-shrink-0 bg-primary/10 text-primary rounded-full h-10 w-10 flex items-center justify-center font-bold text-lg">2</div>
-                <div>
-                    <h3 className="font-semibold">Fill in Your Details</h3>
+                </CardContent>
+            </Card>
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-3"><div className="flex-shrink-0 bg-primary/10 text-primary rounded-full h-8 w-8 flex items-center justify-center font-bold">2</div>Fill in Your Details</CardTitle>
+                </CardHeader>
+                <CardContent>
                     <p className="text-sm text-muted-foreground">Use our AI assistant to craft compelling content.</p>
-                </div>
-            </div>
-            <div className="flex gap-4">
-                <div className="flex-shrink-0 bg-primary/10 text-primary rounded-full h-10 w-10 flex items-center justify-center font-bold text-lg">3</div>
-                <div>
-                    <h3 className="font-semibold">Download & Apply</h3>
+                </CardContent>
+            </Card>
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-3"><div className="flex-shrink-0 bg-primary/10 text-primary rounded-full h-8 w-8 flex items-center justify-center font-bold">3</div>Download & Apply</CardTitle>
+                </CardHeader>
+                <CardContent>
                     <p className="text-sm text-muted-foreground">Export your new resume as a PDF and start applying.</p>
-                </div>
-            </div>
+                </CardContent>
+            </Card>
         </div>
 
-        <Button asChild size="lg" className="group">
+        <Button asChild size="lg" className="group" variant="neuro">
           <Link href="/templates">
             Start by Choosing a Template
             <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
           </Link>
         </Button>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
 );
 
 
@@ -211,7 +214,7 @@ export default function DashboardPage() {
     
     const newResumeData = {
       ...resumeContent,
-      title: `${resumeToDuplicate.title} (Copy)`,
+      title: `${resumeToDuplicate.title || 'Untitled Resume'} (Copy)`,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     };
@@ -236,10 +239,10 @@ export default function DashboardPage() {
   
   if (isUserLoading || !user) {
     return (
-        <div className="container mx-auto px-4 md:px-6 py-8">
+        <div className="container mx-auto px-4 md:px-6 py-12">
             <div className="flex items-center justify-between mb-8">
                 <h1 className="text-3xl font-headline font-bold">My Resumes</h1>
-                <Button asChild>
+                <Button asChild variant="neuro">
                 <Link href="/templates">
                     <PlusCircle className="mr-2 h-4 w-4" />
                     Create New Resume
@@ -252,10 +255,10 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 md:px-6 py-8">
+    <div className="container mx-auto px-4 md:px-6 py-12">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-headline font-bold">My Resumes</h1>
-        <Button asChild>
+        <Button asChild variant="neuro">
           <Link href="/templates">
             <PlusCircle className="mr-2 h-4 w-4" />
             Create New Resume
@@ -266,7 +269,7 @@ export default function DashboardPage() {
       {(isLoading) && <LoadingState />}
 
       {!isLoading && resumes && resumes.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
           {resumes.map((resume) => (
             <ResumeCard key={resume.id} resume={resume} onDuplicate={handleDuplicate} onDelete={handleDelete} />
           ))}

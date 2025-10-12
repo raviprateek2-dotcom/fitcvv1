@@ -104,12 +104,10 @@ const ProFeatureWrapper: React.FC<{ isPro: boolean; children: React.ReactNode }>
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <div className="relative">
-            <Button variant="outline" size="sm" disabled className="mt-2 w-full">
-               <Sparkles className="mr-2 h-4 w-4 text-yellow-500" />
-              AI Feature
-            </Button>
-             <div className="absolute -top-2 -right-2 z-10">
+          <div className="relative w-full">
+            <div className="w-full h-full absolute top-0 left-0 z-10"/>
+            {children}
+             <div className="absolute -top-2 -right-2 z-20">
                 <div className="bg-primary text-primary-foreground px-2 py-0.5 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg">
                     <Sparkles className="w-3 h-3" />
                     Pro
@@ -258,9 +256,14 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   return (
     <>
       <header className="bg-background border-b sticky top-0 z-10 no-print">
-        <div className="container mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-headline font-semibold truncate max-w-xs md:max-w-md">{resumeData.title || 'Untitled Resume'}</h1>
+        <div className="container mx-auto px-4 md:px-6 h-16 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4 flex-grow min-w-0">
+            <Input 
+                value={resumeData.title || ''}
+                onChange={(e) => handleFieldChange('title', e.target.value)}
+                placeholder="Untitled Resume"
+                className="text-xl font-headline font-semibold h-10 border-none shadow-none focus-visible:ring-0 p-0 flex-grow"
+            />
             <SaveStatusIndicator status={saveStatus} />
           </div>
           <div className="flex items-center gap-2">
