@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -219,7 +218,6 @@ export default function Home() {
     return () => clearInterval(timer);
   }, []);
 
-
   return (
     <div className="flex flex-col items-center bg-background text-foreground overflow-x-hidden">
       
@@ -253,7 +251,7 @@ export default function Home() {
                 Create a professional, ATS-optimized resume in minutes. Let our AI guide you to landing your dream job.
               </p>
               <div className="flex flex-col gap-4 sm:flex-row justify-center md:justify-start">
-                <Button asChild size="lg" className="group transition-transform duration-300 hover:scale-105" variant="neuro">
+                <Button asChild size="lg" className="group">
                   <Link href="/templates">
                     Create My Resume for Free
                     <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
@@ -517,7 +515,7 @@ export default function Home() {
             Start for free and see how ResumeAI can transform your job search. No credit card required.
           </p>
           <div className="mt-8">
-            <Button asChild size="lg" className="group" variant="neuro">
+            <Button asChild size="lg" className="group">
               <Link href="/templates">
                 Create Your Resume Now
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
@@ -529,5 +527,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
