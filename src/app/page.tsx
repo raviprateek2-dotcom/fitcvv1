@@ -4,18 +4,12 @@ import { Button } from '@/components/ui/button';
 import { blogPosts } from '@/lib/blog-posts';
 import { ArrowRight, CheckCircle2, DraftingCompass, FileText, Sparkles, Zap, PenTool, FileSignature, BrainCircuit, Star } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useState, useRef, Suspense } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import Autoplay from "embla-carousel-autoplay";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { motion, AnimatePresence, useAnimate, useScroll, useTransform } from 'framer-motion';
-import dynamic from 'next/dynamic';
-
-const Scene = dynamic(() => import('@/components/common/Scene').then(mod => mod.Scene), {
-  ssr: false,
-  loading: () => <div className="absolute inset-0 z-0 h-full w-full" />,
-});
 
 
 const features = [
@@ -108,13 +102,114 @@ const blogPostIcons: { [key: string]: React.FC<React.ComponentProps<'svg'>> } = 
   'how-to-beat-ats': BrainCircuit,
 };
 
-export default function Home() {
-  const [sentenceIndex, setSentenceIndex] = useState(0);
-  const [mounted, setMounted] = useState(false);
+const GridPatternBackground = () => {
+    const { scrollYProgress } = useScroll();
+    const y = useTransform(scrollYProgress, [0, 1], ['0%', '20%']);
+  
+    return (
+      <motion.div
+        style={{ y }}
+        className="absolute inset-0 z-0 overflow-hidden"
+      >
+        <div className="absolute inset-0 bg-background" />
+        <svg
+          className="absolute inset-0 h-full w-full stroke-secondary"
+          aria-hidden="true"
+        >
+          <defs>
+            <pattern
+              id="grid-pattern"
+              width="72"
+              height="72"
+              patternUnits="userSpaceOnUse"
+              x="50%"
+              y="-1"
+              patternTransform="translate(0 -1)"
+            >
+              <path d="M0 72V0h72" fill="none" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid-pattern)" />
+        </svg>
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-background/80 to-background" />
+      </motion.div>
+    );
+};
+
+
+const AnimatedFeatureIcons = () => {
+  const [scope, animate] = useAnimate();
+
+  const iconVariants = {
+    top: { x: '0%', y: '-60%', scale: 1.1, zIndex: 10 },
+    left: { x: '-60%', y: '0%', scale: 0.9, zIndex: 5 },
+    right: { x: '60%', y: '0%', scale: 0.9, zIndex: 5 },
+    bottom: { x: '0%', y: '60%', scale: 0.7, zIndex: 1 },
+  };
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    const runAnimation = async () => {
+      while (true) {
+        await animate([
+          ['#icon-1', iconVariants.left, { duration: 1.2, ease: 'easeInOut' }],
+          ['#icon-2', iconVariants.bottom, { duration: 1.2, ease: 'easeInOut', at: '-0.9' }],
+          ['#icon-3', iconVariants.right, { duration: 1.2, ease: 'easeInOut', at: '-0.9' }],
+          ['#icon-4', iconVariants.top, { duration: 1.2, ease: 'easeInOut', at: '-0.9' }],
+        ]);
+        await new Promise(res => setTimeout(res, 300));
+        await animate([
+          ['#icon-1', iconVariants.bottom, { duration: 1.2, ease: 'easeInOut' }],
+          ['#icon-2', iconVariants.right, { duration: 1.2, ease: 'easeInOut', at: '-0.9' }],
+          ['#icon-3', iconVariants.top, { duration: 1.2, ease: 'easeInOut', at: '-0.9' }],
+          ['#icon-4', iconVariants.left, { duration: 1.2, ease: 'easeInOut', at: '-0.9' }],
+        ]);
+        await new Promise(res => setTimeout(res, 300));
+        await animate([
+          ['#icon-1', iconVariants.right, { duration: 1.2, ease: 'easeInOut' }],
+          ['#icon-2', iconVariants.top, { duration: 1.2, ease: 'easeInOut', at: '-0.9' }],
+          ['#icon-3', iconVariants.left, { duration: 1.2, ease: 'easeInOut', at: '-0.9' }],
+          ['#icon-4', iconVariants.bottom, { duration: 1.2, ease: 'easeInOut', at: '-0.9' }],
+        ]);
+        await new Promise(res => setTimeout(res, 300));
+        await animate([
+          ['#icon-1', iconVariants.top, { duration: 1.2, ease: 'easeInOut' }],
+          ['#icon-2', iconVariants.left, { duration: 1.2, ease: 'easeInOut', at: '-0.9' }],
+          ['#icon-3', iconVariants.bottom, { duration: 1.2, ease: 'easeInOut', at: '-0.9' }],
+          ['#icon-4', iconVariants.right, { duration: 1.2, ease: 'easeInOut', at: '-0.9' }],
+        ]);
+        await new Promise(res => setTimeout(res, 300));
+      }
+    };
+    runAnimation();
+  }, [animate]);
+
+  const featureIcons = [
+    { id: 'icon-1', icon: DraftingCompass, initial: 'top' },
+    { id: 'icon-2', icon: FileText, initial: 'left' },
+    { id: 'icon-3', icon: Sparkles, initial: 'bottom' },
+    { id: 'icon-4', icon: Zap, initial: 'right' },
+  ];
+
+  return (
+    <div ref={scope} className="relative w-48 h-48">
+      {featureIcons.map(({ id, icon: Icon, initial }) => (
+        <motion.div
+          key={id}
+          id={id}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-4 bg-background/50 border rounded-full shadow-lg backdrop-blur-md"
+          // @ts-ignore
+          initial={iconVariants[initial]}
+        >
+          <Icon className="w-8 h-8 text-primary" />
+        </motion.div>
+      ))}
+    </div>
+  )
+};
+
+
+export default function Home() {
+  const [sentenceIndex, setSentenceIndex] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -128,10 +223,7 @@ export default function Home() {
       
       {/* Hero Section */}
       <section className="w-full py-20 md:py-32 relative">
-       <div className="absolute inset-0 z-0 h-full w-full">
-            {mounted && <Scene />}
-             <div className="absolute inset-0 z-10 bg-gradient-to-b from-background via-transparent to-background" />
-        </div>
+        <GridPatternBackground />
         <div className="container mx-auto px-4 md:px-6 relative z-10">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <motion.div 
@@ -160,13 +252,21 @@ export default function Home() {
                 Create a professional, ATS-optimized resume in minutes. Let our AI guide you to landing your dream job.
               </p>
               <div className="flex flex-col gap-4 sm:flex-row justify-center md:justify-start">
-                <Button asChild size="lg" className="group" variant="default">
+                <Button asChild size="lg" className="group">
                   <Link href="/templates">
                     Create My Resume
                     <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </Button>
               </div>
+            </motion.div>
+             <motion.div 
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.8 }}
+                  className="hidden md:flex justify-center items-center"
+                 >
+                 <AnimatedFeatureIcons />
             </motion.div>
           </div>
         </div>
@@ -415,7 +515,7 @@ export default function Home() {
             Start for free and see how ResumeAI can transform your job search. No credit card required.
           </p>
           <div className="mt-8">
-            <Button asChild size="lg" className="group" variant="default">
+            <Button asChild size="lg" className="group">
               <Link href="/templates">
                 Create Your Resume Now
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
