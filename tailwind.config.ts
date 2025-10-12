@@ -19,8 +19,12 @@ const config = {
       },
     },
     extend: {
+      boxShadow: {
+        neuro: '8px 8px 16px rgba(0, 0, 0, 0.25), -8px -8px 16px rgba(255, 255, 255, 0.05), inset 2px 2px 4px rgba(255, 255, 255, 0.1), inset -2px -2px 4px rgba(0, 0, 0, 0.2)',
+        'neuro-inset': 'inset 8px 8px 16px rgba(0, 0, 0, 0.3), inset -8px -8px 16px rgba(255, 255, 255, 0.05)'
+      },
       backgroundImage: {
-        'gradient-glass': 'linear-gradient(135deg, rgba(192, 192, 192, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%)',
+        'gradient-glass': 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%)',
       },
       fontFamily: {
         body: ['var(--font-inter)', 'sans-serif'],
@@ -65,6 +69,7 @@ const config = {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
+        '2xl': 'calc(var(--radius) + 4px)',
       },
       keyframes: {
         'accordion-down': {

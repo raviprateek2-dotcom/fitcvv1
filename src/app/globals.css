@@ -4,48 +4,48 @@
 
 @layer base {
   :root {
-    --background: 240 10% 98%; /* L: #F5F5F5 (Chrome) D: #0A0A0A (Obsidian Black) */
-    --foreground: 0 0% 4.1%; /* L: #0A0A0A (Obsidian Black) D: #F5F5F5 (Chrome) */
-    --card: 240 10% 98%; /* L: #F5F5F5 (Chrome) D: #1A1A1A (Charcoal) */
-    --card-foreground: 0 0% 4.1%; /* L: #0A0A0A (Obsidian Black) D: #F5F5F5 (Chrome) */
-    --popover: 240 10% 98%; /* L: #F5F5F5 (Chrome) D: #2D2D2D (Graphite) */
-    --popover-foreground: 0 0% 4.1%; /* L: #0A0A0A (Obsidian Black) D: #F5F5F5 (Chrome) */
-    --primary: 0 0% 75.3%; /* #C0C0C0 (Silver) */
-    --primary-foreground: 0 0% 4.1%; /* #0A0A0A (Obsidian Black) */
-    --secondary: 0 0% 91.4%; /* #E8E8E8 (Platinum) */
-    --secondary-foreground: 0 0% 10.6%; /* #1A1A1A (Charcoal) */
-    --muted: 0 0% 96.1%; /* #F5F5F5 (Chrome) */
-    --muted-foreground: 0 0% 25.1%; /* #404040 (Steel Grey) */
-    --accent: 0 0% 72.2%; /* #B8B8B8 (Liquid Silver) */
-    --accent-foreground: 0 0% 4.1%; /* #0A0A0A (Obsidian Black) */
+    --background: 240 10% 98%; /* Chrome */
+    --foreground: 0 0% 4.1%; /* Obsidian Black */
+    --card: 240 10% 98%; /* Chrome */
+    --card-foreground: 0 0% 4.1%; /* Obsidian Black */
+    --popover: 240 10% 98%; /* Chrome */
+    --popover-foreground: 0 0% 4.1%; /* Obsidian Black */
+    --primary: 0 0% 75.3%; /* Silver */
+    --primary-foreground: 0 0% 4.1%; /* Obsidian Black */
+    --secondary: 0 0% 91.4%; /* Platinum */
+    --secondary-foreground: 0 0% 10.6%; /* Charcoal */
+    --muted: 0 0% 96.1%; /* Chrome */
+    --muted-foreground: 0 0% 25.1%; /* Steel Grey */
+    --accent: 0 0% 72.2%; /* Liquid Silver */
+    --accent-foreground: 0 0% 4.1%; /* Obsidian Black */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-    --border: 0 0% 25.1%; /* #404040 (Steel Grey) */
-    --input: 0 0% 25.1%; /* #404040 (Steel Grey) */
-    --ring: 0 0% 75.3%; /* #C0C0C0 (Silver) */
-    --radius: 0.5rem;
+    --border: 0 0% 25.1%; /* Steel Grey */
+    --input: 0 0% 25.1%; /* Steel Grey */
+    --ring: 0 0% 75.3%; /* Silver */
+    --radius: 1rem;
   }
 
   .dark {
-    --background: 0 0% 3.9%; /* #0A0A0A (Obsidian Black) */
-    --foreground: 0 0% 96.1%; /* #F5F5F5 (Chrome) */
-    --card: 0 0% 10.2%; /* #1A1A1A (Charcoal) */
-    --card-foreground: 0 0% 96.1%; /* #F5F5F5 (Chrome) */
-    --popover: 0 0% 17.6%; /* #2D2D2D (Graphite) */
-    --popover-foreground: 0 0% 96.1%; /* #F5F5F5 (Chrome) */
-    --primary: 0 0% 75.3%; /* #C0C0C0 (Silver) */
-    --primary-foreground: 0 0% 4.1%; /* #0A0A0A (Obsidian Black) */
-    --secondary: 0 0% 25.1%; /* #404040 (Steel Grey) */
-    --secondary-foreground: 0 0% 96.1%; /* #F5F5F5 (Chrome) */
-    --muted: 0 0% 10.2%; /* #1A1A1A (Charcoal) */
-    --muted-foreground: 0 0% 91.4%; /* #E8E8E8 (Platinum) */
-    --accent: 0 0% 72.2%; /* #B8B8B8 (Liquid Silver) */
-    --accent-foreground: 0 0% 4.1%; /* #0A0A0A (Obsidian Black) */
+    --background: 0 0% 16.5%; /* #2A2A2A */
+    --foreground: 0 0% 96.1%; /* Chrome */
+    --card: 0 0% 16.5%; /* #2A2A2A */
+    --card-foreground: 0 0% 96.1%; /* Chrome */
+    --popover: 0 0% 17.6%; /* Graphite */
+    --popover-foreground: 0 0% 96.1%; /* Chrome */
+    --primary: 0 0% 75.3%; /* Silver */
+    --primary-foreground: 0 0% 4.1%; /* Obsidian Black */
+    --secondary: 0 0% 25.1%; /* Steel Grey */
+    --secondary-foreground: 0 0% 96.1%; /* Chrome */
+    --muted: 0 0% 10.2%; /* Charcoal */
+    --muted-foreground: 0 0% 91.4%; /* Platinum */
+    --accent: 0 0% 72.2%; /* Liquid Silver */
+    --accent-foreground: 0 0% 4.1%; /* Obsidian Black */
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 25.1%; /* #404040 (Steel Grey) */
-    --input: 0 0% 25.1%; /* #404040 (Steel Grey) */
-    --ring: 0 0% 75.3%; /* #C0C0C0 (Silver) */
+    --border: 0 0% 25.1%; /* Steel Grey */
+    --input: 0 0% 25.1%; /* Steel Grey */
+    --ring: 0 0% 75.3%; /* Silver */
   }
 }
 

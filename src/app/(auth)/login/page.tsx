@@ -96,7 +96,7 @@ export default function LoginPage() {
   };
 
   return (
-    <Card className="w-full max-w-sm">
+    <Card className="w-full max-w-sm" variant="neuro">
       <CardHeader className="text-center">
         <div className="flex justify-center mb-4">
            <Rocket className="h-10 w-10 text-primary" />
@@ -105,7 +105,7 @@ export default function LoginPage() {
         <CardDescription>Enter your credentials to access your account.</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
-        <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading}>
+        <Button variant="neuro" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading}>
           <GoogleIcon className="mr-2 h-4 w-4" />
           Continue with Google
         </Button>
@@ -134,7 +134,7 @@ export default function LoginPage() {
             </div>
             <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} disabled={isLoading} />
           </div>
-          <Button className="w-full" type="submit" disabled={isLoading}>
+          <Button variant="neuro" className="w-full" type="submit" disabled={isLoading}>
             {isLoading ? 'Logging In...' : 'Log In'}
           </Button>
         </form>
