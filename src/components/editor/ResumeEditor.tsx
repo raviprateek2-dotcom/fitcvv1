@@ -377,7 +377,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
             </Accordion>
           </div>
         </ScrollArea>
-        <div className="bg-secondary p-6 h-full overflow-auto print:bg-white print:p-0">
+        <div className="bg-background p-6 h-full overflow-auto print:bg-white print:p-0">
           <ResumePreview resumeData={resumeData} />
         </div>
       </div>
