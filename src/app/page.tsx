@@ -46,7 +46,7 @@ export default function Home() {
                 Our AI-powered resume builder helps you create a professional, ATS-friendly resume in minutes. No more writer's block, no more formatting nightmares.
               </p>
               <div className="flex flex-col gap-4 sm:flex-row justify-center animate-fade-in-up animation-delay-400">
-                <Button asChild size="lg" variant="neuro" className="group">
+                <Button asChild size="lg" className="group shadow-cyber-light">
                   <Link href="/templates">
                     Create My Resume
                     <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
@@ -66,21 +66,21 @@ export default function Home() {
                   <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl animate-fade-in-up animation-delay-200">Three Simple Steps to Your Dream Job</h2>
               </div>
               <div className="mx-auto grid items-start gap-8 sm:max-w-4xl md:grid-cols-3 md:gap-12">
-                  <div className="flex flex-col gap-4 items-center text-center p-6 rounded-2xl bg-background shadow-neuro animate-fade-in-up animation-delay-200">
+                  <div className="flex flex-col gap-4 items-center text-center p-6 rounded-2xl bg-background shadow-cyber-dark animate-fade-in-up animation-delay-200">
                       <div className="bg-primary/10 p-4 rounded-full">
                          <FileText className="w-8 h-8 text-primary"/>
                       </div>
                       <h3 className="text-xl font-bold font-headline">1. Select a Template</h3>
                       <p className="text-muted-foreground">Choose from our library of professionally designed and ATS-friendly resume templates.</p>
                   </div>
-                   <div className="flex flex-col gap-4 items-center text-center p-6 rounded-2xl bg-background shadow-neuro animate-fade-in-up animation-delay-400">
+                   <div className="flex flex-col gap-4 items-center text-center p-6 rounded-2xl bg-background shadow-cyber-dark animate-fade-in-up animation-delay-400">
                       <div className="bg-primary/10 p-4 rounded-full">
                          <Sparkles className="w-8 h-8 text-primary"/>
                       </div>
                       <h3 className="text-xl font-bold font-headline">2. Perfect with AI</h3>
                       <p className="text-muted-foreground">Use our AI assistant to write compelling bullet points, summaries, and cover letters.</p>
                   </div>
-                   <div className="flex flex-col gap-4 items-center text-center p-6 rounded-2xl bg-background shadow-neuro animate-fade-in-up animation-delay-600">
+                   <div className="flex flex-col gap-4 items-center text-center p-6 rounded-2xl bg-background shadow-cyber-dark animate-fade-in-up animation-delay-600">
                       <div className="bg-primary/10 p-4 rounded-full">
                          <Zap className="w-8 h-8 text-primary"/>
                       </div>
@@ -123,7 +123,7 @@ export default function Home() {
                         height={700}
                         alt={featuresImage.description}
                         data-ai-hint={featuresImage.imageHint}
-                        className="rounded-2xl shadow-neuro-inset object-cover w-full h-full"
+                        className="rounded-2xl shadow-cyber-dark object-cover w-full h-full"
                         />
                     )}
                 </div>
@@ -143,7 +143,7 @@ export default function Home() {
                           height={500}
                           alt={whyUsImage.description}
                           data-ai-hint={whyUsImage.imageHint}
-                          className="rounded-2xl shadow-neuro-inset object-cover w-full h-full"
+                          className="rounded-2xl shadow-cyber-dark object-cover w-full h-full"
                           />
                       )}
                   </div>
@@ -171,7 +171,7 @@ export default function Home() {
             Start for free and see how ResumeCraft AI can transform your job search. No credit card required.
           </p>
           <div className="mt-8">
-            <Button asChild size="lg" variant="neuro" className="group">
+            <Button asChild size="lg" className="group shadow-cyber-light">
               <Link href="/templates">
                 Create Your Resume Now
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />

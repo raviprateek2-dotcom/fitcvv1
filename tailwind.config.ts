@@ -21,7 +21,9 @@ const config = {
     extend: {
       boxShadow: {
         neuro: '8px 8px 16px rgba(0, 0, 0, 0.25), -8px -8px 16px rgba(255, 255, 255, 0.05), inset 2px 2px 4px rgba(255, 255, 255, 0.1), inset -2px -2px 4px rgba(0, 0, 0, 0.2)',
-        'neuro-inset': 'inset 8px 8px 16px rgba(0, 0, 0, 0.3), inset -8px -8px 16px rgba(255, 255, 255, 0.05)'
+        'neuro-inset': 'inset 8px 8px 16px rgba(0, 0, 0, 0.3), inset -8px -8px 16px rgba(255, 255, 255, 0.05)',
+        'cyber-light': '0 0 10px hsl(var(--primary)), 0 0 20px hsl(var(--primary))',
+        'cyber-dark': '0 0 15px hsl(var(--accent))',
       },
       backgroundImage: {
         'gradient-glass': 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%)',

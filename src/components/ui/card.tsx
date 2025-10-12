@@ -11,7 +11,7 @@ const Card = React.forwardRef<
     className={cn(
       "rounded-2xl bg-card text-card-foreground",
       variant === 'default' && "border shadow-sm",
-      variant === 'neuro' && "shadow-neuro",
+      variant === 'neuro' && "shadow-cyber-dark",
       className
     )}
     {...props}

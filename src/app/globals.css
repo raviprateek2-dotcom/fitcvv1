@@ -4,48 +4,48 @@
 
 @layer base {
   :root {
-    --background: 240 10% 98%; /* Chrome */
-    --foreground: 0 0% 4.1%; /* Obsidian Black */
-    --card: 240 10% 98%; /* Chrome */
-    --card-foreground: 0 0% 4.1%; /* Obsidian Black */
-    --popover: 240 10% 98%; /* Chrome */
-    --popover-foreground: 0 0% 4.1%; /* Obsidian Black */
-    --primary: 0 0% 75.3%; /* Silver */
-    --primary-foreground: 0 0% 4.1%; /* Obsidian Black */
-    --secondary: 0 0% 91.4%; /* Platinum */
-    --secondary-foreground: 0 0% 10.6%; /* Charcoal */
-    --muted: 0 0% 96.1%; /* Chrome */
-    --muted-foreground: 0 0% 25.1%; /* Steel Grey */
-    --accent: 0 0% 72.2%; /* Liquid Silver */
-    --accent-foreground: 0 0% 4.1%; /* Obsidian Black */
+    --background: 224 71% 4%;
+    --foreground: 210 40% 98%;
+    --card: 224 71% 10%;
+    --card-foreground: 210 40% 98%;
+    --popover: 224 71% 4%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 215 28% 17%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 215 28% 17%;
+    --muted-foreground: 215 21% 51%;
+    --accent: 330 84% 51%;
+    --accent-foreground: 210 40% 98%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-    --border: 0 0% 25.1%; /* Steel Grey */
-    --input: 0 0% 25.1%; /* Steel Grey */
-    --ring: 0 0% 75.3%; /* Silver */
+    --border: 215 28% 17%;
+    --input: 215 28% 17%;
+    --ring: 217 91% 60%;
     --radius: 1rem;
   }
 
   .dark {
-    --background: 0 0% 16.5%; /* #2A2A2A */
-    --foreground: 0 0% 96.1%; /* Chrome */
-    --card: 0 0% 16.5%; /* #2A2A2A */
-    --card-foreground: 0 0% 96.1%; /* Chrome */
-    --popover: 0 0% 17.6%; /* Graphite */
-    --popover-foreground: 0 0% 96.1%; /* Chrome */
-    --primary: 0 0% 75.3%; /* Silver */
-    --primary-foreground: 0 0% 4.1%; /* Obsidian Black */
-    --secondary: 0 0% 25.1%; /* Steel Grey */
-    --secondary-foreground: 0 0% 96.1%; /* Chrome */
-    --muted: 0 0% 10.2%; /* Charcoal */
-    --muted-foreground: 0 0% 91.4%; /* Platinum */
-    --accent: 0 0% 72.2%; /* Liquid Silver */
-    --accent-foreground: 0 0% 4.1%; /* Obsidian Black */
+    --background: 224 71% 4%;
+    --foreground: 210 40% 98%;
+    --card: 224 71% 10%;
+    --card-foreground: 210 40% 98%;
+    --popover: 224 71% 4%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 215 28% 17%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 215 28% 17%;
+    --muted-foreground: 215 21% 51%;
+    --accent: 330 84% 51%;
+    --accent-foreground: 210 40% 98%;
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 25.1%; /* Steel Grey */
-    --input: 0 0% 25.1%; /* Steel Grey */
-    --ring: 0 0% 75.3%; /* Silver */
+    --destructive-foreground: 210 40% 98%;
+    --border: 215 28% 17%;
+    --input: 215 28% 17%;
+    --ring: 217 91% 60%;
   }
 }
 
