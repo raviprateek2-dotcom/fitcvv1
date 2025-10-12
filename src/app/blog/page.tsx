@@ -29,7 +29,7 @@ export default function BlogPage() {
           {blogPosts.map((post) => {
             const image = PlaceHolderImages.find(img => img.id === post.imageId);
             return (
-              <Card key={post.slug} className="group overflow-hidden flex flex-col" variant="neuro">
+              <Card key={post.slug} className="group overflow-hidden flex flex-col transition-all duration-300 hover:scale-105 hover:shadow-2xl" variant="neuro">
                 {image && (
                   <Link href={`/blog/${post.slug}`} className="block overflow-hidden">
                     <Image

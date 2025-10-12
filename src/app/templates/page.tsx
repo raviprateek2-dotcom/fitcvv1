@@ -111,7 +111,7 @@ export default function TemplatesPage() {
                   <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
                     <Dialog>
                       <DialogTrigger asChild>
-                        <Button variant="secondary" size="icon" className="h-12 w-12 rounded-full">
+                        <Button variant="secondary" size="icon" className="h-12 w-12 rounded-full transition-all hover:scale-110">
                           <Eye className="h-6 w-6" />
                           <span className="sr-only">Preview</span>
                         </Button>
@@ -133,7 +133,7 @@ export default function TemplatesPage() {
                         )}
                       </DialogContent>
                     </Dialog>
-                    <Button size="lg" onClick={() => handleUseTemplate(template.id, template.isPremium)}>
+                    <Button size="lg" onClick={() => handleUseTemplate(template.id, template.isPremium)} className="transition-all hover:scale-105">
                         {template.isPremium && !isProUser ? <Lock className="mr-2 h-4 w-4" /> : <Plus className="mr-2 h-4 w-4" />}
                         {template.isPremium && !isProUser ? 'Upgrade to Use' : 'Use Template'}
                     </Button>

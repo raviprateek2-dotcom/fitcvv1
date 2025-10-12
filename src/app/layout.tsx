@@ -92,12 +92,10 @@ export default function RootLayout({
           <FirebaseClientProvider>
             <div className="flex flex-col min-h-screen">
               <Header />
-              <main className="flex-grow py-8">
-                <div className="container bg-card text-card-foreground rounded-2xl shadow-lg">
+              <main className="flex-grow">
                   <PageTransition>
                     {children}
                   </PageTransition>
-                </div>
               </main>
               <Footer />
             </div>

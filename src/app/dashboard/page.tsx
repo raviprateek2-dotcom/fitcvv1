@@ -65,7 +65,7 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
 
   return (
     <motion.div variants={itemVariants}>
-      <Card className="overflow-hidden group flex flex-col h-full" variant="neuro">
+      <Card className="overflow-hidden group flex flex-col h-full transition-all duration-300 hover:scale-105 hover:shadow-2xl" variant="neuro">
         <CardHeader>
           <CardTitle className="text-lg font-semibold truncate">
             <Link href={`/editor/${resume.id}`} className="hover:underline">
