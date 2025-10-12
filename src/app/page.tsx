@@ -109,21 +109,21 @@ export default function Home() {
                   <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl animate-fade-in-up animation-delay-200">Three Simple Steps to Your Dream Job</h2>
               </div>
               <div className="mx-auto grid items-stretch gap-8 sm:max-w-4xl sm:grid-cols-3 md:gap-12">
-                  <div className="flex flex-col gap-4 items-center text-center p-6 rounded-2xl bg-background/50 backdrop-blur-sm shadow-cyber-dark animate-fade-in-up animation-delay-200">
+                  <div className="flex flex-col gap-4 items-center text-center p-6 rounded-2xl bg-background/50 backdrop-blur-sm shadow-cyber-dark animate-fade-in-up animation-delay-200 transition-all duration-300 hover:scale-105 hover:shadow-xl">
                       <div className="bg-primary/10 p-4 rounded-full">
                          <FileText className="w-8 h-8 text-primary"/>
                       </div>
                       <h3 className="text-xl font-bold font-headline">1. Select a Template</h3>
                       <p className="text-muted-foreground">Choose from our library of professionally designed and ATS-friendly resume templates.</p>
                   </div>
-                   <div className="flex flex-col gap-4 items-center text-center p-6 rounded-2xl bg-background/50 backdrop-blur-sm shadow-cyber-dark animate-fade-in-up animation-delay-400">
+                   <div className="flex flex-col gap-4 items-center text-center p-6 rounded-2xl bg-background/50 backdrop-blur-sm shadow-cyber-dark animate-fade-in-up animation-delay-400 transition-all duration-300 hover:scale-105 hover:shadow-xl">
                       <div className="bg-primary/10 p-4 rounded-full">
                          <Sparkles className="w-8 h-8 text-primary"/>
                       </div>
                       <h3 className="text-xl font-bold font-headline">2. Perfect with AI</h3>
                       <p className="text-muted-foreground">Use our AI assistant to write compelling bullet points, summaries, and cover letters.</p>
                   </div>
-                   <div className="flex flex-col gap-4 items-center text-center p-6 rounded-2xl bg-background/50 backdrop-blur-sm shadow-cyber-dark animate-fade-in-up animation-delay-600">
+                   <div className="flex flex-col gap-4 items-center text-center p-6 rounded-2xl bg-background/50 backdrop-blur-sm shadow-cyber-dark animate-fade-in-up animation-delay-600 transition-all duration-300 hover:scale-105 hover:shadow-xl">
                       <div className="bg-primary/10 p-4 rounded-full">
                          <Zap className="w-8 h-8 text-primary"/>
                       </div>
