@@ -43,6 +43,7 @@ type ResumeData = {
   experience: Experience[];
   education: Education[];
   skills: string;
+  jobDescription: string;
 };
 
 const initialResumeData: ResumeData = {
@@ -81,6 +82,7 @@ const initialResumeData: ResumeData = {
     },
   ],
   skills: 'JavaScript, TypeScript, React, Node.js, Express, PostgreSQL, Docker, AWS',
+  jobDescription: '',
 };
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
@@ -180,6 +182,10 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     setResumeData((prev) => ({ ...prev, skills: e.target.value }));
   };
 
+  const handleJobDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setResumeData((prev) => ({ ...prev, jobDescription: e.target.value }));
+  };
+
   return (
     <div className="grid md:grid-cols-2 h-[calc(100vh-8rem)]">
       <ScrollArea className="h-full bg-background p-6">
@@ -188,6 +194,14 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
             <h2 className="text-2xl font-headline font-semibold">Edit Content</h2>
           </div>
           <Accordion type="multiple" defaultValue={['personal-info', 'summary']} className="w-full">
+            <AccordionItem value="job-description">
+              <AccordionTrigger className="font-semibold">Job Description (Optional)</AccordionTrigger>
+              <AccordionContent className="space-y-2 pt-4">
+                <Label>Paste the job description here to get tailored AI suggestions.</Label>
+                <Textarea value={resumeData.jobDescription} onChange={handleJobDescriptionChange} rows={6} />
+              </AccordionContent>
+            </AccordionItem>
+
             <AccordionItem value="personal-info">
               <AccordionTrigger className="font-semibold">Personal Information</AccordionTrigger>
               <AccordionContent className="space-y-4 pt-4">
@@ -211,6 +225,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                 <AIContentDialog 
                   sectionName="Professional Summary" 
                   currentContent={resumeData.summary}
+                  jobDescription={resumeData.jobDescription}
                   onApply={(newContent) => setResumeData(prev => ({...prev, summary: newContent}))}
                 />
               </AccordionContent>
@@ -231,6 +246,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                           <AIContentDialog 
                               sectionName={`Experience at ${exp.company}`}
                               currentContent={exp.description}
+                              jobDescription={resumeData.jobDescription}
                               onApply={(newContent) => handleExperienceChange(exp.id, 'description', newContent)}
                           />
                           <Button variant="ghost" size="icon" onClick={() => removeExperience(exp.id)} className="text-destructive hover:text-destructive-foreground hover:bg-destructive">

@@ -36,6 +36,7 @@ type ResumeData = {
   experience: Experience[];
   education: Education[];
   skills: string;
+  jobDescription?: string;
 };
 
 interface ResumePreviewProps {
