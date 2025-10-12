@@ -12,6 +12,7 @@ import Autoplay from "embla-carousel-autoplay";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { motion } from 'framer-motion';
 
 
 const features = [
@@ -205,7 +206,13 @@ export default function Home() {
             <CarouselContent>
               {testimonials.map((testimonial, index) => (
                 <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
-                  <div className="p-1 h-full">
+                  <motion.div 
+                    className="p-1 h-full"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1, duration: 0.5 }}
+                    viewport={{ once: true }}
+                  >
                     <Card className="flex flex-col justify-between h-full" variant="neuro">
                       <CardContent className="p-6 flex flex-col gap-4">
                         <p className="text-muted-foreground">"{testimonial.quote}"</p>
@@ -221,7 +228,7 @@ export default function Home() {
                         </div>
                       </CardContent>
                     </Card>
-                  </div>
+                  </motion.div>
                 </CarouselItem>
               ))}
             </CarouselContent>
@@ -319,4 +326,3 @@ export default function Home() {
     </div>
   );
 }
-
