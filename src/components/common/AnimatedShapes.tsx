@@ -53,5 +53,3 @@ export function AnimatedShapes() {
     </Canvas>
   );
 }
-
-    
