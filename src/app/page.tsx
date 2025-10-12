@@ -126,24 +126,22 @@ export default function Home() {
   }, []);
   
   const sectionVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
+    hidden: { opacity: 0, scale: 0.95, rotateY: -15 },
+    visible: { 
+        opacity: 1, 
+        scale: 1, 
+        rotateY: 0,
+        transition: { 
+            duration: 0.8,
+            ease: [0.6, 0.05, -0.01, 0.9],
+            staggerChildren: 0.2 
+        }
     },
   };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-      },
-    },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
   };
 
 
@@ -197,14 +195,17 @@ export default function Home() {
       </section>
 
       {/* How It Works Section */}
-      <section id="how-it-works" className="relative w-full py-20 md:py-32 bg-secondary/30 backdrop-blur-sm">
-          <motion.div
-            variants={sectionVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.2 }}
+      <motion.section 
+        id="how-it-works"
+        className="relative w-full py-20 md:py-32 bg-secondary/30 backdrop-blur-sm"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+        variants={sectionVariants}
+      >
+        <div
             className="container mx-auto px-4 md:px-6"
-          >
+        >
               <motion.div 
                  variants={itemVariants}
                 className="flex flex-col items-center justify-center space-y-4 text-center mb-12"
@@ -237,17 +238,20 @@ export default function Home() {
                       <p className="text-muted-foreground">Export your pixel-perfect resume as a PDF and start landing interviews.</p>
                   </motion.div>
               </div>
-          </motion.div>
-      </section>
+          </div>
+      </motion.section>
 
       {/* Features Section */}
-       <section id="features" className="relative w-full py-20 md:py-32">
+       <motion.section 
+        id="features" 
+        className="relative w-full py-20 md:py-32"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+        variants={sectionVariants}
+       >
         <div className="container mx-auto px-4 md:px-6">
-            <motion.div
-              variants={sectionVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.2 }}
+            <div
               className="grid md:grid-cols-2 gap-16 items-center"
             >
                 <motion.div variants={itemVariants} className="space-y-8">
@@ -271,17 +275,20 @@ export default function Home() {
                 </motion.div>
                  <motion.div variants={itemVariants} className="hidden md:flex justify-center">
                  </motion.div>
-            </motion.div>
+            </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Testimonials Section */}
-      <section id="testimonials" className="relative w-full py-20 md:py-32 bg-secondary/30 backdrop-blur-sm">
-        <motion.div
-            variants={sectionVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.2 }}
+      <motion.section 
+        id="testimonials" 
+        className="relative w-full py-20 md:py-32 bg-secondary/30 backdrop-blur-sm"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+        variants={sectionVariants}
+        >
+        <div
             className="container mx-auto px-4 md:px-6"
         >
           <motion.div
@@ -331,16 +338,18 @@ export default function Home() {
               <CarouselNext className="hidden sm:flex" />
             </Carousel>
           </motion.div>
-        </motion.div>
-      </section>
+        </div>
+      </motion.section>
 
       {/* Why Us Section */}
-      <section className="relative w-full py-20 md:py-32">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            variants={sectionVariants}
-            viewport={{ once: true, amount: 0.5 }}
+      <motion.section 
+        className="relative w-full py-20 md:py-32"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.5 }}
+        variants={sectionVariants}
+        >
+          <div
             className="container mx-auto px-4 md:px-6"
           >
                <motion.div variants={itemVariants} className="space-y-8 max-w-3xl mx-auto text-center">
@@ -351,18 +360,20 @@ export default function Home() {
                     <motion.li variants={itemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>Intuitive real-time editor.</span></motion.li>
                   </ul>
               </motion.div>
-          </motion.div>
-      </section>
+          </div>
+      </motion.section>
 
       {/* Blog Section */}
-      <section id="blog" className="relative w-full py-20 md:py-32 bg-secondary/30 backdrop-blur-sm">
+      <motion.section 
+        id="blog" 
+        className="relative w-full py-20 md:py-32 bg-secondary/30 backdrop-blur-sm"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+        variants={sectionVariants}
+      >
         <div className="container mx-auto px-4 md:px-6">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            variants={sectionVariants}
-            viewport={{ once: true, amount: 0.2 }}
-          >
+          <div>
             <motion.div
               variants={itemVariants}
               className="flex flex-col items-center justify-center space-y-4 text-center mb-12"
@@ -412,17 +423,19 @@ export default function Home() {
                       <Link href="/blog">View All Articles</Link>
                   </Button>
               </motion.div>
-          </motion.div>
+          </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Final CTA */}
-      <section className="relative w-full py-20 md:py-32">
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          variants={itemVariants}
-          viewport={{ once: true, amount: 0.5 }}
+      <motion.section 
+        className="relative w-full py-20 md:py-32"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.5 }}
+        variants={sectionVariants}
+        >
+        <div
           className="container mx-auto px-4 md:px-6 text-center"
         >
           <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Ready to Build Your Future?</h2>
@@ -437,8 +450,8 @@ export default function Home() {
               </Link>
             </Button>
           </div>
-        </motion.div>
-      </section>
+        </div>
+      </motion.section>
     </div>
   );
 }
