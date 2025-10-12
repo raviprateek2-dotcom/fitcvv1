@@ -1,123 +1,98 @@
 /**
- * @file Firebase Security Rules for the Resume App.
+ * @fileoverview Firestore Security Rules for the Resume App.
  *
- * @core_philosophy This ruleset enforces a strict user-ownership model for resumes and feedback,
- *                  while allowing public read access to templates.  User data is secured under
- *                  the `/users/{userId}` path, and only the authenticated user matching the `userId`
- *                  has write access. Resumes and feedback are stored as subcollections, inheriting
- *                  the user-ownership constraint. Templates are publicly readable.
+ * Core Philosophy:
+ * This ruleset enforces a strict user-ownership model for user profiles, resumes, and feedback, while allowing public read access to resume templates.
  *
- * @data_structure All user-specific data is nested under `/users/{userId}`, including profile
- *                 information, resumes, and feedback. Templates are stored in a top-level
- *                 `/templates` collection.
+ * Data Structure:
+ * - /users/{userId}: Stores user profile data. Only the user can read/write their own profile.
+ * - /users/{userId}/resumes/{resumeId}: Stores resume data for a specific user. Only the user can read/write resumes under their profile.
+ * - /templates/{templateId}: Stores resume template data.  These are publicly readable.
+ * - /users/{userId}/feedback/{feedbackId}: Stores feedback associated with resumes. Only the owning user can access their own feedback.
  *
- * @key_security_decisions
- *   - User listing is explicitly denied.
- *   - Resumes and feedback are only accessible by their owner.
- *   - Templates are publicly readable.
- *   - All write operations require authentication.
- *   - Data validation is limited to ownership fields.
+ * Key Security Decisions:
+ * - Users can only access data under their own user ID.
+ * - Resume templates are publicly readable.
+ * - No user listing is allowed.
+ *
+ * Denormalization for Authorization:
+ * The `userId` is included in both the `/users/{userId}/resumes/{resumeId}` and `/users/{userId}/feedback/{feedbackId}` documents. This avoids needing to perform `get()` operations to verify ownership.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Checks if the request is authenticated.
-     */
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    /**
-     * @description Checks if the authenticated user ID matches the provided user ID.
-     * @param {string} userId The user ID to compare against.
-     */
-    function isOwner(userId) {
-      return isSignedIn() && request.auth.uid == userId;
-    }
-
-    /**
-     * @description Checks if the authenticated user is the owner of an existing document.
-     * @param {string} userId The user ID to compare against.
-     */
-    function isExistingOwner(userId) {
-      return isOwner(userId) && resource != null;
-    }
-
-    /**
-     * @description Security rules for user profiles.
+     * @description Enforces user-ownership for user profiles.  Only the authenticated user can read or write their own profile.
      * @path /users/{userId}
-     * @allow (create) User with ID 'user123' creates their profile.
-     *     - Request: auth.uid = 'user123', resource.data.id = 'user123'
-     * @allow (get) User with ID 'user123' reads their own profile.
-     *     - Request: auth.uid = 'user123'
-     * @deny (create) User with ID 'user123' attempts to create a profile for 'user456'.
-     *     - Request: auth.uid = 'user123', resource.data.id = 'user456'
-     * @deny (update) User with ID 'user123' attempts to update profile for 'user456'.
-     *     - Request: auth.uid = 'user123', resource.data.id = 'user456'
-     * @principle Enforces document ownership for writes and restricts read access to the owner.
+     * @allow (create, update, get, delete) if request.auth.uid == userId
+     * @deny (create, update, get, delete) if request.auth.uid != userId
+     * @principle Enforces document ownership for writes.
      */
     match /users/{userId} {
       allow get: if isOwner(userId);
       allow list: if false;
-      allow create: if isOwner(userId) && request.resource.data.id == userId;
-      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
       allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Security rules for resumes under a specific user.
+     * @description Enforces user-ownership for resumes.  Only the authenticated user can read or write resumes under their own user profile.
      * @path /users/{userId}/resumes/{resumeId}
-     * @allow (create) User with ID 'user123' creates a resume under their profile.
-     *     - Request: auth.uid = 'user123', resource.data.userId = 'user123'
-     * @allow (get) User with ID 'user123' reads a resume under their profile.
-     *     - Request: auth.uid = 'user123'
-     * @deny (create) User with ID 'user123' attempts to create a resume under profile 'user456'.
-     *     - Request: auth.uid = 'user123', resource.data.userId = 'user456'
-     * @deny (update) User with ID 'user123' attempts to update a resume under profile 'user456'.
-     *     - Request: auth.uid = 'user123', resource.data.userId = 'user456'
-     * @principle Enforces document ownership for writes and restricts read access to the owner.
+     * @allow (create, update, get, delete) if request.auth.uid == userId
+     * @deny (create, update, get, delete) if request.auth.uid != userId
+     * @principle Restricts access to a user's own data tree.
      */
     match /users/{userId}/resumes/{resumeId} {
       allow get: if isOwner(userId);
       allow list: if isOwner(userId);
-      allow create: if isOwner(userId) && request.resource.data.userId == userId;
-      allow update: if isExistingOwner(userId) && resource.data.userId == userId;
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
       allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Security rules for resume templates.
+     * @description Allows public read access to resume templates.  No authentication required to read templates.
      * @path /templates/{templateId}
-     * @allow (get) Any user can read template data.
-     *     - Request: No authentication required.
-     * @principle Allows public read access to templates.
+     * @allow (get, list) if true
+     * @deny (create, update, delete) always.
+     * @principle Templates are publicly accessible for reading.
      */
     match /templates/{templateId} {
-      allow get, list: if true;
-      allow create, update, delete: if false;
+      allow get: if true;
+      allow list: if true;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
     }
 
     /**
-     * @description Security rules for feedback under a specific user.
+     * @description Enforces user-ownership for feedback entries. Only the authenticated user can read or write feedback entries under their own user profile.
      * @path /users/{userId}/feedback/{feedbackId}
-     * @allow (create) User with ID 'user123' creates feedback under their profile.
-     *     - Request: auth.uid = 'user123', resource.data.userId = 'user123'
-     * @allow (get) User with ID 'user123' reads feedback under their profile.
-     *     - Request: auth.uid = 'user123'
-     * @deny (create) User with ID 'user123' attempts to create feedback under profile 'user456'.
-     *     - Request: auth.uid = 'user123', resource.data.userId = 'user456'
-     * @deny (update) User with ID 'user123' attempts to update feedback under profile 'user456'.
-     *     - Request: auth.uid = 'user123', resource.data.userId = 'user456'
-     * @principle Enforces document ownership for writes and restricts read access to the owner.
+     * @allow (create, update, get, delete) if request.auth.uid == userId
+     * @deny (create, update, get, delete) if request.auth.uid != userId or attempting to modify another user's feedback
+     * @principle Restricts access to a user's own data tree.
      */
     match /users/{userId}/feedback/{feedbackId} {
       allow get: if isOwner(userId);
       allow list: if isOwner(userId);
-      allow create: if isOwner(userId) && request.resource.data.userId == userId;
-      allow update: if isExistingOwner(userId) && resource.data.userId == userId;
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
       allow delete: if isExistingOwner(userId);
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
     }
   }
 }
