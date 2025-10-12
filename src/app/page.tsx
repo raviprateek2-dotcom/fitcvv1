@@ -198,22 +198,21 @@ export default function Home() {
 
       {/* How It Works Section */}
       <section id="how-it-works" className="relative w-full py-20 md:py-32 bg-secondary/30 backdrop-blur-sm">
-          <div className="container mx-auto px-4 md:px-6">
+          <motion.div
+            variants={sectionVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            className="container mx-auto px-4 md:px-6"
+          >
               <motion.div 
-                 initial={{ opacity: 0, y: 20 }}
-                 whileInView={{ opacity: 1, y: 0 }}
-                 viewport={{ once: true, amount: 0.3 }}
-                 transition={{ duration: 0.5 }}
+                 variants={itemVariants}
                 className="flex flex-col items-center justify-center space-y-4 text-center mb-12"
               >
                   <div className="inline-block rounded-lg bg-background/50 backdrop-blur-sm px-3 py-1 text-sm font-medium border">How It Works</div>
                   <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Three Simple Steps to Your Dream Job</h2>
               </motion.div>
-              <motion.div 
-                 variants={sectionVariants}
-                 initial="hidden"
-                 whileInView="visible"
-                 viewport={{ once: true, amount: 0.2 }}
+              <div
                  className="mx-auto grid items-start gap-8 sm:max-w-4xl sm:grid-cols-3 md:gap-12"
               >
                   <motion.div variants={itemVariants} className="flex flex-col gap-4 items-center text-center p-6">
@@ -237,8 +236,8 @@ export default function Home() {
                       <h3 className="text-xl font-bold font-headline">3. Download & Apply</h3>
                       <p className="text-muted-foreground">Export your pixel-perfect resume as a PDF and start landing interviews.</p>
                   </motion.div>
-              </motion.div>
-          </div>
+              </div>
+          </motion.div>
       </section>
 
       {/* Features Section */}
@@ -258,7 +257,7 @@ export default function Home() {
                     </div>
                     <ul className="grid sm:grid-cols-1 gap-8">
                         {features.map((feature, index) => (
-                          <li key={index} className="flex items-start gap-4">
+                          <motion.li key={index} variants={itemVariants} className="flex items-start gap-4">
                               <div className="bg-primary/10 p-3 rounded-full mt-1">
                                 {feature.icon}
                               </div>
@@ -266,7 +265,7 @@ export default function Home() {
                                 <h3 className="font-semibold text-xl">{feature.title}</h3>
                                 <p className="text-muted-foreground text-lg">{feature.description}</p>
                               </div>
-                          </li>
+                          </motion.li>
                         ))}
                     </ul>
                 </motion.div>
@@ -278,22 +277,22 @@ export default function Home() {
 
       {/* Testimonials Section */}
       <section id="testimonials" className="relative w-full py-20 md:py-32 bg-secondary/30 backdrop-blur-sm">
-        <div className="container mx-auto px-4 md:px-6">
+        <motion.div
+            variants={sectionVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            className="container mx-auto px-4 md:px-6"
+        >
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.5 }}
+            variants={itemVariants}
             className="flex flex-col items-center justify-center space-y-4 text-center mb-12"
           >
             <div className="inline-block rounded-lg bg-background/50 backdrop-blur-sm border px-3 py-1 text-sm font-medium">What Our Users Say</div>
             <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Loved by Job Seekers Worldwide</h2>
           </motion.div>
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.5 }}
+            variants={itemVariants}
           >
             <Carousel
               opts={{ align: "start", loop: true }}
@@ -332,26 +331,26 @@ export default function Home() {
               <CarouselNext className="hidden sm:flex" />
             </Carousel>
           </motion.div>
-        </div>
+        </motion.div>
       </section>
 
       {/* Why Us Section */}
       <section className="relative w-full py-20 md:py-32">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial="hidden"
+            whileInView="visible"
+            variants={sectionVariants}
             viewport={{ once: true, amount: 0.5 }}
-            transition={{ duration: 0.5 }}
             className="container mx-auto px-4 md:px-6"
           >
-               <div className="space-y-8 max-w-3xl mx-auto text-center">
+               <motion.div variants={itemVariants} className="space-y-8 max-w-3xl mx-auto text-center">
                   <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Don't just write a resume. Design your future.</h2>
                   <ul className="space-y-4 text-xl inline-flex flex-col items-start text-left">
-                    <li className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>AI-powered content suggestions.</span></li>
-                    <li className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>Professionally designed templates.</span></li>
-                    <li className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>Intuitive real-time editor.</span></li>
+                    <motion.li variants={itemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>AI-powered content suggestions.</span></motion.li>
+                    <motion.li variants={itemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>Professionally designed templates.</span></motion.li>
+                    <motion.li variants={itemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>Intuitive real-time editor.</span></motion.li>
                   </ul>
-              </div>
+              </motion.div>
           </motion.div>
       </section>
 
@@ -359,74 +358,71 @@ export default function Home() {
       <section id="blog" className="relative w-full py-20 md:py-32 bg-secondary/30 backdrop-blur-sm">
         <div className="container mx-auto px-4 md:px-6">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.5 }}
-            className="flex flex-col items-center justify-center space-y-4 text-center mb-12"
-          >
-            <div className="inline-block rounded-lg bg-background/50 backdrop-blur-sm border px-3 py-1 text-sm font-medium">From Our Blog</div>
-            <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Career Advice & Resume Tips</h2>
-            <p className="max-w-[600px] text-muted-foreground md:text-lg">
-              Get the latest insights from our career experts to help you land your dream job.
-            </p>
-          </motion.div>
-          <motion.div
-            variants={sectionVariants}
             initial="hidden"
             whileInView="visible"
+            variants={sectionVariants}
             viewport={{ once: true, amount: 0.2 }}
-            className="grid gap-8 md:grid-cols-3"
           >
-            {blogPosts.slice(0, 3).map((post) => {
-                const Icon = blogPostIcons[post.slug] || PenTool;
-                return (
-                    <motion.div key={post.slug} variants={itemVariants}>
-                      <Card className="group overflow-hidden flex flex-col h-full" variant="neuro">
-                          <Link href={`/blog/${post.slug}`} className="block overflow-hidden relative h-48">
-                              <div className="absolute inset-0 bg-primary/10 flex items-center justify-center">
-                                  <motion.div whileHover={{ scale: 1.2, rotate: -5 }} transition={{ type: 'spring', stiffness: 300 }}>
-                                    <Icon className="w-24 h-24 text-primary/50" />
-                                  </motion.div>
-                              </div>
-                          </Link>
-                          <CardContent className="p-6 flex flex-col flex-grow">
-                          <h3 className="text-xl font-bold font-headline mb-2 group-hover:text-primary transition-colors">
-                              <Link href={`/blog/${post.slug}`}>{post.title}</Link>
-                          </h3>
-                          <p className="text-muted-foreground text-sm mb-4 flex-grow">{post.description}</p>
-                          <Button variant="link" asChild className="p-0 h-auto self-start">
-                              <Link href={`/blog/${post.slug}`}>
-                              Read More <ArrowRight className="ml-2 h-4 w-4" />
-                              </Link>
-                          </Button>
-                          </CardContent>
-                      </Card>
-                    </motion.div>
-                )
-            })}
-          </motion.div>
-           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-center mt-12"
-           >
-                <Button asChild size="lg" variant="outline">
-                    <Link href="/blog">View All Articles</Link>
-                </Button>
+            <motion.div
+              variants={itemVariants}
+              className="flex flex-col items-center justify-center space-y-4 text-center mb-12"
+            >
+              <div className="inline-block rounded-lg bg-background/50 backdrop-blur-sm border px-3 py-1 text-sm font-medium">From Our Blog</div>
+              <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Career Advice & Resume Tips</h2>
+              <p className="max-w-[600px] text-muted-foreground md:text-lg">
+                Get the latest insights from our career experts to help you land your dream job.
+              </p>
             </motion.div>
+            <div
+              className="grid gap-8 md:grid-cols-3"
+            >
+              {blogPosts.slice(0, 3).map((post) => {
+                  const Icon = blogPostIcons[post.slug] || PenTool;
+                  return (
+                      <motion.div key={post.slug} variants={itemVariants}>
+                        <Card className="group overflow-hidden flex flex-col h-full" variant="neuro">
+                            <Link href={`/blog/${post.slug}`} className="block overflow-hidden relative h-48">
+                                <div className="absolute inset-0 bg-primary/10 flex items-center justify-center">
+                                    <motion.div whileHover={{ scale: 1.2, rotate: -5 }} transition={{ type: 'spring', stiffness: 300 }}>
+                                      <Icon className="w-24 h-24 text-primary/50" />
+                                    </motion.div>
+                                </div>
+                            </Link>
+                            <CardContent className="p-6 flex flex-col flex-grow">
+                            <h3 className="text-xl font-bold font-headline mb-2 group-hover:text-primary transition-colors">
+                                <Link href={`/blog/${post.slug}`}>{post.title}</Link>
+                            </h3>
+                            <p className="text-muted-foreground text-sm mb-4 flex-grow">{post.description}</p>
+                            <Button variant="link" asChild className="p-0 h-auto self-start">
+                                <Link href={`/blog/${post.slug}`}>
+                                Read More <ArrowRight className="ml-2 h-4 w-4" />
+                                </Link>
+                            </Button>
+                            </CardContent>
+                        </Card>
+                      </motion.div>
+                  )
+              })}
+            </div>
+             <motion.div
+              variants={itemVariants}
+              className="text-center mt-12"
+             >
+                  <Button asChild size="lg" variant="outline">
+                      <Link href="/blog">View All Articles</Link>
+                  </Button>
+              </motion.div>
+          </motion.div>
         </div>
       </section>
 
       {/* Final CTA */}
       <section className="relative w-full py-20 md:py-32">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial="hidden"
+          whileInView="visible"
+          variants={itemVariants}
           viewport={{ once: true, amount: 0.5 }}
-          transition={{ duration: 0.5 }}
           className="container mx-auto px-4 md:px-6 text-center"
         >
           <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Ready to Build Your Future?</h2>
