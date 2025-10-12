@@ -1,48 +1,59 @@
 /**
- * @fileoverview Firestore Security Rules for the Resume App.
+ * @fileOverview Firestore Security Rules for Resume Builder Application
  *
  * Core Philosophy:
- * This ruleset enforces a strict user-ownership model for user profiles, resumes, and feedback, while allowing public read access to resume templates.
+ * This ruleset enforces a strict user-ownership model for user profiles and resumes,
+ * while allowing public read access to resume templates. Feedback is secured based on
+ * the parent resume's ownership. All write operations require authentication.
  *
  * Data Structure:
- * - /users/{userId}: Stores user profile data. Only the user can read/write their own profile.
- * - /users/{userId}/resumes/{resumeId}: Stores resume data for a specific user. Only the user can read/write resumes under their profile.
- * - /templates/{templateId}: Stores resume template data.  These are publicly readable.
- * - /users/{userId}/feedback/{feedbackId}: Stores feedback associated with resumes. Only the owning user can access their own feedback.
+ * - /users/{userId}: Stores user profile information. User-owned.
+ * - /users/{userId}/resumes/{resumeId}: Stores resumes. User-owned and nested under the user's profile.
+ * - /templates/{templateId}: Stores resume templates. Publicly readable, but write-protected.
+ * - /resumes/{resumeId}/feedback/{feedbackId}: Stores feedback for specific resumes.
+ *   Write access controlled by resume ownership.
  *
  * Key Security Decisions:
- * - Users can only access data under their own user ID.
- * - Resume templates are publicly readable.
- * - No user listing is allowed.
+ * - Users can only read and write their own profiles and resumes.
+ * - Resume templates are publicly readable to allow all users to browse available designs.
+ * - Feedback is secured via a combination of resume ownership and explicit checks.
+ * - User listing is disallowed for privacy.
  *
  * Denormalization for Authorization:
- * The `userId` is included in both the `/users/{userId}/resumes/{resumeId}` and `/users/{userId}/feedback/{feedbackId}` documents. This avoids needing to perform `get()` operations to verify ownership.
+ * - The `resumes` collection denormalizes the `userId` to enable efficient rule checking.
+ *
+ * Structural Segregation:
+ * - Public templates are stored in a top-level `/templates` collection, separate from user-specific data.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Enforces user-ownership for user profiles.  Only the authenticated user can read or write their own profile.
+     * @description Controls access to user profile documents.
      * @path /users/{userId}
-     * @allow (create, update, get, delete) if request.auth.uid == userId
-     * @deny (create, update, get, delete) if request.auth.uid != userId
-     * @principle Enforces document ownership for writes.
+     * @allow (create) Authenticated user can create their own profile.
+     * @allow (get, update, delete) Authenticated user can only access their own profile.
+     * @deny (create) Unauthenticated user attempts to create a profile.
+     * @deny (get, update, delete) Authenticated user attempts to access another user's profile.
+     * @principle Enforces document ownership for user profiles.
      */
     match /users/{userId} {
       allow get: if isOwner(userId);
       allow list: if false;
-      allow create: if isOwner(userId);
+      allow create: if isSignedIn() && isNewOwner(userId);
       allow update: if isExistingOwner(userId);
       allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Enforces user-ownership for resumes.  Only the authenticated user can read or write resumes under their own user profile.
+     * @description Controls access to resume documents nested under a user profile.
      * @path /users/{userId}/resumes/{resumeId}
-     * @allow (create, update, get, delete) if request.auth.uid == userId
-     * @deny (create, update, get, delete) if request.auth.uid != userId
-     * @principle Restricts access to a user's own data tree.
+     * @allow (create) Authenticated user can create resumes under their own profile.
+     * @allow (get, update, delete) Authenticated user can only access resumes under their own profile.
+     * @deny (create) Unauthenticated user attempts to create a resume.
+     * @deny (get, update, delete) Authenticated user attempts to access resumes under another user's profile.
+     * @principle Enforces document ownership for resumes.
      */
     match /users/{userId}/resumes/{resumeId} {
       allow get: if isOwner(userId);
@@ -53,46 +64,47 @@ service cloud.firestore {
     }
 
     /**
-     * @description Allows public read access to resume templates.  No authentication required to read templates.
+     * @description Controls access to resume template documents.
      * @path /templates/{templateId}
-     * @allow (get, list) if true
-     * @deny (create, update, delete) always.
-     * @principle Templates are publicly accessible for reading.
+     * @allow (get, list) Any user can read available templates.
+     * @deny (create, update, delete) No user can create, update, or delete templates.
+     * @principle Allows public read access to templates while restricting write access.
      */
     match /templates/{templateId} {
-      allow get: if true;
-      allow list: if true;
-      allow create: if false;
-      allow update: if false;
-      allow delete: if false;
+      allow get, list: if true;
+      allow create, update, delete: if false;
     }
 
     /**
-     * @description Enforces user-ownership for feedback entries. Only the authenticated user can read or write feedback entries under their own user profile.
-     * @path /users/{userId}/feedback/{feedbackId}
-     * @allow (create, update, get, delete) if request.auth.uid == userId
-     * @deny (create, update, get, delete) if request.auth.uid != userId or attempting to modify another user's feedback
-     * @principle Restricts access to a user's own data tree.
+     * @description Controls access to feedback documents for a specific resume.
+     * @path /resumes/{resumeId}/feedback/{feedbackId}
+     * @allow (create) Authenticated user can create feedback
+     * @deny (get, list, update, delete) Only the resume owner can manage feedback.
+     * @principle Enforces document ownership for resumes and feedback.
      */
-    match /users/{userId}/feedback/{feedbackId} {
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-      allow create: if isOwner(userId);
-      allow update: if isExistingOwner(userId);
-      allow delete: if isExistingOwner(userId);
+    match /resumes/{resumeId}/feedback/{feedbackId} {
+      allow get: if get(/databases/$(database)/documents/resumes/$(resumeId)).data.userId == request.auth.uid;
+      allow list: if get(/databases/$(database)/documents/resumes/$(resumeId)).data.userId == request.auth.uid;
+      allow create: if isSignedIn();
+      allow update: if get(/databases/$(database)/documents/resumes/$(resumeId)).data.userId == request.auth.uid && resource != null;
+      allow delete: if get(/databases/$(database)/documents/resumes/$(resumeId)).data.userId == request.auth.uid && resource != null;
     }
+  }
 
-    // Helper functions
-    function isSignedIn() {
-      return request.auth != null;
-    }
+  // Helper functions
+  function isSignedIn() {
+    return request.auth != null;
+  }
 
-    function isOwner(userId) {
-      return isSignedIn() && request.auth.uid == userId;
-    }
+  function isOwner(userId) {
+    return request.auth.uid == userId;
+  }
 
-    function isExistingOwner(userId) {
-        return isOwner(userId) && resource != null;
-    }
+    function isNewOwner(userId) {
+    return isSignedIn() && request.auth.uid == userId && request.resource.data.email == request.auth.token.email;
+  }
+
+  function isExistingOwner(userId) {
+    return isSignedIn() && isOwner(userId) && resource != null;
   }
 }
