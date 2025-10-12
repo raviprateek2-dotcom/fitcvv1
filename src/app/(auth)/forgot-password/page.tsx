@@ -29,23 +29,20 @@ export default function ForgotPasswordPage() {
     }
     setIsLoading(true);
     try {
+      // We always await, but the user experience is the same for success or failure.
       await sendPasswordResetEmail(auth, email);
-      toast({
-        title: 'Password Reset Email Sent',
-        description: 'If an account with that email exists, a password reset link has been sent to it.',
-      });
     } catch (error: any) {
       // We don't want to reveal if an email exists or not for security reasons.
       // So we show the same success message even on error.
       // Specific errors could be logged to a monitoring service.
       console.error('Password reset error:', error);
+    } finally {
+      setIsLoading(false);
+      setEmail('');
        toast({
         title: 'Password Reset Email Sent',
         description: 'If an account with that email exists, a password reset link has been sent to it.',
       });
-    } finally {
-      setIsLoading(false);
-      setEmail('');
     }
   };
 

@@ -136,7 +136,7 @@ function UserMenu() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
-            <AvatarImage src={user?.photoURL || "https://picsum.photos/seed/user-avatar/40/40"} alt="User avatar" />
+            <AvatarImage src={user?.photoURL || ''} alt="User avatar" />
             <AvatarFallback>
               <User className="h-5 w-5" />
             </AvatarFallback>

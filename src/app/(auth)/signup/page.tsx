@@ -43,14 +43,13 @@ export default function SignupPage() {
   const auth = useAuth();
   const { toast } = useToast();
   const router = useRouter();
-  const { user, isUserLoading } = useUser();
+  const { user } = useUser();
 
   useEffect(() => {
-    if (isUserLoading) return;
     if (user) {
       router.push('/dashboard');
     }
-  }, [user, isUserLoading, router]);
+  }, [user, router]);
 
   const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
