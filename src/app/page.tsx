@@ -141,10 +141,10 @@ export default function Home() {
                  <div className="space-y-8">
                     <div className="inline-block rounded-lg bg-secondary px-3 py-1 text-sm font-medium animate-fade-in">Everything You Need</div>
                     <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl animate-fade-in-up animation-delay-200">Features that help you stand out</h2>
-                    <p className="text-muted-foreground md:text-lg">
+                    <p className="text-muted-foreground md:text-lg animate-fade-in-up animation-delay-300">
                         ResumeCraft AI provides all the tools you need to create a professional resume that gets noticed by both recruiters and automated systems.
                     </p>
-                    <ul className="grid gap-6">
+                    <ul className="grid gap-6 animate-fade-in-up animation-delay-400">
                         {features.map((feature, index) => (
                           <li key={index} className="flex items-start gap-4">
                               <div className="bg-primary/10 p-2 rounded-full mt-1">
@@ -195,7 +195,7 @@ export default function Home() {
                       <p className="max-w-[600px] text-muted-foreground md:text-xl animate-fade-in-up animation-delay-200">
                           We blend beautiful design with powerful AI to give you an unfair advantage in your job search. Go beyond boring templates and create a resume that truly reflects your skills and personality.
                       </p>
-                      <ul className="space-y-4 text-lg">
+                      <ul className="space-y-4 text-lg animate-fade-in-up animation-delay-300">
                         <li className="flex items-center gap-3"><CheckCircle2 className="text-primary h-6 w-6"/><span>AI-powered content suggestions.</span></li>
                         <li className="flex items-center gap-3"><CheckCircle2 className="text-primary h-6 w-6"/><span>Professionally designed templates.</span></li>
                         <li className="flex items-center gap-3"><CheckCircle2 className="text-primary h-6 w-6"/><span>Intuitive real-time editor.</span></li>
