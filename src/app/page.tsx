@@ -46,7 +46,7 @@ export default function Home() {
                 Our AI-powered resume builder helps you create a professional, ATS-friendly resume in minutes. No more writer's block, no more formatting nightmares.
               </p>
               <div className="flex flex-col gap-4 sm:flex-row justify-center animate-fade-in-up animation-delay-400">
-                <Button asChild size="lg" className="group shadow-cyber-light">
+                <Button asChild size="lg" className="group" variant="neuro">
                   <Link href="/templates">
                     Create My Resume
                     <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
@@ -171,7 +171,7 @@ export default function Home() {
             Start for free and see how ResumeCraft AI can transform your job search. No credit card required.
           </p>
           <div className="mt-8">
-            <Button asChild size="lg" className="group shadow-cyber-light">
+            <Button asChild size="lg" className="group" variant="neuro">
               <Link href="/templates">
                 Create Your Resume Now
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
