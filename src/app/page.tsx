@@ -28,7 +28,6 @@ const features = [
   },
 ];
 
-const heroImage = PlaceHolderImages.find((img) => img.id === 'hero-image');
 const featuresImage = PlaceHolderImages.find((img) => img.id === 'features-image');
 const whyUsImage = PlaceHolderImages.find((img) => img.id === 'why-us-image');
 
@@ -38,28 +37,15 @@ export default function Home() {
       {/* Hero Section */}
       <section className="w-full py-20 md:py-32">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="grid gap-8 lg:grid-cols-2 lg:gap-16 items-center">
-             <div className="flex justify-center animate-fade-in animation-delay-300 rounded-lg overflow-hidden">
-              {heroImage && (
-                <Image
-                  src={heroImage.imageUrl}
-                  width={800}
-                  height={600}
-                  alt={heroImage.description}
-                  data-ai-hint={heroImage.imageHint}
-                  className="rounded-2xl shadow-neuro-inset transform transition-transform duration-500 hover:scale-105"
-                  priority
-                />
-              )}
-            </div>
+          <div className="text-center">
             <div className="space-y-6">
               <h1 className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl animate-fade-in-up">
                 The fastest way to create a resume that gets you hired.
               </h1>
-              <p className="max-w-[600px] text-muted-foreground md:text-xl animate-fade-in-up animation-delay-200">
+              <p className="max-w-[600px] mx-auto text-muted-foreground md:text-xl animate-fade-in-up animation-delay-200">
                 Our AI-powered resume builder helps you create a professional, ATS-friendly resume in minutes. No more writer's block, no more formatting nightmares.
               </p>
-              <div className="flex flex-col gap-4 sm:flex-row animate-fade-in-up animation-delay-400">
+              <div className="flex flex-col gap-4 sm:flex-row justify-center animate-fade-in-up animation-delay-400">
                 <Button asChild size="lg" variant="neuro" className="group">
                   <Link href="/templates">
                     Create My Resume
