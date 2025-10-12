@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter, Space_Grotesk } from 'next/font/google';
+import { Inter, Space_Grotesk, Montserrat } from 'next/font/google';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
@@ -7,14 +7,14 @@ import { Header } from '@/components/common/Header';
 import { Footer } from '@/components/common/Footer';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-});
-
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
-  variable: '--font-space-grotesk',
+  variable: '--font-body',
+});
+
+const montserrat = Montserrat({
+  subsets: ['latin'],
+  variable: '--font-headline',
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:9002';
@@ -77,8 +77,8 @@ export default function RootLayout({
       <body
         className={cn(
           'relative h-full font-body antialiased',
-          inter.variable,
-          spaceGrotesk.variable
+          spaceGrotesk.variable,
+          montserrat.variable
         )}
       >
         <FirebaseClientProvider>

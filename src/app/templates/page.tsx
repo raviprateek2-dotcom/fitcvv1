@@ -92,7 +92,7 @@ export default function TemplatesPage() {
                 </div>
               </CardContent>
               <CardFooter className="p-4 bg-background">
-                <h3 className="font-semibold text-lg">{template.name}</h3>
+                <h3 className="font-headline text-lg">{template.name}</h3>
               </CardFooter>
             </Card>
           ))}

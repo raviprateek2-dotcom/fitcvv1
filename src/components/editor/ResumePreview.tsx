@@ -49,10 +49,10 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
   const skillList = skills.split(',').map(s => s.trim()).filter(Boolean);
 
   return (
-    <div className="bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full p-8 mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-auto print:shadow-none print:rounded-none print:max-h-full">
+    <div className="bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full p-8 mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-auto print:shadow-none print:rounded-none print:max-h-full font-body">
       <header className="text-center mb-6">
-        <h1 className="text-4xl font-bold text-gray-900">{personalInfo.name}</h1>
-        <h2 className="text-xl font-semibold text-primary">{personalInfo.title}</h2>
+        <h1 className="text-4xl font-bold text-gray-900 font-headline">{personalInfo.name}</h1>
+        <h2 className="text-xl font-semibold text-primary font-headline">{personalInfo.title}</h2>
         <div className="flex justify-center items-center gap-4 text-sm text-gray-600 mt-2 flex-wrap">
           <div className="flex items-center gap-1.5"><AtSign size={14} />{personalInfo.email}</div>
           <div className="flex items-center gap-1.5"><Phone size={14} />{personalInfo.phone}</div>
@@ -64,19 +64,19 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
       <Separator className="my-6" />
 
       <section>
-        <h3 className="text-lg font-bold text-primary mb-2 uppercase tracking-wider">Summary</h3>
+        <h3 className="text-lg font-bold text-primary mb-2 uppercase tracking-wider font-headline">Summary</h3>
         <p className="text-sm leading-relaxed">{summary}</p>
       </section>
 
       <Separator className="my-6" />
 
       <section>
-        <h3 className="text-lg font-bold text-primary mb-3 uppercase tracking-wider">Experience</h3>
+        <h3 className="text-lg font-bold text-primary mb-3 uppercase tracking-wider font-headline">Experience</h3>
         <div className="space-y-4">
           {experience.map((exp) => (
             <div key={exp.id}>
               <div className="flex justify-between items-baseline">
-                <h4 className="font-bold text-md">{exp.role}</h4>
+                <h4 className="font-bold text-md font-headline">{exp.role}</h4>
                 <p className="text-sm text-gray-600">{exp.date}</p>
               </div>
               <p className="text-sm italic text-gray-700 mb-1">{exp.company}</p>
@@ -97,7 +97,7 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
       <Separator className="my-6" />
 
       <section>
-        <h3 className="text-lg font-bold text-primary mb-3 uppercase tracking-wider">Skills</h3>
+        <h3 className="text-lg font-bold text-primary mb-3 uppercase tracking-wider font-headline">Skills</h3>
         <div className="flex flex-wrap gap-2">
             {skillList.map((skill, index) => (
                 <Badge key={index} variant="secondary">{skill}</Badge>
@@ -108,12 +108,12 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
       <Separator className="my-6" />
 
       <section>
-        <h3 className="text-lg font-bold text-primary mb-3 uppercase tracking-wider">Education</h3>
+        <h3 className="text-lg font-bold text-primary mb-3 uppercase tracking-wider font-headline">Education</h3>
         <div className="space-y-2">
             {education.map(edu => (
                 <div key={edu.id} className="flex justify-between items-baseline">
                     <div>
-                        <h4 className="font-bold text-md">{edu.degree}</h4>
+                        <h4 className="font-bold text-md font-headline">{edu.degree}</h4>
                         <p className="text-sm italic text-gray-700">{edu.institution}</p>
                     </div>
                     <p className="text-sm text-gray-600">{edu.date}</p>
