@@ -7,12 +7,6 @@
       "imageHint": "professional workspace computer"
     },
     {
-      "id": "features-image",
-      "description": "A collage of resume snippets and professional headshots.",
-      "imageUrl": "https://picsum.photos/seed/features-main/600/700",
-      "imageHint": "resume examples"
-    },
-    {
       "id": "why-us-image",
       "description": "A split image showing a plain document transforming into a beautifully designed resume.",
       "imageUrl": "https://picsum.photos/seed/why-us/600/500",

@@ -3,7 +3,7 @@
 
 import { Button } from '@/components/ui/button';
 import { blogPosts } from '@/lib/blog-posts';
-import { ArrowRight, CheckCircle2, DraftingCompass, FileText, Sparkles, Zap } from 'lucide-react';
+import { ArrowRight, CheckCircle2, DraftingCompass, FileText, Sparkles, Zap, PenTool, Users, FileSignature, Search, BrainCircuit } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -138,6 +138,48 @@ const AnimatedResumeCarousel = () => {
     );
 }
 
+const AnimatedFeatureIcons = () => {
+    const featureIcons = [
+        { icon: DraftingCompass, className: 'col-start-2 row-start-1' },
+        { icon: FileText, className: 'col-start-1 row-start-2' },
+        { icon: Sparkles, className: 'col-start-3 row-start-2' },
+        { icon: Zap, className: 'col-start-2 row-start-3' },
+    ];
+
+    return (
+        <div className="grid grid-cols-3 grid-rows-3 gap-4 w-[300px] h-[300px] md:w-[400px] md:h-[400px]">
+            {featureIcons.map((item, index) => (
+                <motion.div
+                    key={index}
+                    className={`flex items-center justify-center bg-background rounded-2xl shadow-cyber-dark ${item.className}`}
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.5 + index * 0.2, type: 'spring', stiffness: 120 }}
+                >
+                     <motion.div
+                        animate={{
+                            y: [0, -10, 0],
+                        }}
+                        transition={{
+                            duration: 2 + index * 0.5,
+                            repeat: Infinity,
+                            ease: 'easeInOut',
+                        }}
+                    >
+                        <item.icon className="w-12 h-12 md:w-16 md:h-16 text-primary" />
+                    </motion.div>
+                </motion.div>
+            ))}
+        </div>
+    );
+};
+
+const blogPostIcons: { [key: string]: React.FC<React.ComponentProps<'svg'>> } = {
+  'ultimate-resume-guide-2024': PenTool,
+  '5-common-resume-mistakes': FileSignature,
+  'how-to-beat-ats': BrainCircuit,
+};
+
 export default function Home() {
   const [sentenceIndex, setSentenceIndex] = useState(0);
 
@@ -256,18 +298,9 @@ export default function Home() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true, amount: 0.5 }}
                   transition={{ duration: 0.8 }}
-                  className="hidden md:block"
+                  className="hidden md:flex justify-center"
                  >
-                    {PlaceHolderImages.find(img => img.id === 'features-image') && 
-                      <Image 
-                        src={PlaceHolderImages.find(img => img.id === 'features-image')!.imageUrl}
-                        alt="ResumeAI Features"
-                        width={600}
-                        height={700}
-                        data-ai-hint="resume examples"
-                        className="rounded-2xl shadow-2xl"
-                      />
-                    }
+                    <AnimatedFeatureIcons />
                  </motion.div>
                  <motion.div 
                     initial="hidden"
@@ -395,22 +428,17 @@ export default function Home() {
             className="grid gap-8 md:grid-cols-3"
           >
             {blogPosts.slice(0, 3).map((post) => {
-                const image = PlaceHolderImages.find(img => img.id === post.imageId);
+                const Icon = blogPostIcons[post.slug] || PenTool;
                 return (
                     <motion.div variants={itemVariants} key={post.slug}>
                       <Card className="group overflow-hidden flex flex-col h-full" variant="neuro">
-                          {image && (
-                          <Link href={`/blog/${post.slug}`} className="block overflow-hidden">
-                              <Image
-                                  src={image.imageUrl}
-                                  alt={post.title}
-                                  width={400}
-                                  height={200}
-                                  data-ai-hint={image.imageHint}
-                                  className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                              />
+                          <Link href={`/blog/${post.slug}`} className="block overflow-hidden relative h-48">
+                              <div className="absolute inset-0 bg-primary/10 flex items-center justify-center">
+                                  <motion.div whileHover={{ scale: 1.2, rotate: -5 }} transition={{ type: 'spring', stiffness: 300 }}>
+                                    <Icon className="w-24 h-24 text-primary/50" />
+                                  </motion.div>
+                              </div>
                           </Link>
-                          )}
                           <CardContent className="p-6 flex flex-col flex-grow">
                           <h3 className="text-xl font-bold font-headline mb-2 group-hover:text-primary transition-colors">
                               <Link href={`/blog/${post.slug}`}>{post.title}</Link>
