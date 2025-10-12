@@ -43,9 +43,6 @@ export default function Home() {
               <h1 className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl animate-fade-in-up">
                 Build a resume that gets you hired.
               </h1>
-              <p className="max-w-[600px] text-muted-foreground md:text-xl animate-fade-in-up animation-delay-200">
-                Our AI-powered resume builder helps you create a professional, ATS-friendly resume in minutes. No more writer's block, no more formatting nightmares.
-              </p>
               <div className="flex flex-col gap-4 sm:flex-row animate-fade-in-up animation-delay-400">
                 <Button asChild size="lg" className="group" variant="neuro">
                   <Link href="/templates">
