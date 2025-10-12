@@ -50,7 +50,6 @@ export default function Home() {
   useEffect(() => {
     const handleTyping = () => {
       const currentSentence = sentences[sentenceIndex];
-      const typingSpeed = isDeleting ? 75 : 150;
       
       if (isDeleting) {
         setTypedText(currentSentence.substring(0, charIndex - 1));
@@ -109,7 +108,7 @@ export default function Home() {
                   <div className="inline-block rounded-lg bg-background px-3 py-1 text-sm font-medium animate-fade-in">How It Works</div>
                   <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl animate-fade-in-up animation-delay-200">Three Simple Steps to Your Dream Job</h2>
               </div>
-              <div className="mx-auto grid items-start gap-8 sm:max-w-4xl sm:grid-cols-3 md:gap-12">
+              <div className="mx-auto grid items-stretch gap-8 sm:max-w-4xl sm:grid-cols-3 md:gap-12">
                   <div className="flex flex-col gap-4 items-center text-center p-6 rounded-2xl bg-background/50 backdrop-blur-sm shadow-cyber-dark animate-fade-in-up animation-delay-200">
                       <div className="bg-primary/10 p-4 rounded-full">
                          <FileText className="w-8 h-8 text-primary"/>
