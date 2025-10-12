@@ -25,7 +25,7 @@ const proFeatures = [
 
 export default function PricingPage() {
   return (
-    <div className="bg-secondary">
+    <div className="bg-background">
       <div className="container mx-auto px-4 md:px-6 py-12 md:py-20">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-headline font-bold tracking-tight sm:text-5xl">Simple, Transparent Pricing</h1>
@@ -33,7 +33,7 @@ export default function PricingPage() {
         </div>
 
         <div className="flex flex-col lg:flex-row justify-center items-center lg:items-stretch gap-8">
-          <Card className="w-full max-w-md shadow-lg bg-background">
+          <Card className="w-full max-w-md shadow-lg bg-card">
             <CardHeader className="text-center p-8">
               <CardTitle className="font-headline text-3xl">Free</CardTitle>
               <CardDescription>Perfect for getting started and landing your first interview.</CardDescription>
@@ -60,7 +60,7 @@ export default function PricingPage() {
             </CardFooter>
           </Card>
 
-          <Card className="w-full max-w-md shadow-2xl border-2 border-primary bg-background relative">
+          <Card className="w-full max-w-md shadow-2xl border-2 border-primary bg-card relative">
             <div className="absolute top-0 -translate-y-1/2 w-full flex justify-center">
               <div className="bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-semibold shadow-lg">
                 Most Popular

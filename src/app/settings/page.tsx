@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
+import Link from 'next/link';
 
 export default function SettingsPage() {
   const { user, isUserLoading, userProfile, isProfileLoading } = useUser();
@@ -48,7 +49,9 @@ export default function SettingsPage() {
                             {subscriptionStatus === 'Pro' ? (
                                 <Button variant="outline">Manage Subscription</Button>
                             ) : (
-                                <Button>Upgrade to Pro</Button>
+                                <Button asChild>
+                                  <Link href="/pricing">Upgrade to Pro</Link>
+                                </Button>
                             )}
                         </div>
                     )}
