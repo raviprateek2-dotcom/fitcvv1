@@ -31,9 +31,6 @@ const features = [
   },
 ];
 
-const featuresImage = PlaceHolderImages.find((img) => img.id === 'features-image');
-const whyUsImage = PlaceHolderImages.find((img) => img.id === 'why-us-image');
-
 const sentences = [
     "gets you hired.",
     "lands you interviews.",
@@ -137,14 +134,14 @@ export default function Home() {
       {/* Features Section */}
        <section id="features" className="w-full py-20 md:py-32">
         <div className="container mx-auto px-4 md:px-6">
-            <div className="grid md:grid-cols-2 gap-16 items-center">
-                 <div className="space-y-8">
+            <div className="grid md:grid-cols-1 gap-16 items-center">
+                 <div className="space-y-8 max-w-3xl mx-auto text-center md:text-left">
                     <div className="inline-block rounded-lg bg-secondary px-3 py-1 text-sm font-medium animate-fade-in">Everything You Need</div>
                     <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl animate-fade-in-up animation-delay-200">Features that help you stand out</h2>
                     <p className="text-muted-foreground md:text-lg animate-fade-in-up animation-delay-300">
                         ResumeCraft AI provides all the tools you need to create a professional resume that gets noticed by both recruiters and automated systems.
                     </p>
-                    <ul className="grid gap-6 animate-fade-in-up animation-delay-400">
+                    <ul className="grid sm:grid-cols-2 gap-6 animate-fade-in-up animation-delay-400 text-left">
                         {features.map((feature, index) => (
                           <li key={index} className="flex items-start gap-4">
                               <div className="bg-primary/10 p-2 rounded-full mt-1">
@@ -158,18 +155,6 @@ export default function Home() {
                         ))}
                     </ul>
                 </div>
-                 <div className="flex justify-center animate-fade-in animation-delay-300 rounded-lg overflow-hidden">
-                    {featuresImage && (
-                        <Image
-                        src={featuresImage.imageUrl}
-                        width={600}
-                        height={700}
-                        alt={featuresImage.description}
-                        data-ai-hint={featuresImage.imageHint}
-                        className="rounded-2xl shadow-cyber-dark object-cover w-full h-full"
-                        />
-                    )}
-                </div>
             </div>
         </div>
       </section>
@@ -177,20 +162,8 @@ export default function Home() {
       {/* Why Us Section */}
       <section className="w-full py-20 md:py-32 bg-secondary">
           <div className="container mx-auto px-4 md:px-6">
-               <div className="grid md:grid-cols-2 gap-16 items-center">
-                <div className="flex justify-center animate-fade-in animation-delay-300 rounded-lg overflow-hidden">
-                      {whyUsImage && (
-                          <Image
-                          src={whyUsImage.imageUrl}
-                          width={600}
-                          height={500}
-                          alt={whyUsImage.description}
-                          data-ai-hint={whyUsImage.imageHint}
-                          className="rounded-2xl shadow-cyber-dark object-cover w-full h-full"
-                          />
-                      )}
-                  </div>
-                   <div className="space-y-6">
+               <div className="grid md:grid-cols-1 gap-16 items-center">
+                   <div className="space-y-6 max-w-3xl mx-auto text-center md:text-left">
                       <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl animate-fade-in-up">Don't just write a resume. Design your future.</h2>
                       <p className="max-w-[600px] text-muted-foreground md:text-xl animate-fade-in-up animation-delay-200">
                           We blend beautiful design with powerful AI to give you an unfair advantage in your job search. Go beyond boring templates and create a resume that truly reflects your skills and personality.
