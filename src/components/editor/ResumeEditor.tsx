@@ -180,11 +180,6 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
         if (!Array.isArray(updatedData.projects)) updatedData.projects = [];
         if (typeof updatedData.coverLetter !== 'string') updatedData.coverLetter = '';
         if (typeof updatedData.companyInfo !== 'object' || updatedData.companyInfo === null) updatedData.companyInfo = { name: '', jobTitle: '' };
-        
-        // Migration for skills from string to Skill[]
-        if (updatedData.skills.length > 0 && typeof updatedData.skills[0] === 'string') {
-             updatedData.skills = (updatedData.skills as any[]).map(name => ({ id: Date.now() + Math.random(), name, level: 'Advanced' }));
-        }
 
         setResumeData(updatedData);
         initialDataRef.current = updatedData;
