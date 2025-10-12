@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { MoreHorizontal, PlusCircle } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, FileText, Palette, Download, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -116,6 +116,46 @@ const LoadingState = () => (
     </div>
 );
 
+const EmptyState = () => (
+    <div className="text-center py-16 md:py-24 border-2 border-dashed rounded-lg bg-background">
+      <div className="max-w-2xl mx-auto">
+        <h2 className="text-3xl font-headline font-bold mb-4">Welcome to ResumeCraft AI!</h2>
+        <p className="text-muted-foreground mb-8 text-lg">Let's create a resume that gets you hired. Follow these simple steps to get started.</p>
+        
+        <div className="grid md:grid-cols-3 gap-8 text-left mb-10">
+            <div className="flex gap-4">
+                <div className="flex-shrink-0 bg-primary/10 text-primary rounded-full h-10 w-10 flex items-center justify-center font-bold text-lg">1</div>
+                <div>
+                    <h3 className="font-semibold">Choose a Template</h3>
+                    <p className="text-sm text-muted-foreground">Pick a design that matches your style and industry.</p>
+                </div>
+            </div>
+            <div className="flex gap-4">
+                <div className="flex-shrink-0 bg-primary/10 text-primary rounded-full h-10 w-10 flex items-center justify-center font-bold text-lg">2</div>
+                <div>
+                    <h3 className="font-semibold">Fill in Your Details</h3>
+                    <p className="text-sm text-muted-foreground">Use our AI assistant to craft compelling content.</p>
+                </div>
+            </div>
+            <div className="flex gap-4">
+                <div className="flex-shrink-0 bg-primary/10 text-primary rounded-full h-10 w-10 flex items-center justify-center font-bold text-lg">3</div>
+                <div>
+                    <h3 className="font-semibold">Download & Apply</h3>
+                    <p className="text-sm text-muted-foreground">Export your new resume as a PDF and start applying.</p>
+                </div>
+            </div>
+        </div>
+
+        <Button asChild size="lg" className="group">
+          <Link href="/templates">
+            Start by Choosing a Template
+            <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+          </Link>
+        </Button>
+      </div>
+    </div>
+);
+
 
 export default function DashboardPage() {
   const { user, isUserLoading } = useUser();
@@ -196,16 +236,7 @@ export default function DashboardPage() {
           ))}
         </div>
       ) : !isLoading && (
-        <div className="text-center py-20 border-2 border-dashed rounded-lg">
-          <h2 className="text-2xl font-semibold mb-2">No Resumes Yet</h2>
-          <p className="text-muted-foreground mb-4">Click below to create your first professional resume.</p>
-          <Button asChild>
-            <Link href="/templates">
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Create a Resume
-            </Link>
-          </Button>
-        </div>
+        <EmptyState />
       )}
     </div>
   );
