@@ -242,7 +242,7 @@ export default function Home() {
                         {features.map((feature, index) => (
                           <motion.li 
                             key={index} 
-                            className="flex items-start gap-4 transition-all duration-300 hover:bg-secondary/50 p-4 rounded-lg"
+                            className="flex items-start gap-4 transition-all duration-300 hover:bg-secondary/50 p-4 rounded-lg hover:scale-105"
                             variants={itemVariants}
                           >
                               <div className="bg-primary/10 p-3 rounded-full mt-1">
@@ -429,5 +429,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
