@@ -95,49 +95,6 @@ const itemVariants = {
   },
 };
 
-const AnimatedResumeCarousel = () => {
-    const images = ['template-modern', 'template-professional', 'template-creative', 'template-minimalist'].map(id => 
-        PlaceHolderImages.find(img => img.id === id)
-    ).filter(Boolean);
-
-    const [index, setIndex] = useState(0);
-
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setIndex(prev => (prev + 1) % images.length);
-        }, 3000);
-        return () => clearInterval(timer);
-    }, [images.length]);
-
-    return (
-        <div className="relative w-full max-w-md h-[450px] sm:h-[550px] [perspective:1000px]">
-            <AnimatePresence>
-                {images.map((image, i) => (
-                    index === i && image && (
-                        <motion.div
-                            key={image.id}
-                            className="absolute w-full h-full"
-                            initial={{ opacity: 0, transform: 'rotateY(180deg)' }}
-                            animate={{ opacity: 1, transform: 'rotateY(0deg)' }}
-                            exit={{ opacity: 0, transform: 'rotateY(-180deg)' }}
-                            transition={{ duration: 0.8, ease: 'easeInOut' }}
-                        >
-                            <Image
-                                src={image.imageUrl}
-                                alt={image.description}
-                                layout="fill"
-                                objectFit="contain"
-                                data-ai-hint={image.imageHint}
-                                className="rounded-2xl shadow-2xl"
-                            />
-                        </motion.div>
-                    )
-                ))}
-            </AnimatePresence>
-        </div>
-    );
-}
-
 const AnimatedFeatureIcons = () => {
     const featureIcons = [
         { icon: DraftingCompass, className: 'col-start-2 row-start-1' },
@@ -238,7 +195,7 @@ export default function Home() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="hidden md:flex items-center justify-center"
             >
-              <AnimatedResumeCarousel />
+              <AnimatedFeatureIcons />
             </motion.div>
           </div>
         </div>
