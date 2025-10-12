@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -426,9 +427,12 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
           </div>
            <div className="flex items-center gap-4">
              <SaveStatusIndicator status={saveStatus} />
+            <Button variant="outline" size="sm" asChild>
+                <Link href={`/share/${resumeId}`} target="_blank"><Share2 className="mr-2 h-4 w-4"/>Share</Link>
+            </Button>
             <Button variant="outline" size="sm" onClick={handlePrint}>
               <Download className="mr-2 h-4 w-4" />
-              Download PDF
+              PDF
             </Button>
             <Button variant="outline" size="icon" asChild>
                 <Link href="/dashboard"><ArrowLeft/></Link>
