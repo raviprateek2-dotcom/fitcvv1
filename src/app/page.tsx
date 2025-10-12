@@ -42,10 +42,10 @@ export default function Home() {
               <h1 className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl text-foreground">
                 Craft Your Future with an AI-Powered Resume
               </h1>
-              <p className="max-w-[600px] text-muted-foreground md:text-xl animate-fade-in-up animate-delay-200">
+              <p className="max-w-[600px] text-muted-foreground md:text-xl animate-fade-in-up animation-delay-200">
                 Build a professional, ATS-friendly resume in minutes. Let our AI guide you to crafting the perfect application that lands you your dream job.
               </p>
-              <div className="flex flex-col gap-4 sm:flex-row animate-fade-in-up animate-delay-400">
+              <div className="flex flex-col gap-4 sm:flex-row animate-fade-in-up animation-delay-400">
                 <Button asChild size="lg" className="group">
                   <Link href="/templates">
                     Get Started Free
@@ -57,7 +57,7 @@ export default function Home() {
                 </Button>
               </div>
             </div>
-            <div className="flex justify-center animate-fade-in animate-delay-200">
+            <div className="flex justify-center animate-fade-in animation-delay-200">
               {heroImage && (
                 <Image
                   src={heroImage.imageUrl}
@@ -78,8 +78,8 @@ export default function Home() {
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
             <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm animate-fade-in">Key Features</div>
-            <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl animate-fade-in-up animate-delay-200">Why Choose ResumeCraft AI?</h2>
-            <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed animate-fade-in-up animate-delay-400">
+            <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl animate-fade-in-up animation-delay-200">Why Choose ResumeCraft AI?</h2>
+            <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed animate-fade-in-up animation-delay-400">
               We provide all the tools you need to create a professional resume that stands out from the crowd and gets you hired.
             </p>
           </div>
@@ -109,7 +109,7 @@ export default function Home() {
               Find answers to common questions about ResumeCraft AI.
             </p>
           </div>
-          <div className="max-w-3xl mx-auto animate-fade-in-up animate-delay-200">
+          <div className="max-w-3xl mx-auto animate-fade-in-up animation-delay-200">
             <Accordion type="single" collapsible className="w-full">
               <AccordionItem value="item-1">
                 <AccordionTrigger>Is ResumeCraft AI free to use?</AccordionTrigger>
