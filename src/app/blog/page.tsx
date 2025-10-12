@@ -1,0 +1,50 @@
+
+import { blogPosts } from '@/lib/blog-posts';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Blog - Career Advice & Resume Tips',
+  description: 'Explore articles on resume writing, career development, interview tips, and more from the ResumeCraft AI team.',
+};
+
+
+export default function BlogPage() {
+  return (
+    <div className="bg-secondary">
+      <div className="container mx-auto px-4 md:px-6 py-12 md:py-20">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-headline font-bold tracking-tight sm:text-5xl">From the Blog</h1>
+          <p className="mt-4 text-lg text-muted-foreground">
+            Explore articles on resume writing, career development, and interview tips.
+          </p>
+        </div>
+
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {blogPosts.map((post) => (
+            <Card key={post.slug} className="group overflow-hidden flex flex-col" variant="neuro">
+               <CardHeader>
+                    <h2 className="text-xl font-bold font-headline group-hover:text-primary transition-colors">
+                        <Link href={`/blog/${post.slug}`}>{post.title}</Link>
+                    </h2>
+                </CardHeader>
+              <CardContent className="flex flex-col flex-grow">
+                <p className="text-muted-foreground text-sm flex-grow">{post.description}</p>
+                <Button variant="link" asChild className="p-0 h-auto mt-4 self-start">
+                    <Link href={`/blog/${post.slug}`}>
+                    Read More <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+    

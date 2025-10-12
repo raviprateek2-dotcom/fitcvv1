@@ -2,11 +2,15 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { ArrowRight, Bot, DraftingCompass, FileText, Sparkles, Zap, CheckCircle2 } from 'lucide-react';
-import Image from 'next/image';
+import { blogPosts } from '@/lib/blog-posts';
+import { ArrowRight, CheckCircle2, DraftingCompass, FileText, Sparkles, Zap } from 'lucide-react';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import Autoplay from "embla-carousel-autoplay";
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+
 
 const features = [
   {
@@ -37,6 +41,34 @@ const sentences = [
     "builds your future.",
     "showcases your skills."
 ];
+
+const testimonials = [
+  {
+    quote: "ResumeCraft AI transformed my job search. The AI writer is a game-changer, and I got more interviews in a week than I did in a month.",
+    author: "Sarah J.",
+    title: "Software Engineer",
+    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d"
+  },
+  {
+    quote: "As a recent graduate, I was struggling to write a professional resume. This tool made it so easy, and the templates are beautiful. Highly recommended!",
+    author: "Michael B.",
+    title: "Marketing Graduate",
+    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026705d"
+  },
+  {
+    quote: "I needed to update my resume quickly for a promotion. The intuitive editor and professional results saved me hours of work.",
+    author: "Emily K.",
+    title: "Project Manager",
+    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026706d"
+  },
+   {
+    quote: "The cover letter generator is pure magic. It perfectly captured my experience and tailored it to the job description. I got the job!",
+    author: "David L.",
+    title: "UX Designer",
+    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026707d"
+  },
+];
+
 
 export default function Home() {
   const [sentenceIndex, setSentenceIndex] = useState(0);
@@ -135,13 +167,13 @@ export default function Home() {
        <section id="features" className="w-full py-20 md:py-32">
         <div className="container mx-auto px-4 md:px-6">
             <div className="grid md:grid-cols-1 gap-16 items-center">
-                 <div className="space-y-8 max-w-3xl mx-auto text-center md:text-left">
-                    <div className="inline-block rounded-lg bg-secondary px-3 py-1 text-sm font-medium animate-fade-in">Everything You Need</div>
-                    <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl animate-fade-in-up animation-delay-200">Features that help you stand out</h2>
-                    <p className="text-muted-foreground md:text-lg animate-fade-in-up animation-delay-300">
+                 <div className="space-y-8 max-w-3xl mx-auto text-center animate-fade-in-up">
+                    <div className="inline-block rounded-lg bg-secondary px-3 py-1 text-sm font-medium">Everything You Need</div>
+                    <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl animation-delay-200">Features that help you stand out</h2>
+                    <p className="text-muted-foreground md:text-lg animation-delay-300">
                         ResumeCraft AI provides all the tools you need to create a professional resume that gets noticed by both recruiters and automated systems.
                     </p>
-                    <ul className="grid sm:grid-cols-2 gap-6 animate-fade-in-up animation-delay-400 text-left">
+                    <ul className="grid sm:grid-cols-2 gap-6 animation-delay-400 text-left">
                         {features.map((feature, index) => (
                           <li key={index} className="flex items-start gap-4">
                               <div className="bg-primary/10 p-2 rounded-full mt-1">
@@ -159,16 +191,58 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Testimonials Section */}
+      <section id="testimonials" className="w-full py-20 md:py-32 bg-secondary">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
+            <div className="inline-block rounded-lg bg-background px-3 py-1 text-sm font-medium animate-fade-in">What Our Users Say</div>
+            <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl animate-fade-in-up animation-delay-200">Loved by Job Seekers Worldwide</h2>
+          </div>
+          <Carousel
+            opts={{ align: "start", loop: true }}
+            plugins={[Autoplay({ delay: 5000 })]}
+            className="w-full max-w-4xl mx-auto animate-fade-in-up animation-delay-400"
+          >
+            <CarouselContent>
+              {testimonials.map((testimonial, index) => (
+                <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                  <div className="p-1 h-full">
+                    <Card className="flex flex-col justify-between h-full" variant="neuro">
+                      <CardContent className="p-6 flex flex-col gap-4">
+                        <p className="text-muted-foreground">"{testimonial.quote}"</p>
+                        <div className="flex items-center gap-4 pt-4">
+                          <Avatar>
+                            <AvatarImage src={testimonial.avatar} alt={testimonial.author} />
+                            <AvatarFallback>{testimonial.author.charAt(0)}</AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-semibold">{testimonial.author}</p>
+                            <p className="text-sm text-muted-foreground">{testimonial.title}</p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="hidden sm:flex" />
+            <CarouselNext className="hidden sm:flex" />
+          </Carousel>
+        </div>
+      </section>
+
+
       {/* Why Us Section */}
-      <section className="w-full py-20 md:py-32 bg-secondary">
+      <section className="w-full py-20 md:py-32">
           <div className="container mx-auto px-4 md:px-6">
                <div className="grid md:grid-cols-1 gap-16 items-center">
-                   <div className="space-y-6 max-w-3xl mx-auto text-center md:text-left">
-                      <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl animate-fade-in-up">Don't just write a resume. Design your future.</h2>
-                      <p className="max-w-[600px] text-muted-foreground md:text-xl animate-fade-in-up animation-delay-200">
+                   <div className="space-y-6 max-w-3xl mx-auto text-center animate-fade-in-up">
+                      <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Don't just write a resume. Design your future.</h2>
+                      <p className="max-w-[600px] text-muted-foreground md:text-xl animation-delay-200">
                           We blend beautiful design with powerful AI to give you an unfair advantage in your job search. Go beyond boring templates and create a resume that truly reflects your skills and personality.
                       </p>
-                      <ul className="space-y-4 text-lg animate-fade-in-up animation-delay-300">
+                      <ul className="space-y-4 text-lg animation-delay-300 inline-flex flex-col items-start">
                         <li className="flex items-center gap-3"><CheckCircle2 className="text-primary h-6 w-6"/><span>AI-powered content suggestions.</span></li>
                         <li className="flex items-center gap-3"><CheckCircle2 className="text-primary h-6 w-6"/><span>Professionally designed templates.</span></li>
                         <li className="flex items-center gap-3"><CheckCircle2 className="text-primary h-6 w-6"/><span>Intuitive real-time editor.</span></li>
@@ -176,6 +250,41 @@ export default function Home() {
                   </div>
               </div>
           </div>
+      </section>
+
+      {/* Blog Section */}
+      <section id="blog" className="w-full py-20 md:py-32 bg-secondary">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
+            <div className="inline-block rounded-lg bg-background px-3 py-1 text-sm font-medium animate-fade-in">From Our Blog</div>
+            <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl animate-fade-in-up animation-delay-200">Career Advice & Resume Tips</h2>
+            <p className="max-w-[600px] text-muted-foreground md:text-lg animation-delay-300">
+              Get the latest insights from our career experts to help you land your dream job.
+            </p>
+          </div>
+          <div className="grid gap-8 md:grid-cols-3 animate-fade-in-up animation-delay-400">
+            {blogPosts.slice(0, 3).map((post) => (
+              <Card key={post.slug} className="group overflow-hidden" variant="neuro">
+                <CardContent className="p-6">
+                  <h3 className="text-xl font-bold font-headline mb-2 group-hover:text-primary transition-colors">
+                    <Link href={`/blog/${post.slug}`}>{post.title}</Link>
+                  </h3>
+                  <p className="text-muted-foreground text-sm mb-4">{post.description}</p>
+                  <Button variant="link" asChild className="p-0 h-auto">
+                     <Link href={`/blog/${post.slug}`}>
+                      Read More <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+           <div className="text-center mt-12 animate-fade-in-up animation-delay-600">
+                <Button asChild size="lg" variant="outline">
+                    <Link href="/blog">View All Articles</Link>
+                </Button>
+            </div>
+        </div>
       </section>
 
 
@@ -199,3 +308,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
