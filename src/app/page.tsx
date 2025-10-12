@@ -89,7 +89,7 @@ const GridPatternBackground = () => {
         style={{ y }}
         className="absolute inset-0 z-0 overflow-hidden"
       >
-        <div className="absolute inset-0 bg-background" />
+        <div className="absolute inset-0 bg-card" />
         <svg
           className="absolute inset-0 h-full w-full stroke-secondary"
           aria-hidden="true"
@@ -109,7 +109,7 @@ const GridPatternBackground = () => {
           </defs>
           <rect width="100%" height="100%" fill="url(#grid-pattern)" />
         </svg>
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-background/80 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-b from-card via-card/80 to-card" />
       </motion.div>
     );
 };
@@ -167,7 +167,7 @@ export default function Home() {
   }, []);
   
   return (
-    <div className="flex flex-col items-center bg-background text-foreground overflow-x-hidden" style={{ perspective: '1000px' }}>
+    <div className="flex flex-col items-center bg-card text-card-foreground overflow-x-hidden" style={{ perspective: '1000px' }}>
       
       {/* Hero Section */}
       <section className="w-full py-20 md:py-32 relative h-auto mb-20">
@@ -220,7 +220,7 @@ export default function Home() {
               <div
                 className="flex flex-col items-center justify-center space-y-4 text-center mb-12"
               >
-                  <div className="inline-block rounded-lg bg-background/50 backdrop-blur-sm px-3 py-1 text-sm font-medium border">How It Works</div>
+                  <div className="inline-block rounded-lg bg-card/50 backdrop-blur-sm px-3 py-1 text-sm font-medium border">How It Works</div>
                   <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Three Simple Steps to Your Dream Job</h2>
               </div>
               <div
@@ -301,7 +301,7 @@ export default function Home() {
           <div
             className="flex flex-col items-center justify-center space-y-4 text-center mb-12"
           >
-            <div className="inline-block rounded-lg bg-background/50 backdrop-blur-sm border px-3 py-1 text-sm font-medium">What Our Users Say</div>
+            <div className="inline-block rounded-lg bg-card/50 backdrop-blur-sm border px-3 py-1 text-sm font-medium">What Our Users Say</div>
             <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Loved by Job Seekers Worldwide</h2>
           </div>
           <div>
@@ -377,7 +377,7 @@ export default function Home() {
             <div
               className="flex flex-col items-center justify-center space-y-4 text-center mb-12"
             >
-              <div className="inline-block rounded-lg bg-background/50 backdrop-blur-sm border px-3 py-1 text-sm font-medium">From Our Blog</div>
+              <div className="inline-block rounded-lg bg-card/50 backdrop-blur-sm border px-3 py-1 text-sm font-medium">From Our Blog</div>
               <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Career Advice & Resume Tips</h2>
               <p className="max-w-[600px] text-muted-foreground md:text-lg">
                 Get the latest insights from our career experts to help you land your dream job.
@@ -449,5 +449,3 @@ export default function Home() {
     </div>
   );
 }
-
-    

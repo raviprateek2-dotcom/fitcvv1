@@ -93,9 +93,11 @@ export default function RootLayout({
             <div className="flex flex-col min-h-screen">
               <Header />
               <main className="flex-grow py-8">
-                <PageTransition>
-                  {children}
-                </PageTransition>
+                <div className="container bg-card text-card-foreground rounded-2xl shadow-lg">
+                  <PageTransition>
+                    {children}
+                  </PageTransition>
+                </div>
               </main>
               <Footer />
             </div>
