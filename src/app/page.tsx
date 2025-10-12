@@ -126,19 +126,21 @@ export default function Home() {
   }, []);
   
   const sectionVariants = {
-    hidden: { opacity: 0 },
-    visible: { 
-        opacity: 1, 
-        transition: { 
-            duration: 0.5,
-            staggerChildren: 0.2 
-        }
+    hidden: { opacity: 0, y: 50 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.8,
+        ease: 'easeOut',
+        staggerChildren: 0.3,
+      },
     },
   };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
   };
 
 
@@ -195,10 +197,10 @@ export default function Home() {
       <motion.section 
         id="how-it-works"
         className="relative w-full py-20 md:py-32 bg-secondary/30 backdrop-blur-sm"
+        variants={sectionVariants}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
-        variants={sectionVariants}
       >
         <div
             className="container mx-auto px-4 md:px-6"
@@ -243,10 +245,10 @@ export default function Home() {
        <motion.section 
         id="features" 
         className="relative w-full py-20 md:py-32"
+        variants={sectionVariants}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
-        variants={sectionVariants}
        >
         <div className="container mx-auto px-4 md:px-6">
             <motion.div
@@ -282,10 +284,10 @@ export default function Home() {
       <motion.section 
         id="testimonials" 
         className="relative w-full py-20 md:py-32 bg-secondary/30 backdrop-blur-sm"
+        variants={sectionVariants}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
-        variants={sectionVariants}
         >
         <div
             className="container mx-auto px-4 md:px-6"
@@ -343,10 +345,10 @@ export default function Home() {
       {/* Why Us Section */}
       <motion.section 
         className="relative w-full py-20 md:py-32"
+        variants={sectionVariants}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.5 }}
-        variants={sectionVariants}
         >
           <div
             className="container mx-auto px-4 md:px-6"
@@ -366,10 +368,10 @@ export default function Home() {
       <motion.section 
         id="blog" 
         className="relative w-full py-20 md:py-32 bg-secondary/30 backdrop-blur-sm"
+        variants={sectionVariants}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
-        variants={sectionVariants}
       >
         <div className="container mx-auto px-4 md:px-6">
           <div>
@@ -430,10 +432,10 @@ export default function Home() {
       {/* Final CTA */}
       <motion.section 
         className="relative w-full py-20 md:py-32"
+        variants={sectionVariants}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.5 }}
-        variants={sectionVariants}
         >
         <div
           className="container mx-auto px-4 md:px-6 text-center"
