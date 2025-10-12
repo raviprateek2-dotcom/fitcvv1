@@ -1,150 +1,191 @@
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { ArrowRight, Bot, DraftingCompass, FileText, Sparkles, Zap } from 'lucide-react';
+import { ArrowRight, Bot, DraftingCompass, FileText, Sparkles, Zap, CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 const features = [
   {
-    icon: <DraftingCompass className="w-8 h-8 text-primary" />,
+    icon: <DraftingCompass className="w-6 h-6 text-primary" />,
     title: 'Intuitive Editor',
-    description: 'Effortlessly build and customize your resume with our user-friendly editor.',
+    description: 'Effortlessly build and customize your resume with our user-friendly drag and drop editor.',
   },
   {
-    icon: <FileText className="w-8 h-8 text-primary" />,
+    icon: <FileText className="w-6 h-6 text-primary" />,
     title: 'Professional Templates',
     description: 'Choose from a variety of modern, classic, and creative templates designed by experts.',
   },
   {
-    icon: <Sparkles className="w-8 h-8 text-primary" />,
+    icon: <Sparkles className="w-6 h-6 text-primary" />,
     title: 'AI Content Writer',
-    description: 'Let our AI write compelling resume content tailored to your target job.',
+    description: 'Let our AI write compelling resume content tailored to your target job in seconds.',
   },
   {
-    icon: <Zap className="w-8 h-8 text-primary" />,
+    icon: <Zap className="w-6 h-6 text-primary" />,
     title: 'ATS-Optimized',
-    description: 'Craft a resume optimized to pass through Applicant Tracking Systems.',
+    description: 'Craft a resume that is optimized to pass through Applicant Tracking Systems and get seen by recruiters.',
   },
 ];
 
 const heroImage = PlaceHolderImages.find((img) => img.id === 'hero-image');
+const featuresImage = PlaceHolderImages.find((img) => img.id === 'features-image');
+const whyUsImage = PlaceHolderImages.find((img) => img.id === 'why-us-image');
 
 export default function Home() {
   return (
-    <div className="flex flex-col items-center">
-      <section className="w-full bg-background py-20 md:py-32">
+    <div className="flex flex-col items-center bg-background text-foreground">
+      {/* Hero Section */}
+      <section className="w-full py-20 md:py-32">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="grid gap-6 lg:grid-cols-2 lg:gap-16 items-center">
-            <div className="space-y-6">
-              <h1 className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl text-foreground animate-fade-in-up">
-                Build a Resume That Gets Results. Fast.
-              </h1>
-              <p className="max-w-[600px] text-muted-foreground md:text-xl animate-fade-in-up animation-delay-200">
-                Create a professional, ATS-friendly resume in minutes. Let our AI guide you to landing your dream job.
-              </p>
-              <div className="flex flex-col gap-4 sm:flex-row animate-fade-in-up animation-delay-400">
-                <Button asChild size="lg" className="group">
-                  <Link href="/templates">
-                    Start Building Now
-                    <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                </Button>
-                <Button asChild size="lg" variant="outline">
-                  <Link href="#features">Explore Features</Link>
-                </Button>
-              </div>
-            </div>
-            <div className="flex justify-center animate-fade-in animation-delay-300">
+          <div className="grid gap-8 lg:grid-cols-2 lg:gap-16 items-center">
+             <div className="flex justify-center animate-fade-in animation-delay-300 rounded-lg overflow-hidden">
               {heroImage && (
                 <Image
                   src={heroImage.imageUrl}
-                  width={600}
-                  height={400}
+                  width={800}
+                  height={600}
                   alt={heroImage.description}
                   data-ai-hint={heroImage.imageHint}
-                  className="rounded-xl shadow-2xl transform transition-transform duration-500 hover:scale-105"
+                  className="rounded-2xl shadow-neuro-inset transform transition-transform duration-500 hover:scale-105"
                   priority
                 />
               )}
             </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="features" className="w-full py-20 md:py-32 bg-secondary">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
-            <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm animate-fade-in">Key Features</div>
-            <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl animate-fade-in-up animation-delay-200">Why You'll Love It</h2>
-            <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed animate-fade-in-up animation-delay-400">
-              We provide all the tools you need to create a professional resume that stands out.
-            </p>
-          </div>
-          <div className="mx-auto grid items-start gap-8 sm:max-w-4xl sm:grid-cols-2 md:gap-12 lg:max-w-5xl lg:grid-cols-4">
-            {features.map((feature, index) => (
-              <div key={index} className={`animate-fade-in-up`} style={{ animationDelay: `${200 + index * 150}ms` }}>
-                <Card className="bg-background shadow-lg hover:shadow-xl transition-transform duration-300 h-full flex flex-col hover:-translate-y-2">
-                  <CardHeader className="flex flex-col items-center text-center gap-4">
-                    {feature.icon}
-                    <CardTitle className="font-headline text-2xl">{feature.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="text-center text-muted-foreground flex-grow">
-                    {feature.description}
-                  </CardContent>
-                </Card>
+            <div className="space-y-6">
+              <h1 className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl animate-fade-in-up">
+                The fastest way to create a resume that gets you hired.
+              </h1>
+              <p className="max-w-[600px] text-muted-foreground md:text-xl animate-fade-in-up animation-delay-200">
+                Our AI-powered resume builder helps you create a professional, ATS-friendly resume in minutes. No more writer's block, no more formatting nightmares.
+              </p>
+              <div className="flex flex-col gap-4 sm:flex-row animate-fade-in-up animation-delay-400">
+                <Button asChild size="lg" variant="neuro" className="group">
+                  <Link href="/templates">
+                    Create My Resume
+                    <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                </Button>
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="w-full py-20 md:py-32">
+      {/* How It Works Section */}
+      <section id="how-it-works" className="w-full py-20 md:py-32 bg-secondary">
+          <div className="container mx-auto px-4 md:px-6">
+              <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
+                  <div className="inline-block rounded-lg bg-background px-3 py-1 text-sm font-medium animate-fade-in">How It Works</div>
+                  <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl animate-fade-in-up animation-delay-200">Three Simple Steps to Your Dream Job</h2>
+              </div>
+              <div className="mx-auto grid items-start gap-8 sm:max-w-4xl md:grid-cols-3 md:gap-12">
+                  <div className="flex flex-col gap-4 items-center text-center p-6 rounded-2xl bg-background shadow-neuro animate-fade-in-up animation-delay-200">
+                      <div className="bg-primary/10 p-4 rounded-full">
+                         <FileText className="w-8 h-8 text-primary"/>
+                      </div>
+                      <h3 className="text-xl font-bold font-headline">1. Select a Template</h3>
+                      <p className="text-muted-foreground">Choose from our library of professionally designed and ATS-friendly resume templates.</p>
+                  </div>
+                   <div className="flex flex-col gap-4 items-center text-center p-6 rounded-2xl bg-background shadow-neuro animate-fade-in-up animation-delay-400">
+                      <div className="bg-primary/10 p-4 rounded-full">
+                         <Sparkles className="w-8 h-8 text-primary"/>
+                      </div>
+                      <h3 className="text-xl font-bold font-headline">2. Perfect with AI</h3>
+                      <p className="text-muted-foreground">Use our AI assistant to write compelling bullet points, summaries, and cover letters.</p>
+                  </div>
+                   <div className="flex flex-col gap-4 items-center text-center p-6 rounded-2xl bg-background shadow-neuro animate-fade-in-up animation-delay-600">
+                      <div className="bg-primary/10 p-4 rounded-full">
+                         <Zap className="w-8 h-8 text-primary"/>
+                      </div>
+                      <h3 className="text-xl font-bold font-headline">3. Download & Apply</h3>
+                      <p className="text-muted-foreground">Export your pixel-perfect resume as a PDF and start landing interviews.</p>
+                  </div>
+              </div>
+          </div>
+      </section>
+
+      {/* Features Section */}
+       <section id="features" className="w-full py-20 md:py-32">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12 animate-fade-in-up">
-            <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Frequently Asked Questions</h2>
-          </div>
-          <div className="max-w-3xl mx-auto animate-fade-in-up animation-delay-200">
-            <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="item-1">
-                <AccordionTrigger>Is ResumeCraft AI free?</AccordionTrigger>
-                <AccordionContent>
-                  Yes, our free plan lets you create one resume with basic templates. Upgrade to Pro for unlimited access and premium features.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="item-2">
-                <AccordionTrigger>How does the AI help?</AccordionTrigger>
-                <AccordionContent>
-                  Our AI suggests improvements, rephrases bullet points, and tailors your content to a specific job description to boost your chances.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="item-3">
-                <AccordionTrigger>Are the resumes ATS-friendly?</AccordionTrigger>
-                <AccordionContent>
-                  Absolutely. All our templates are designed and structured to be fully compatible with modern Applicant Tracking Systems.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="item-4">
-                <AccordionTrigger>Can I download my resume as a PDF?</AccordionTrigger>
-                <AccordionContent>
-                  Yes, you can download a high-quality PDF from the editor. Our Pro plan offers downloads without any watermarks.
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </div>
+            <div className="grid md:grid-cols-2 gap-16 items-center">
+                 <div className="space-y-8">
+                    <div className="inline-block rounded-lg bg-secondary px-3 py-1 text-sm font-medium animate-fade-in">Everything You Need</div>
+                    <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl animate-fade-in-up animation-delay-200">Features that help you stand out</h2>
+                    <p className="text-muted-foreground md:text-lg">
+                        ResumeCraft AI provides all the tools you need to create a professional resume that gets noticed by both recruiters and automated systems.
+                    </p>
+                    <ul className="grid gap-6">
+                        {features.map((feature, index) => (
+                          <li key={index} className="flex items-start gap-4">
+                              <div className="bg-primary/10 p-2 rounded-full mt-1">
+                                {feature.icon}
+                              </div>
+                              <div>
+                                <h3 className="font-semibold text-lg">{feature.title}</h3>
+                                <p className="text-muted-foreground">{feature.description}</p>
+                              </div>
+                          </li>
+                        ))}
+                    </ul>
+                </div>
+                 <div className="flex justify-center animate-fade-in animation-delay-300 rounded-lg overflow-hidden">
+                    {featuresImage && (
+                        <Image
+                        src={featuresImage.imageUrl}
+                        width={600}
+                        height={700}
+                        alt={featuresImage.description}
+                        data-ai-hint={featuresImage.imageHint}
+                        className="rounded-2xl shadow-neuro-inset object-cover w-full h-full"
+                        />
+                    )}
+                </div>
+            </div>
         </div>
       </section>
 
+      {/* Why Us Section */}
       <section className="w-full py-20 md:py-32 bg-secondary">
+          <div className="container mx-auto px-4 md:px-6">
+               <div className="grid md:grid-cols-2 gap-16 items-center">
+                <div className="flex justify-center animate-fade-in animation-delay-300 rounded-lg overflow-hidden">
+                      {whyUsImage && (
+                          <Image
+                          src={whyUsImage.imageUrl}
+                          width={600}
+                          height={500}
+                          alt={whyUsImage.description}
+                          data-ai-hint={whyUsImage.imageHint}
+                          className="rounded-2xl shadow-neuro-inset object-cover w-full h-full"
+                          />
+                      )}
+                  </div>
+                   <div className="space-y-6">
+                      <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl animate-fade-in-up">Don't just write a resume. Design your future.</h2>
+                      <p className="max-w-[600px] text-muted-foreground md:text-xl animate-fade-in-up animation-delay-200">
+                          We blend beautiful design with powerful AI to give you an unfair advantage in your job search. Go beyond boring templates and create a resume that truly reflects your skills and personality.
+                      </p>
+                      <ul className="space-y-4 text-lg">
+                        <li className="flex items-center gap-3"><CheckCircle2 className="text-primary h-6 w-6"/><span>AI-powered content suggestions.</span></li>
+                        <li className="flex items-center gap-3"><CheckCircle2 className="text-primary h-6 w-6"/><span>Professionally designed templates.</span></li>
+                        <li className="flex items-center gap-3"><CheckCircle2 className="text-primary h-6 w-6"/><span>Intuitive real-time editor.</span></li>
+                      </ul>
+                  </div>
+              </div>
+          </div>
+      </section>
+
+
+      {/* Final CTA */}
+      <section className="w-full py-20 md:py-32">
         <div className="container mx-auto px-4 md:px-6 text-center animate-fade-in-up">
           <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Ready to Build Your Future?</h2>
           <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl mt-4">
             Start for free and see how ResumeCraft AI can transform your job search. No credit card required.
           </p>
           <div className="mt-8">
-            <Button asChild size="lg" className="group">
+            <Button asChild size="lg" variant="neuro" className="group">
               <Link href="/templates">
                 Create Your Resume Now
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />

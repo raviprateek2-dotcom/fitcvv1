@@ -3,8 +3,20 @@
     {
       "id": "hero-image",
       "description": "A person working on a laptop in a modern workspace.",
-      "imageUrl": "https://picsum.photos/seed/resume-hero/600/400",
-      "imageHint": "professional workspace"
+      "imageUrl": "https://picsum.photos/seed/new-hero/800/600",
+      "imageHint": "professional workspace computer"
+    },
+    {
+      "id": "features-image",
+      "description": "A collage of resume snippets and professional headshots.",
+      "imageUrl": "https://picsum.photos/seed/features-main/600/700",
+      "imageHint": "resume examples"
+    },
+    {
+      "id": "why-us-image",
+      "description": "A split image showing a plain document transforming into a beautifully designed resume.",
+      "imageUrl": "https://picsum.photos/seed/why-us/600/500",
+      "imageHint": "resume before after"
     },
     {
       "id": "template-modern",
