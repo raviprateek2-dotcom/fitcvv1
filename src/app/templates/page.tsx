@@ -23,6 +23,16 @@ const templates = [
     name: 'Creative',
     image: PlaceHolderImages.find((img) => img.id === 'template-creative'),
   },
+  {
+    id: 'minimalist',
+    name: 'Minimalist',
+    image: PlaceHolderImages.find((img) => img.id === 'template-minimalist'),
+  },
+  {
+    id: 'professional',
+    name: 'Professional',
+    image: PlaceHolderImages.find((img) => img.id === 'template-professional'),
+  },
 ];
 
 export default function TemplatesPage() {
@@ -35,7 +45,7 @@ export default function TemplatesPage() {
         </div>
 
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {templates.map((template) => (
+          {templates.filter(t => t.image).map((template) => (
             <Card key={template.id} className="group overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300">
               <CardContent className="p-0 relative">
                 {template.image && (

@@ -25,6 +25,18 @@
       "imageHint": "graphic design"
     },
     {
+      "id": "template-minimalist",
+      "description": "A preview of a minimalist resume template.",
+      "imageUrl": "https://picsum.photos/seed/template-minimalist/400/566",
+      "imageHint": "clean resume"
+    },
+    {
+      "id": "template-professional",
+      "description": "A preview of a professional resume template.",
+      "imageUrl": "https://picsum.photos/seed/template-professional/400/566",
+      "imageHint": "corporate resume"
+    },
+    {
       "id": "dashboard-resume-1",
       "description": "Thumbnail of a software engineer resume.",
       "imageUrl": "https://picsum.photos/seed/dash-resume1/300/200",
