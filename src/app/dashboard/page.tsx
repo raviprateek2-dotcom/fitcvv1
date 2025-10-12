@@ -138,7 +138,7 @@ const EmptyState = () => (
         <p className="text-muted-foreground mb-8 text-lg max-w-2xl mx-auto">Let's create a resume that gets you hired. Follow these simple steps to get started.</p>
         
         <div className="grid md:grid-cols-3 gap-8 text-left mb-10 max-w-4xl mx-auto">
-            <Card>
+            <Card variant="neuro">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-3"><div className="flex-shrink-0 bg-primary/10 text-primary rounded-full h-8 w-8 flex items-center justify-center font-bold">1</div>Choose a Template</CardTitle>
                 </CardHeader>
@@ -146,7 +146,7 @@ const EmptyState = () => (
                     <p className="text-sm text-muted-foreground">Pick a design that matches your style and industry.</p>
                 </CardContent>
             </Card>
-            <Card>
+            <Card variant="neuro">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-3"><div className="flex-shrink-0 bg-primary/10 text-primary rounded-full h-8 w-8 flex items-center justify-center font-bold">2</div>Fill in Your Details</CardTitle>
                 </CardHeader>
@@ -154,7 +154,7 @@ const EmptyState = () => (
                     <p className="text-sm text-muted-foreground">Use our AI assistant to craft compelling content.</p>
                 </CardContent>
             </Card>
-            <Card>
+            <Card variant="neuro">
                 <CardHeader>
                     <CardTitle className="flex items-center gap-3"><div className="flex-shrink-0 bg-primary/10 text-primary rounded-full h-8 w-8 flex items-center justify-center font-bold">3</div>Download & Apply</CardTitle>
                 </CardHeader>

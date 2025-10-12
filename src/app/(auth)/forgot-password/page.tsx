@@ -50,7 +50,7 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <Card className="w-full max-w-sm">
+    <Card className="w-full max-w-sm" variant="neuro">
       <CardHeader className="text-center">
         <div className="flex justify-center mb-4">
           <Rocket className="h-10 w-10 text-primary" />
@@ -74,7 +74,7 @@ export default function ForgotPasswordPage() {
               disabled={isLoading}
             />
           </div>
-          <Button className="w-full" type="submit" disabled={isLoading}>
+          <Button variant="neuro" className="w-full" type="submit" disabled={isLoading}>
             {isLoading ? 'Sending...' : 'Send Reset Link'}
           </Button>
         </form>
