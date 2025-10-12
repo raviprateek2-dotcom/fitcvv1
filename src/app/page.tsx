@@ -363,9 +363,9 @@ export default function Home() {
               >
                   <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Don't just write a resume. Design your future.</motion.h2>
                   <ul className="space-y-4 text-xl inline-flex flex-col items-start text-left">
-                    <motion.li variants={itemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-primary h-6 w-6"/><span>AI-powered content suggestions.</span></motion.li>
-                    <motion.li variants={itemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-primary h-6 w-6"/><span>Professionally designed templates.</span></motion.li>
-                    <motion.li variants={itemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-primary h-6 w-6"/><span>Intuitive real-time editor.</span></motion.li>
+                    <motion.li variants={itemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>AI-powered content suggestions.</span></motion.li>
+                    <motion.li variants={itemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>Professionally designed templates.</span></motion.li>
+                    <motion.li variants={itemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>Intuitive real-time editor.</span></motion.li>
                   </ul>
               </motion.div>
           </div>
@@ -467,5 +467,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
