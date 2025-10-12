@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -118,8 +119,9 @@ export default function Home() {
   const [sentenceIndex, setSentenceIndex] = useState(0);
   const { scrollYProgress } = useScroll();
   const heroY = useTransform(scrollYProgress, [0, 0.1], ['0%', '-20%']);
-  const featuresOpacity = useTransform(scrollYProgress, [0.1, 0.2], [0, 1]);
-  const featuresY = useTransform(scrollYProgress, [0.1, 0.2], ['20px', '0px']);
+  
+  const sectionHeaderY = useTransform(scrollYProgress, [0.1, 0.2], ['20px', '0px']);
+  const sectionHeaderOpacity = useTransform(scrollYProgress, [0.1, 0.2], [0, 1]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -127,6 +129,28 @@ export default function Home() {
     }, 2500);
     return () => clearInterval(timer);
   }, []);
+  
+  const sectionVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+      },
+    },
+  };
+
 
   return (
     <div className="flex flex-col items-center bg-background text-foreground overflow-x-hidden">
@@ -168,13 +192,6 @@ export default function Home() {
                 </Button>
               </div>
             </motion.div>
-             <motion.div
-                  className="hidden md:flex justify-center items-center h-full"
-                 >
-                   <div className="relative w-full h-full min-h-[300px]">
-                      
-                  </div>
-            </motion.div>
           </div>
         </div>
       </section>
@@ -183,37 +200,40 @@ export default function Home() {
       <section id="how-it-works" className="relative w-full py-20 md:py-32 bg-secondary/30 backdrop-blur-sm">
           <div className="container mx-auto px-4 md:px-6">
               <motion.div 
-                style={{ opacity: featuresOpacity, y: featuresY }}
+                style={{ opacity: sectionHeaderOpacity, y: sectionHeaderY }}
                 className="flex flex-col items-center justify-center space-y-4 text-center mb-12"
               >
                   <div className="inline-block rounded-lg bg-background/50 backdrop-blur-sm px-3 py-1 text-sm font-medium border">How It Works</div>
                   <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Three Simple Steps to Your Dream Job</h2>
               </motion.div>
               <motion.div 
-                style={{ opacity: featuresOpacity, y: featuresY }}
-                className="mx-auto grid items-start gap-8 sm:max-w-4xl sm:grid-cols-3 md:gap-12"
+                 variants={sectionVariants}
+                 initial="hidden"
+                 whileInView="visible"
+                 viewport={{ once: true, amount: 0.2 }}
+                 className="mx-auto grid items-start gap-8 sm:max-w-4xl sm:grid-cols-3 md:gap-12"
               >
-                  <div className="flex flex-col gap-4 items-center text-center p-6">
+                  <motion.div variants={itemVariants} className="flex flex-col gap-4 items-center text-center p-6">
                       <div className="bg-primary/10 p-4 rounded-full">
                          <FileText className="w-8 h-8 text-primary"/>
                       </div>
                       <h3 className="text-xl font-bold font-headline">1. Select a Template</h3>
                       <p className="text-muted-foreground">Choose from our library of professionally designed and ATS-friendly resume templates.</p>
-                  </div>
-                   <div className="flex flex-col gap-4 items-center text-center p-6">
+                  </motion.div>
+                   <motion.div variants={itemVariants} className="flex flex-col gap-4 items-center text-center p-6">
                       <div className="bg-primary/10 p-4 rounded-full">
                          <Sparkles className="w-8 h-8 text-primary"/>
                       </div>
                       <h3 className="text-xl font-bold font-headline">2. Perfect with AI</h3>
                       <p className="text-muted-foreground">Use our AI assistant to write compelling bullet points, summaries, and cover letters.</p>
-                  </div>
-                   <div className="flex flex-col gap-4 items-center text-center p-6">
+                  </motion.div>
+                   <motion.div variants={itemVariants} className="flex flex-col gap-4 items-center text-center p-6">
                       <div className="bg-primary/10 p-4 rounded-full">
                          <Zap className="w-8 h-8 text-primary"/>
                       </div>
                       <h3 className="text-xl font-bold font-headline">3. Download & Apply</h3>
                       <p className="text-muted-foreground">Export your pixel-perfect resume as a PDF and start landing interviews.</p>
-                  </div>
+                  </motion.div>
               </motion.div>
           </div>
       </section>
@@ -221,8 +241,14 @@ export default function Home() {
       {/* Features Section */}
        <section id="features" className="relative w-full py-20 md:py-32">
         <div className="container mx-auto px-4 md:px-6">
-            <div className="grid md:grid-cols-2 gap-16 items-center">
-                <div className="space-y-8">
+            <motion.div
+              variants={sectionVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.2 }}
+              className="grid md:grid-cols-2 gap-16 items-center"
+            >
+                <motion.div variants={itemVariants} className="space-y-8">
                     <div className="space-y-4">
                       <div className="inline-block rounded-lg bg-secondary px-3 py-1 text-sm font-medium">Everything You Need</div>
                       <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Features that help you stand out</h2>
@@ -240,62 +266,81 @@ export default function Home() {
                           </li>
                         ))}
                     </ul>
-                </div>
-                 <div className="hidden md:flex justify-center">
-                 </div>
-            </div>
+                </motion.div>
+                 <motion.div variants={itemVariants} className="hidden md:flex justify-center">
+                 </motion.div>
+            </motion.div>
         </div>
       </section>
 
       {/* Testimonials Section */}
       <section id="testimonials" className="relative w-full py-20 md:py-32 bg-secondary/30 backdrop-blur-sm">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col items-center justify-center space-y-4 text-center mb-12"
+          >
             <div className="inline-block rounded-lg bg-background/50 backdrop-blur-sm border px-3 py-1 text-sm font-medium">What Our Users Say</div>
             <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Loved by Job Seekers Worldwide</h2>
-          </div>
-          <Carousel
-            opts={{ align: "start", loop: true }}
-            plugins={[Autoplay({ delay: 5000 })]}
-            className="w-full max-w-6xl mx-auto"
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.5 }}
           >
-            <CarouselContent>
-              {testimonials.map((testimonial, index) => (
-                <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
-                  <div className="p-1 h-full">
-                    <Card className="flex flex-col justify-between h-full p-8" variant="neuro">
-                      <CardContent className="p-0 flex flex-col gap-6">
-                        <div className="flex">
-                            {[...Array(5)].map((_, i) => (
-                                <Star key={i} className={`w-5 h-5 ${i < testimonial.rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground/50'}`} />
-                            ))}
-                        </div>
-                        <p className="text-lg text-muted-foreground flex-grow">"{testimonial.quote}"</p>
-                        <div className="flex items-center gap-4 pt-6 border-t">
-                          <Avatar>
-                            <AvatarImage src={testimonial.avatar} alt={testimonial.author} />
-                            <AvatarFallback>{testimonial.author.charAt(0)}</AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <p className="font-semibold text-lg">{testimonial.author}</p>
-                            <p className="text-md text-muted-foreground">{testimonial.title}</p>
+            <Carousel
+              opts={{ align: "start", loop: true }}
+              plugins={[Autoplay({ delay: 5000 })]}
+              className="w-full max-w-6xl mx-auto"
+            >
+              <CarouselContent>
+                {testimonials.map((testimonial, index) => (
+                  <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                    <div className="p-1 h-full">
+                      <Card className="flex flex-col justify-between h-full p-8" variant="neuro">
+                        <CardContent className="p-0 flex flex-col gap-6">
+                          <div className="flex">
+                              {[...Array(5)].map((_, i) => (
+                                  <Star key={i} className={`w-5 h-5 ${i < testimonial.rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground/50'}`} />
+                              ))}
                           </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="hidden sm:flex" />
-            <CarouselNext className="hidden sm:flex" />
-          </Carousel>
+                          <p className="text-lg text-muted-foreground flex-grow">"{testimonial.quote}"</p>
+                          <div className="flex items-center gap-4 pt-6 border-t">
+                            <Avatar>
+                              <AvatarImage src={testimonial.avatar} alt={testimonial.author} />
+                              <AvatarFallback>{testimonial.author.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <p className="font-semibold text-lg">{testimonial.author}</p>
+                              <p className="text-md text-muted-foreground">{testimonial.title}</p>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="hidden sm:flex" />
+              <CarouselNext className="hidden sm:flex" />
+            </Carousel>
+          </motion.div>
         </div>
       </section>
 
       {/* Why Us Section */}
       <section className="relative w-full py-20 md:py-32">
-          <div className="container mx-auto px-4 md:px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ duration: 0.5 }}
+            className="container mx-auto px-4 md:px-6"
+          >
                <div className="space-y-8 max-w-3xl mx-auto text-center">
                   <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Don't just write a resume. Design your future.</h2>
                   <ul className="space-y-4 text-xl inline-flex flex-col items-start text-left">
@@ -304,24 +349,36 @@ export default function Home() {
                     <li className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>Intuitive real-time editor.</span></li>
                   </ul>
               </div>
-          </div>
+          </motion.div>
       </section>
 
       {/* Blog Section */}
       <section id="blog" className="relative w-full py-20 md:py-32 bg-secondary/30 backdrop-blur-sm">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col items-center justify-center space-y-4 text-center mb-12"
+          >
             <div className="inline-block rounded-lg bg-background/50 backdrop-blur-sm border px-3 py-1 text-sm font-medium">From Our Blog</div>
             <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Career Advice & Resume Tips</h2>
             <p className="max-w-[600px] text-muted-foreground md:text-lg">
               Get the latest insights from our career experts to help you land your dream job.
             </p>
-          </div>
-          <div className="grid gap-8 md:grid-cols-3">
+          </motion.div>
+          <motion.div
+            variants={sectionVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            className="grid gap-8 md:grid-cols-3"
+          >
             {blogPosts.slice(0, 3).map((post) => {
                 const Icon = blogPostIcons[post.slug] || PenTool;
                 return (
-                    <div key={post.slug}>
+                    <motion.div key={post.slug} variants={itemVariants}>
                       <Card className="group overflow-hidden flex flex-col h-full" variant="neuro">
                           <Link href={`/blog/${post.slug}`} className="block overflow-hidden relative h-48">
                               <div className="absolute inset-0 bg-primary/10 flex items-center justify-center">
@@ -342,21 +399,33 @@ export default function Home() {
                           </Button>
                           </CardContent>
                       </Card>
-                    </div>
+                    </motion.div>
                 )
             })}
-          </div>
-           <div className="text-center mt-12">
+          </motion.div>
+           <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="text-center mt-12"
+           >
                 <Button asChild size="lg" variant="outline">
                     <Link href="/blog">View All Articles</Link>
                 </Button>
-            </div>
+            </motion.div>
         </div>
       </section>
 
       {/* Final CTA */}
       <section className="relative w-full py-20 md:py-32">
-        <div className="container mx-auto px-4 md:px-6 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.5 }}
+          transition={{ duration: 0.5 }}
+          className="container mx-auto px-4 md:px-6 text-center"
+        >
           <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Ready to Build Your Future?</h2>
           <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl mt-4">
             Start for free and see how ResumeAI can transform your job search. No credit card required.
@@ -369,8 +438,9 @@ export default function Home() {
               </Link>
             </Button>
           </div>
-        </div>
+        </motion.div>
       </section>
     </div>
   );
-}
+
+    
