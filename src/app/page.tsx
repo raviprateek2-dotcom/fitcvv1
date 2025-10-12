@@ -4,7 +4,7 @@
 
 import { Button } from '@/components/ui/button';
 import { blogPosts } from '@/lib/blog-posts';
-import { ArrowRight, CheckCircle2, DraftingCompass, FileText, Sparkles, Zap, PenTool, Users, FileSignature, Search, BrainCircuit } from 'lucide-react';
+import { ArrowRight, CheckCircle2, DraftingCompass, FileText, Sparkles, Zap, PenTool, Users, FileSignature, Search, BrainCircuit, Star } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -51,25 +51,29 @@ const testimonials = [
     quote: "ResumeAI transformed my job search. The AI writer is a game-changer, and I got more interviews in a week than I did in a month.",
     author: "Sarah J.",
     title: "Software Engineer",
-    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d"
+    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
+    rating: 5,
   },
   {
     quote: "As a recent graduate, I was struggling to write a professional resume. This tool made it so easy, and the templates are beautiful. Highly recommended!",
     author: "Michael B.",
     title: "Marketing Graduate",
-    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026705d"
+    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026705d",
+    rating: 5,
   },
   {
     quote: "I needed to update my resume quickly for a promotion. The intuitive editor and professional results saved me hours of work.",
     author: "Emily K.",
     title: "Project Manager",
-    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026706d"
+    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026706d",
+    rating: 4,
   },
    {
     quote: "The cover letter generator is pure magic. It perfectly captured my experience and tailored it to the job description. I got the job!",
     author: "David L.",
     title: "UX Designer",
-    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026707d"
+    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026707d",
+    rating: 5,
   },
 ];
 
@@ -384,10 +388,15 @@ export default function Home() {
                     transition={{ duration: 0.5, delay: index * 0.1 }}
                     viewport={{ once: true }}
                   >
-                    <Card className="flex flex-col justify-between h-full p-6" variant="neuro">
+                    <Card className="flex flex-col justify-between h-full p-8" variant="neuro">
                       <CardContent className="p-0 flex flex-col gap-6">
+                        <div className="flex">
+                            {[...Array(5)].map((_, i) => (
+                                <Star key={i} className={`w-5 h-5 ${i < testimonial.rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground/50'}`} />
+                            ))}
+                        </div>
                         <p className="text-lg text-muted-foreground flex-grow">"{testimonial.quote}"</p>
-                        <div className="flex items-center gap-4 pt-4 border-t">
+                        <div className="flex items-center gap-4 pt-6 border-t">
                           <Avatar>
                             <AvatarImage src={testimonial.avatar} alt={testimonial.author} />
                             <AvatarFallback>{testimonial.author.charAt(0)}</AvatarFallback>
