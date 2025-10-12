@@ -2,7 +2,7 @@
 
 import React, { DependencyList, createContext, useContext, ReactNode, useMemo, useState, useEffect } from 'react';
 import { FirebaseApp } from 'firebase/app';
-import { Firestore, doc } from 'firebase/firestore';
+import { Firestore, doc, getDoc } from 'firebase/firestore';
 import { Auth, User, onAuthStateChanged } from 'firebase/auth';
 import { FirebaseErrorListener } from '@/components/FirebaseErrorListener'
 import { useDoc } from './firestore/use-doc';
@@ -100,7 +100,20 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
 
     const unsubscribe = onAuthStateChanged(
       auth,
-      (firebaseUser) => { // Auth state determined
+      async (firebaseUser) => { // Auth state determined
+        if (firebaseUser) {
+          // Check if user profile exists before setting auth state
+          const userDocRef = doc(firestore, `users/${firebaseUser.uid}`);
+          const docSnap = await getDoc(userDocRef);
+          if (!docSnap.exists()) {
+             const newUserProfile: UserProfile = {
+              email: firebaseUser.email || '',
+              subscription: 'free',
+            };
+            // Set the doc non-blockingly, don't wait for it to complete.
+            setDocumentNonBlocking(userDocRef, newUserProfile, { merge: false });
+          }
+        }
         setUserAuthState({ user: firebaseUser, isUserLoading: false, userError: null });
       },
       (error) => { // Auth listener error
@@ -109,21 +122,8 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
       }
     );
     return () => unsubscribe(); // Cleanup
-  }, [auth]); // Depends on the auth instance
+  }, [auth, firestore]);
   
-  // Effect to create user profile document if it doesn't exist
-  useEffect(() => {
-    if (userAuthState.user && !isProfileLoading && !userProfile) {
-      const { uid, email } = userAuthState.user;
-      const userDocRef = doc(firestore, `users/${uid}`);
-      const newUserProfile: UserProfile = {
-        email: email || '',
-        subscription: 'free',
-      };
-      setDocumentNonBlocking(userDocRef, newUserProfile, { merge: false });
-    }
-  }, [userAuthState.user, userProfile, isProfileLoading, firestore]);
-
   // Memoize the context value
   const contextValue = useMemo((): FirebaseContextState => {
     const servicesAvailable = !!(firebaseApp && firestore && auth);

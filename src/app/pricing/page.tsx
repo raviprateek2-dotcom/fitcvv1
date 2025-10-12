@@ -1,7 +1,13 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { useFirestore, useUser } from '@/firebase';
+import { useToast } from '@/hooks/use-toast';
+import { doc, updateDoc } from 'firebase/firestore';
 import { Check, X } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const freeFeatures = [
   { text: '1 Resume', included: true },
@@ -24,6 +30,36 @@ const proFeatures = [
 ];
 
 export default function PricingPage() {
+  const { user } = useUser();
+  const firestore = useFirestore();
+  const router = useRouter();
+  const { toast } = useToast();
+
+  const handleUpgrade = async () => {
+    if (!user) {
+      router.push('/signup?plan=pro');
+      return;
+    }
+    if (!firestore) return;
+
+    const userDocRef = doc(firestore, `users/${user.uid}`);
+    try {
+      await updateDoc(userDocRef, { subscription: 'premium' });
+      toast({
+        title: 'Upgrade Successful!',
+        description: "Welcome to Pro! You now have access to all premium features.",
+      });
+      router.push('/settings');
+    } catch (error) {
+      console.error('Upgrade failed:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Upgrade Failed',
+        description: 'We couldn\'t process your upgrade. Please try again.',
+      });
+    }
+  };
+
   return (
     <div className="bg-background">
       <div className="container mx-auto px-4 md:px-6 py-12 md:py-20">
@@ -82,8 +118,8 @@ export default function PricingPage() {
               </ul>
             </CardContent>
             <CardFooter className="p-8 pt-0">
-              <Button className="w-full" asChild>
-                <Link href="/signup?plan=pro">Go Pro</Link>
+              <Button className="w-full" onClick={handleUpgrade}>
+                Go Pro
               </Button>
             </CardFooter>
           </Card>
