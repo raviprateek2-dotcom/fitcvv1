@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Download, Eye, PlusCircle, Share2, Trash2, Sparkles, Bot } from 'lucide-react';
+import { Download, Eye, PlusCircle, Share2, Trash2, Sparkles, Bot, Lock } from 'lucide-react';
 import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import AIContentDialog from './AIContentDialog';
 import AISectionWriterDialog from './AISectionWriterDialog';
@@ -16,6 +16,8 @@ import { useDoc, useUser, useFirestore, useMemoFirebase } from '@/firebase';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { Skeleton } from '../ui/skeleton';
 import { useRouter } from 'next/navigation';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
+import Link from 'next/link';
 
 // Define types for resume structure
 type PersonalInfo = {
@@ -93,10 +95,45 @@ function SaveStatusIndicator({ status }: { status: SaveStatus }) {
   )
 }
 
+const ProFeatureWrapper: React.FC<{ isPro: boolean; children: React.ReactNode }> = ({ isPro, children }) => {
+  if (isPro) {
+    return <>{children}</>;
+  }
+
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className="relative">
+            <Button variant="outline" size="sm" disabled className="mt-2 w-full">
+               <Sparkles className="mr-2 h-4 w-4 text-yellow-500" />
+              AI Feature
+            </Button>
+             <div className="absolute -top-2 -right-2 z-10">
+                <div className="bg-primary text-primary-foreground px-2 py-0.5 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg">
+                    <Sparkles className="w-3 h-3" />
+                    Pro
+                </div>
+            </div>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Upgrade to Pro to use this feature.</p>
+          <Button size="sm" asChild className="mt-2 w-full">
+            <Link href="/pricing">Upgrade</Link>
+          </Button>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+};
+
+
 export function ResumeEditor({ resumeId }: { resumeId: string }) {
-  const { user } = useUser();
+  const { user, userProfile } = useUser();
   const firestore = useFirestore();
   const router = useRouter();
+  const isProUser = userProfile?.subscription === 'premium';
 
   const resumeDocRef = useMemoFirebase(
     () => (user ? doc(firestore, `users/${user.uid}/resumes`, resumeId) : null),
@@ -242,7 +279,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
           </div>
         </div>
       </header>
-      <div className="grid print:block md:grid-cols-2 h-[calc(100vh-4rem)]">
+      <div className="grid print:block md:grid-cols-2 h-[calc(100vh-8rem)]">
         <ScrollArea className="h-full bg-background p-6 no-print">
           <div className="space-y-6">
             <Accordion type="multiple" defaultValue={['personal-info', 'summary']} className="w-full">
@@ -279,23 +316,27 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                 <AccordionContent className="space-y-2 pt-4">
                   <Textarea value={resumeData.summary} onChange={e => handleFieldChange('summary', e.target.value)} rows={5} />
                   <div className="flex gap-2">
-                    <AISectionWriterDialog
-                      sectionName="Professional Summary"
-                      jobDescription={resumeData.jobDescription}
-                      existingContent={resumeData.summary}
-                      onApply={(newContent) => handleFieldChange('summary', newContent)}
-                    >
-                      <Button variant="outline" size="sm">
-                        <Bot className="mr-2 h-4 w-4" />
-                        AI Writer
-                      </Button>
-                    </AISectionWriterDialog>
-                    <AIContentDialog 
-                      sectionName="Professional Summary" 
-                      currentContent={resumeData.summary}
-                      jobDescription={resumeData.jobDescription}
-                      onApply={(newContent) => handleFieldChange('summary', newContent)}
-                    />
+                    <ProFeatureWrapper isPro={isProUser}>
+                      <AISectionWriterDialog
+                        sectionName="Professional Summary"
+                        jobDescription={resumeData.jobDescription}
+                        existingContent={resumeData.summary}
+                        onApply={(newContent) => handleFieldChange('summary', newContent)}
+                      >
+                        <Button variant="outline" size="sm">
+                          <Bot className="mr-2 h-4 w-4" />
+                          AI Writer
+                        </Button>
+                      </AISectionWriterDialog>
+                    </ProFeatureWrapper>
+                    <ProFeatureWrapper isPro={isProUser}>
+                       <AIContentDialog 
+                        sectionName="Professional Summary" 
+                        currentContent={resumeData.summary}
+                        jobDescription={resumeData.jobDescription}
+                        onApply={(newContent) => handleFieldChange('summary', newContent)}
+                      />
+                    </ProFeatureWrapper>
                   </div>
                 </AccordionContent>
               </AccordionItem>
@@ -313,23 +354,27 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                           <div className="space-y-2"><Label>Description</Label><Textarea rows={4} value={exp.description} onChange={e => handleNestedChange('experience', exp.id, 'description', e.target.value)} /></div>
                           <div className="flex justify-between items-center">
                             <div className="flex gap-2">
-                                <AISectionWriterDialog
-                                    sectionName={`Work Experience at ${exp.company}`}
-                                    jobDescription={resumeData.jobDescription}
-                                    existingContent={exp.description}
-                                    onApply={(newContent) => handleNestedChange('experience', exp.id, 'description', newContent)}
-                                >
-                                    <Button variant="outline" size="sm">
-                                        <Bot className="mr-2 h-4 w-4" />
-                                        AI Writer
-                                    </Button>
-                                </AISectionWriterDialog>
-                                <AIContentDialog 
-                                    sectionName={`Experience at ${exp.company}`}
-                                    currentContent={exp.description}
-                                    jobDescription={resumeData.jobDescription}
-                                    onApply={(newContent) => handleNestedChange('experience', exp.id, 'description', newContent)}
-                                />
+                                <ProFeatureWrapper isPro={isProUser}>
+                                  <AISectionWriterDialog
+                                      sectionName={`Work Experience at ${exp.company}`}
+                                      jobDescription={resumeData.jobDescription}
+                                      existingContent={exp.description}
+                                      onApply={(newContent) => handleNestedChange('experience', exp.id, 'description', newContent)}
+                                  >
+                                      <Button variant="outline" size="sm">
+                                          <Bot className="mr-2 h-4 w-4" />
+                                          AI Writer
+                                      </Button>
+                                  </AISectionWriterDialog>
+                                </ProFeatureWrapper>
+                                <ProFeatureWrapper isPro={isProUser}>
+                                  <AIContentDialog 
+                                      sectionName={`Experience at ${exp.company}`}
+                                      currentContent={exp.description}
+                                      jobDescription={resumeData.jobDescription}
+                                      onApply={(newContent) => handleNestedChange('experience', exp.id, 'description', newContent)}
+                                  />
+                                </ProFeatureWrapper>
                             </div>
                             <Button variant="ghost" size="icon" onClick={() => removeExperience(exp.id)} className="text-destructive hover:text-destructive-foreground hover:bg-destructive">
                               <Trash2 className="h-4 w-4" />
