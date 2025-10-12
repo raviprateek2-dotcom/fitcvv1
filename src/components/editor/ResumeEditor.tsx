@@ -8,7 +8,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Download, Eye, PlusCircle, Share2, Trash2, Sparkles, Bot, FileText, Newspaper, PanelLeft, ArrowLeft } from 'lucide-react';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import AIContentDialog from './AIContentDialog';
 import AISectionWriterDialog from './AISectionWriterDialog';
 import { ResumePreview, CoverLetterPreview } from './ResumePreview';
@@ -162,6 +162,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     [firestore, user, resumeId]
   );
   const { data: initialResumeData, isLoading: isResumeLoading } = useDoc<ResumeData>(resumeDocRef);
+  const initialDataRef = useRef<ResumeData | null>(null);
 
   const [resumeData, setResumeData] = useState<ResumeData | null>(null);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
@@ -171,21 +172,22 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   const { toast } = useToast();
 
   useEffect(() => {
-    if (initialResumeData) {
+    if (initialResumeData && !initialDataRef.current) {
         let updatedData = { ...initialResumeData };
+        
+        // Ensure all fields are present to prevent controlled/uncontrolled input errors
+        if (!Array.isArray(updatedData.skills)) updatedData.skills = [];
+        if (!Array.isArray(updatedData.projects)) updatedData.projects = [];
+        if (typeof updatedData.coverLetter !== 'string') updatedData.coverLetter = '';
+        if (typeof updatedData.companyInfo !== 'object' || updatedData.companyInfo === null) updatedData.companyInfo = { name: '', jobTitle: '' };
+        
         // Migration for skills from string to Skill[]
-        if (Array.isArray(initialResumeData.skills) && initialResumeData.skills.length > 0 && typeof initialResumeData.skills[0] === 'string') {
-             updatedData.skills = (initialResumeData.skills as any[]).map(name => ({ id: Date.now() + Math.random(), name, level: 'Advanced' }));
-        } else if (!Array.isArray(initialResumeData.skills)) {
-            updatedData.skills = [];
+        if (updatedData.skills.length > 0 && typeof updatedData.skills[0] === 'string') {
+             updatedData.skills = (updatedData.skills as any[]).map(name => ({ id: Date.now() + Math.random(), name, level: 'Advanced' }));
         }
 
-
-        if (!initialResumeData.projects) updatedData.projects = [];
-        if (!initialResumeData.coverLetter) updatedData.coverLetter = '';
-        if (!initialResumeData.companyInfo) updatedData.companyInfo = { name: '', jobTitle: '' };
-
         setResumeData(updatedData);
+        initialDataRef.current = updatedData;
     }
   }, [initialResumeData]);
 
@@ -221,21 +223,9 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
 
   // Auto-save useEffect
   useEffect(() => {
-    if (!resumeData || !initialResumeData || isPrintMode) return;
+    if (!resumeData || !initialDataRef.current || isPrintMode) return;
     
-    // Create a comparable version of initial data to avoid saving on first load
-    let comparableInitial = {...initialResumeData};
-    if (Array.isArray(initialResumeData.skills) && initialResumeData.skills.length > 0 && typeof initialResumeData.skills[0] === 'string') {
-        comparableInitial.skills = (initialResumeData.skills as any[]).map(name => ({ id: Date.now() + Math.random(), name, level: 'Advanced' }));
-    } else if (!Array.isArray(initialResumeData.skills)) {
-        comparableInitial.skills = [];
-    }
-    if (!initialResumeData.projects) comparableInitial.projects = [];
-    if (!initialResumeData.coverLetter) comparableInitial.coverLetter = '';
-    if (!initialResumeData.companyInfo) comparableInitial.companyInfo = { name: '', jobTitle: '' };
-
-
-    if (JSON.stringify(resumeData) === JSON.stringify(comparableInitial)) {
+    if (JSON.stringify(resumeData) === JSON.stringify(initialDataRef.current)) {
       return;
     }
 
@@ -246,7 +236,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     return () => {
       clearTimeout(handler);
     };
-  }, [resumeData, initialResumeData, handleSave, isPrintMode]);
+  }, [resumeData, handleSave, isPrintMode]);
 
 
   const handleFieldChange = <T extends keyof ResumeData>(field: T, value: ResumeData[T]) => {
@@ -655,7 +645,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
             </ScrollArea>
           </aside>
         )}
-        <main className="w-2/3 bg-secondary/50 p-6 h-full print:bg-white print:p-0">
+        <main className="flex-grow bg-secondary/50 p-6 h-full print:bg-white print:p-0">
           <ScrollArea className="h-full">
             {activeTab === 'resume' ? (
               <ResumePreview resumeData={resumeData} templateId={resumeData.templateId} />

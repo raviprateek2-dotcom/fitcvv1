@@ -62,8 +62,10 @@ export default function LoginPage() {
     }
     setIsLoading(true);
     initiateEmailSignIn(auth, email, password).catch((error: any) => {
-        let description = 'Invalid email or password. Please check your credentials and try again.';
-        if (error.code === 'auth/too-many-requests') {
+        let description = 'An unexpected error occurred. Please try again.';
+        if (error.code === 'auth/invalid-credential' || error.code === 'auth/invalid-email') {
+          description = 'Invalid email or password. Please check your credentials and try again.';
+        } else if (error.code === 'auth/too-many-requests') {
           description = 'Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later.'
         }
         toast({
