@@ -1,3 +1,4 @@
+
 import type {NextConfig} from 'next';
 
 const contentSecurityPolicy = `
@@ -46,6 +47,9 @@ const nextConfig: NextConfig = {
   },
   eslint: {
     ignoreDuringBuilds: true,
+  },
+  devIndicators: {
+    allowedDevOrigins: ["*.cloudworkstations.dev"],
   },
   images: {
     remotePatterns: [
