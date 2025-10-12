@@ -106,6 +106,7 @@ const config = {
         '300': '300ms',
         '400': '400ms',
         '500': '500ms',
+        '600': '600ms',
       },
       backdropBlur: {
         '2xl': '40px',
