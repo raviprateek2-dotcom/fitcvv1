@@ -1,8 +1,9 @@
+
 'use client';
 
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { AtSign, Globe, MapPin, Phone, Star, TrendingUp, Zap } from 'lucide-react';
+import { AtSign, Globe, MapPin, Phone, Star, TrendingUp, Zap, Briefcase, GraduationCap, Code } from 'lucide-react';
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Progress } from '../ui/progress';
@@ -39,12 +40,20 @@ type Skill = {
     level: 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert';
 };
 
+type Project = {
+  id: number;
+  name: string;
+  description: string;
+  link: string;
+};
+
 type ResumeData = {
   personalInfo: PersonalInfo;
   summary: string;
   experience: Experience[];
   education: Education[];
   skills: Skill[];
+  projects: Project[];
   jobDescription?: string;
   templateId?: string;
 };
@@ -85,7 +94,7 @@ const skillLevelToValue = {
 };
 
 const ProfessionalTemplatePreview = ({ resumeData }: { resumeData: ResumeData }) => {
-    const { personalInfo, summary, experience, education, skills } = resumeData;
+    const { personalInfo, summary, experience, education, skills, projects } = resumeData;
     const templateStyles = templates.professional;
     
     return (
@@ -108,7 +117,7 @@ const ProfessionalTemplatePreview = ({ resumeData }: { resumeData: ResumeData })
                 <div className="space-y-4">
                      <h3 className="text-lg font-bold text-white uppercase tracking-wider font-headline border-b border-slate-600 pb-1">Skills</h3>
                      <div className="space-y-3">
-                        {skills.map(skill => (
+                        {(skills || []).map(skill => (
                             <div key={skill.id} className="text-sm">
                                 <p className="font-semibold mb-1">{skill.name}</p>
                                 <Progress value={skillLevelToValue[skill.level]} className="h-2 bg-slate-700" />
@@ -139,7 +148,7 @@ const ProfessionalTemplatePreview = ({ resumeData }: { resumeData: ResumeData })
                 </section>
                 <Separator className="my-6 bg-slate-700" />
                 <section>
-                    <h3 className={templateStyles.sectionTitle}><TrendingUp className="inline-block mr-2 text-primary" size={18}/>Experience</h3>
+                    <h3 className={templateStyles.sectionTitle}><Briefcase className="inline-block mr-2 text-primary" size={18}/>Experience</h3>
                     <div className="space-y-5">
                     {experience.map((exp) => (
                         <div key={exp.id}>
@@ -160,6 +169,28 @@ const ProfessionalTemplatePreview = ({ resumeData }: { resumeData: ResumeData })
                     ))}
                     </div>
                 </section>
+                <Separator className="my-6 bg-slate-700" />
+                <section>
+                    <h3 className={templateStyles.sectionTitle}><Code className="inline-block mr-2 text-primary" size={18}/>Projects</h3>
+                    <div className="space-y-5">
+                    {(projects || []).map((proj) => (
+                        <div key={proj.id}>
+                        <div className="flex justify-between items-baseline">
+                            <h4 className="font-bold text-md text-slate-100 font-headline">{proj.name}</h4>
+                            {proj.link && <a href={proj.link} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">View Project</a>}
+                        </div>
+                        <ul className="list-disc pl-5 space-y-1 text-sm leading-relaxed mt-1">
+                            {proj.description.split('\n').map((line, index) => {
+                                const trimmedLine = line.trim();
+                                if (!trimmedLine) return null;
+                                const cleanedLine = trimmedLine.replace(/^[-*]\s*/, '');
+                                return <li key={index}>{cleanedLine}</li>;
+                            })}
+                        </ul>
+                        </div>
+                    ))}
+                    </div>
+                </section>
             </main>
         </div>
     )
@@ -170,7 +201,7 @@ export function ResumePreview({ resumeData, templateId = 'modern' }: ResumePrevi
       return <ProfessionalTemplatePreview resumeData={resumeData} />;
   }
 
-  const { personalInfo, summary, experience, education, skills } = resumeData;
+  const { personalInfo, summary, experience, education, skills, projects } = resumeData;
   const skillList = Array.isArray(skills) ? skills.map(s => s.name) : (typeof skills === 'string' ? skills.split(',').map(s => s.trim()).filter(Boolean) : []);
   const templateStyles = templates[templateId] || templates.modern;
 
@@ -211,7 +242,30 @@ export function ResumePreview({ resumeData, templateId = 'modern' }: ResumePrevi
                  {exp.description.split('\n').map((line, index) => {
                     const trimmedLine = line.trim();
                     if (!trimmedLine) return null;
-                    // Strip leading hyphens or asterisks, which are common for bullet points
+                    const cleanedLine = trimmedLine.replace(/^[-*]\s*/, '');
+                    return <li key={index}>{cleanedLine}</li>;
+                  })}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <Separator className="my-6" />
+
+      <section>
+        <h3 className={templateStyles.sectionTitle}>Projects</h3>
+        <div className="space-y-4">
+          {(projects || []).map((proj) => (
+            <div key={proj.id}>
+              <div className="flex justify-between items-baseline">
+                <h4 className="font-bold text-md font-headline">{proj.name}</h4>
+                 {proj.link && <a href={proj.link} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline">View Project</a>}
+              </div>
+              <ul className="list-disc pl-5 space-y-1 text-sm mt-1">
+                 {proj.description.split('\n').map((line, index) => {
+                    const trimmedLine = line.trim();
+                    if (!trimmedLine) return null;
                     const cleanedLine = trimmedLine.replace(/^[-*]\s*/, '');
                     return <li key={index}>{cleanedLine}</li>;
                   })}
@@ -251,5 +305,3 @@ export function ResumePreview({ resumeData, templateId = 'modern' }: ResumePrevi
     </div>
   );
 }
-
-    

@@ -52,6 +52,13 @@ type Skill = {
   level: 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert';
 };
 
+type Project = {
+  id: number;
+  name: string;
+  description: string;
+  link: string;
+};
+
 type ResumeData = {
   title?: string;
   personalInfo: PersonalInfo;
@@ -59,6 +66,7 @@ type ResumeData = {
   experience: Experience[];
   education: Education[];
   skills: Skill[];
+  projects: Project[];
   jobDescription: string;
   templateId?: string;
 };
@@ -154,18 +162,22 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
 
   useEffect(() => {
     if (initialResumeData) {
+        let updatedData = { ...initialResumeData };
         // Migration for skills from string to Skill[]
         if (typeof initialResumeData.skills === 'string') {
             const skillsFromString = initialResumeData.skills.split(',').map(s => s.trim()).filter(Boolean);
-            setResumeData({
-                ...initialResumeData,
-                skills: skillsFromString.map(name => ({ id: Date.now() + Math.random(), name, level: 'Advanced' }))
-            });
-        } else {
-            setResumeData(initialResumeData);
+            updatedData.skills = skillsFromString.map(name => ({ id: Date.now() + Math.random(), name, level: 'Advanced' }));
         }
+
+        // Initialize projects array if it doesn't exist
+        if (!initialResumeData.projects) {
+            updatedData.projects = [];
+        }
+
+        setResumeData(updatedData);
     }
   }, [initialResumeData]);
+
 
   useEffect(() => {
     if (isPrintMode && resumeData) {
@@ -200,24 +212,22 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   useEffect(() => {
     if (!resumeData || !initialResumeData || isPrintMode) return;
     
-    // Create a comparable version of initial data to handle the migration
-    let comparableInitial = initialResumeData;
+    let comparableInitial = {...initialResumeData};
     if (typeof initialResumeData.skills === 'string') {
         const skillsFromString = initialResumeData.skills.split(',').map(s => s.trim()).filter(Boolean);
-        comparableInitial = {
-            ...initialResumeData,
-            skills: skillsFromString.map(name => ({ id: Date.now() + Math.random(), name, level: 'Advanced' }))
-        }
+        comparableInitial.skills = skillsFromString.map(name => ({ id: Date.now() + Math.random(), name, level: 'Advanced' }));
+    }
+    if (!initialResumeData.projects) {
+        comparableInitial.projects = [];
     }
 
-    // A simple deep-enough comparison to check for changes
     if (JSON.stringify(resumeData) === JSON.stringify(comparableInitial)) {
       return;
     }
 
     const handler = setTimeout(() => {
       handleSave(resumeData);
-    }, 1500); // Save after 1.5 seconds of inactivity
+    }, 1500);
 
     return () => {
       clearTimeout(handler);
@@ -236,9 +246,9 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   };
   
   const handleNestedChange = (
-    section: 'experience' | 'education' | 'skills', 
+    section: 'experience' | 'education' | 'skills' | 'projects', 
     id: number, 
-    field: keyof Experience | keyof Education | keyof Skill, 
+    field: keyof Experience | keyof Education | keyof Skill | keyof Project, 
     value: string
   ) => {
     setResumeData(prev => {
@@ -291,6 +301,20 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
           ...prev,
           skills: prev.skills.filter(skill => skill.id !== id)
       } : null));
+  };
+
+  const addProject = () => {
+    setResumeData(prev => (prev ? {
+      ...prev,
+      projects: [...(prev.projects || []), { id: Date.now(), name: '', description: '', link: '' }]
+    } : null));
+  };
+
+  const removeProject = (id: number) => {
+    setResumeData(prev => (prev ? {
+      ...prev,
+      projects: prev.projects.filter(p => p.id !== id)
+    } : null));
   };
   
   const handlePrint = () => {
@@ -449,6 +473,27 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                 </AccordionContent>
               </AccordionItem>
 
+              <AccordionItem value="projects">
+                <AccordionTrigger className="font-semibold">Projects</AccordionTrigger>
+                <AccordionContent className="space-y-4 pt-4">
+                  {(resumeData.projects || []).map((proj) => (
+                      <div key={proj.id} className="p-4 border rounded-lg space-y-4 relative">
+                          <div className="space-y-2"><Label>Project Name</Label><Input value={proj.name} onChange={e => handleNestedChange('projects', proj.id, 'name', e.target.value)} /></div>
+                          <div className="space-y-2"><Label>Description</Label><Textarea rows={3} value={proj.description} onChange={e => handleNestedChange('projects', proj.id, 'description', e.target.value)} /></div>
+                          <div className="space-y-2"><Label>Link (Optional)</Label><Input value={proj.link} onChange={e => handleNestedChange('projects', proj.id, 'link', e.target.value)} /></div>
+                           <div className="flex justify-end">
+                              <Button variant="ghost" size="icon" onClick={() => removeProject(proj.id)} className="text-destructive hover:text-destructive-foreground hover:bg-destructive">
+                                  <Trash2 className="h-4 w-4" />
+                              </Button>
+                          </div>
+                      </div>
+                  ))}
+                  <Button variant="outline" onClick={addProject} className="w-full">
+                      <PlusCircle className="mr-2 h-4 w-4" /> Add Project
+                  </Button>
+                </AccordionContent>
+              </AccordionItem>
+
               <AccordionItem value="education">
                 <AccordionTrigger className="font-semibold">Education</AccordionTrigger>
                 <AccordionContent className="space-y-4 pt-4">
@@ -475,7 +520,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
               <AccordionItem value="skills">
                 <AccordionTrigger className="font-semibold">Skills</AccordionTrigger>
                 <AccordionContent className="space-y-4 pt-4">
-                  {resumeData.skills.map((skill) => (
+                  {(resumeData.skills || []).map((skill) => (
                     <div key={skill.id} className="p-4 border rounded-lg space-y-4">
                         <div className="flex items-center gap-4">
                             <div className="flex-grow space-y-2">
@@ -518,5 +563,3 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     </>
   );
 }
-
-    
