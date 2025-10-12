@@ -6,6 +6,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { Header } from '@/components/common/Header';
 import { Footer } from '@/components/common/Footer';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
+import { PageTransition } from '@/components/common/PageTransition';
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
@@ -84,7 +85,11 @@ export default function RootLayout({
         <FirebaseClientProvider>
           <div className="flex flex-col min-h-screen">
             <Header />
-            <main className="flex-grow">{children}</main>
+            <main className="flex-grow">
+              <PageTransition>
+                {children}
+              </PageTransition>
+            </main>
             <Footer />
           </div>
           <Toaster />
