@@ -71,7 +71,6 @@ export default function SignupPage() {
     }
     setIsLoading(true);
     initiateEmailSignUp(auth, email, password).catch((error: any) => {
-        console.error(error.code, error.message);
         let description = 'An unexpected error occurred. Please try again.';
         if (error.code === 'auth/email-already-in-use') {
             description = 'An account with this email address already exists.';
