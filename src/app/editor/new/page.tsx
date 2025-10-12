@@ -1,7 +1,7 @@
 'use client';
 
-import { useUser, useFirestore } from '@/firebase';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { useUser, useFirestore, getCollection } from '@/firebase';
+import { addDoc, collection, serverTimestamp, query, where } from 'firebase/firestore';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -33,34 +33,43 @@ export default function NewResumePage() {
   const { toast } = useToast();
 
   useEffect(() => {
-    const isProUser = userProfile?.subscription === 'premium';
-    const isPremiumTemplate = premiumTemplates.includes(templateId);
+    const createResumeFlow = async () => {
+        // Wait until we know the user's status
+        if (isUserLoading || isProfileLoading || !firestore || !user) {
+          return;
+        }
 
-    // Wait until we know the user's status
-    if (isUserLoading || isProfileLoading) {
-      return;
-    }
+        const isProUser = userProfile?.subscription === 'premium';
+        const isPremiumTemplate = premiumTemplates.includes(templateId);
 
-    // If user is not logged in, redirect to login page.
-    if (!user) {
-      router.push(`/login?redirect=/templates`);
-      return;
-    }
-    
-    // If a free user tries to access a premium template, block them.
-    if (isPremiumTemplate && !isProUser) {
-        toast({
-            variant: 'destructive',
-            title: 'Upgrade Required',
-            description: 'You need a Pro plan to use this template.',
-        });
-        router.push('/pricing');
-        return;
-    }
+        // If a free user tries to access a premium template, block them.
+        if (isPremiumTemplate && !isProUser) {
+            toast({
+                variant: 'destructive',
+                title: 'Upgrade Required',
+                description: 'You need a Pro plan to use this template.',
+            });
+            router.push('/pricing');
+            return;
+        }
+        
+        // For free users, check if they already have a resume.
+        if (!isProUser) {
+            const resumesCollection = collection(firestore, `users/${user.uid}/resumes`);
+            const existingResumes = await getCollection(resumesCollection);
+            
+            if (existingResumes.length > 0) {
+                toast({
+                    variant: 'destructive',
+                    title: 'Free Plan Limit Reached',
+                    description: 'You can only create one resume on the Free plan. Please upgrade to create more.',
+                });
+                router.push('/pricing');
+                return;
+            }
+        }
 
-    // Once we have a user and all checks have passed, create the new resume.
-    if (user && firestore) {
-      const createResume = async () => {
+        // All checks passed, create the new resume.
         try {
           const resumesCollection = collection(firestore, `users/${user.uid}/resumes`);
           const newResumeData = {
@@ -79,8 +88,14 @@ export default function NewResumePage() {
             summary: 'A brief professional summary about yourself.',
             experience: [],
             education: [],
-            skills: 'React, Next.js, TypeScript',
+            skills: [],
+            projects: [],
             jobDescription: '',
+            coverLetter: '',
+            companyInfo: {
+                name: '',
+                jobTitle: ''
+            }
           };
 
           const docRef = await addDoc(resumesCollection, newResumeData);
@@ -95,10 +110,16 @@ export default function NewResumePage() {
           });
           router.push('/dashboard'); // Redirect to dashboard on error.
         }
-      };
-
-      createResume();
+    };
+    
+    // If user is not logged in, redirect to login page.
+    if (!isUserLoading && !user) {
+        router.push(`/login?redirect=/templates`);
+        return;
     }
+    
+    createResumeFlow();
+
   }, [user, isUserLoading, userProfile, isProfileLoading, firestore, router, templateId, toast]);
 
   // Show a loading indicator while the async operations are in progress.
