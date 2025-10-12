@@ -47,7 +47,7 @@ const sentences = [
 
 const testimonials = [
   {
-    quote: "ResumeCraft AI transformed my job search. The AI writer is a game-changer, and I got more interviews in a week than I did in a month.",
+    quote: "ResumeAI transformed my job search. The AI writer is a game-changer, and I got more interviews in a week than I did in a month.",
     author: "Sarah J.",
     title: "Software Engineer",
     avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d"
@@ -311,7 +311,7 @@ export default function Home() {
         <div className="container mx-auto px-4 md:px-6 text-center animate-fade-in-up">
           <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Ready to Build Your Future?</h2>
           <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl mt-4">
-            Start for free and see how ResumeCraft AI can transform your job search. No credit card required.
+            Start for free and see how ResumeAI can transform your job search. No credit card required.
           </p>
           <div className="mt-8">
             <Button asChild size="lg" className="group" variant="neuro">

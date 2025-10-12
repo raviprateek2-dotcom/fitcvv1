@@ -39,7 +39,7 @@ export default function PrivacyPolicyPage() {
           </p>
           
           <h2>7. Contact Us</h2>
-          <p>If you have any questions about this Privacy Policy, please contact us at privacy@resumecraft.ai.</p>
+          <p>If you have any questions about this Privacy Policy, please contact us at privacy@resumeai.ai.</p>
 
           <p className="text-sm text-muted-foreground mt-8">Last updated: {new Date().toLocaleDateString()}</p>
         </CardContent>

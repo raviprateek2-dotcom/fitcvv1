@@ -45,7 +45,7 @@ Most large companies use Applicant Tracking Systems (ATS) to screen resumes. To 
 
 - **Use Standard Section Headers:** (e.g., "Work Experience", "Education", "Skills").
 - **Include Keywords:** Sprinkle relevant keywords from the job description throughout your resume.
-- **Avoid Complicated Formatting:** Stick to clean, professional templates. All ResumeCraft AI templates are ATS-optimized.
+- **Avoid Complicated Formatting:** Stick to clean, professional templates. All ResumeAI templates are ATS-optimized.
 
 ## 5. Keep it Clean and Readable
 
@@ -55,7 +55,7 @@ Your resume's design matters. It should be easy to read and visually appealing.
 - **White Space:** Use ample white space to avoid a cluttered look.
 - **Length:** Aim for one page if you have less than 10 years of experience. Two pages is acceptable for more experienced professionals.
 
-By following these tips, you can create a powerful resume that not only gets past the ATS but also grabs the attention of recruiters. Ready to get started? **Choose a template and let ResumeCraft AI help you build your future!**
+By following these tips, you can create a powerful resume that not only gets past the ATS but also grabs the attention of recruiters. Ready to get started? **Choose a template and let ResumeAI help you build your future!**
     `,
   },
   {
@@ -90,7 +90,7 @@ Recruiters can spot a generic resume from a mile away. It shows a lack of genuin
 
 A resume that is hard to read won't get read. Cluttered layouts, tiny fonts, and distracting graphics are major turn-offs.
 
-- **The Fix:** Choose a clean, professional template. Ensure there is plenty of white space and use a standard, readable font. ResumeCraft AI's templates are all designed for maximum readability and ATS-compatibility.
+- **The Fix:** Choose a clean, professional template. Ensure there is plenty of white space and use a standard, readable font. ResumeAI's templates are all designed for maximum readability and ATS-compatibility.
 
 ## 5. Including Irrelevant Information
 
@@ -126,7 +126,7 @@ Fancy formatting can confuse an ATS. Stick to a clean, professional, and straigh
   - Use a standard, reverse-chronological format.
   - Choose a professional font like Arial, Helvetica, or Calibri.
   - Avoid tables, columns, headers, and footers, as these can be misread by the software.
-  - All templates on ResumeCraft AI are tested and optimized for ATS compatibility.
+  - All templates on ResumeAI are tested and optimized for ATS compatibility.
 
 ## 3. Use Standard Section Headings
 
@@ -139,7 +139,7 @@ Don't get creative with your section titles. The ATS is programmed to look for s
 
 Most job applications specify the preferred file format. If they don't, a .docx or .pdf file is usually a safe bet.
 
-- **PDF vs. Word:** While PDFs preserve your formatting, some older ATS systems can struggle with them. If given the option, submitting a .docx file is often safer. However, modern ATS can handle PDFs just fine. ResumeCraft AI allows you to download in PDF, the most universally accepted format.
+- **PDF vs. Word:** While PDFs preserve your formatting, some older ATS systems can struggle with them. If given the option, submitting a .docx file is often safer. However, modern ATS can handle PDFs just fine. ResumeAI allows you to download in PDF, the most universally accepted format.
 
 ## 5. Don't Put Crucial Information in the Header or Footer
 
@@ -242,7 +242,7 @@ A powerful summary should quickly answer three questions for the recruiter:
 
 ## AI to the Rescue
 
-Struggling to find the right words? ResumeCraft AI's **AI Writer** can generate a professional summary tailored to your target job description in seconds. Just provide the job description, and let our AI do the heavy lifting.
+Struggling to find the right words? ResumeAI's **AI Writer** can generate a professional summary tailored to your target job description in seconds. Just provide the job description, and let our AI do the heavy lifting.
     `,
   },
   {
@@ -263,7 +263,7 @@ A resume is a concise, one-to-two-page summary of your skills, experience, and e
 - **Content:** Highly customized to the specific job you are applying for. It focuses on the most relevant skills and achievements.
 - **Used for:** Most job applications in the United States and Canada.
 
-**ResumeCraft AI is designed to help you create a perfect, targeted resume.**
+**ResumeAI is designed to help you create a perfect, targeted resume.**
 
 ## What is a CV (Curriculum Vitae)?
 
@@ -402,7 +402,7 @@ End with a confident closing and a clear call to action.
 
 ## Let AI Help
 
-Feeling stuck? The **AI Cover Letter Writer** in ResumeCraft AI can generate a tailored, three-paragraph cover letter for you based on your resume and the target job. It's the perfect way to get started.
+Feeling stuck? The **AI Cover Letter Writer** in ResumeAI can generate a tailored, three-paragraph cover letter for you based on your resume and the target job. It's the perfect way to get started.
     `,
   },
   {

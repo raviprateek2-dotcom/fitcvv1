@@ -8,9 +8,9 @@ export function Footer() {
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2">
             <Rocket className="h-6 w-6 text-primary" />
-            <p className="text-lg font-bold font-headline">ResumeCraft AI</p>
+            <p className="text-lg font-bold font-headline">ResumeAI</p>
           </div>
-          <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} ResumeCraft AI. All rights reserved.</p>
+          <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} ResumeAI. All rights reserved.</p>
           <nav className="flex gap-4 sm:gap-6">
             <Link href="/terms" className="text-sm hover:underline underline-offset-4">
               Terms of Service

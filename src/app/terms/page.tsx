@@ -10,7 +10,7 @@ export default function TermsOfServicePage() {
         <CardContent className="prose prose-lg max-w-none">
           <h2>1. Introduction</h2>
           <p>
-            Welcome to ResumeCraft AI. These Terms of Service ("Terms") govern your use of our website and services. By accessing or using our service, you agree to be bound by these Terms.
+            Welcome to ResumeAI. These Terms of Service ("Terms") govern your use of our website and services. By accessing or using our service, you agree to be bound by these Terms.
           </p>
 
           <h2>2. Use of Our Service</h2>
@@ -30,7 +30,7 @@ export default function TermsOfServicePage() {
           
           <h2>5. Limitation of Liability</h2>
           <p>
-            In no event shall ResumeCraft AI, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your access to or use of or inability to access or use the Service.
+            In no event shall ResumeAI, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your access to or use of or inability to access or use the Service.
           </p>
           
           <h2>6. Changes</h2>
@@ -39,7 +39,7 @@ export default function TermsOfServicePage() {
           </p>
           
           <h2>7. Contact Us</h2>
-          <p>If you have any questions about these Terms, please contact us at support@resumecraft.ai.</p>
+          <p>If you have any questions about these Terms, please contact us at support@resumeai.ai.</p>
           
           <p className="text-sm text-muted-foreground mt-8">Last updated: {new Date().toLocaleDateString()}</p>
         </CardContent>

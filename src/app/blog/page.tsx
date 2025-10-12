@@ -10,7 +10,7 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export const metadata: Metadata = {
   title: 'Blog - Career Advice & Resume Tips',
-  description: 'Explore articles on resume writing, career development, interview tips, and more from the ResumeCraft AI team.',
+  description: 'Explore articles on resume writing, career development, interview tips, and more from the ResumeAI team.',
 };
 
 

@@ -135,7 +135,7 @@ const LoadingState = () => (
 const EmptyState = () => (
     <Card variant="neuro" className="text-center py-16 md:py-24">
       <CardContent>
-        <h2 className="text-3xl font-headline font-bold mb-4">Welcome to ResumeCraft AI!</h2>
+        <h2 className="text-3xl font-headline font-bold mb-4">Welcome to ResumeAI!</h2>
         <p className="text-muted-foreground mb-8 text-lg max-w-2xl mx-auto">Let's create a resume that gets you hired. Follow these simple steps to get started.</p>
         
         <div className="grid md:grid-cols-3 gap-8 text-left mb-10 max-w-4xl mx-auto">

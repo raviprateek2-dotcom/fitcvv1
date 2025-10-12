@@ -37,7 +37,7 @@ export function Header() {
         <div className="mr-auto flex items-center">
           <Link href="/" className="flex items-center gap-2 font-bold font-headline text-lg">
             <Rocket className="h-6 w-6 text-primary" />
-            <span>ResumeCraft AI</span>
+            <span>ResumeAI</span>
           </Link>
         </div>
 
@@ -86,7 +86,7 @@ export function Header() {
               <div className="flex flex-col gap-6 mt-8">
                 <Link href="/" className="flex items-center gap-2 font-bold font-headline text-lg">
                   <Rocket className="h-6 w-6 text-primary" />
-                  <span>ResumeCraft AI</span>
+                  <span>ResumeAI</span>
                 </Link>
                 <div className="flex flex-col gap-4">
                   {navLinks.map((link) => (
