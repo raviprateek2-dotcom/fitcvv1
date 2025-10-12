@@ -2,7 +2,8 @@
 
 import { useCollection, useUser } from '@/firebase';
 import { useMemo } from 'react';
-import { collection, query, where } from 'firebase/firestore';
+import { addDocumentNonBlocking, deleteDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { collection, serverTimestamp } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,17 +14,23 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useMemoFirebase } from '@/firebase/provider';
+import { useRouter } from 'next/navigation';
 
 type Resume = {
   id: string;
   title: string;
+  templateId: string;
   updatedAt: {
     toDate: () => Date;
   };
 };
 
-const ResumeCard = ({ resume }: { resume: Resume }) => {
-  const image = useMemo(() => PlaceHolderImages[Math.floor(Math.random() * PlaceHolderImages.length)], []);
+const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDuplicate: (resume: Resume) => void; onDelete: (resumeId: string) => void; }) => {
+  const image = useMemo(() => {
+    const templateImage = PlaceHolderImages.find(p => p.id.includes(resume.templateId));
+    return templateImage || PlaceHolderImages[Math.floor(Math.random() * PlaceHolderImages.length)];
+  }, [resume.templateId]);
+  
   const updatedAt = useMemo(() => {
     const date = resume.updatedAt?.toDate();
     if (!date) return 'recently';
@@ -43,7 +50,7 @@ const ResumeCard = ({ resume }: { resume: Resume }) => {
           <div className="aspect-[3/2] overflow-hidden">
             {image && (
               <Image
-                src={image.imageUrl}
+                src={image.imageUrl.replace('/400/566', '/300/200')} // Adjust image size for dashboard
                 width={300}
                 height={200}
                 alt={image.description}
@@ -74,9 +81,9 @@ const ResumeCard = ({ resume }: { resume: Resume }) => {
             <DropdownMenuItem asChild>
               <Link href={`/editor/${resume.id}`}>Edit</Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>Duplicate</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onDuplicate(resume)}>Duplicate</DropdownMenuItem>
             <DropdownMenuItem>Download PDF</DropdownMenuItem>
-            <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onDelete(resume.id)} className="text-destructive">Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </CardFooter>
@@ -102,8 +109,9 @@ const ResumeSkeleton = () => {
 }
 
 export default function DashboardPage() {
-  const { user } = useUser();
+  const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
+  const router = useRouter();
 
   const resumesQuery = useMemoFirebase(
     () => (user ? collection(firestore, `users/${user.uid}/resumes`) : null),
@@ -111,6 +119,41 @@ export default function DashboardPage() {
   );
   
   const { data: resumes, isLoading } = useCollection<Resume>(resumesQuery);
+
+  const handleDuplicate = async (resumeToDuplicate: Resume) => {
+    if (!user || !resumesQuery) return;
+    
+    // In a real app, you would fetch the full resume document content
+    const newResumeData = {
+      title: `${resumeToDuplicate.title} (Copy)`,
+      templateId: resumeToDuplicate.templateId,
+      // content: resumeToDuplicate.content, // This would be the full content
+      content: { // Placeholder content for now
+         personalInfo: { name: 'Copy Of User' },
+         summary: 'This is a copied summary.',
+         experience: [],
+         education: [],
+         skills: ''
+      },
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    };
+    const newDocRef = await addDocumentNonBlocking(resumesQuery, newResumeData);
+    if (newDocRef) {
+      router.push(`/editor/${newDocCref.id}`);
+    }
+  };
+
+  const handleDelete = (resumeId: string) => {
+    if (!user) return;
+    const docRef = useMemoFirebase(() => collection(firestore, `users/${user.uid}/resumes`, resumeId), []);
+    if(docRef) deleteDocumentNonBlocking(docRef);
+  };
+  
+  if (!isUserLoading && !user) {
+    router.push('/login');
+    return null;
+  }
 
   return (
     <div className="container mx-auto px-4 md:px-6 py-8">
@@ -124,19 +167,19 @@ export default function DashboardPage() {
         </Button>
       </div>
 
-      {isLoading && (
+      {(isLoading || isUserLoading) && (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {[...Array(4)].map((_, i) => <ResumeSkeleton key={i} />)}
         </div>
       )}
 
-      {!isLoading && resumes && resumes.length > 0 ? (
+      {!isLoading && !isUserLoading && resumes && resumes.length > 0 ? (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {resumes.map((resume) => (
-            <ResumeCard key={resume.id} resume={resume} />
+            <ResumeCard key={resume.id} resume={resume} onDuplicate={handleDuplicate} onDelete={handleDelete} />
           ))}
         </div>
-      ) : !isLoading && (
+      ) : !isLoading && !isUserLoading && (
         <div className="text-center py-20 border-2 border-dashed rounded-lg">
           <h2 className="text-2xl font-semibold mb-2">No Resumes Yet</h2>
           <p className="text-muted-foreground mb-4">Click below to create your first professional resume.</p>
