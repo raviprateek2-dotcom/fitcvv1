@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Download, Eye, PlusCircle, Share2, Trash2, Sparkles, Bot, FileText, Newspaper, PanelLeft, ArrowLeft, Brush, Lock, Lightbulb, Upload } from 'lucide-react';
+import { Download, Eye, PlusCircle, Share2, Trash2, Sparkles, Bot, FileText, Newspaper, PanelLeft, ArrowLeft, Brush, Lock, Lightbulb, Upload, MinusCircle } from 'lucide-react';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import AIContentDialog from './AIContentDialog';
 import AISectionWriterDialog from './AISectionWriterDialog';
@@ -81,8 +81,8 @@ type ResumeData = {
   summary: string;
   experience: Experience[];
   education: Education[];
-  skills: Skill[];
-  projects: Project[];
+  skills?: Skill[];
+  projects?: Project[];
   jobDescription: string;
   templateId?: string;
   coverLetter?: string;
@@ -214,8 +214,6 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
         let updatedData = { ...initialResumeData };
         
         // Ensure all fields are present to prevent controlled/uncontrolled input errors
-        if (!Array.isArray(updatedData.skills)) updatedData.skills = [];
-        if (!Array.isArray(updatedData.projects)) updatedData.projects = [];
         if (typeof updatedData.coverLetter !== 'string') updatedData.coverLetter = '';
         if (typeof updatedData.companyInfo !== 'object' || updatedData.companyInfo === null) updatedData.companyInfo = { name: '', jobTitle: '' };
         if (typeof updatedData.styling !== 'object' || updatedData.styling === null) {
@@ -318,7 +316,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   ) => {
     setResumeData(prev => {
         if (!prev) return null;
-        const list = prev[section];
+        const list = prev[section as 'experience' | 'education'] || [];
         const updatedList = (list as any[]).map(item => 
             item.id === id ? { ...item, [field]: value } : item
         );
@@ -354,6 +352,21 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     } : null));
   };
 
+  const addSkillSection = () => {
+    setResumeData(prev => (prev ? {
+      ...prev,
+      skills: []
+    } : null));
+  };
+
+  const removeSkillSection = () => {
+    setResumeData(prev => {
+      if (!prev) return null;
+      const { skills, ...rest } = prev;
+      return rest;
+    });
+  }
+
   const addSkill = () => {
     setResumeData(prev => (prev ? {
         ...prev,
@@ -364,9 +377,24 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   const removeSkill = (id: number) => {
       setResumeData(prev => (prev ? {
           ...prev,
-          skills: prev.skills.filter(skill => skill.id !== id)
+          skills: (prev.skills || []).filter(skill => skill.id !== id)
       } : null));
   };
+
+  const addProjectSection = () => {
+    setResumeData(prev => (prev ? {
+      ...prev,
+      projects: []
+    } : null));
+  };
+
+  const removeProjectSection = () => {
+    setResumeData(prev => {
+      if (!prev) return null;
+      const { projects, ...rest } = prev;
+      return rest;
+    });
+  }
 
   const addProject = () => {
     setResumeData(prev => (prev ? {
@@ -378,7 +406,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   const removeProject = (id: number) => {
     setResumeData(prev => (prev ? {
       ...prev,
-      projects: prev.projects.filter(p => p.id !== id)
+      projects: (prev.projects || []).filter(p => p.id !== id)
     } : null));
   };
   
@@ -798,27 +826,49 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                             </Button>
                         </AccordionContent>
                         </AccordionItem>
-
-                        <AccordionItem value="projects">
-                        <AccordionTrigger className="font-semibold">Projects</AccordionTrigger>
-                        <AccordionContent className="space-y-4 pt-4">
-                            {(resumeData.projects || []).map((proj) => (
-                                <div key={proj.id} className="p-4 border rounded-lg space-y-4 relative">
-                                    <div className="space-y-2"><Label>Project Name</Label><Input value={proj.name} onChange={e => handleNestedChange('projects', proj.id, 'name', e.target.value)} /></div>
-                                    <div className="space-y-2"><Label>Description</Label><Textarea rows={3} value={proj.description} onChange={e => handleNestedChange('projects', proj.id, 'description', e.target.value)} /></div>
-                                    <div className="space-y-2"><Label>Link (Optional)</Label><Input value={proj.link} onChange={e => handleNestedChange('projects', proj.id, 'link', e.target.value)} /></div>
-                                    <div className="flex justify-end">
-                                        <Button variant="ghost" size="icon" onClick={() => removeProject(proj.id)} className="text-destructive hover:text-destructive-foreground hover:bg-destructive">
-                                            <Trash2 className="h-4 w-4" />
-                                        </Button>
-                                    </div>
-                                </div>
-                            ))}
-                            <Button variant="outline" onClick={addProject} className="w-full">
-                                <PlusCircle className="mr-2 h-4 w-4" /> Add Project
+                        
+                        {resumeData.projects === undefined && (
+                          <div className="p-4 border-dashed border-2 rounded-lg flex items-center justify-center">
+                            <Button variant="ghost" onClick={addProjectSection}>
+                              <PlusCircle className="mr-2 h-4 w-4" /> Add Projects Section
                             </Button>
-                        </AccordionContent>
-                        </AccordionItem>
+                          </div>
+                        )}
+                        {resumeData.projects !== undefined && (
+                          <AccordionItem value="projects">
+                          <AccordionTrigger className="font-semibold flex justify-between w-full">
+                            Projects
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); removeProjectSection();}} className="text-destructive hover:text-destructive-foreground hover:bg-destructive h-7 w-7">
+                                    <MinusCircle className="h-4 w-4" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>Remove Section</TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </AccordionTrigger>
+                          <AccordionContent className="space-y-4 pt-4">
+                              {resumeData.projects.map((proj) => (
+                                  <div key={proj.id} className="p-4 border rounded-lg space-y-4 relative">
+                                      <div className="space-y-2"><Label>Project Name</Label><Input value={proj.name} onChange={e => handleNestedChange('projects', proj.id, 'name', e.target.value)} /></div>
+                                      <div className="space-y-2"><Label>Description</Label><Textarea rows={3} value={proj.description} onChange={e => handleNestedChange('projects', proj.id, 'description', e.target.value)} /></div>
+                                      <div className="space-y-2"><Label>Link (Optional)</Label><Input value={proj.link} onChange={e => handleNestedChange('projects', proj.id, 'link', e.target.value)} /></div>
+                                      <div className="flex justify-end">
+                                          <Button variant="ghost" size="icon" onClick={() => removeProject(proj.id)} className="text-destructive hover:text-destructive-foreground hover:bg-destructive">
+                                              <Trash2 className="h-4 w-4" />
+                                          </Button>
+                                      </div>
+                                  </div>
+                              ))}
+                              <Button variant="outline" onClick={addProject} className="w-full">
+                                  <PlusCircle className="mr-2 h-4 w-4" /> Add Project
+                              </Button>
+                          </AccordionContent>
+                          </AccordionItem>
+                        )}
+                        
 
                         <AccordionItem value="education">
                         <AccordionTrigger className="font-semibold">Education</AccordionTrigger>
@@ -843,41 +893,63 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                         </AccordionContent>
                         </AccordionItem>
 
-                        <AccordionItem value="skills">
-                        <AccordionTrigger className="font-semibold">Skills</AccordionTrigger>
-                        <AccordionContent className="space-y-4 pt-4">
-                            {(resumeData.skills || []).map((skill) => (
-                            <div key={skill.id} className="p-4 border rounded-lg space-y-4">
-                                <div className="flex items-center gap-4">
-                                    <div className="flex-grow space-y-2">
-                                        <Label>Skill</Label>
-                                        <Input value={skill.name} onChange={e => handleNestedChange('skills', skill.id, 'name', e.target.value)} />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label>Level</Label>
-                                        <Select value={skill.level} onValueChange={value => handleNestedChange('skills', skill.id, 'level', value)}>
-                                            <SelectTrigger className="w-[180px]">
-                                                <SelectValue placeholder="Select level" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="Beginner">Beginner</SelectItem>
-                                                <SelectItem value="Intermediate">Intermediate</SelectItem>
-                                                <SelectItem value="Advanced">Advanced</SelectItem>
-                                                <SelectItem value="Expert">Expert</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-                                    <Button variant="ghost" size="icon" onClick={() => removeSkill(skill.id)} className="text-destructive hover:text-destructive-foreground hover:bg-destructive self-end">
-                                        <Trash2 className="h-4 w-4" />
-                                    </Button>
-                                </div>
-                            </div>
-                            ))}
-                            <Button variant="outline" onClick={addSkill} className="w-full">
-                                <PlusCircle className="mr-2 h-4 w-4" /> Add Skill
+                        {resumeData.skills === undefined && (
+                          <div className="p-4 border-dashed border-2 rounded-lg flex items-center justify-center">
+                            <Button variant="ghost" onClick={addSkillSection}>
+                              <PlusCircle className="mr-2 h-4 w-4" /> Add Skills Section
                             </Button>
-                        </AccordionContent>
-                        </AccordionItem>
+                          </div>
+                        )}
+                        {resumeData.skills !== undefined && (
+                          <AccordionItem value="skills">
+                          <AccordionTrigger className="font-semibold flex justify-between w-full">
+                            Skills
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); removeSkillSection();}} className="text-destructive hover:text-destructive-foreground hover:bg-destructive h-7 w-7">
+                                    <MinusCircle className="h-4 w-4" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>Remove Section</TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </AccordionTrigger>
+                          <AccordionContent className="space-y-4 pt-4">
+                              {resumeData.skills.map((skill) => (
+                              <div key={skill.id} className="p-4 border rounded-lg space-y-4">
+                                  <div className="flex items-center gap-4">
+                                      <div className="flex-grow space-y-2">
+                                          <Label>Skill</Label>
+                                          <Input value={skill.name} onChange={e => handleNestedChange('skills', skill.id, 'name', e.target.value)} />
+                                      </div>
+                                      <div className="space-y-2">
+                                          <Label>Level</Label>
+                                          <Select value={skill.level} onValueChange={value => handleNestedChange('skills', skill.id, 'level', value)}>
+                                              <SelectTrigger className="w-[180px]">
+                                                  <SelectValue placeholder="Select level" />
+                                              </SelectTrigger>
+                                              <SelectContent>
+                                                  <SelectItem value="Beginner">Beginner</SelectItem>
+                                                  <SelectItem value="Intermediate">Intermediate</SelectItem>
+                                                  <SelectItem value="Advanced">Advanced</SelectItem>
+                                                  <SelectItem value="Expert">Expert</SelectItem>
+                                              </SelectContent>
+                                          </Select>
+                                      </div>
+                                      <Button variant="ghost" size="icon" onClick={() => removeSkill(skill.id)} className="text-destructive hover:text-destructive-foreground hover:bg-destructive self-end">
+                                          <Trash2 className="h-4 w-4" />
+                                      </Button>
+                                  </div>
+                              </div>
+                              ))}
+                              <Button variant="outline" onClick={addSkill} className="w-full">
+                                  <PlusCircle className="mr-2 h-4 w-4" /> Add Skill
+                              </Button>
+                          </AccordionContent>
+                          </AccordionItem>
+                        )}
+                        
 
                     </Accordion>
                   </div>
@@ -932,3 +1004,5 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     </>
   );
 }
+
+    
