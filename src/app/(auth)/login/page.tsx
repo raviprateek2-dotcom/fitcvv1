@@ -11,6 +11,7 @@ import { Rocket } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -95,7 +96,19 @@ export default function LoginPage() {
     <Card className="w-full max-w-sm" variant="neuro">
       <CardHeader className="text-center">
         <div className="flex justify-center mb-4">
-           <Rocket className="h-10 w-10 text-primary" />
+            <motion.div
+              animate={{
+                y: [0, -10, 0],
+              }}
+              transition={{
+                duration: 2.5,
+                ease: 'easeInOut',
+                repeat: Infinity,
+                repeatType: 'loop',
+              }}
+            >
+              <Rocket className="h-10 w-10 text-primary" />
+            </motion.div>
         </div>
         <CardTitle className="font-headline text-2xl">Welcome Back</CardTitle>
         <CardDescription>Enter your credentials to access your account.</CardDescription>
