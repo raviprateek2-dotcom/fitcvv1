@@ -27,7 +27,7 @@ var pdfjsLib;
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.shadow = exports.removeNullCharacters = exports.ReadableStream = exports.PasswordResponses = exports.PasswordException = exports.Parser = exports.PDF_VERSION_REGEXP = exports.PDF_HEADER_REGEXP = exports.OPS = exports.OperatorList = exports.OBJECT_STREAM = exports. numerosi = exports.normalizeUnicode = exports.normalizeRect = exports.MissingDataException = exports.LINEARIZED = exports.Lexer = exports.isWhiteSpace = exports.isString = exports.isStream = exports.isSpace = exports.isRef = exports.isPDFFunction = exports.isName = exports.isNum = exports.isHexDigit = exports.isEOF = exports.isDict = exports.isCmd = exports.isBool = exports.isArray = exports.InvalidPDFException = exports.isSentinal = exports.isChar = exports.ImageKind = exports.getVerbosityLevel = exports.getLookupTableFactory = exports.getWarn = exports.getShadingPatternFromIR = exports.getAxialShadingFromIR = exports.FONT_IDENTITY_MATRIX = exports.FormatError = exports.DocStats = exports.Dict = exports.createValidAbsoluteUrl = exports.createPromiseCapability = exports.createObjectURL = exports.createImageCache = exports.createCanvas = exports.clearPrimitiveCaches = exports.assert = exports.arrayBytePool = exports.AnnotationStorage = exports.AnnotationBorderStyleType = exports.Annotation = exports.IDENTITY_MATRIX = exports.CIRCULAR_REF = exports.AbortException = exports.Util = exports.UNSUPPORTED_FEATURES = exports.UnknownErrorException = exports.UnexpectedResponseException = exports.stringToPDFString = exports.stringToBytes = exports.setVerbosityLevel = void 0;
+exports.shadow = exports.removeNullCharacters = exports.ReadableStream = exports.PasswordResponses = exports.PasswordException = exports.Parser = exports.PDF_VERSION_REGEXP = exports.PDF_HEADER_REGEXP = exports.OPS = exports.OperatorList = exports.OBJECT_STREAM = exports.numerosi = exports.normalizeUnicode = exports.normalizeRect = exports.MissingDataException = exports.LINEARIZED = exports.Lexer = exports.isWhiteSpace = exports.isString = exports.isStream = exports.isSpace = exports.isRef = exports.isPDFFunction = exports.isName = exports.isNum = exports.isHexDigit = exports.isEOF = exports.isDict = exports.isCmd = exports.isBool = exports.isArray = exports.InvalidPDFException = exports.isSentinal = exports.isChar = exports.ImageKind = exports.getVerbosityLevel = exports.getLookupTableFactory = exports.getWarn = exports.getShadingPatternFromIR = exports.getAxialShadingFromIR = exports.FONT_IDENTITY_MATRIX = exports.FormatError = exports.DocStats = exports.Dict = exports.createValidAbsoluteUrl = exports.createPromiseCapability = exports.createObjectURL = exports.createImageCache = exports.createCanvas = exports.clearPrimitiveCaches = exports.assert = exports.arrayBytePool = exports.AnnotationStorage = exports.AnnotationBorderStyleType = exports.Annotation = exports.IDENTITY_MATRIX = exports.CIRCULAR_REF = exports.AbortException = exports.Util = exports.UNSUPPORTED_FEATURES = exports.UnknownErrorException = exports.UnexpectedResponseException = exports.stringToPDFString = exports.stringToBytes = exports.setVerbosityLevel = void 0;
 exports.warn = warn;
 const CIRCULAR_REF = Symbol("CIRCULAR_REF");
 exports.CIRCULAR_REF = CIRCULAR_REF;
@@ -790,7 +790,7 @@ class StringStream extends BaseStream {
     return bytes;
   }
   getReader() {
-    return new Stream Reader(this);
+    return new StreamReader(this);
   }
   getIR() {
     return Array.from(this.bytes.subarray(this.start, this.end));
@@ -867,7 +867,7 @@ class NullStream extends BaseStream {
     return new Uint8Array(0);
   }
   getReader() {
-    return new Stream Reader(this);
+    return new StreamReader(this);
   }
   getIR() {
     return [];
@@ -967,7 +967,7 @@ class DecodeStream extends BaseStream {
     return new Stream(this.buffer.buffer, this.pos + start, end - start, dict);
   }
   getReader() {
-    return new Stream Reader(this);
+    return new StreamReader(this);
   }
   getIR() {
     this._ensureBuffer(this.str.length);
@@ -1015,7 +1015,7 @@ class FakeStream extends BaseStream {
     return this.actual.makeSubStream(start, length, dict);
   }
   getReader() {
-    return new Stream Reader(this);
+    return new StreamReader(this);
   }
   getIR() {
     return this.actual.getIR();
@@ -2362,92 +2362,276 @@ class Util {
   }
   static get CFFExpertSubsetCharset() {
     return shadow(this, "CFFExpertSubsetCharset", CFFExpertSubsetCharset);
-final_huffman:
-    if (hlit > 286 || hdist > 30) {
-      throw new FormatError("Invalid number of literal/length or distance codes.");
+  }
+  static get Flate() {
+    return shadow(this, "Flate", Flate);
+  }
+  static get createFlateStream() {
+    return shadow(this, "createFlateStream", createFlateStream);
+  }
+  static get createAEF() {
+    return shadow(this, "createAEF", createAEF);
+  }
+  static get createA85() {
+    return shadow(this, "createA85", createA85);
+  }
+  static get createLZW() {
+    return shadow(this, "createLZW", createLZW);
+  }
+  static get createRL() {
+    return shadow(this, "createRL", createRL);
+  }
+  static get createCryptStream() {
+    return shadow(this, "createCryptStream", createCryptStream);
+  }
+  static get Decrypt() {
+    return shadow(this, "Decrypt", Decrypt);
+  }
+  static get isChar() {
+    return shadow(this, "isChar", isChar);
+  }
+  static get isHexDigit() {
+    return shadow(this, "isHexDigit", isHexDigit);
+  }
+  static get isOctalDigit() {
+    return shadow(this, "isOctalDigit", isOctalDigit);
+  }
+  static get log2() {
+    return shadow(this, "log2", log2);
+  }
+  static get readInt() {
+    return shadow(this, "readInt", readInt);
+  }
+  static get readUint() {
+    return shadow(this, "readUint", readUint);
+  }
+  static get writeInt() {
+    return shadow(this, "writeInt", writeInt);
+  }
+  static get writeUint() {
+    return shadow(this, "writeUint", writeUint);
+  }
+  static get bytesToString() {
+    return shadow(this, "bytesToString", bytesToString);
+  }
+  static get stringToBytes() {
+    return shadow(this, "stringToBytes", stringToBytes);
+  }
+  static get stringToPDFString() {
+    return shadow(this, "stringToPDFString", stringToPDFString);
+  }
+  static get XRef() {
+    return shadow(this, "XRef", XRef);
+  }
+  static get Linearization() {
+    return shadow(this, "Linearization", Linearization);
+  }
+}
+function HuffmanDecoder(stream) {
+  this.stream = stream;
+  this.bit_buffer = 0;
+  this.bits = 0;
+}
+HuffmanDecoder.prototype = {
+  buildHuffmanTable(lengths) {
+    const table = [];
+    const max_len = Math.max.apply(null, lengths);
+    const codes = new Array(max_len + 1);
+    let code = 0;
+    for (let len = 1; len <= max_len; len++) {
+      for (let i = 0; i < lengths.length; i++) {
+        if (lengths[i] === len) {
+          codes[i] = code++;
+        }
+      }
+      code <<= 1;
     }
-    const copy_len_and_dist = new Uint8Array(hlit + hdist);
-    let i = 0;
-    let code, repeat;
-    while (i < hlit + hdist) {
-      code = clen_code[this._readBits(cl)];
-      if (code < 16) {
-        copy_len_and_dist[i++] = code;
+    for (let i = 0; i < lengths.length; i++) {
+      const len = lengths[i];
+      if (len === 0) {
         continue;
       }
-      if (code === 16) {
-        repeat = this._readBits(2) + 3;
-        if (i === 0) {
-          throw new FormatError("Invalid block: no elements to copy.");
-        }
-        const prev = copy_len_and_dist[i - 1];
-        for (let j = 0; j < repeat; j++) {
-          copy_len_and_dist[i++] = prev;
-        }
-        continue;
-      }
-      if (code === 17) {
-        repeat = this._readBits(3) + 3;
-        for (let j = 0; j < repeat; j++) {
-          copy_len_and_dist[i++] = 0;
-        }
-        continue;
-      }
-      if (code === 18) {
-        repeat = this._readBits(7) + 11;
-        for (let j = 0; j < repeat; j++) {
-          copy_len_and_dist[i++] = 0;
-        }
-        continue;
-      }
-      throw new FormatError(`Invalid code: ${code}`);
+      const code = codes[i];
+      table[code] = len << 16 | i;
     }
-    const lit_len_code = this.buildHuffmanTable(copy_len_and_dist.subarray(0, hlit));
-    const dist_code = this.buildHuffmanTable(copy_len_and_dist.subarray(hlit, hlit + hdist));
-    let literal;
+    return [table, max_len];
+  },
+  _readBits(n) {
+    while (this.bits < n) {
+      const c = this.stream.getByte();
+      if (c === EOF) {
+        return -1;
+      }
+      this.bit_buffer = this.bit_buffer << 8 | c;
+      this.bits += 8;
+    }
+    const bits = this.bit_buffer >> this.bits - n & (1 << n) - 1;
+    this.bits -= n;
+    return bits;
+  },
+  decode(table, max_len) {
+    let code = 0;
+    let len = 0;
     while (true) {
-      literal = this.decode(lit_len_code, ll);
-      if (literal < 256) {
-        if (buffer_length === buffer.length) {
-          buffer = this.expandBuffer(buffer_length);
+      len++;
+      code = code << 1 | this._readBits(1);
+      if (len > max_len) {
+        throw new FormatError("Invalid huffman code");
+      }
+      const pair = table[code];
+      if (pair && pair >> 16 === len) {
+        return pair & 0xffff;
+      }
+    }
+  },
+  expandBuffer(buffer_length) {
+    const new_buffer = new Uint8Array(buffer_length * 2);
+    new_buffer.set(this.buffer.subarray(0, buffer_length));
+    this.buffer = new_buffer;
+  },
+  decode: function HuffmanDecoder_decode() {
+    let buffer = new Uint8Array(512),
+      buffer_length = 0;
+    let bfinal, btype;
+    do {
+      bfinal = this._readBits(1);
+      btype = this._readBits(2);
+      if (btype === 0) {
+        const len = this._readBits(16);
+        const nlen = this._readBits(16);
+        this.bits = 0;
+        this.bit_buffer = 0;
+        const block = this.stream.getBytes(len);
+        if (buffer_length + len > buffer.length) {
+          const new_buffer = new Uint8Array(buffer_length + len);
+          new_buffer.set(buffer);
+          buffer = new_buffer;
         }
-        buffer[buffer_length++] = literal;
+        buffer.set(block, buffer_length);
+        buffer_length += len;
         continue;
       }
-      if (literal === 256) {
-        break final_huffman;
+      if (btype === 1) {
+        const lit_len = [],
+          dist = [];
+        let i;
+        for (i = 0; i <= 143; i++) lit_len.push(8);
+        for (i = 144; i <= 255; i++) lit_len.push(9);
+        for (i = 256; i <= 279; i++) lit_len.push(7);
+        for (i = 280; i <= 287; i++) lit_len.push(8);
+        for (i = 0; i <= 31; i++) dist.push(5);
+        const lit_len_code = this.buildHuffmanTable(lit_len);
+        const dist_code = this.buildHuffmanTable(dist);
+        var ll = lit_len_code[1],
+          ld = dist_code[1];
+        lit_len_code = lit_len_code[0];
+        dist_code = dist_code[0];
+      } else if (btype === 2) {
+        const hlit = this._readBits(5) + 257;
+        const hdist = this._readBits(5) + 1;
+        const hclen = this._readBits(4) + 4;
+        const clen = [];
+        const order = [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15];
+        for (let i = 0; i < hclen; i++) {
+          clen[order[i]] = this._readBits(3);
+        }
+        for (let i = hclen; i < 19; i++) {
+          clen[order[i]] = 0;
+        }
+        const clen_code = this.buildHuffmanTable(clen);
+        var cl = clen_code[1];
+        clen_code = clen_code[0];
+        const copy_len_and_dist = new Uint8Array(hlit + hdist);
+        let i = 0;
+        let code, repeat;
+        while (i < hlit + hdist) {
+          code = this.decode(clen_code, cl);
+          if (code < 16) {
+            copy_len_and_dist[i++] = code;
+            continue;
+          }
+          if (code === 16) {
+            repeat = this._readBits(2) + 3;
+            if (i === 0) {
+              throw new FormatError("Invalid block: no elements to copy.");
+            }
+            const prev = copy_len_and_dist[i - 1];
+            for (let j = 0; j < repeat; j++) {
+              copy_len_and_dist[i++] = prev;
+            }
+            continue;
+          }
+          if (code === 17) {
+            repeat = this._readBits(3) + 3;
+            for (let j = 0; j < repeat; j++) {
+              copy_len_and_dist[i++] = 0;
+            }
+            continue;
+          }
+          if (code === 18) {
+            repeat = this._readBits(7) + 11;
+            for (let j = 0; j < repeat; j++) {
+              copy_len_and_dist[i++] = 0;
+            }
+            continue;
+          }
+          throw new FormatError(`Invalid code: ${code}`);
+        }
+        const lit_len_code = this.buildHuffmanTable(copy_len_and_dist.subarray(0, hlit));
+        const dist_code = this.buildHuffmanTable(copy_len_and_dist.subarray(hlit, hlit + hdist));
+        var ll = lit_len_code[1],
+          ld = dist_code[1];
+        lit_len_code = lit_len_code[0];
+        dist_code = dist_code[0];
+      } else {
+        throw new FormatError(`Invalid btype: ${btype}`);
       }
-      literal -= 257;
-      let len = codeLen[literal];
-      if (codeLenExt[literal] > 0) {
-        len += this._readBits(codeLenExt[literal]);
-      }
-      literal = this.decode(dist_code, ld);
-      let dist = codeDist[literal];
-      if (codeDistExt[literal] > 0) {
-        dist += this._readBits(codeDistExt[literal]);
-      }
-      if (buffer_length === buffer.length) {
-        buffer = this.expandBuffer(buffer_length);
-      }
-      const back_pos = buffer_length - dist;
-      if (len > dist) {
-        for (let i = 0; i < len; i++) {
+      let literal;
+      while (true) {
+        literal = this.decode(lit_len_code, ll);
+        if (literal < 256) {
           if (buffer_length === buffer.length) {
             buffer = this.expandBuffer(buffer_length);
           }
-          buffer[buffer_length++] = buffer[back_pos + i];
+          buffer[buffer_length++] = literal;
+          continue;
         }
-      } else {
-        if (buffer_length + len > buffer.length) {
+        if (literal === 256) {
+          break;
+        }
+        literal -= 257;
+        let len = codeLen[literal];
+        if (codeLenExt[literal] > 0) {
+          len += this._readBits(codeLenExt[literal]);
+        }
+        literal = this.decode(dist_code, ld);
+        let dist = codeDist[literal];
+        if (codeDistExt[literal] > 0) {
+          dist += this._readBits(codeDistExt[literal]);
+        }
+        if (buffer_length === buffer.length) {
           buffer = this.expandBuffer(buffer_length);
         }
-        buffer.set(buffer.subarray(back_pos, back_pos + len), buffer_length);
-        buffer_length += len;
+        const back_pos = buffer_length - dist;
+        if (len > dist) {
+          for (let i = 0; i < len; i++) {
+            if (buffer_length === buffer.length) {
+              buffer = this.expandBuffer(buffer_length);
+            }
+            buffer[buffer_length++] = buffer[back_pos + i];
+          }
+        } else {
+          if (buffer_length + len > buffer.length) {
+            buffer = this.expandBuffer(buffer_length);
+          }
+          buffer.set(buffer.subarray(back_pos, back_pos + len), buffer_length);
+          buffer_length += len;
+        }
       }
-    }
+    } while (bfinal === 0);
+    return buffer.subarray(0, buffer_length);
   }
-}
+};
 function constructor(stream) {
   let buffer, buffer_length;
   let eof = false;
