@@ -42,7 +42,6 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   /* config options here */
-  serverComponentsExternalPackages: ['pdf-parse', 'nanoid'],
   typescript: {
     ignoreBuildErrors: true,
   },
