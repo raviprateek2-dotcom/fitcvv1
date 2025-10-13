@@ -3353,7 +3353,7 @@ class XRef {
     if (obj1 !== num || obj2 !== entry.gen || !isCmd(obj3, "obj")) {
       throw new FormatError("Invalid object header");
     }
-    const obj = parser.getObj();
+    let obj = parser.getObj();
     if (isDict(obj) && !obj.objId) {
       obj.objId = ref.toString();
     } else if (isStream(obj) && !obj.dict.objId) {
@@ -3666,5 +3666,3 @@ pdfjsLib = __webpack_exports__;
 /******/ })()
 ;
 //# sourceMappingURL=pdf.js.map
-
-    
