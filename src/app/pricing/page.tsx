@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useFirestore, useUser } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { doc, updateDoc } from 'firebase/firestore';
-import { Check, X } from 'lucide-react';
+import { Check, X, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
@@ -91,7 +91,7 @@ export default function PricingPage() {
           animate="visible"
         >
           <motion.div variants={itemVariants} className="w-full max-w-md">
-            <Card className="shadow-lg bg-card h-full">
+            <Card className="shadow-lg bg-card h-full" variant="neuro">
               <CardHeader className="text-center p-8">
                 <CardTitle className="font-headline text-3xl">Free</CardTitle>
                 <CardDescription>Perfect for getting started and landing your first interview.</CardDescription>
@@ -120,9 +120,10 @@ export default function PricingPage() {
           </motion.div>
 
           <motion.div variants={itemVariants} className="w-full max-w-md">
-            <Card className="shadow-2xl border-2 border-primary bg-card relative h-full">
+            <Card className="shadow-2xl border-2 border-primary bg-card relative h-full" variant="neuro">
               <div className="absolute top-0 -translate-y-1/2 w-full flex justify-center">
-                <div className="bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-semibold shadow-lg">
+                <div className="bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-semibold shadow-lg flex items-center gap-2">
+                  <Sparkles className="w-4 h-4" />
                   Most Popular
                 </div>
               </div>
@@ -142,7 +143,7 @@ export default function PricingPage() {
                 </ul>
               </CardContent>
               <CardFooter className="p-8 pt-0">
-                <Button className="w-full" onClick={handleUpgrade}>
+                <Button className="w-full" onClick={handleUpgrade} variant="default">
                   Go Pro
                 </Button>
               </CardFooter>
