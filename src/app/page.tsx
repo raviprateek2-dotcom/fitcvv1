@@ -10,7 +10,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import Autoplay from "embla-carousel-autoplay";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform, Variants } from 'framer-motion';
 import { TypingAnimation } from '@/components/common/TypingAnimation';
 
 const features = [
@@ -165,9 +165,44 @@ const HeroTextMotion = ({ children }: { children: React.ReactNode }) => {
     );
 }
 
+const howItWorksContainerVariants: Variants = {
+  visible: {
+    transition: {
+      staggerChildren: 0.3,
+    },
+  },
+};
+
+const howItWorksItemVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: 'spring',
+      stiffness: 100,
+    },
+  },
+};
+
+const iconVariants: Variants = {
+  hidden: { scale: 0, opacity: 0 },
+  visible: {
+    scale: 1,
+    opacity: 1,
+    transition: {
+      delay: 0.2,
+      type: 'spring',
+      stiffness: 200,
+      damping: 10
+    },
+  },
+};
+
+
 export default function Home() {
   return (
-    <div className="flex flex-col items-center bg-card text-card-foreground overflow-x-hidden">
+    <div className="flex flex-col items-center bg-background text-foreground overflow-x-hidden">
       
       {/* Hero Section */}
       <section className="w-full py-20 md:py-32 relative h-auto mb-20">
@@ -213,37 +248,41 @@ export default function Home() {
                   <div className="inline-block rounded-lg bg-card/50 backdrop-blur-sm px-3 py-1 text-sm font-medium border">How It Works</div>
                   <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Three Simple Steps to Your Dream Job</h2>
               </div>
-              <div
+              <motion.div
+                 variants={howItWorksContainerVariants}
+                 initial="hidden"
+                 whileInView="visible"
+                 viewport={{ once: true, amount: 0.5 }}
                  className="mx-auto grid items-start gap-8 sm:max-w-4xl sm:grid-cols-3 md:gap-12"
               >
-                  <MotionCard>
+                  <motion.div variants={howItWorksItemVariants}>
                     <div className="flex flex-col gap-4 items-center text-center p-6 transition-all duration-300 hover:scale-105">
-                      <div className="bg-primary/10 p-4 rounded-full">
+                      <motion.div variants={iconVariants} className="bg-primary/10 p-4 rounded-full">
                          <FileText className="w-8 h-8 text-primary"/>
-                      </div>
+                      </motion.div>
                       <h3 className="text-xl font-bold font-headline">1. Select a Template</h3>
                       <p className="text-muted-foreground">Choose from our library of professionally designed and ATS-friendly resume templates.</p>
                     </div>
-                  </MotionCard>
-                  <MotionCard>
+                  </motion.div>
+                  <motion.div variants={howItWorksItemVariants}>
                    <div className="flex flex-col gap-4 items-center text-center p-6 transition-all duration-300 hover:scale-105">
-                      <div className="bg-primary/10 p-4 rounded-full">
+                      <motion.div variants={iconVariants} className="bg-primary/10 p-4 rounded-full">
                          <Sparkles className="w-8 h-8 text-primary"/>
-                      </div>
+                      </motion.div>
                       <h3 className="text-xl font-bold font-headline">2. Perfect with AI</h3>
                       <p className="text-muted-foreground">Use our AI assistant to write compelling bullet points, summaries, and cover letters.</p>
                    </div>
-                  </MotionCard>
-                  <MotionCard>
+                  </motion.div>
+                  <motion.div variants={howItWorksItemVariants}>
                    <div className="flex flex-col gap-4 items-center text-center p-6 transition-all duration-300 hover:scale-105">
-                      <div className="bg-primary/10 p-4 rounded-full">
+                      <motion.div variants={iconVariants} className="bg-primary/10 p-4 rounded-full">
                          <Zap className="w-8 h-8 text-primary"/>
-                      </div>
+                      </motion.div>
                       <h3 className="text-xl font-bold font-headline">3. Download & Apply</h3>
                       <p className="text-muted-foreground">Export your pixel-perfect resume as a PDF and start landing interviews.</p>
                    </div>
-                  </MotionCard>
-              </div>
+                  </motion.div>
+              </motion.div>
           </div>
       </MotionSection>
 
