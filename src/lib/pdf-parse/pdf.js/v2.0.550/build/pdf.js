@@ -1,3 +1,4 @@
+
 /* Copyright 2012 Mozilla Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -2270,8 +2271,8 @@ class Util {
   static get isRef() {
     return shadow(this, "isRef", isRef);
   }
-  static get isRef Set() {
-    return shadow(this, "isRef Set", isRefSet);
+  static get isRefSet() {
+    return shadow(this, "isRefSet", isRefSet);
   }
   static get isStream() {
     return shadow(this, "isStream", isStream);
@@ -2297,7 +2298,7 @@ class Util {
   static get Ref() {
     return shadow(this, "Ref", Ref);
   }
-  static get Ref Set() {
+  static get RefSet() {
     return shadow(this, "RefSet", RefSet);
   }
   static get RefSetCache() {
@@ -3665,3 +3666,5 @@ pdfjsLib = __webpack_exports__;
 /******/ })()
 ;
 //# sourceMappingURL=pdf.js.map
+
+    
