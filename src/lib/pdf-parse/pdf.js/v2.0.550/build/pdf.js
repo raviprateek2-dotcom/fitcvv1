@@ -2707,9 +2707,9 @@ function constructor(stream) {
     const adler32_calculated = b << 16 | a;
     if (adler32 !== adler32_calculated) {}
   }
-  const stream = new DecodeStream(stream);
-  stream.readBlock = readBlock;
-  return stream;
+  const decodeStream = new DecodeStream(stream);
+  decodeStream.readBlock = readBlock;
+  return decodeStream;
 }
 function applyPredictor(stream, predictor, colors, bits, columns) {
   if (predictor === 1) {
