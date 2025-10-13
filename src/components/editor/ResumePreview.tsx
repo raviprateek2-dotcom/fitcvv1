@@ -85,7 +85,7 @@ const templates: Record<string, { header: string, sectionTitle: string }> = {
         sectionTitle: 'text-sm font-extrabold text-gray-700 mb-2 uppercase tracking-widest font-serif'
     },
     creative: {
-        header: 'text-center mb-8 p-4 rounded-lg',
+        header: 'text-center mb-8 p-6 rounded-lg text-white',
         sectionTitle: 'text-xl font-bold text-[var(--accent-color)] mb-3 font-headline'
     },
     minimalist: {
@@ -344,13 +344,12 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
     '--accent-color': accentColor
   } as React.CSSProperties;
 
-
   return (
     <div style={dynamicStyles} className="bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full p-8 mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-auto print:shadow-none print:rounded-none print:max-h-full font-body text-[var(--body-font-size)]">
-      <header className={templateStyles.header}>
-        <h1 style={{ fontSize: 'var(--title-font-size)'}} className="font-bold text-gray-900 font-headline leading-tight">{personalInfo.name}</h1>
-        <h2 style={{ fontSize: 'var(--heading-font-size)', color: 'var(--accent-color)'}} className="font-semibold font-headline">{personalInfo.title}</h2>
-        <div className="flex justify-center items-center gap-4 text-sm text-gray-600 mt-2 flex-wrap">
+      <header className={templateStyles.header} style={templateId === 'creative' ? { backgroundColor: accentColor } : {}}>
+        <h1 style={{ fontSize: 'var(--title-font-size)'}} className={cn("font-bold font-headline leading-tight", templateId === 'creative' ? 'text-white' : 'text-gray-900')}>{personalInfo.name}</h1>
+        <h2 style={{ fontSize: 'var(--heading-font-size)'}} className={cn("font-semibold font-headline", templateId === 'creative' ? 'text-white/90' : 'text-[var(--accent-color)]')}>{personalInfo.title}</h2>
+        <div className={cn("flex justify-center items-center gap-4 text-sm mt-2 flex-wrap", templateId === 'creative' ? 'text-white/80' : 'text-gray-600')}>
           <div className="flex items-center gap-1.5"><AtSign size={14} />{personalInfo.email}</div>
           <div className="flex items-center gap-1.5"><Phone size={14} />{personalInfo.phone}</div>
           <div className="flex items-center gap-1.5"><MapPin size={14} />{personalInfo.location}</div>
@@ -358,14 +357,14 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
         </div>
       </header>
 
-      <Separator className="my-6" />
+      <Separator className={cn("my-6", templateId === 'minimalist' ? 'bg-gray-200' : '')} />
 
       <section>
         <h3 className={templateStyles.sectionTitle} style={{ fontSize: 'var(--heading-font-size)'}}>Summary</h3>
         <p className="leading-relaxed">{summary}</p>
       </section>
 
-      <Separator className="my-6" />
+      <Separator className={cn("my-6", templateId === 'minimalist' ? 'bg-gray-200' : '')} />
 
       <section>
         <h3 className={templateStyles.sectionTitle} style={{ fontSize: 'var(--heading-font-size)'}}>Experience</h3>
@@ -390,7 +389,7 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
         </div>
       </section>
 
-      <Separator className="my-6" />
+      <Separator className={cn("my-6", templateId === 'minimalist' ? 'bg-gray-200' : '')} />
 
       <section>
         <h3 className={templateStyles.sectionTitle} style={{ fontSize: 'var(--heading-font-size)'}}>Projects</h3>
@@ -414,7 +413,7 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
         </div>
       </section>
 
-      <Separator className="my-6" />
+      <Separator className={cn("my-6", templateId === 'minimalist' ? 'bg-gray-200' : '')} />
 
       <section>
         <h3 className={templateStyles.sectionTitle} style={{ fontSize: 'var(--heading-font-size)'}}>Skills</h3>
@@ -425,7 +424,7 @@ export function ResumePreview({ resumeData }: ResumePreviewProps) {
         </div>
       </section>
       
-      <Separator className="my-6" />
+      <Separator className={cn("my-6", templateId === 'minimalist' ? 'bg-gray-200' : '')} />
 
       <section>
         <h3 className={templateStyles.sectionTitle} style={{ fontSize: 'var(--heading-font-size)'}}>Education</h3>
@@ -460,10 +459,10 @@ export function CoverLetterPreview({ resumeData }: ResumePreviewProps) {
 
 
   const renderHeader = () => (
-    <header className={templateStyles.header}>
-        <h1 style={{ fontSize: 'var(--title-font-size)'}} className="font-bold text-gray-900 font-headline leading-tight">{personalInfo.name}</h1>
-        <h2 style={{ fontSize: 'var(--heading-font-size)', color: 'var(--accent-color)'}} className="font-semibold font-headline">{personalInfo.title}</h2>
-        <div className="flex justify-center items-center gap-4 text-sm text-gray-600 mt-2 flex-wrap">
+    <header className={templateStyles.header} style={templateId === 'creative' ? { backgroundColor: accentColor } : {}}>
+        <h1 style={{ fontSize: 'var(--title-font-size)'}} className={cn("font-bold font-headline leading-tight", templateId === 'creative' ? 'text-white' : 'text-gray-900')}>{personalInfo.name}</h1>
+        <h2 style={{ fontSize: 'var(--heading-font-size)'}} className={cn("font-semibold font-headline", templateId === 'creative' ? 'text-white/90' : 'text-[var(--accent-color)]')}>{personalInfo.title}</h2>
+        <div className={cn("flex justify-center items-center gap-4 text-sm mt-2 flex-wrap", templateId === 'creative' ? 'text-white/80' : 'text-gray-600')}>
           <div className="flex items-center gap-1.5"><AtSign size={14} />{personalInfo.email}</div>
           <div className="flex items-center gap-1.5"><Phone size={14} />{personalInfo.phone}</div>
           <div className="flex items-center gap-1.5"><MapPin size={14} />{personalInfo.location}</div>
@@ -522,7 +521,7 @@ export function CoverLetterPreview({ resumeData }: ResumePreviewProps) {
   return (
      <div style={dynamicStyles} className="bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full p-8 mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-auto print:shadow-none print:rounded-none print:max-h-full font-body text-[var(--body-font-size)]">
       {renderHeader()}
-      <Separator className="my-6" />
+      <Separator className={cn("my-6", templateId === 'minimalist' ? 'bg-gray-200' : '')} />
       <main className="leading-relaxed space-y-4 whitespace-pre-wrap">
           <p>{date}</p>
           <p>Hiring Manager<br/>{companyInfo?.name}</p>
@@ -536,5 +535,3 @@ export function CoverLetterPreview({ resumeData }: ResumePreviewProps) {
     </div>
   )
 }
-
-    
