@@ -14,7 +14,7 @@ import AIContentDialog from './AIContentDialog';
 import AISectionWriterDialog from './AISectionWriterDialog';
 import { ResumePreview, CoverLetterPreview } from './ResumePreview';
 import { useDoc, useUser, useFirestore, useMemoFirebase } from '@/firebase';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp, collection } from 'firebase/firestore';
 import { Skeleton } from '../ui/skeleton';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
@@ -24,6 +24,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { writeCoverLetter as writeCoverLetterAction } from '@/app/actions/ai-cover-letter';
 import { Slider } from '../ui/slider';
 import { cn } from '@/lib/utils';
+import { nanoid } from 'nanoid';
 
 // Define types for resume structure
 type PersonalInfo = {
@@ -86,6 +87,7 @@ type ResumeData = {
     jobTitle: string;
   };
   styling?: Styling;
+  shareId?: string;
 };
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
@@ -244,6 +246,12 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
         updatedAt: serverTimestamp() 
       }, { merge: true });
       
+      // Also update the public resume if it exists
+      if(data.shareId) {
+        const publicResumeRef = doc(firestore, 'publicResumes', data.shareId);
+        await setDoc(publicResumeRef, { ...data, updatedAt: serverTimestamp() }, { merge: true });
+      }
+
       setSaveStatus('saved');
       setTimeout(() => setSaveStatus('idle'), 2000);
     } catch (error) {
@@ -254,7 +262,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
         description: 'Failed to save your resume.',
       });
     }
-  }, [resumeDocRef, toast]);
+  }, [resumeDocRef, toast, firestore]);
 
   // Auto-save useEffect
   useEffect(() => {
@@ -421,8 +429,33 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     }
     
     handleFieldChange('templateId', templateId);
-  }
+  };
   
+  const handleShare = async () => {
+    if (!resumeData || !firestore) return;
+
+    let shareId = resumeData.shareId;
+    
+    // If there is no shareId, create one.
+    if (!shareId) {
+        shareId = nanoid(10);
+        const updatedDataWithShareId = { ...resumeData, shareId };
+        setResumeData(updatedDataWithShareId); // Update local state
+        // The autosave will handle saving this to the user's private resume.
+    }
+
+    // Create or update the public document
+    const publicResumeRef = doc(firestore, 'publicResumes', shareId);
+    await setDoc(publicResumeRef, { ...resumeData, shareId }, { merge: true });
+
+    const shareUrl = `${window.location.origin}/share/${shareId}`;
+    navigator.clipboard.writeText(shareUrl);
+    toast({
+        title: "Share Link Copied!",
+        description: "Anyone with the link can now view your resume."
+    });
+  };
+
   const isProUser = userProfile?.subscription === 'premium';
 
   if (isResumeLoading || !resumeData) {
@@ -454,8 +487,8 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
           </div>
            <div className="flex items-center gap-4">
              <SaveStatusIndicator status={saveStatus} />
-            <Button variant="outline" size="sm" asChild>
-                <Link href={`/share/${resumeId}`} target="_blank"><Share2 className="mr-2 h-4 w-4"/>Share</Link>
+            <Button variant="outline" size="sm" onClick={handleShare}>
+              <Share2 className="mr-2 h-4 w-4"/>Share
             </Button>
             <Button variant="outline" size="sm" onClick={handlePrint}>
               <Download className="mr-2 h-4 w-4" />
@@ -787,5 +820,3 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     </>
   );
 }
-
-    

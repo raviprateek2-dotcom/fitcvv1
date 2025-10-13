@@ -61,32 +61,13 @@ export default function SharePage({ params }: { params: { id: string } }) {
   const [feedbackComment, setFeedbackComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Note: This is a simplified approach assuming resumes are public or semi-public.
-  // In a real app, we'd need to find the user who owns the resume first.
-  // For this demo, we'll try to find the resume across all users.
-  // This is NOT secure or scalable for a real application.
-  // We are creating a placeholder reference to a user that may not exist.
+  // Reference to the public resume document
   const resumeDocRef = useMemoFirebase(() => {
-    if (!firestore) return null;
-    // This is a simplification. We need to know the user ID. For now, we assume a resume ID is globally unique
-    // and we can't securely know the user ID on this public page.
-    // This part of the code will likely not work without a better data model for sharing.
-    // Let's assume we can construct a path if we had both userId and resumeId.
-    // Since we don't have userId, this will fail. We'll simulate by trying to find it.
-    // A better approach would be a dedicated 'publicResumes' collection.
-    // For now, let's create a non-functional reference to show UI structure.
-    // This path is invalid and will result in `useDoc` returning `isLoading: false` and `data: null`.
-    // Let's create a placeholder that might work if we can find a user who owns this.
-    // This is a mock-up of how it *would* work.
-    // We'll need a way to look up the user for a given resume.
-    // Let's assume we have a way to find it. For now, we can't query effectively.
-    // We will just show a not found page.
-    return null;
+    if (!firestore || !params.id) return null;
+    return doc(firestore, 'publicResumes', params.id);
   }, [firestore, params.id]);
-  
-  // This is a placeholder. A real implementation needs a way to resolve resumeId to a user.
-  // We'll simulate this by showing a 'not found' state, as `resumeDocRef` will be null.
-  const { data: resumeData, isLoading: isResumeLoading } = useDoc<ResumeData>(null);
+
+  const { data: resumeData, isLoading: isResumeLoading } = useDoc<ResumeData>(resumeDocRef);
 
   const feedbackCollectionRef = useMemoFirebase(() => {
      if (!resumeDocRef) return null;
@@ -123,13 +104,10 @@ export default function SharePage({ params }: { params: { id: string } }) {
     }
   };
 
-  // This will be true until we implement a way to find the resume's user.
   if (isResumeLoading) {
     return <SharePageSkeleton />;
   }
 
-  // Since we cannot find the resume with the current structure, we show a "not found" page.
-  // This is the expected outcome until the data model is updated for public sharing.
   if (!resumeData) {
     return (
       <div className="container mx-auto px-4 md:px-6 py-12 text-center">
@@ -213,6 +191,11 @@ export default function SharePage({ params }: { params: { id: string } }) {
                   </div>
                 </div>
               ))
+            )}
+            { !isFeedbackLoading && sortedFeedback.length === 0 && (
+                <div className="text-center text-muted-foreground py-8">
+                    <p>No feedback yet. Be the first to leave a comment!</p>
+                </div>
             )}
           </div>
         </div>

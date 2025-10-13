@@ -62,6 +62,10 @@
           "type": "string",
           "format": "date-time",
           "description": "Timestamp of when the resume was last modified."
+        },
+        "shareId": {
+            "type": "string",
+            "description": "The public ID for the shared version of this resume."
         }
       },
       "required": ["userId", "title", "templateId", "content", "createdAt", "updatedAt"]
@@ -137,9 +141,13 @@
       "schema": { "$ref": "#/backend/entities/Template" },
       "description": "Stores available resume templates. These are globally accessible."
     },
-    "/resumes/{resumeId}/feedback/{feedbackId}": {
-      "schema": { "$ref": "#/backend/entities/Feedback" },
-      "description": "Stores feedback for a specific resume. Access control depends on resume ownership or collaboration status."
+    "/publicResumes/{shareId}": {
+        "schema": { "$ref": "#/backend/entities/Resume" },
+        "description": "Stores public, shareable copies of resumes. Anyone with the link can view."
+    },
+    "/publicResumes/{shareId}/feedback/{feedbackId}": {
+        "schema": { "$ref": "#/backend/entities/Feedback" },
+        "description": "Stores feedback for a specific shared resume."
     }
   }
 }
