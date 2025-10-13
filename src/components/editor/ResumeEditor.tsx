@@ -249,7 +249,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
       // Also update the public resume if it exists
       if(data.shareId) {
         const publicResumeRef = doc(firestore, 'publicResumes', data.shareId);
-        await setDoc(publicResumeRef, { ...data, updatedAt: serverTimestamp() }, { merge: true });
+        await setDoc(publicResumeRef, { ...data, shareId: data.shareId }, { merge: true });
       }
 
       setSaveStatus('saved');
