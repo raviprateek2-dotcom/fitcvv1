@@ -1,12 +1,6 @@
 {
   "placeholderImages": [
     {
-      "id": "hero-image-main",
-      "description": "An abstract, professional background with geometric shapes and resume elements.",
-      "imageUrl": "https://picsum.photos/seed/hero-main-bg/800/800",
-      "imageHint": "resume abstract"
-    },
-    {
       "id": "hero-image",
       "description": "A person working on a laptop in a modern workspace.",
       "imageUrl": "https://picsum.photos/seed/hero-image/800/600",

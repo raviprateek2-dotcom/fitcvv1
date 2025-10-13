@@ -244,15 +244,7 @@ const listItemVariants: Variants = {
 
 
 export default function Home() {
-  const heroImage = PlaceHolderImages.find((img) => img.id === 'hero-image-main');
   const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-      target: ref,
-      offset: ["start start", "end start"]
-  });
-  const imageOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-  const imageY = useTransform(scrollYProgress, [0, 0.5], ["0px", "-100px"]);
-  const imageScale = useTransform(scrollYProgress, [0, 0.5], [1, 1.1]);
   
   return (
     <div className="flex flex-col items-center bg-background text-foreground overflow-x-hidden">
@@ -291,29 +283,9 @@ export default function Home() {
                   </div>
                 </div>
               </HeroTextMotion>
-              <motion.div 
-                className="hidden md:flex justify-center items-center"
-                style={{
-                  opacity: imageOpacity,
-                  y: imageY,
-                  scale: imageScale,
-                }}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-              >
-                  {heroImage && (
-                    <Image
-                      src={heroImage.imageUrl}
-                      alt={heroImage.description}
-                      width={600}
-                      height={600}
-                      priority
-                      data-ai-hint={heroImage.imageHint}
-                      className="rounded-full shadow-2xl shadow-primary/20"
-                    />
-                  )}
-              </motion.div>
+              <div className="hidden md:flex justify-center items-center">
+                 {/* This space is intentionally left blank */}
+              </div>
             </div>
         </div>
       </section>
