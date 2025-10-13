@@ -114,7 +114,7 @@ const GridPatternBackground = () => {
     );
 };
 
-const MotionSection = ({ children }: { children: React.ReactNode }) => {
+const MotionSection = ({ children, className }: { children: React.ReactNode, className?: string }) => {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -125,7 +125,7 @@ const MotionSection = ({ children }: { children: React.ReactNode }) => {
   const y = useTransform(scrollYProgress, [0, 1], ["50px", "-50px"]);
 
   return (
-    <motion.section ref={ref} style={{ opacity, y }} className="relative w-full py-20 md:py-32">
+    <motion.section ref={ref} style={{ opacity, y }} className={className}>
       {children}
     </motion.section>
   );
@@ -174,10 +174,10 @@ const howItWorksContainerVariants: Variants = {
 };
 
 const howItWorksItemVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, x: -50 },
   visible: {
     opacity: 1,
-    y: 0,
+    x: 0,
     transition: {
       type: 'spring',
       stiffness: 100,
@@ -195,6 +195,26 @@ const iconVariants: Variants = {
       type: 'spring',
       stiffness: 200,
       damping: 10
+    },
+  },
+};
+
+const featureListVariants: Variants = {
+  visible: {
+    transition: {
+      staggerChildren: 0.2,
+    },
+  },
+};
+
+const featureItemVariants: Variants = {
+  hidden: { opacity: 0, x: -50 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      duration: 0.5,
+      ease: 'easeOut',
     },
   },
 };
@@ -242,7 +262,7 @@ export default function Home() {
       </section>
 
       {/* How It Works Section */}
-      <MotionSection>
+      <MotionSection className="relative w-full py-20 md:py-32">
         <div id="how-it-works" className="container mx-auto px-4 md:px-6">
               <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
                   <div className="inline-block rounded-lg bg-card/50 backdrop-blur-sm px-3 py-1 text-sm font-medium border">How It Works</div>
@@ -287,7 +307,7 @@ export default function Home() {
       </MotionSection>
 
       {/* Features Section */}
-      <MotionSection>
+      <MotionSection className="relative w-full py-20 md:py-32">
         <div id="features" className="container mx-auto px-4 md:px-6">
             <div className="grid md:grid-cols-2 gap-16 items-center">
                 <div className="space-y-8">
@@ -295,12 +315,17 @@ export default function Home() {
                       <div className="inline-block rounded-lg bg-secondary px-3 py-1 text-sm font-medium">Everything You Need</div>
                       <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Features that help you stand out</h2>
                     </div>
-                    <ul
+                    <motion.ul
+                      variants={featureListVariants}
+                      initial="hidden"
+                      whileInView="visible"
+                      viewport={{ once: true, amount: 0.2 }}
                       className="grid sm:grid-cols-1 gap-8"
                     >
                         {features.map((feature, index) => (
                           <motion.li 
-                            key={index} 
+                            key={index}
+                            variants={featureItemVariants}
                             className="flex items-start gap-4 transition-all duration-300 hover:bg-secondary/50 p-4 rounded-lg hover:scale-105"
                           >
                               <div className="bg-primary/10 p-3 rounded-full mt-1">
@@ -312,7 +337,7 @@ export default function Home() {
                               </div>
                           </motion.li>
                         ))}
-                    </ul>
+                    </motion.ul>
                 </div>
                  <div className="hidden md:flex justify-center">
                  </div>
@@ -321,7 +346,7 @@ export default function Home() {
       </MotionSection>
 
       {/* Testimonials Section */}
-      <MotionSection>
+      <MotionSection className="relative w-full py-20 md:py-32">
         <div id="testimonials" className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
             <div className="inline-block rounded-lg bg-card/50 backdrop-blur-sm border px-3 py-1 text-sm font-medium">What Our Users Say</div>
@@ -369,7 +394,7 @@ export default function Home() {
       </MotionSection>
 
       {/* Why Us Section */}
-      <MotionSection>
+      <MotionSection className="relative w-full py-20 md:py-32">
           <div className="container mx-auto px-4 md:px-6">
                <div className="space-y-8 max-w-3xl mx-auto text-center">
                   <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Don't just write a resume. Design your future.</h2>
@@ -385,7 +410,7 @@ export default function Home() {
       </MotionSection>
 
       {/* Blog Section */}
-      <MotionSection>
+      <MotionSection className="relative w-full py-20 md:py-32">
         <div id="blog" className="container mx-auto px-4 md:px-6">
           <div>
             <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
@@ -438,7 +463,7 @@ export default function Home() {
       </MotionSection>
 
       {/* Final CTA */}
-      <MotionSection>
+      <MotionSection className="relative w-full py-20 md:py-32">
         <div
           className="container mx-auto px-4 md:px-6 text-center"
         >
