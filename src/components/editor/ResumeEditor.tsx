@@ -672,7 +672,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                 
                 <TabsContent value="resume" className="p-6">
                   <div className="space-y-6">
-                    <Accordion type="multiple" defaultValue={['personal-info', 'summary', 'design']} className="w-full">
+                    <Accordion type="multiple" defaultValue={['personal-info', 'summary', 'design', 'job-description']} className="w-full">
                         <AccordionItem value="design">
                           <AccordionTrigger className="font-semibold">Design</AccordionTrigger>
                           <AccordionContent className="space-y-4 pt-4">
@@ -1054,7 +1054,3 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     </>
   );
 }
-
-    
-
-    

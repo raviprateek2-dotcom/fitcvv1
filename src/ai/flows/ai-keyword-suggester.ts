@@ -9,7 +9,7 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
+import { z } from 'zod';
 
 const SuggestKeywordsInputSchema = z.object({
   resumeContent: z.string().describe('The entire content of the user\'s resume.'),
