@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Download, Eye, PlusCircle, Share2, Trash2, Sparkles, Bot, FileText, Newspaper, PanelLeft, ArrowLeft, Brush, Lock } from 'lucide-react';
+import { Download, Eye, PlusCircle, Share2, Trash2, Sparkles, Bot, FileText, Newspaper, PanelLeft, ArrowLeft, Brush, Lock, Lightbulb } from 'lucide-react';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import AIContentDialog from './AIContentDialog';
 import AISectionWriterDialog from './AISectionWriterDialog';
@@ -22,9 +22,11 @@ import Link from 'next/link';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { writeCoverLetter as writeCoverLetterAction } from '@/app/actions/ai-cover-letter';
+import { suggestKeywords as suggestKeywordsAction } from '@/app/actions/ai-keyword-suggester';
 import { Slider } from '../ui/slider';
 import { cn } from '@/lib/utils';
 import { nanoid } from 'nanoid';
+import { Badge } from '../ui/badge';
 
 // Define types for resume structure
 type PersonalInfo = {
@@ -200,6 +202,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   const [activeTab, setActiveTab] = useState<EditorTab>('resume');
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [isFormVisible, setIsFormVisible] = useState(true);
+  const [keywordSuggestions, setKeywordSuggestions] = useState<string[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -456,6 +459,42 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     });
   };
 
+  const handleSuggestKeywords = async () => {
+    if (!resumeData || !resumeData.jobDescription) {
+      toast({
+        variant: 'destructive',
+        title: 'Job Description Required',
+        description: 'Please paste a job description to get keyword suggestions.',
+      });
+      return;
+    }
+    setIsAiLoading(true);
+    setKeywordSuggestions([]);
+
+    const resumeContent = JSON.stringify({
+      summary: resumeData.summary,
+      experience: resumeData.experience,
+      skills: resumeData.skills,
+    });
+
+    try {
+      const result = await suggestKeywordsAction({
+        resumeContent,
+        jobDescription: resumeData.jobDescription,
+      });
+      if (result.success && result.data) {
+        setKeywordSuggestions(result.data.suggestions);
+        toast({ title: 'Keywords Suggested!', description: 'Here are some keywords you might want to add.' });
+      } else {
+        toast({ variant: 'destructive', title: 'Error', description: result.error });
+      }
+    } catch (error: any) {
+      toast({ variant: 'destructive', title: 'Error', description: error.message });
+    } finally {
+      setIsAiLoading(false);
+    }
+  };
+
   const isProUser = userProfile?.subscription === 'premium';
 
   if (isResumeLoading || !resumeData) {
@@ -583,14 +622,30 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                         </AccordionItem>
 
                         <AccordionItem value="job-description">
-                        <AccordionTrigger className="font-semibold">Job Description (Optional)</AccordionTrigger>
-                        <AccordionContent className="space-y-2 pt-4">
+                        <AccordionTrigger className="font-semibold">Job Description (For AI)</AccordionTrigger>
+                        <AccordionContent className="space-y-4 pt-4">
                             <Label>Paste the job description here to get tailored AI suggestions.</Label>
                             <Textarea 
-                            value={resumeData.jobDescription} 
-                            onChange={e => handleFieldChange('jobDescription', e.target.value)} 
-                            rows={6} 
+                              value={resumeData.jobDescription} 
+                              onChange={e => handleFieldChange('jobDescription', e.target.value)} 
+                              rows={6} 
                             />
+                             <ProFeatureWrapper isPro={isProUser}>
+                               <Button variant="outline" size="sm" onClick={handleSuggestKeywords} disabled={isAiLoading}>
+                                 <Lightbulb className="mr-2 h-4 w-4" />
+                                 {isAiLoading ? 'Analyzing...' : 'Suggest Keywords'}
+                               </Button>
+                             </ProFeatureWrapper>
+                             {keywordSuggestions.length > 0 && (
+                               <div className="space-y-2 pt-2">
+                                 <Label>Suggested Keywords to Add:</Label>
+                                 <div className="flex flex-wrap gap-2">
+                                   {keywordSuggestions.map((keyword, i) => (
+                                     <Badge key={i} variant="secondary">{keyword}</Badge>
+                                   ))}
+                                 </div>
+                               </div>
+                             )}
                         </AccordionContent>
                         </AccordionItem>
 
