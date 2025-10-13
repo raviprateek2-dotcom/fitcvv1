@@ -296,9 +296,10 @@ export default function Home() {
                       }}
                       animate={{
                         y: [0, -15, 0],
+                        rotateY: [20, -20, 20],
                       }}
                       transition={{
-                        duration: 15,
+                        duration: 20,
                         ease: 'easeInOut',
                         repeat: Infinity,
                         repeatType: 'loop',
