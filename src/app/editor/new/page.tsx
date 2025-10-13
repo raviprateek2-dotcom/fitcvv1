@@ -39,6 +39,12 @@ export default function NewResumePage() {
           return;
         }
 
+        // The logic for PDF uploads is handled on the dashboard, so we only proceed if there is a templateId
+        if (!templateId) {
+            router.push('/dashboard');
+            return;
+        }
+
         const isProUser = userProfile?.subscription === 'premium';
         const isPremiumTemplate = premiumTemplates.includes(templateId);
 

@@ -1,13 +1,13 @@
 'use client';
 
 import { useCollection, useUser } from '@/firebase';
-import { useMemo, useEffect, useState } from 'react';
+import { useMemo, useEffect, useState, useRef } from 'react';
 import { addDoc, doc, serverTimestamp, collection } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, PlusCircle, ArrowRight } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, ArrowRight, Upload } from 'lucide-react';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useMemoFirebase } from '@/firebase/provider';
@@ -25,6 +25,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { motion } from 'framer-motion';
+import { useToast } from '@/hooks/use-toast';
+import { parseResumeFromPdf } from '@/app/actions/ai-resume-parser';
 
 
 type Resume = {
@@ -189,6 +191,9 @@ export default function DashboardPage() {
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
   const router = useRouter();
+  const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isParsing, setIsParsing] = useState(false);
 
   useEffect(() => {
     if (!isUserLoading && !user) {
@@ -234,6 +239,49 @@ export default function DashboardPage() {
     deleteDocumentNonBlocking(docRef);
   };
   
+  const handlePdfUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !user || !resumesQuery) return;
+
+    setIsParsing(true);
+    toast({ title: 'Parsing PDF...', description: 'Our AI is reading your resume. This may take a moment.' });
+
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const fileBuffer = Buffer.from(arrayBuffer);
+
+      const result = await parseResumeFromPdf(fileBuffer);
+      
+      if (!result.success || !result.data) {
+        throw new Error(result.error || 'Failed to parse resume.');
+      }
+      
+      const newResumeData = {
+        ...result.data.resumeData,
+        title: result.data.resumeData.personalInfo.name ? `${result.data.resumeData.personalInfo.name}'s Resume` : 'Imported Resume',
+        templateId: 'modern', // Default template
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      };
+      
+      const newDocRef = await addDoc(resumesQuery, newResumeData);
+      toast({ title: 'Success!', description: 'Your resume has been imported.' });
+      router.push(`/editor/${newDocRef.id}`);
+
+    } catch (error: any) {
+      console.error('Error parsing or saving PDF resume:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Import Failed',
+        description: error.message || 'Could not import your resume from the PDF.',
+      });
+    } finally {
+      setIsParsing(false);
+      // Reset file input
+      if(fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -249,12 +297,15 @@ export default function DashboardPage() {
         <div className="container mx-auto px-4 md:px-6 py-12">
             <div className="flex items-center justify-between mb-8">
                 <h1 className="text-3xl font-headline font-bold">My Resumes</h1>
-                <Button asChild variant="neuro">
-                <Link href="/templates">
-                    <PlusCircle className="mr-2 h-4 w-4" />
-                    Create New Resume
-                </Link>
-                </Button>
+                <div className="flex gap-2">
+                    <Button variant="outline" disabled><Upload className="mr-2 h-4 w-4" /> Import from PDF</Button>
+                    <Button asChild variant="neuro">
+                    <Link href="/templates">
+                        <PlusCircle className="mr-2 h-4 w-4" />
+                        Create New Resume
+                    </Link>
+                    </Button>
+                </div>
             </div>
             <LoadingState />
         </div>
@@ -263,14 +314,28 @@ export default function DashboardPage() {
 
   return (
     <div className="container mx-auto px-4 md:px-6 py-12">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
         <h1 className="text-3xl font-headline font-bold">My Resumes</h1>
-        <Button asChild variant="neuro">
-          <Link href="/templates">
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Create New Resume
-          </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+           <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handlePdfUpload}
+              accept="application/pdf"
+              className="hidden"
+              disabled={isParsing}
+            />
+           <Button variant="outline" onClick={() => fileInputRef.current?.click()} disabled={isParsing}>
+              <Upload className="mr-2 h-4 w-4" /> 
+              {isParsing ? 'Importing...' : 'Import from PDF'}
+            </Button>
+          <Button asChild variant="neuro">
+            <Link href="/templates">
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Create New Resume
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {(isLoading) && <LoadingState />}
