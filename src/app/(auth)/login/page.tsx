@@ -7,11 +7,11 @@ import { Label } from '@/components/ui/label';
 import { useAuth, useUser } from '@/firebase';
 import { initiateEmailSignIn, initiateGoogleSignIn } from '@/firebase/non-blocking-login';
 import { useToast } from '@/hooks/use-toast';
-import { Rocket } from 'lucide-react';
+import { Rocket, Check } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -39,7 +39,7 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [loginState, setLoginState] = useState<'idle' | 'loading' | 'success'>('idle');
   const auth = useAuth();
   const { toast } = useToast();
   const router = useRouter();
@@ -47,9 +47,13 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (user) {
-      router.push('/dashboard');
+      // If user is already logged in, show success and redirect
+      if (loginState !== 'success') setLoginState('success');
+      setTimeout(() => {
+        router.push('/dashboard');
+      }, 1000); // Wait for success animation
     }
-  }, [user, router]);
+  }, [user, router, loginState]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,8 +65,13 @@ export default function LoginPage() {
       });
       return;
     }
-    setIsLoading(true);
-    initiateEmailSignIn(auth, email, password).catch((error: any) => {
+    setLoginState('loading');
+    initiateEmailSignIn(auth, email, password)
+    .then(() => {
+        // Auth state listener will handle the redirect via useEffect
+    })
+    .catch((error: any) => {
+        setLoginState('idle');
         let description = 'An unexpected error occurred. Please try again.';
         if (error.code === 'auth/invalid-credential' || error.code === 'auth/invalid-email') {
           description = 'Invalid email or password. Please check your credentials and try again.';
@@ -74,23 +83,26 @@ export default function LoginPage() {
             title: 'Login Failed',
             description,
         });
-    }).finally(() => {
-        setIsLoading(false)
     });
   };
   
   const handleGoogleSignIn = () => {
-    setIsLoading(true);
-    initiateGoogleSignIn(auth).catch(() => {
+    setLoginState('loading');
+    initiateGoogleSignIn(auth)
+    .then(() => {
+      // Auth state listener will handle redirect
+    })
+    .catch(() => {
+        setLoginState('idle');
         toast({
             variant: 'destructive',
             title: 'Sign-in Failed',
             description: 'Could not sign in with Google. Please try again.',
         });
-    }).finally(() => {
-        setIsLoading(false);
     });
   };
+
+  const isButtonDisabled = loginState === 'loading' || loginState === 'success';
 
   return (
     <Card className="w-full max-w-sm" variant="neuro">
@@ -114,7 +126,7 @@ export default function LoginPage() {
         <CardDescription>Enter your credentials to access your account.</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
-        <Button variant="neuro" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading}>
+        <Button variant="neuro" className="w-full" onClick={handleGoogleSignIn} disabled={isButtonDisabled}>
           <GoogleIcon className="mr-2 h-4 w-4" />
           Continue with Google
         </Button>
@@ -129,7 +141,7 @@ export default function LoginPage() {
         <form onSubmit={handleLogin} className="grid gap-4">
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" placeholder="m@example.com" required value={email} onChange={(e) => setEmail(e.target.value)} disabled={isLoading} />
+            <Input id="email" type="email" placeholder="m@example.com" required value={email} onChange={(e) => setEmail(e.target.value)} disabled={isButtonDisabled} />
           </div>
           <div className="grid gap-2">
             <div className="flex items-center">
@@ -141,11 +153,37 @@ export default function LoginPage() {
                 Forgot your password?
               </Link>
             </div>
-            <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} disabled={isLoading} />
+            <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} disabled={isButtonDisabled} />
           </div>
-          <Button variant="neuro" className="w-full" type="submit" disabled={isLoading}>
-            {isLoading ? 'Logging In...' : 'Log In'}
-          </Button>
+          <motion.div
+            initial={false}
+            animate={{
+              width: loginState === 'success' ? 44 : '100%',
+              borderRadius: loginState === 'success' ? '9999px' : '0.375rem',
+            }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            className="mx-auto"
+          >
+            <Button variant={loginState === 'success' ? 'default' : 'neuro'} className="w-full" type="submit" disabled={isButtonDisabled}>
+              <AnimatePresence mode="wait" initial={false}>
+                {loginState === 'idle' && (
+                  <motion.span key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                    Log In
+                  </motion.span>
+                )}
+                {loginState === 'loading' && (
+                  <motion.span key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                    Logging In...
+                  </motion.span>
+                )}
+                {loginState === 'success' && (
+                  <motion.div key="success" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
+                    <Check className="h-5 w-5" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </Button>
+          </motion.div>
         </form>
       </CardContent>
       <CardFooter className="flex flex-col gap-4">
@@ -159,3 +197,5 @@ export default function LoginPage() {
     </Card>
   );
 }
+
+    
