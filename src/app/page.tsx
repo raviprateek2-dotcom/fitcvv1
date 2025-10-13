@@ -234,10 +234,11 @@ export default function Home() {
                 className="space-y-6 text-center md:text-left"
               >
                 <h1 className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl">
-                  Design your future.
+                  Don't just write a resume.
                   <br />
                   <span className="text-primary transition-all duration-300 inline-block min-h-[60px] sm:min-h-[70px] md:min-h-[80px]">
                     <TypingAnimation phrases={[
+                      "Design your future.",
                       "Build your career.",
                       "Land your dream job.",
                       "Showcase your skills."

@@ -75,7 +75,7 @@ export function TypingAnimation({
     return () => clearTimeout(timeoutId);
   }, [typedText, isDeleting, phraseIndex, phrases, typingSpeed, deletingSpeed, pauseDuration]);
 
-  const textToShow = typedText || '\u00A0'; // Use non-breaking space to maintain height
+  const textToShow = typedText || ' '; // Use non-breaking space to maintain height
 
   return (
     <AnimatePresence mode="wait">
