@@ -104,13 +104,9 @@
       "type": "object",
       "description": "Represents user feedback and collaboration comments.",
       "properties": {
-        "userId": {
+        "name": {
           "type": "string",
-          "description": "Reference to UserProfile who gave feedback."
-        },
-        "resumeId": {
-          "type": "string",
-          "description": "Reference to Resume receiving feedback."
+          "description": "Name of the person giving feedback (can be anonymous)."
         },
         "comment": {
           "type": "string",
@@ -122,7 +118,7 @@
           "description": "Timestamp of when the feedback was submitted."
         }
       },
-      "required": ["userId", "resumeId", "comment", "createdAt"]
+      "required": ["name", "comment", "createdAt"]
     }
   },
   "auth": {
@@ -130,23 +126,23 @@
   },
   "firestore": {
     "/users/{userId}": {
-      "schema": { "$ref": "#/backend/entities/UserProfile" },
+      "schema": { "$ref": "#/entities/UserProfile" },
       "description": "Stores user profiles, subscription status, and preferences."
     },
     "/users/{userId}/resumes/{resumeId}": {
-      "schema": { "$ref": "#/backend/entities/Resume" },
+      "schema": { "$ref": "#/entities/Resume" },
       "description": "Stores resume data for a specific user. Path-based ownership is enforced via the /users/{userId} path."
     },
     "/templates/{templateId}": {
-      "schema": { "$ref": "#/backend/entities/Template" },
+      "schema": { "$ref": "#/entities/Template" },
       "description": "Stores available resume templates. These are globally accessible."
     },
     "/publicResumes/{shareId}": {
-        "schema": { "$ref": "#/backend/entities/Resume" },
+        "schema": { "$ref": "#/entities/Resume" },
         "description": "Stores public, shareable copies of resumes. Anyone with the link can view."
     },
     "/publicResumes/{shareId}/feedback/{feedbackId}": {
-        "schema": { "$ref": "#/backend/entities/Feedback" },
+        "schema": { "$ref": "#/entities/Feedback" },
         "description": "Stores feedback for a specific shared resume."
     }
   }
