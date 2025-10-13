@@ -288,7 +288,28 @@ export default function Home() {
                 className="hidden md:flex justify-center items-center"
                 style={{ perspective: '1000px' }}
               >
-                 <AnimatedResume />
+                 <div className="relative w-full h-full min-h-[450px]">
+                    <motion.div
+                      className="absolute inset-0 opacity-60"
+                      style={{
+                        transform: 'rotate(30deg) scale(0.9)',
+                      }}
+                      animate={{
+                        y: [0, -15, 0],
+                      }}
+                      transition={{
+                        duration: 15,
+                        ease: 'easeInOut',
+                        repeat: Infinity,
+                        repeatType: 'loop',
+                      }}
+                    >
+                      <AnimatedResume />
+                    </motion.div>
+                    <motion.div className="relative z-10">
+                      <AnimatedResume />
+                    </motion.div>
+                  </div>
               </motion.div>
             </div>
         </div>
