@@ -12,6 +12,9 @@ import Autoplay from "embla-carousel-autoplay";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { motion, AnimatePresence, useScroll, useTransform, Variants } from 'framer-motion';
 import { TypingAnimation } from '@/components/common/TypingAnimation';
+import Image from 'next/image';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
+
 
 const MotionSection = ({ children, className }: { children: React.ReactNode, className?: string }) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -241,44 +244,77 @@ const listItemVariants: Variants = {
 
 
 export default function Home() {
+  const heroImage = PlaceHolderImages.find((img) => img.id === 'hero-image-main');
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+      target: ref,
+      offset: ["start start", "end start"]
+  });
+  const imageOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const imageY = useTransform(scrollYProgress, [0, 0.5], ["0px", "-100px"]);
+  const imageScale = useTransform(scrollYProgress, [0, 0.5], [1, 1.1]);
+  
   return (
     <div className="flex flex-col items-center bg-background text-foreground overflow-x-hidden">
       
       {/* Hero Section */}
-      <section className="w-full py-20 md:py-32 relative h-auto mb-20">
+      <section ref={ref} className="w-full py-20 md:py-32 relative h-auto mb-20">
         <GridPatternBackground />
         <div className="container mx-auto px-4 md:px-6 relative z-10">
-          <HeroTextMotion>
             <div className="grid md:grid-cols-2 gap-12 items-center">
-              <div 
-                className="space-y-6 text-center md:text-left"
-              >
-                <h1 className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl">
-                  Don't just write a resume.
-                  <br />
-                  <span className="text-primary transition-all duration-300 inline-block min-h-[60px] sm:min-h-[70px] md:min-h-[80px]">
-                    <TypingAnimation phrases={[
-                      "Design your future.",
-                      "Build your career.",
-                      "Land your dream job.",
-                      "Showcase your skills."
-                    ]} />
-                  </span>
-                </h1>
-                <p className="max-w-lg mx-auto md:mx-0 text-muted-foreground md:text-xl">
-                  Create a professional, ATS-optimized resume in minutes. Let our AI guide you to landing your dream job.
-                </p>
-                <div className="flex flex-col gap-4 sm:flex-row justify-center md:justify-start">
-                  <Button asChild size="lg" className="group">
-                    <Link href="/templates">
-                      Create My Resume
-                      <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                    </Link>
-                  </Button>
+              <HeroTextMotion>
+                <div 
+                  className="space-y-6 text-center md:text-left"
+                >
+                  <h1 className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl">
+                    Don't just write a resume.
+                    <br />
+                    <span className="text-primary transition-all duration-300 inline-block min-h-[60px] sm:min-h-[70px] md:min-h-[80px]">
+                      <TypingAnimation phrases={[
+                        "Design your future.",
+                        "Build your career.",
+                        "Land your dream job.",
+                        "Showcase your skills."
+                      ]} />
+                    </span>
+                  </h1>
+                  <p className="max-w-lg mx-auto md:mx-0 text-muted-foreground md:text-xl">
+                    Create a professional, ATS-optimized resume in minutes. Let our AI guide you to landing your dream job.
+                  </p>
+                  <div className="flex flex-col gap-4 sm:flex-row justify-center md:justify-start">
+                    <Button asChild size="lg" className="group">
+                      <Link href="/templates">
+                        Create My Resume
+                        <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                      </Link>
+                    </Button>
+                  </div>
                 </div>
-              </div>
+              </HeroTextMotion>
+              <motion.div 
+                className="hidden md:flex justify-center items-center"
+                style={{
+                  opacity: imageOpacity,
+                  y: imageY,
+                  scale: imageScale,
+                }}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+              >
+                  {heroImage && (
+                    <Image
+                      src={heroImage.imageUrl}
+                      alt={heroImage.description}
+                      width={600}
+                      height={600}
+                      priority
+                      data-ai-hint={heroImage.imageHint}
+                      className="rounded-full shadow-2xl shadow-primary/20"
+                    />
+                  )}
+              </motion.div>
             </div>
-          </HeroTextMotion>
         </div>
       </section>
 

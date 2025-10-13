@@ -1,6 +1,12 @@
 {
   "placeholderImages": [
     {
+      "id": "hero-image-main",
+      "description": "An abstract, professional background with geometric shapes and resume elements.",
+      "imageUrl": "https://picsum.photos/seed/hero-main-bg/800/800",
+      "imageHint": "resume abstract"
+    },
+    {
       "id": "hero-image",
       "description": "A person working on a laptop in a modern workspace.",
       "imageUrl": "https://picsum.photos/seed/hero-image/800/600",
@@ -13,10 +19,34 @@
       "imageHint": "resume before after"
     },
     {
+      "id": "template-modern",
+      "description": "A preview of a modern resume template.",
+      "imageUrl": "https://picsum.photos/seed/template-modern/400/566",
+      "imageHint": "resume modern"
+    },
+    {
       "id": "template-classic",
       "description": "A preview of a classic resume template.",
       "imageUrl": "https://picsum.photos/seed/template-classic/400/566",
       "imageHint": "document layout"
+    },
+    {
+      "id": "template-creative",
+      "description": "A preview of a creative resume template.",
+      "imageUrl": "https://picsum.photos/seed/template-creative/400/566",
+      "imageHint": "creative design"
+    },
+    {
+      "id": "template-minimalist",
+      "description": "A preview of a minimalist resume template.",
+      "imageUrl": "https://picsum.photos/seed/template-minimalist/400/566",
+      "imageHint": "simple resume"
+    },
+    {
+      "id": "template-professional",
+      "description": "A preview of a professional resume template.",
+      "imageUrl": "https://picsum.photos/seed/template-professional/400/566",
+      "imageHint": "corporate resume"
     },
     {
       "id": "dashboard-resume-1",
