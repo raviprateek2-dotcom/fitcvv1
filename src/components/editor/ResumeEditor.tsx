@@ -23,6 +23,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { writeCoverLetter as writeCoverLetterAction } from '@/app/actions/ai-cover-letter';
 import { suggestKeywords as suggestKeywordsAction } from '@/app/actions/ai-keyword-suggester';
+import { suggestTitle as suggestTitleAction } from '@/app/actions/ai-title-suggester';
 import { Slider } from '../ui/slider';
 import { cn } from '@/lib/utils';
 import { nanoid } from 'nanoid';
@@ -208,6 +209,9 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   const [isFormVisible, setIsFormVisible] = useState(true);
   const [keywordSuggestions, setKeywordSuggestions] = useState<string[]>([]);
   const { toast } = useToast();
+  
+  const [isTitleSuggesting, setIsTitleSuggesting] = useState(false);
+
 
   useEffect(() => {
     if (initialResumeData && !initialDataRef.current) {
@@ -567,6 +571,37 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     }
   };
 
+  const handleSuggestTitle = async () => {
+    if (!resumeData?.personalInfo.title) return;
+    setIsTitleSuggesting(true);
+    try {
+      const result = await suggestTitleAction({ currentTitle: resumeData.personalInfo.title });
+      if (result.success && result.data) {
+        if (result.data.suggestedTitle.toLowerCase() !== resumeData.personalInfo.title.toLowerCase()) {
+          toast({
+            title: 'AI Title Suggestion',
+            description: `We suggest changing "${resumeData.personalInfo.title}" to "${result.data.suggestedTitle}".`,
+            action: (
+              <Button size="sm" onClick={() => {
+                setResumeData(prev => prev ? { ...prev, personalInfo: { ...prev.personalInfo, title: result.data.suggestedTitle }} : null);
+              }}>
+                Apply
+              </Button>
+            )
+          });
+        } else {
+            toast({ title: 'Title Looks Good!', description: 'Your job title is already professional and clear.' });
+        }
+      } else {
+        toast({ variant: 'destructive', title: 'Error', description: result.error });
+      }
+    } catch (error: any) {
+       toast({ variant: 'destructive', title: 'Error', description: 'Failed to get title suggestion.' });
+    } finally {
+      setIsTitleSuggesting(false);
+    }
+  }
+
 
   const isProUser = userProfile?.subscription === 'premium';
 
@@ -738,7 +773,24 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                         <AccordionContent className="space-y-4 pt-4">
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2"><Label>Full Name</Label><Input name="name" value={resumeData.personalInfo.name} onChange={handlePersonalInfoChange} /></div>
-                                <div className="space-y-2"><Label>Job Title</Label><Input name="title" value={resumeData.personalInfo.title} onChange={handlePersonalInfoChange} /></div>
+                                <div className="space-y-2">
+                                  <Label>Job Title</Label>
+                                  <div className="flex items-center gap-2">
+                                    <Input name="title" value={resumeData.personalInfo.title} onChange={handlePersonalInfoChange} className="flex-grow"/>
+                                    <TooltipProvider>
+                                      <Tooltip>
+                                        <TooltipTrigger asChild>
+                                          <Button variant="outline" size="icon" onClick={handleSuggestTitle} disabled={isTitleSuggesting}>
+                                            <Sparkles className="h-4 w-4" />
+                                          </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                          <p>AI Suggest Professional Title</p>
+                                        </TooltipContent>
+                                      </Tooltip>
+                                    </TooltipProvider>
+                                  </div>
+                                </div>
                             </div>
                             <div className="space-y-2"><Label>Email</Label><Input name="email" type="email" value={resumeData.personalInfo.email} onChange={handlePersonalInfoChange} /></div>
                             <div className="grid grid-cols-2 gap-4">
