@@ -219,6 +219,26 @@ const featureItemVariants: Variants = {
   },
 };
 
+const listVariants: Variants = {
+  visible: {
+    transition: {
+      staggerChildren: 0.2,
+    },
+  },
+};
+
+const listItemVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: 'easeOut',
+    },
+  },
+};
+
 
 export default function Home() {
   return (
@@ -399,13 +419,17 @@ export default function Home() {
           <div className="container mx-auto px-4 md:px-6">
                <div className="space-y-8 max-w-3xl mx-auto text-center">
                   <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Don't just write a resume. Design your future.</h2>
-                  <ul
+                  <motion.ul
+                    variants={listVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.5 }}
                     className="space-y-4 text-xl inline-flex flex-col items-start text-left"
                   >
-                    <li className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>AI-powered content suggestions.</span></li>
-                    <li className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>Professionally designed templates.</span></li>
-                    <li className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>Intuitive real-time editor.</span></li>
-                  </ul>
+                    <motion.li variants={listItemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>AI-powered content suggestions.</span></motion.li>
+                    <motion.li variants={listItemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>Professionally designed templates.</span></motion.li>
+                    <motion.li variants={listItemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>Intuitive real-time editor.</span></motion.li>
+                  </motion.ul>
               </div>
           </div>
       </MotionSection>
