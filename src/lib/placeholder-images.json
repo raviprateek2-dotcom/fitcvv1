@@ -43,6 +43,12 @@
       "imageHint": "corporate resume"
     },
     {
+      "id": "template-executive",
+      "description": "A preview of an executive resume template with a sidebar.",
+      "imageUrl": "https://picsum.photos/seed/template-executive/400/566",
+      "imageHint": "executive resume"
+    },
+    {
       "id": "dashboard-resume-1",
       "description": "Thumbnail of a software engineer resume.",
       "imageUrl": "https://picsum.photos/seed/dash-resume1/300/200",

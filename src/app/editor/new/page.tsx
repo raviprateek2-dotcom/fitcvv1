@@ -8,7 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 
 
-const premiumTemplates = ['minimalist', 'professional'];
+const premiumTemplates = ['minimalist', 'professional', 'executive'];
 
 // A simple loading state while the resume is being created and we redirect.
 const CreatingResumeLoading = () => {

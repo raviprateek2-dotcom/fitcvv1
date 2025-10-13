@@ -42,6 +42,12 @@ const templates = [
     image: PlaceHolderImages.find((img) => img.id === 'template-professional'),
     isPremium: true,
   },
+  {
+    id: 'executive',
+    name: 'Executive',
+    image: PlaceHolderImages.find((img) => img.id === 'template-executive'),
+    isPremium: true,
+  },
 ];
 
 export default function TemplatesPage() {
