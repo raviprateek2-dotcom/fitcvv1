@@ -625,8 +625,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
         </div>
       </header>
        <div className="flex flex-grow h-[calc(100vh-4rem)]">
-        {isFormVisible && (
-          <aside className="w-1/3 border-r bg-background no-print">
+        <aside className={cn("w-1/3 border-r bg-background no-print transition-all duration-300 ease-in-out", !isFormVisible && "-ml-[33.333333%]")}>
             <ScrollArea className="h-full">
               <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as EditorTab)} className="w-full">
                 <div className="p-4 border-b">
@@ -990,8 +989,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
               </Tabs>
             </ScrollArea>
           </aside>
-        )}
-        <main className="flex-grow bg-secondary/50 p-6 h-full print:bg-white print:p-0">
+        <main className={cn("flex-grow bg-secondary/50 p-6 h-full print:bg-white print:p-0 transition-all duration-300 ease-in-out", isFormVisible ? 'w-2/3' : 'w-full')}>
           <ScrollArea className="h-full">
             {activeTab === 'resume' ? (
               <ResumePreview resumeData={resumeData} />
@@ -1004,5 +1002,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     </>
   );
 }
+
+    
 
     
