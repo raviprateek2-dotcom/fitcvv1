@@ -24,8 +24,9 @@ const MotionSection = ({ children, className }: { children: React.ReactNode, cla
     offset: ["start end", "end start"],
   });
 
-  const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 0]);
-  const y = useTransform(scrollYProgress, [0, 1], ["50px", "-50px"]);
+  const opacity = useTransform(scrollYProgress, [0.1, 0.4, 0.9], [0, 1, 0]);
+  const y = useTransform(scrollYProgress, [0.1, 0.4], ["30px", "0px"]);
+
 
   return (
     <motion.section ref={ref} style={{ opacity, y }} className={className}>
@@ -143,7 +144,7 @@ const GridPatternBackground = () => {
           style={{ y }}
           className="absolute inset-0"
         >
-          <div className="absolute inset-0 bg-card" />
+          <div className="absolute inset-0 bg-background" />
           <svg
             className="absolute inset-0 h-full w-full stroke-secondary"
             aria-hidden="true"
@@ -163,7 +164,7 @@ const GridPatternBackground = () => {
             </defs>
             <rect width="100%" height="100%" fill="url(#grid-pattern)" />
           </svg>
-          <div className="absolute inset-0 bg-gradient-to-b from-card via-card/80 to-card" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background via-background/80 to-background" />
         </motion.div>
       </div>
     );
@@ -275,7 +276,7 @@ export default function Home() {
                     Create a professional, ATS-optimized resume in minutes. Let our AI guide you to landing your dream job.
                   </p>
                   <div className="flex flex-col gap-4 sm:flex-row justify-center md:justify-start">
-                    <Button asChild size="lg" className="group">
+                    <Button asChild size="lg" className="group" variant='neuro'>
                       <Link href="/templates">
                         Create My Resume
                         <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
@@ -395,6 +396,7 @@ export default function Home() {
                     </motion.ul>
                 </div>
                  <div className="hidden md:flex justify-center">
+                    <AnimatedResume />
                  </div>
             </div>
         </div>
@@ -545,7 +547,7 @@ export default function Home() {
             Start for free and see how ResumeAI can transform your job search. No credit card required.
           </motion.p>
           <motion.div variants={listItemVariants} className="mt-8">
-            <Button asChild size="lg" className="group">
+            <Button asChild size="lg" className="group" variant='neuro'>
               <Link href="/templates">
                 Create Your Resume Now
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
