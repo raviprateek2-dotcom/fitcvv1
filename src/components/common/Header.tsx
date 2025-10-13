@@ -40,15 +40,15 @@ export function Header() {
           <Link href="/" className="flex items-center gap-2 font-bold font-headline text-lg">
              <motion.div
               animate={{
-                y: [0, -10, 0],
-                rotate: [0, 10, -10, 0],
+                y: [0, -15, 0],
+                rotate: [0, 90, 0],
               }}
               transition={{
-                duration: 1.5,
+                duration: 2,
                 ease: "easeInOut",
-                times: [0, 0.4, 0.6, 1],
-                repeat: 0,
-                delay: 1
+                times: [0, 0.5, 1],
+                repeat: Infinity,
+                repeatDelay: 2
               }}
             >
               <Rocket className="h-6 w-6 text-primary" />
