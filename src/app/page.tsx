@@ -75,56 +75,95 @@ const blogPostIcons: { [key: string]: React.FC<React.ComponentProps<'svg'>> } = 
 };
 
 const GridPatternBackground = () => {
-    const { scrollYProgress } = useScroll();
+    const ref = useRef(null);
+    const { scrollYProgress } = useScroll({
+      target: ref,
+      offset: ["start start", "end start"]
+    });
     const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
   
     return (
-      <motion.div
-        style={{ y }}
-        className="absolute inset-0 z-0 overflow-hidden"
-      >
-        <div className="absolute inset-0 bg-card" />
-        <svg
-          className="absolute inset-0 h-full w-full stroke-secondary"
-          aria-hidden="true"
+      <div ref={ref} className="absolute inset-0 z-0 overflow-hidden">
+        <motion.div
+          style={{ y }}
+          className="absolute inset-0"
         >
-          <defs>
-            <pattern
-              id="grid-pattern"
-              width="72"
-              height="72"
-              patternUnits="userSpaceOnUse"
-              x="50%"
-              y="-1"
-              patternTransform="translate(0 -1)"
-            >
-              <path d="M0 72V0h72" fill="none" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#grid-pattern)" />
-        </svg>
-        <div className="absolute inset-0 bg-gradient-to-b from-card via-card/80 to-card" />
-      </motion.div>
+          <div className="absolute inset-0 bg-card" />
+          <svg
+            className="absolute inset-0 h-full w-full stroke-secondary"
+            aria-hidden="true"
+          >
+            <defs>
+              <pattern
+                id="grid-pattern"
+                width="72"
+                height="72"
+                patternUnits="userSpaceOnUse"
+                x="50%"
+                y="-1"
+                patternTransform="translate(0 -1)"
+              >
+                <path d="M0 72V0h72" fill="none" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grid-pattern)" />
+          </svg>
+          <div className="absolute inset-0 bg-gradient-to-b from-card via-card/80 to-card" />
+        </motion.div>
+      </div>
     );
 };
 
-const sectionVariants = {
-  hidden: { opacity: 0, y: 50 },
-  visible: { 
-    opacity: 1, 
-    y: 0, 
-    transition: { 
-      duration: 0.6, 
-      ease: "easeOut",
-      staggerChildren: 0.2 
-    } 
-  },
+const MotionSection = ({ children }: { children: React.ReactNode }) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+
+  const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 0]);
+  const y = useTransform(scrollYProgress, [0, 1], ["50px", "-50px"]);
+
+  return (
+    <motion.section ref={ref} style={{ opacity, y }} className="relative w-full py-20 md:py-32">
+      {children}
+    </motion.section>
+  );
 };
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 30, scale: 0.98 },
-  visible: { opacity: 1, y: 0, scale: 1 },
+const MotionCard = ({ children }: { children: React.ReactNode }) => {
+    const ref = useRef<HTMLDivElement>(null);
+    const { scrollYProgress } = useScroll({
+        target: ref,
+        offset: ["start end", "end start"],
+    });
+
+    const opacity = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
+    const scale = useTransform(scrollYProgress, [0, 0.5], [0.9, 1]);
+    const rotateX = useTransform(scrollYProgress, [0, 0.5], ["15deg", "0deg"]);
+
+    return (
+        <motion.div ref={ref} style={{ opacity, scale, rotateX }}>
+            {children}
+        </motion.div>
+    );
 };
+
+const HeroTextMotion = ({ children }: { children: React.ReactNode }) => {
+    const ref = useRef<HTMLDivElement>(null);
+    const { scrollYProgress } = useScroll({
+        target: ref,
+        offset: ["start start", "end start"]
+    });
+    const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+    const y = useTransform(scrollYProgress, [0, 0.5], ["0px", "-50px"]);
+
+    return (
+        <motion.div ref={ref} style={{ opacity, y }}>
+            {children}
+        </motion.div>
+    );
+}
 
 export default function Home() {
   return (
@@ -134,116 +173,96 @@ export default function Home() {
       <section className="w-full py-20 md:py-32 relative h-auto mb-20">
         <GridPatternBackground />
         <div className="container mx-auto px-4 md:px-6 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="grid md:grid-cols-2 gap-12 items-center"
-          >
-            <div 
-              className="space-y-6 text-center md:text-left"
-            >
-              <h1 className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl">
-                Design your future.
-                <br />
-                <span className="text-primary transition-all duration-300 inline-block min-h-[60px] sm:min-h-[70px] md:min-h-[80px]">
-                  <TypingAnimation phrases={[
-                    "Build your career.",
-                    "Land your dream job.",
-                    "Showcase your skills."
-                  ]} />
-                </span>
-              </h1>
-              <p className="max-w-lg mx-auto md:mx-0 text-muted-foreground md:text-xl">
-                Create a professional, ATS-optimized resume in minutes. Let our AI guide you to landing your dream job.
-              </p>
-              <div className="flex flex-col gap-4 sm:flex-row justify-center md:justify-start">
-                <Button asChild size="lg" className="group">
-                  <Link href="/templates">
-                    Create My Resume
-                    <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                </Button>
+          <HeroTextMotion>
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              <div 
+                className="space-y-6 text-center md:text-left"
+              >
+                <h1 className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl">
+                  Design your future.
+                  <br />
+                  <span className="text-primary transition-all duration-300 inline-block min-h-[60px] sm:min-h-[70px] md:min-h-[80px]">
+                    <TypingAnimation phrases={[
+                      "Build your career.",
+                      "Land your dream job.",
+                      "Showcase your skills."
+                    ]} />
+                  </span>
+                </h1>
+                <p className="max-w-lg mx-auto md:mx-0 text-muted-foreground md:text-xl">
+                  Create a professional, ATS-optimized resume in minutes. Let our AI guide you to landing your dream job.
+                </p>
+                <div className="flex flex-col gap-4 sm:flex-row justify-center md:justify-start">
+                  <Button asChild size="lg" className="group">
+                    <Link href="/templates">
+                      Create My Resume
+                      <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                  </Button>
+                </div>
               </div>
             </div>
-          </motion.div>
+          </HeroTextMotion>
         </div>
       </section>
 
       {/* How It Works Section */}
-      <motion.section 
-        id="how-it-works" 
-        className="relative w-full py-20 md:py-32 bg-secondary/30 backdrop-blur-sm"
-        variants={sectionVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
-      >
-        <div className="container mx-auto px-4 md:px-6">
+      <MotionSection>
+        <div id="how-it-works" className="container mx-auto px-4 md:px-6">
               <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
                   <div className="inline-block rounded-lg bg-card/50 backdrop-blur-sm px-3 py-1 text-sm font-medium border">How It Works</div>
                   <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Three Simple Steps to Your Dream Job</h2>
               </div>
-              <motion.div
+              <div
                  className="mx-auto grid items-start gap-8 sm:max-w-4xl sm:grid-cols-3 md:gap-12"
-                 variants={sectionVariants}
               >
-                  <motion.div variants={itemVariants} className="transition-all duration-300 hover:scale-105">
-                    <div className="flex flex-col gap-4 items-center text-center p-6">
+                  <MotionCard>
+                    <div className="flex flex-col gap-4 items-center text-center p-6 transition-all duration-300 hover:scale-105">
                       <div className="bg-primary/10 p-4 rounded-full">
                          <FileText className="w-8 h-8 text-primary"/>
                       </div>
                       <h3 className="text-xl font-bold font-headline">1. Select a Template</h3>
                       <p className="text-muted-foreground">Choose from our library of professionally designed and ATS-friendly resume templates.</p>
                     </div>
-                  </motion.div>
-                  <motion.div variants={itemVariants} className="transition-all duration-300 hover:scale-105">
-                   <div className="flex flex-col gap-4 items-center text-center p-6">
+                  </MotionCard>
+                  <MotionCard>
+                   <div className="flex flex-col gap-4 items-center text-center p-6 transition-all duration-300 hover:scale-105">
                       <div className="bg-primary/10 p-4 rounded-full">
                          <Sparkles className="w-8 h-8 text-primary"/>
                       </div>
                       <h3 className="text-xl font-bold font-headline">2. Perfect with AI</h3>
                       <p className="text-muted-foreground">Use our AI assistant to write compelling bullet points, summaries, and cover letters.</p>
                    </div>
-                  </motion.div>
-                  <motion.div variants={itemVariants} className="transition-all duration-300 hover:scale-105">
-                   <div className="flex flex-col gap-4 items-center text-center p-6">
+                  </MotionCard>
+                  <MotionCard>
+                   <div className="flex flex-col gap-4 items-center text-center p-6 transition-all duration-300 hover:scale-105">
                       <div className="bg-primary/10 p-4 rounded-full">
                          <Zap className="w-8 h-8 text-primary"/>
                       </div>
                       <h3 className="text-xl font-bold font-headline">3. Download & Apply</h3>
                       <p className="text-muted-foreground">Export your pixel-perfect resume as a PDF and start landing interviews.</p>
                    </div>
-                  </motion.div>
-              </motion.div>
+                  </MotionCard>
+              </div>
           </div>
-      </motion.section>
+      </MotionSection>
 
       {/* Features Section */}
-      <motion.section 
-        id="features" 
-        className="relative w-full py-20 md:py-32"
-        variants={sectionVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
-      >
-        <div className="container mx-auto px-4 md:px-6">
+      <MotionSection>
+        <div id="features" className="container mx-auto px-4 md:px-6">
             <div className="grid md:grid-cols-2 gap-16 items-center">
                 <div className="space-y-8">
                     <div className="space-y-4">
                       <div className="inline-block rounded-lg bg-secondary px-3 py-1 text-sm font-medium">Everything You Need</div>
                       <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Features that help you stand out</h2>
                     </div>
-                    <motion.ul
+                    <ul
                       className="grid sm:grid-cols-1 gap-8"
-                      variants={sectionVariants}
                     >
                         {features.map((feature, index) => (
                           <motion.li 
                             key={index} 
                             className="flex items-start gap-4 transition-all duration-300 hover:bg-secondary/50 p-4 rounded-lg hover:scale-105"
-                            variants={itemVariants}
                           >
                               <div className="bg-primary/10 p-3 rounded-full mt-1">
                                 {feature.icon}
@@ -254,24 +273,17 @@ export default function Home() {
                               </div>
                           </motion.li>
                         ))}
-                    </motion.ul>
+                    </ul>
                 </div>
                  <div className="hidden md:flex justify-center">
                  </div>
             </div>
         </div>
-      </motion.section>
+      </MotionSection>
 
       {/* Testimonials Section */}
-      <motion.section
-        id="testimonials"
-        className="relative w-full py-20 md:py-32 bg-secondary/30 backdrop-blur-sm"
-        variants={sectionVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
-        >
-        <div className="container mx-auto px-4 md:px-6">
+      <MotionSection>
+        <div id="testimonials" className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
             <div className="inline-block rounded-lg bg-card/50 backdrop-blur-sm border px-3 py-1 text-sm font-medium">What Our Users Say</div>
             <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Loved by Job Seekers Worldwide</h2>
@@ -315,41 +327,27 @@ export default function Home() {
             </Carousel>
           </div>
         </div>
-      </motion.section>
+      </MotionSection>
 
       {/* Why Us Section */}
-      <motion.section
-        className="relative w-full py-20 md:py-32"
-        variants={sectionVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
-        >
+      <MotionSection>
           <div className="container mx-auto px-4 md:px-6">
                <div className="space-y-8 max-w-3xl mx-auto text-center">
                   <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Don't just write a resume. Design your future.</h2>
-                  <motion.ul
+                  <ul
                     className="space-y-4 text-xl inline-flex flex-col items-start text-left"
-                    variants={sectionVariants}
                   >
-                    <motion.li variants={itemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>AI-powered content suggestions.</span></motion.li>
-                    <motion.li variants={itemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>Professionally designed templates.</span></motion.li>
-                    <motion.li variants={itemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>Intuitive real-time editor.</span></motion.li>
-                  </motion.ul>
+                    <li className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>AI-powered content suggestions.</span></li>
+                    <li className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>Professionally designed templates.</span></li>
+                    <li className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>Intuitive real-time editor.</span></li>
+                  </ul>
               </div>
           </div>
-      </motion.section>
+      </MotionSection>
 
       {/* Blog Section */}
-      <motion.section
-        id="blog"
-        className="relative w-full py-20 md:py-32 bg-secondary/30 backdrop-blur-sm"
-        variants={sectionVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
-      >
-        <div className="container mx-auto px-4 md:px-6">
+      <MotionSection>
+        <div id="blog" className="container mx-auto px-4 md:px-6">
           <div>
             <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
               <div className="inline-block rounded-lg bg-card/50 backdrop-blur-sm border px-3 py-1 text-sm font-medium">From Our Blog</div>
@@ -358,14 +356,13 @@ export default function Home() {
                 Get the latest insights from our career experts to help you land your dream job.
               </p>
             </div>
-            <motion.div
+            <div
               className="grid gap-8 md:grid-cols-3"
-              variants={sectionVariants}
             >
               {blogPosts.slice(0, 3).map((post) => {
                   const Icon = blogPostIcons[post.slug] || PenTool;
                   return (
-                      <motion.div variants={itemVariants} key={post.slug}>
+                      <MotionCard key={post.slug}>
                         <Card className="group overflow-hidden flex flex-col h-full transition-all duration-300 hover:scale-105 hover:shadow-2xl" variant="neuro">
                             <Link href={`/blog/${post.slug}`} className="block overflow-hidden relative h-48">
                                 <div className="absolute inset-0 bg-primary/10 flex items-center justify-center">
@@ -386,10 +383,10 @@ export default function Home() {
                             </Button>
                             </CardContent>
                         </Card>
-                      </motion.div>
+                      </MotionCard>
                   )
               })}
-            </motion.div>
+            </div>
              <div
               className="text-center mt-12"
              >
@@ -399,16 +396,10 @@ export default function Home() {
               </div>
           </div>
         </div>
-      </motion.section>
+      </MotionSection>
 
       {/* Final CTA */}
-      <motion.section
-        className="relative w-full py-20 md:py-32"
-        variants={sectionVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
-        >
+      <MotionSection>
         <div
           className="container mx-auto px-4 md:px-6 text-center"
         >
@@ -425,7 +416,7 @@ export default function Home() {
             </Button>
           </div>
         </div>
-      </motion.section>
+      </MotionSection>
     </div>
   );
 }
