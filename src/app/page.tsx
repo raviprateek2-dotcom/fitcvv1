@@ -13,6 +13,57 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { motion, AnimatePresence, useScroll, useTransform, Variants } from 'framer-motion';
 import { TypingAnimation } from '@/components/common/TypingAnimation';
 
+const MotionSection = ({ children, className }: { children: React.ReactNode, className?: string }) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+
+  const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 0]);
+  const y = useTransform(scrollYProgress, [0, 1], ["50px", "-50px"]);
+
+  return (
+    <motion.section ref={ref} style={{ opacity, y }} className={className}>
+      {children}
+    </motion.section>
+  );
+};
+
+const MotionCard = ({ children }: { children: React.ReactNode }) => {
+    const ref = useRef<HTMLDivElement>(null);
+    const { scrollYProgress } = useScroll({
+        target: ref,
+        offset: ["start end", "end start"],
+    });
+
+    const opacity = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
+    const scale = useTransform(scrollYProgress, [0, 0.5], [0.9, 1]);
+    const rotateX = useTransform(scrollYProgress, [0, 0.5], ["15deg", "0deg"]);
+
+    return (
+        <motion.div ref={ref} style={{ opacity, scale, rotateX }}>
+            {children}
+        </motion.div>
+    );
+};
+
+const HeroTextMotion = ({ children }: { children: React.ReactNode }) => {
+    const ref = useRef<HTMLDivElement>(null);
+    const { scrollYProgress } = useScroll({
+        target: ref,
+        offset: ["start start", "end start"]
+    });
+    const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+    const y = useTransform(scrollYProgress, [0, 0.5], ["0px", "-50px"]);
+
+    return (
+        <motion.div ref={ref} style={{ opacity, y }}>
+            {children}
+        </motion.div>
+    );
+}
+
 const features = [
   {
     icon: <DraftingCompass className="w-8 h-8 text-primary" />,
@@ -113,57 +164,6 @@ const GridPatternBackground = () => {
       </div>
     );
 };
-
-const MotionSection = ({ children, className }: { children: React.ReactNode, className?: string }) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"],
-  });
-
-  const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [0, 1, 0]);
-  const y = useTransform(scrollYProgress, [0, 1], ["50px", "-50px"]);
-
-  return (
-    <motion.section ref={ref} style={{ opacity, y }} className={className}>
-      {children}
-    </motion.section>
-  );
-};
-
-const MotionCard = ({ children }: { children: React.ReactNode }) => {
-    const ref = useRef<HTMLDivElement>(null);
-    const { scrollYProgress } = useScroll({
-        target: ref,
-        offset: ["start end", "end start"],
-    });
-
-    const opacity = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
-    const scale = useTransform(scrollYProgress, [0, 0.5], [0.9, 1]);
-    const rotateX = useTransform(scrollYProgress, [0, 0.5], ["15deg", "0deg"]);
-
-    return (
-        <motion.div ref={ref} style={{ opacity, scale, rotateX }}>
-            {children}
-        </motion.div>
-    );
-};
-
-const HeroTextMotion = ({ children }: { children: React.ReactNode }) => {
-    const ref = useRef<HTMLDivElement>(null);
-    const { scrollYProgress } = useScroll({
-        target: ref,
-        offset: ["start start", "end start"]
-    });
-    const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-    const y = useTransform(scrollYProgress, [0, 0.5], ["0px", "-50px"]);
-
-    return (
-        <motion.div ref={ref} style={{ opacity, y }}>
-            {children}
-        </motion.div>
-    );
-}
 
 const howItWorksContainerVariants: Variants = {
   visible: {
@@ -417,41 +417,50 @@ export default function Home() {
       {/* Why Us Section */}
       <MotionSection className="relative w-full py-20 md:py-32">
           <div className="container mx-auto px-4 md:px-6">
-               <div className="space-y-8 max-w-3xl mx-auto text-center">
-                  <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Don't just write a resume. Design your future.</h2>
+               <motion.div
+                 variants={listVariants}
+                 initial="hidden"
+                 whileInView="visible"
+                 viewport={{ once: true, amount: 0.5 }}
+                 className="space-y-8 max-w-3xl mx-auto text-center"
+               >
+                  <motion.h2 variants={listItemVariants} className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Don't just write a resume. Design your future.</motion.h2>
                   <motion.ul
                     variants={listVariants}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, amount: 0.5 }}
                     className="space-y-4 text-xl inline-flex flex-col items-start text-left"
                   >
                     <motion.li variants={listItemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>AI-powered content suggestions.</span></motion.li>
                     <motion.li variants={listItemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>Professionally designed templates.</span></motion.li>
                     <motion.li variants={listItemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>Intuitive real-time editor.</span></motion.li>
                   </motion.ul>
-              </div>
+              </motion.div>
           </div>
       </MotionSection>
 
       {/* Blog Section */}
       <MotionSection className="relative w-full py-20 md:py-32">
         <div id="blog" className="container mx-auto px-4 md:px-6">
-          <div>
-            <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
+          <motion.div
+            variants={listVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+          >
+            <motion.div variants={listItemVariants} className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
               <div className="inline-block rounded-lg bg-card/50 backdrop-blur-sm border px-3 py-1 text-sm font-medium">From Our Blog</div>
               <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Career Advice & Resume Tips</h2>
               <p className="max-w-[600px] text-muted-foreground md:text-lg">
                 Get the latest insights from our career experts to help you land your dream job.
               </p>
-            </div>
-            <div
+            </motion.div>
+            <motion.div
+              variants={listVariants}
               className="grid gap-8 md:grid-cols-3"
             >
               {blogPosts.slice(0, 3).map((post) => {
                   const Icon = blogPostIcons[post.slug] || PenTool;
                   return (
-                      <MotionCard key={post.slug}>
+                      <motion.div variants={listItemVariants} key={post.slug}>
                         <Card className="group overflow-hidden flex flex-col h-full transition-all duration-300 hover:scale-105 hover:shadow-2xl" variant="neuro">
                             <Link href={`/blog/${post.slug}`} className="block overflow-hidden relative h-48">
                                 <div className="absolute inset-0 bg-primary/10 flex items-center justify-center">
@@ -472,39 +481,44 @@ export default function Home() {
                             </Button>
                             </CardContent>
                         </Card>
-                      </MotionCard>
+                      </motion.div>
                   )
               })}
-            </div>
-             <div
-              className="text-center mt-12"
+            </motion.div>
+             <motion.div
+                variants={listItemVariants}
+                className="text-center mt-12"
              >
                   <Button asChild size="lg" variant="outline">
                       <Link href="/blog">View All Articles</Link>
                   </Button>
-              </div>
-          </div>
+              </motion.div>
+          </motion.div>
         </div>
       </MotionSection>
 
       {/* Final CTA */}
       <MotionSection className="relative w-full py-20 md:py-32">
-        <div
+        <motion.div
+          variants={listVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.5 }}
           className="container mx-auto px-4 md:px-6 text-center"
         >
-          <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Ready to Build Your Future?</h2>
-          <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl mt-4">
+          <motion.h2 variants={listItemVariants} className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Ready to Build Your Future?</motion.h2>
+          <motion.p variants={listItemVariants} className="mx-auto max-w-[600px] text-muted-foreground md:text-xl mt-4">
             Start for free and see how ResumeAI can transform your job search. No credit card required.
-          </p>
-          <div className="mt-8">
+          </motion.p>
+          <motion.div variants={listItemVariants} className="mt-8">
             <Button asChild size="lg" className="group">
               <Link href="/templates">
                 Create Your Resume Now
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </MotionSection>
     </div>
   );
