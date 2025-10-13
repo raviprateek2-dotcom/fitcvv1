@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
@@ -2521,8 +2521,8 @@ HuffmanDecoder.prototype = {
         for (i = 256; i <= 279; i++) lit_len.push(7);
         for (i = 280; i <= 287; i++) lit_len.push(8);
         for (i = 0; i <= 31; i++) dist.push(5);
-        const lit_len_code = this.buildHuffmanTable(lit_len);
-        const dist_code = this.buildHuffmanTable(dist);
+        let lit_len_code = this.buildHuffmanTable(lit_len);
+        let dist_code = this.buildHuffmanTable(dist);
         var ll = lit_len_code[1],
           ld = dist_code[1];
         lit_len_code = lit_len_code[0];
@@ -3666,3 +3666,5 @@ pdfjsLib = __webpack_exports__;
 /******/ })()
 ;
 //# sourceMappingURL=pdf.js.map
+
+  
