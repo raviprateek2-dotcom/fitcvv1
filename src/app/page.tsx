@@ -14,6 +14,7 @@ import { motion, AnimatePresence, useScroll, useTransform, Variants } from 'fram
 import { TypingAnimation } from '@/components/common/TypingAnimation';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { AnimatedResume } from '@/components/common/AnimatedResume';
 
 
 const MotionSection = ({ children, className }: { children: React.ReactNode, className?: string }) => {
@@ -283,9 +284,14 @@ export default function Home() {
                   </div>
                 </div>
               </HeroTextMotion>
-              <div className="hidden md:flex justify-center items-center">
-                 {/* This space is intentionally left blank */}
-              </div>
+              <motion.div 
+                className="hidden md:flex justify-center items-center"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
+                 <AnimatedResume />
+              </motion.div>
             </div>
         </div>
       </section>
