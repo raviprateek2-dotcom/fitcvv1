@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Download, Eye, PlusCircle, Share2, Trash2, Sparkles, Bot, FileText, Newspaper, PanelLeft, ArrowLeft, Brush, Lock, Lightbulb } from 'lucide-react';
+import { Download, Eye, PlusCircle, Share2, Trash2, Sparkles, Bot, FileText, Newspaper, PanelLeft, ArrowLeft, Brush, Lock, Lightbulb, Upload } from 'lucide-react';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import AIContentDialog from './AIContentDialog';
 import AISectionWriterDialog from './AISectionWriterDialog';
@@ -27,6 +27,8 @@ import { Slider } from '../ui/slider';
 import { cn } from '@/lib/utils';
 import { nanoid } from 'nanoid';
 import { Badge } from '../ui/badge';
+import { parseResumeFromPdf } from '@/app/actions/ai-resume-parser';
+
 
 // Define types for resume structure
 type PersonalInfo = {
@@ -201,6 +203,8 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
   const [activeTab, setActiveTab] = useState<EditorTab>('resume');
   const [isAiLoading, setIsAiLoading] = useState(false);
+  const [isParsing, setIsParsing] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isFormVisible, setIsFormVisible] = useState(true);
   const [keywordSuggestions, setKeywordSuggestions] = useState<string[]>([]);
   const { toast } = useToast();
@@ -494,6 +498,47 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
       setIsAiLoading(false);
     }
   };
+  
+  const handlePdfUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setIsParsing(true);
+    toast({ title: 'Parsing PDF...', description: 'Our AI is reading your resume to fill in the editor.' });
+
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const fileBuffer = Buffer.from(arrayBuffer);
+
+      const result = await parseResumeFromPdf(fileBuffer);
+      
+      if (!result.success || !result.data) {
+        throw new Error(result.error || 'Failed to parse resume.');
+      }
+      
+      // Update the current resume data with the parsed content
+      setResumeData(prev => ({
+        ...prev!,
+        ...result.data!.resumeData,
+        title: result.data!.resumeData.personalInfo.name ? `${result.data!.resumeData.personalInfo.name}'s Resume` : 'Imported Resume',
+      }));
+
+      toast({ title: 'Success!', description: 'Your resume has been imported into the editor.' });
+
+    } catch (error: any) {
+      console.error('Error parsing PDF resume:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Import Failed',
+        description: error.message || 'Could not import your resume from the PDF.',
+      });
+    } finally {
+      setIsParsing(false);
+      // Reset file input
+      if(fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
 
   const isProUser = userProfile?.subscription === 'premium';
 
@@ -526,6 +571,18 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
           </div>
            <div className="flex items-center gap-4">
              <SaveStatusIndicator status={saveStatus} />
+             <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handlePdfUpload}
+              accept="application/pdf"
+              className="hidden"
+              disabled={isParsing}
+            />
+            <Button variant="outline" size="sm" onClick={() => fileInputRef.current?.click()} disabled={isParsing}>
+              <Upload className="mr-2 h-4 w-4" /> 
+              {isParsing ? 'Importing...' : 'Import PDF'}
+            </Button>
             <Button variant="outline" size="sm" onClick={handleShare}>
               <Share2 className="mr-2 h-4 w-4"/>Share
             </Button>
