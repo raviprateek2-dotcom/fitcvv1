@@ -286,9 +286,7 @@ export default function Home() {
               </HeroTextMotion>
               <motion.div 
                 className="hidden md:flex justify-center items-center"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
+                style={{ perspective: '1000px' }}
               >
                  <AnimatedResume />
               </motion.div>

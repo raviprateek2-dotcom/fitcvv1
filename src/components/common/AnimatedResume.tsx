@@ -57,7 +57,19 @@ export function AnimatedResume() {
     <motion.div
       variants={containerVariants}
       initial="hidden"
-      animate="visible"
+      animate={{
+        ...containerVariants.visible,
+        rotateX: [0, 10, 0, -10, 0],
+        rotateY: [0, 15, 0, -15, 0],
+      }}
+      whileHover={{ scale: 1.05, rotateX: 0, rotateY: 0, transition: { duration: 0.3 } }}
+      transition={{
+        duration: 15,
+        ease: 'easeInOut',
+        repeat: Infinity,
+        repeatType: 'loop',
+      }}
+      style={{ transformStyle: 'preserve-3d' }}
       className="w-full max-w-sm aspect-[3/4] p-6 rounded-2xl bg-card border shadow-2xl flex flex-col gap-4"
     >
       {/* Header */}
