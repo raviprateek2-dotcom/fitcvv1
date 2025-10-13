@@ -10,7 +10,7 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-import pdf from 'pdf-parse';
+import pdf from '@/lib/pdf-parse';
 
 // Define types for resume structure
 const PersonalInfoSchema = z.object({
