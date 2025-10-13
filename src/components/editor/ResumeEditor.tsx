@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Download, Eye, PlusCircle, Share2, Trash2, Sparkles, Bot, FileText, Newspaper, PanelLeft, ArrowLeft, Brush } from 'lucide-react';
+import { Download, Eye, PlusCircle, Share2, Trash2, Sparkles, Bot, FileText, Newspaper, PanelLeft, ArrowLeft, Brush, Lock } from 'lucide-react';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import AIContentDialog from './AIContentDialog';
 import AISectionWriterDialog from './AISectionWriterDialog';
@@ -100,6 +100,14 @@ const colorSwatches = [
   'hsl(0 0% 9%)',          // Black
 ];
 
+const availableTemplates = [
+  { id: 'modern', name: 'Modern', isPremium: false },
+  { id: 'classic', name: 'Classic', isPremium: false },
+  { id: 'creative', name: 'Creative', isPremium: false },
+  { id: 'minimalist', name: 'Minimalist', isPremium: true },
+  { id: 'professional', name: 'Professional', isPremium: true },
+  { id: 'executive', name: 'Executive', isPremium: true },
+];
 
 const EditorLoadingSkeleton = () => {
     return (
@@ -396,6 +404,25 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     }
   };
   
+  const handleTemplateChange = (templateId: string) => {
+    const template = availableTemplates.find(t => t.id === templateId);
+    if (!template) return;
+
+    const isProUser = userProfile?.subscription === 'premium';
+
+    if (template.isPremium && !isProUser) {
+        toast({
+            variant: 'destructive',
+            title: 'Upgrade Required',
+            description: `The "${template.name}" template is a Pro feature.`,
+            action: <Button asChild><Link href="/pricing">Upgrade</Link></Button>
+        });
+        return;
+    }
+    
+    handleFieldChange('templateId', templateId);
+  }
+  
   const isProUser = userProfile?.subscription === 'premium';
 
   if (isResumeLoading || !resumeData) {
@@ -458,6 +485,24 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                         <AccordionItem value="design">
                           <AccordionTrigger className="font-semibold">Design</AccordionTrigger>
                           <AccordionContent className="space-y-4 pt-4">
+                            <div className="space-y-2">
+                                <Label>Template</Label>
+                                <Select value={resumeData.templateId} onValueChange={handleTemplateChange}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select a template" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {availableTemplates.map(template => (
+                                            <SelectItem key={template.id} value={template.id} disabled={template.isPremium && !isProUser}>
+                                                <div className="flex items-center gap-2">
+                                                    {template.name}
+                                                    {template.isPremium && <span className="text-xs bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full">PRO</span>}
+                                                </div>
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
                             <div className="space-y-2">
                               <Label>Color Palette</Label>
                               <div className="flex flex-wrap gap-2">
@@ -742,3 +787,5 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     </>
   );
 }
+
+    
