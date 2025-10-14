@@ -538,29 +538,35 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   const handlePdfUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-
+  
     setIsParsing(true);
     toast({ title: 'Parsing PDF...', description: 'Our AI is reading your resume to fill in the editor.' });
-
+  
     try {
-      const arrayBuffer = await file.arrayBuffer();
-      const base64String = Buffer.from(arrayBuffer).toString('base64');
-
-      const result = await parseResumeFromPdf(base64String);
-      
-      if (!result.success || !result.data) {
-        throw new Error(result.error || 'Failed to parse resume.');
-      }
-      
-      // Update the current resume data with the parsed content
-      setResumeData(prev => ({
-        ...prev!,
-        ...result.data!.resumeData,
-        title: result.data!.resumeData.personalInfo.name ? `${result.data!.resumeData.personalInfo.name}'s Resume` : 'Imported Resume',
-      }));
-
-      toast({ title: 'Success!', description: 'Your resume has been imported into the editor.' });
-
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = async () => {
+        const base64String = reader.result as string;
+        
+        const result = await parseResumeFromPdf(base64String);
+        
+        if (!result.success || !result.data) {
+          throw new Error(result.error || 'Failed to parse resume.');
+        }
+        
+        // Update the current resume data with the parsed content
+        setResumeData(prev => ({
+          ...prev!,
+          ...result.data!.resumeData,
+          title: result.data!.resumeData.personalInfo.name ? `${result.data!.resumeData.personalInfo.name}'s Resume` : 'Imported Resume',
+        }));
+  
+        toast({ title: 'Success!', description: 'Your resume has been imported into the editor.' });
+      };
+      reader.onerror = (error) => {
+        throw new Error('Failed to read the file.');
+      };
+  
     } catch (error: any) {
       console.error('Error parsing PDF resume:', error);
       toast({
