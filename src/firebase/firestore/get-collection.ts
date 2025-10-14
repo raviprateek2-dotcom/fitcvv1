@@ -6,6 +6,7 @@ import {
   DocumentData,
   QuerySnapshot,
   CollectionReference,
+  FirestoreError,
 } from 'firebase/firestore';
 import { WithId } from './use-collection';
 import { errorEmitter } from '@/firebase/error-emitter';
@@ -31,13 +32,17 @@ export async function getCollection<T = any>(
       results.push({ ...(doc.data() as T), id: doc.id });
     });
     return results;
-  } catch (error) {
-    const permissionError = new FirestorePermissionError({
-      path: (targetRefOrQuery as CollectionReference).path,
-      operation: 'list',
-    });
-    errorEmitter.emit('permission-error', permissionError);
-    // Re-throw the error so the calling function knows the operation failed.
-    throw permissionError;
+  } catch (serverError: any) {
+      if (serverError instanceof FirestoreError && serverError.code === 'permission-denied') {
+        const permissionError = new FirestorePermissionError({
+          path: (targetRefOrQuery as CollectionReference).path,
+          operation: 'list',
+        });
+        errorEmitter.emit('permission-error', permissionError);
+        // Re-throw the contextual error so the calling function knows the operation failed.
+        throw permissionError;
+      }
+      // Re-throw any other type of error
+      throw serverError;
   }
 }
