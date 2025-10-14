@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -76,6 +77,7 @@ type Styling = {
 };
 
 type ResumeData = {
+  userId?: string;
   title?: string;
   personalInfo: PersonalInfo;
   summary: string;
@@ -246,11 +248,12 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
 
   // Debounced save function
   const handleSave = useCallback((dataToSave: ResumeData) => {
-    if (!resumeDocRef || !firestore) return;
+    if (!resumeDocRef || !firestore || !user) return;
     setSaveStatus('saving');
 
     const updatedData = {
         ...dataToSave,
+        userId: user.uid,
         updatedAt: serverTimestamp()
     };
     
@@ -260,13 +263,13 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     // Also update the public resume if it exists
     if(dataToSave.shareId) {
         const publicResumeRef = doc(firestore, 'publicResumes', dataToSave.shareId);
-        setDocumentNonBlocking(publicResumeRef, { ...dataToSave, shareId: dataToSave.shareId }, { merge: true });
+        setDocumentNonBlocking(publicResumeRef, { ...updatedData }, { merge: true });
     }
 
     // Optimistically update UI
     setSaveStatus('saved');
     setTimeout(() => setSaveStatus('idle'), 2000);
-  }, [resumeDocRef, firestore]);
+  }, [resumeDocRef, firestore, user]);
 
 
   // Auto-save useEffect
@@ -467,20 +470,26 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   };
   
   const handleShare = () => {
-    if (!resumeData || !firestore) return;
+    if (!resumeData || !firestore || !user) return;
 
     let shareId = resumeData.shareId;
     
     // If there is no shareId, create one.
     if (!shareId) {
         shareId = nanoid(10);
-        const updatedDataWithShareId = { ...resumeData, shareId };
-        setResumeData(updatedDataWithShareId); // Update local state, autosave will persist it.
+        // This state update will be picked up by the auto-save useEffect
+        setResumeData(prev => (prev ? { ...prev, shareId } : null)); 
     }
+
+    const dataToShare = {
+        ...resumeData,
+        shareId,
+        userId: user.uid // Ensure userId is in the shared data
+    };
 
     // Create or update the public document non-blockingly
     const publicResumeRef = doc(firestore, 'publicResumes', shareId);
-    setDocumentNonBlocking(publicResumeRef, { ...resumeData, shareId }, { merge: true });
+    setDocumentNonBlocking(publicResumeRef, dataToShare, { merge: true });
 
     const shareUrl = `${window.location.origin}/share/${shareId}`;
     navigator.clipboard.writeText(shareUrl);
@@ -887,7 +896,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                             <TooltipProvider>
                               <Tooltip>
                                 <TooltipTrigger asChild>
-                                  <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); removeProjectSection(); }} className="text-destructive hover:text-destructive-foreground hover:bg-destructive h-7 w-7 mr-2">
+                                  <Button variant="ghost" size="icon" onClick={() => removeProjectSection()} className="text-destructive hover:text-destructive-foreground hover:bg-destructive h-7 w-7">
                                     <MinusCircle className="h-4 w-4" />
                                   </Button>
                                 </TooltipTrigger>
@@ -953,7 +962,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                              <TooltipProvider>
                                <Tooltip>
                                  <TooltipTrigger asChild>
-                                   <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); removeSkillSection(); }} className="text-destructive hover:text-destructive-foreground hover:bg-destructive h-7 w-7 mr-2">
+                                   <Button variant="ghost" size="icon" onClick={() => removeSkillSection()} className="text-destructive hover:text-destructive-foreground hover:bg-destructive h-7 w-7">
                                      <MinusCircle className="h-4 w-4" />
                                    </Button>
                                  </TooltipTrigger>
@@ -1035,7 +1044,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                 </TabsContent>
               </Tabs>
             </ScrollArea>
-          </aside>
+        </aside>
         <main className={cn("flex-grow bg-secondary/50 p-6 h-full print:bg-white print:p-0 transition-all duration-300 ease-in-out", isFormVisible ? 'w-2/3' : 'w-full')}>
           <ScrollArea className="h-full">
             {activeTab === 'resume' ? (
