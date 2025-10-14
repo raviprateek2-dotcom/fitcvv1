@@ -71,9 +71,9 @@ export async function parseResumeFromPdf(base64String: string): Promise<ParseRes
 
 const prompt = ai.definePrompt({
   name: 'parseResumePrompt',
-  input: { schema: z.string() },
+  input: { schema: z.string().describe("A PDF file encoded as a Base64 string, prefixed with a data URI scheme (e.g., 'data:application/pdf;base64,...').") },
   output: { schema: ParseResumeOutputSchema },
-  prompt: `You are an expert resume parser. Your task is to analyze the raw text content from a resume and structure it into a JSON format.
+  prompt: `You are an expert resume parser. Your task is to analyze the content of the provided PDF file and structure it into a JSON format.
 
   Pay close attention to section headings like "Experience", "Education", "Skills", and "Projects" to correctly categorize the information.
   
@@ -82,9 +82,9 @@ const prompt = ai.definePrompt({
   - Generate a unique numeric 'id' for each item in the arrays (experience, education, skills, projects) starting from Date.now() and incrementing.
   - Make sure the output strictly adheres to the provided JSON schema.
 
-  Resume Text to Parse:
+  Resume PDF to Parse:
   ---
-  {{{input}}}
+  {{media url=input}}
   ---
   `,
 });
@@ -96,23 +96,19 @@ const parseResumeFlow = ai.defineFlow(
     outputSchema: ParseResumeOutputSchema,
   },
   async (base64String: string) => {
-    // 1. Convert Base64 to Buffer
-    const fileBuffer = Buffer.from(base64String, 'base64');
-    
-    // 2. Dynamically import and use pdf-parse
-    // We use a dynamic import to avoid potential build-time issues with Next.js
-    const pdf = (await import('pdf-parse')).default;
-    const data = await pdf(fileBuffer);
-    const rawText = data.text;
-    
-    // 3. Use AI to structure the text
-    const { output } = await prompt(rawText);
+    // 1. Ensure the base64 string has the data URI prefix
+    const dataUri = base64String.startsWith('data:') 
+        ? base64String 
+        : `data:application/pdf;base64,${base64String}`;
+
+    // 2. Use AI to extract text and structure it
+    const { output } = await prompt(dataUri);
     
     if (!output) {
       throw new Error('AI failed to parse the resume structure.');
     }
     
-    // 4. Add unique IDs to array items
+    // 3. Add unique IDs to array items
     const now = Date.now();
     output.resumeData.experience.forEach((item, index) => item.id = now + index);
     output.resumeData.education.forEach((item, index) => item.id = now + 100 + index);
