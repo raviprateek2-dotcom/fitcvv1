@@ -48,38 +48,38 @@ export async function generateStaticParams() {
 const MarkdownRenderer = ({ content }: { content: string }) => {
   const htmlContent = content
     .split('\n')
-    .map((line) => {
+    .map((line, index) => {
       line = line.trim();
       if (line.startsWith('# ')) {
-        return `<h1>${line.substring(2)}</h1>`;
+        return `<h1 key=${index} class="text-3xl font-bold font-headline mt-8 mb-4">${line.substring(2)}</h1>`;
       }
       if (line.startsWith('## ')) {
-        return `<h2>${line.substring(3)}</h2>`;
+        return `<h2 key=${index} class="text-2xl font-bold font-headline mt-6 mb-3">${line.substring(3)}</h2>`;
       }
       if (line.startsWith('### ')) {
-        return `<h3>${line.substring(4)}</h3>`;
+        return `<h3 key=${index} class="text-xl font-bold font-headline mt-4 mb-2">${line.substring(4)}</h3>`;
       }
       if (line.startsWith('- ')) {
-        return `<li>${line.substring(2)}</li>`;
+        return `<li key=${index} class="mb-2">${line.substring(2)}</li>`;
       }
       // Basic bold and italic
       line = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
       line = line.replace(/\*(.*?)\*/g, '<em>$1</em>');
       
       if (line.startsWith('`') && line.endsWith('`')) {
-        return `<p><code>${line.substring(1, line.length -1)}</code></p>`;
+        return `<p key=${index} class="my-4"><code class="bg-muted text-muted-foreground rounded-md px-2 py-1 font-mono text-sm">${line.substring(1, line.length - 1)}</code></p>`;
       }
       
       if(line === '') {
           return '<br />';
       }
 
-      return `<p>${line}</p>`;
+      return `<p key=${index} class="mb-4 leading-relaxed">${line}</p>`;
     })
     .join('');
     
     // Wrap lists
-    const withLists = htmlContent.replace(/<li>(.*?)<\/li>(?!<li>)/gs, '<li>$1</li></ul>').replace(/(<li>.*?<\/li>)/, '<ul>$1');
+    const withLists = htmlContent.replace(/<li>(.*?)<\/li>(?!<li)/gs, '<li>$1</li></ul>').replace(/(<li>.*?<\/li>)/, '<ul class="list-disc pl-6 my-4 space-y-2">$1');
 
   return <div className="prose prose-lg dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: withLists }} />;
 };
@@ -127,5 +127,3 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
     </div>
   );
 }
-
-    

@@ -3,14 +3,14 @@
 
 import { Button } from '@/components/ui/button';
 import { blogPosts } from '@/lib/blog-posts';
-import { ArrowRight, CheckCircle2, DraftingCompass, FileText, Sparkles, Zap, PenTool, FileSignature, BrainCircuit, Star } from 'lucide-react';
+import { ArrowRight, CheckCircle2, DraftingCompass, FileText, Sparkles, Zap } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useState, useRef } from 'react';
+import { useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import Autoplay from "embla-carousel-autoplay";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { motion, AnimatePresence, useScroll, useTransform, Variants } from 'framer-motion';
+import { motion, useScroll, useTransform, Variants } from 'framer-motion';
 import { TypingAnimation } from '@/components/common/TypingAnimation';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
@@ -123,12 +123,6 @@ const testimonials = [
   },
 ];
 
-
-const blogPostIcons: { [key: string]: React.FC<React.ComponentProps<'svg'>> } = {
-  'ultimate-resume-guide-2024': PenTool,
-  '5-common-resume-mistakes': FileSignature,
-  'how-to-beat-ats': BrainCircuit,
-};
 
 const GridPatternBackground = () => {
     const ref = useRef(null);
@@ -423,7 +417,7 @@ export default function Home() {
                         <CardContent className="p-0 flex flex-col gap-6">
                           <div className="flex">
                               {[...Array(5)].map((_, i) => (
-                                  <Star key={i} className={`w-5 h-5 ${i < testimonial.rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground/50'}`} />
+                                  <svg key={i} className={`w-5 h-5 ${i < testimonial.rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground/50'}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
                               ))}
                           </div>
                           <p className="text-lg text-muted-foreground flex-grow">"{testimonial.quote}"</p>
@@ -494,17 +488,22 @@ export default function Home() {
               className="grid gap-8 md:grid-cols-3"
             >
               {blogPosts.slice(0, 3).map((post) => {
-                  const Icon = blogPostIcons[post.slug] || PenTool;
+                  const image = PlaceHolderImages.find(img => img.id === post.imageId);
                   return (
                       <motion.div variants={listItemVariants} key={post.slug}>
                         <Card className="group overflow-hidden flex flex-col h-full transition-all duration-300 hover:scale-105 hover:shadow-2xl" variant="neuro">
-                            <Link href={`/blog/${post.slug}`} className="block overflow-hidden relative h-48">
-                                <div className="absolute inset-0 bg-primary/10 flex items-center justify-center">
-                                    <motion.div whileHover={{ scale: 1.2, rotate: -5 }} transition={{ type: 'spring', stiffness: 300 }}>
-                                      <Icon className="w-24 h-24 text-primary/50" />
-                                    </motion.div>
-                                </div>
-                            </Link>
+                           {image && (
+                              <Link href={`/blog/${post.slug}`} className="block overflow-hidden relative h-48">
+                                <Image
+                                  src={image.imageUrl}
+                                  alt={post.title}
+                                  width={400}
+                                  height={200}
+                                  data-ai-hint={image.imageHint}
+                                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                />
+                              </Link>
+                           )}
                             <CardContent className="p-6 flex flex-col flex-grow">
                             <h3 className="text-xl font-bold font-headline mb-2 group-hover:text-primary transition-colors">
                                 <Link href={`/blog/${post.slug}`}>{post.title}</Link>
