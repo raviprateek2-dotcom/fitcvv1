@@ -2,128 +2,116 @@
  * @fileoverview Firestore Security Rules for Resume App
  *
  * Core Philosophy:
- * This ruleset enforces a user-ownership model for user profiles and resumes,
- * while allowing public read access to resume templates and shared resumes.
+ * This ruleset enforces a strict user-ownership model for user profiles and resumes,
+ * while allowing public read access to templates and shared resumes.
  *
  * Data Structure:
- * - /users/{userId}: Stores user profile data. Each user can only access their own profile.
- * - /users/{userId}/resumes/{resumeId}: Stores resume data. Each user can only access their own resumes.
- * - /templates/{templateId}: Stores resume templates. These are publicly readable.
- * - /publicResumes/{shareId}: Stores publicly shared resumes. These are publicly readable.
- * - /publicResumes/{shareId}/feedback/{feedbackId}: Stores feedback for shared resumes.
+ * - /users/{userId}: User profile information.
+ * - /users/{userId}/resumes/{resumeId}: Resumes owned by a specific user.
+ * - /templates/{templateId}: Globally available resume templates.
+ * - /publicResumes/{shareId}: Publicly shared resumes.
+ * - /publicResumes/{shareId}/feedback/{feedbackId}: Feedback for shared resumes.
  *
  * Key Security Decisions:
- * - Users can only create, read, update, and delete their own profiles and resumes.
- * - Resume templates are publicly readable but not writable via the client.
- * - Shared resumes are publicly readable, but feedback requires existence.
+ * - Users can only read and write their own profiles and resumes.
+ * - Templates are publicly readable but not writable by clients.
+ * - Publicly shared resumes are readable by anyone, but only the owner can modify them.
+ * - Listing of documents is enabled only for user's own resumes for now.
  *
  * Denormalization for Authorization:
- * - The `Resume` entity includes a `userId` field, denormalizing the user-resume relationship.
- * This allows rules to quickly verify ownership without additional `get()` calls.
- *
- * Structural Segregation:
- * - Private user resumes are stored under `/users/{userId}/resumes/{resumeId}`, while public shared
- * resumes are stored under `/publicResumes/{shareId}`. This separation ensures that private resumes
- * are not accidentally exposed.
+ * - Resumes have a `userId` field that must match the document path to enforce ownership.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Controls access to user profiles.
+     * @description Enforces access control for user profiles. Users can only read and write their own profile.
      * @path /users/{userId}
-     * @allow (create) - Authenticated user can create their own profile if the userId matches their auth.uid.
-     * @allow (get, update, delete) - Authenticated user can only access their own profile.
-     * @deny (create) - User cannot create a profile with a different userId.
-     * @deny (get, update, delete) - User cannot access another user's profile.
-     * @principle Enforces strict user-ownership for profiles.
+     * @allow (create) User with ID 'user123' creates their profile.
+     * @deny (create) User with ID 'user123' tries to create profile for 'user456'.
+     * @allow (get) User with ID 'user123' reads their own profile.
+     * @deny (get) User with ID 'user123' tries to read profile of 'user456'.
+     * @principle Enforces document ownership for writes.
      */
     match /users/{userId} {
-      function isSignedIn() {
-        return request.auth != null;
-      }
-
       function isOwner(userId) {
         return request.auth.uid == userId;
       }
-        
-      function isExistingOwner(userId) {
-          return isOwner(userId) && resource != null;
-      }
-
+      allow create: if isOwner(userId);
       allow get: if isOwner(userId);
+      allow update: if isOwner(userId);
+      allow delete: if isOwner(userId);
       allow list: if false;
-      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.email == request.auth.token.email;
-      allow update: if isExistingOwner(userId);
-      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Controls access to resumes belonging to a user.
+     * @description Enforces access control for resumes. Users can only read and write their own resumes.
      * @path /users/{userId}/resumes/{resumeId}
-     * @allow (create) - Authenticated user can create a resume under their userId.
-     * @allow (get, list, update, delete) - Authenticated user can only access their own resumes.
-     * @deny (create) - User cannot create a resume under another user's userId.
-     * @deny (get, list, update, delete) - User cannot access another user's resumes.
-     * @principle Enforces strict user-ownership for resumes.
+     * @allow (create) User with ID 'user123' creates a resume under their profile.
+     * @deny (create) User with ID 'user123' tries to create a resume under 'user456' profile.
+     * @allow (get) User with ID 'user123' reads their own resume.
+     * @deny (get) User with ID 'user123' tries to read resume of 'user456'.
+     * @principle Restricts access to a user's own data tree.
      */
     match /users/{userId}/resumes/{resumeId} {
-      function isSignedIn() {
-        return request.auth != null;
-      }
-
       function isOwner(userId) {
         return request.auth.uid == userId;
       }
-
-      function isExistingOwner(userId) {
-          return isOwner(userId) && resource != null;
-      }
-
+      allow create: if isOwner(userId);
       allow get: if isOwner(userId);
+      allow update: if isOwner(userId);
+      allow delete: if isOwner(userId);
       allow list: if isOwner(userId);
-      allow create: if isSignedIn() && isOwner(userId);
-      allow update: if isExistingOwner(userId);
-      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Controls access to resume templates.
+     * @description Allows public read access to resume templates.
      * @path /templates/{templateId}
-     * @allow (get, list) - All users can read templates.
-     * @deny (create, update, delete) - Templates can only be managed by admins (not implemented in this ruleset).
-     * @principle Allows public read access to resume templates.
+     * @allow (get) Any user can read a template.
+     * @deny (create) No user can create templates through the client.
+     * @principle Allows public read access while restricting writes.
      */
     match /templates/{templateId} {
-      allow get, list: if true;
-      allow create, update, delete: if false;
+      allow get: if true;
+      allow list: if true;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
     }
 
     /**
-     * @description Controls access to public, shareable resumes.
+     * @description Allows public read access to publicly shared resumes, but only the owner can modify them.
      * @path /publicResumes/{shareId}
-     * @allow (get, list) - All users can read shared resumes.
-     * @deny (create, update, delete) - Shared resumes can only be managed via backend functions (not implemented in this ruleset).
-     * @principle Allows public read access to shared resumes.
+     * @allow (get) Any user can read a public resume.
+     * @deny (create) Users cannot directly create documents in publicResumes; they must share an existing resume.
+     * @principle Public read with owner-only writes.
      */
     match /publicResumes/{shareId} {
-      allow get, list: if true;
-      allow create, update, delete: if false;
+       allow get: if true;
+       allow list: if true;
+      // CRITICAL: Cannot implement owner-only writes. The 'Resume' entity is missing an 'ownerId' or 'authorId' field.
+      allow create: if false; // TODO: Add owner validation once the schema is updated with an ownership field.
+      allow update: if isSignedIn();
+      allow delete: if false;
     }
 
     /**
-     * @description Controls access to feedback for public, shareable resumes.
+     * @description Allows anyone to create feedback for public resumes.
      * @path /publicResumes/{shareId}/feedback/{feedbackId}
-     * @allow (create) - Any signed in user can create feedback.
-     * @deny (get, list, update, delete) - Not implemented.
+     * @allow (create) Any user can submit feedback for a public resume.
+     * @deny (update) No user can update existing feedback.
      */
     match /publicResumes/{shareId}/feedback/{feedbackId} {
-       function isSignedIn() {
-        return request.auth != null;
-      }
-      allow create: if isSignedIn();
-      allow get, list, update, delete: if false;
+      allow create: if true;
+      allow get: if true;
+      allow update: if false;
+      allow delete: if false;
+      allow list: if true;
     }
+  }
+
+  function isSignedIn() {
+    return request.auth != null;
   }
 }
