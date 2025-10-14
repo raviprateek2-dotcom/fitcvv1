@@ -74,22 +74,8 @@ export function useCollection<T = any>(
       },
       (error: FirestoreError) => {
         let path: string = 'unknown path';
-        // This logic extracts the path from either a ref or a query
-        if (memoizedTargetRefOrQuery.type === 'collection') {
-            path = (memoizedTargetRefOrQuery as CollectionReference).path;
-        } else if (memoizedTargetRefOrQuery.type === 'query') {
-            // For queries, we can often get the path from the underlying reference if it's simple
-            // This is a safer way than accessing private properties
-            const queryRef = memoizedTargetRefOrQuery as Query;
-            // This part is a bit of a workaround as the public API doesn't directly expose the path
-            // for a complex query. We assume it operates on a collection.
-            // A more robust solution might involve passing the path as a separate argument if needed.
-            try {
-                // This might represent the collection the query is built on.
-                path = (queryRef as any)._query.path.segments.join('/');
-            } catch (e) {
-                // fallback
-            }
+        if ('path' in memoizedTargetRefOrQuery) {
+          path = (memoizedTargetRefOrQuery as CollectionReference).path;
         }
         
         const contextualError = new FirestorePermissionError({
