@@ -887,18 +887,20 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                         )}
                         {resumeData.projects !== undefined && (
                           <AccordionItem value="projects">
-                          <AccordionTrigger className="font-semibold flex justify-between w-full">
-                            Projects
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); removeProjectSection();}} className="text-destructive hover:text-destructive-foreground hover:bg-destructive h-7 w-7">
-                                    <MinusCircle className="h-4 w-4" />
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>Remove Section</TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
+                          <AccordionTrigger className="font-semibold">
+                            <div className="flex items-center justify-between w-full">
+                                <span>Projects</span>
+                                <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                    <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); removeProjectSection();}} className="text-destructive hover:text-destructive-foreground hover:bg-destructive h-7 w-7 mr-2">
+                                        <MinusCircle className="h-4 w-4" />
+                                    </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>Remove Section</TooltipContent>
+                                </Tooltip>
+                                </TooltipProvider>
+                            </div>
                           </AccordionTrigger>
                           <AccordionContent className="space-y-4 pt-4">
                               {resumeData.projects.map((proj) => (
@@ -953,18 +955,20 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                         )}
                         {resumeData.skills !== undefined && (
                           <AccordionItem value="skills">
-                          <AccordionTrigger className="font-semibold flex justify-between w-full">
-                            Skills
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); removeSkillSection();}} className="text-destructive hover:text-destructive-foreground hover:bg-destructive h-7 w-7">
-                                    <MinusCircle className="h-4 w-4" />
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>Remove Section</TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
+                          <AccordionTrigger className="font-semibold">
+                            <div className="flex items-center justify-between w-full">
+                                <span>Skills</span>
+                                <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                    <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); removeSkillSection();}} className="text-destructive hover:text-destructive-foreground hover:bg-destructive h-7 w-7 mr-2">
+                                        <MinusCircle className="h-4 w-4" />
+                                    </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>Remove Section</TooltipContent>
+                                </Tooltip>
+                                </TooltipProvider>
+                            </div>
                           </AccordionTrigger>
                           <AccordionContent className="space-y-4 pt-4">
                               {resumeData.skills.map((skill) => (
