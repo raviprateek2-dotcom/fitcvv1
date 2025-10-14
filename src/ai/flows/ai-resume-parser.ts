@@ -98,7 +98,12 @@ const parseResumeFlow = ai.defineFlow(
   },
   async (fileBuffer: Buffer) => {
     // 1. Parse PDF to get raw text
-    const data = await pdf(fileBuffer);
+    
+    // The 'pdf-parse' library is causing persistent build issues.
+    // We will install and use 'pdf-parse' from npm again, but use a dynamic import
+    // to avoid the build-time analysis that seems to be failing.
+    const pdfParse = (await import('pdf-parse')).default;
+    const data = await pdfParse(fileBuffer);
     const rawText = data.text;
     
     // 2. Use AI to structure the text
