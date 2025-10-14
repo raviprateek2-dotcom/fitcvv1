@@ -110,15 +110,15 @@ export default function LoginPage() {
         <div className="flex justify-center mb-4">
             <motion.div
               animate={{
-                rotate: [0, -5, 5, -5, 5, 0],
-                y: [0, -20, -20, -50],
-                x: [0, 0, 0, 200],
-                opacity: [1, 1, 1, 0],
+                rotate: [0, -10, 10, -10, 10, 0, 0, 0],
+                y: [0, 0, 0, 0, -50, -50, -50],
+                x: [0, 0, 0, 0, 0, 200, 200],
+                opacity: [1, 1, 1, 1, 1, 0, 0],
               }}
               transition={{
-                duration: 2.5,
+                duration: 3,
                 ease: 'easeInOut',
-                times: [0, 0.4, 0.6, 1],
+                times: [0, 0.2, 0.4, 0.6, 0.8, 0.9, 1],
               }}
             >
               <Rocket className="h-10 w-10 text-primary" />
