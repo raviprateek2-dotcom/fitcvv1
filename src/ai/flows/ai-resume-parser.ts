@@ -66,8 +66,8 @@ const ParseResumeOutputSchema = z.object({
 
 export type ParseResumeOutput = z.infer<typeof ParseResumeOutputSchema>;
 
-export async function parseResumeFromPdf(fileBuffer: Buffer): Promise<ParseResumeOutput> {
-  return parseResumeFlow(fileBuffer);
+export async function parseResumeFromPdf(base64String: string): Promise<ParseResumeOutput> {
+  return parseResumeFlow(base64String);
 }
 
 const prompt = ai.definePrompt({
@@ -93,11 +93,12 @@ const prompt = ai.definePrompt({
 const parseResumeFlow = ai.defineFlow(
   {
     name: 'parseResumeFlow',
-    inputSchema: z.any(),
+    inputSchema: z.string(),
     outputSchema: ParseResumeOutputSchema,
   },
-  async (fileBuffer: Buffer) => {
-    // 1. Parse PDF to get raw text
+  async (base64String: string) => {
+    // 1. Convert Base64 to Buffer and then parse PDF to get raw text
+    const fileBuffer = Buffer.from(base64String, 'base64');
     
     // The 'pdf-parse' library is causing persistent build issues.
     // We will install and use 'pdf-parse' from npm again, but use a dynamic import

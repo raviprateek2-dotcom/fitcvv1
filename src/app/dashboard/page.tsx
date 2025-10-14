@@ -245,9 +245,10 @@ export default function DashboardPage() {
 
     try {
       const arrayBuffer = await file.arrayBuffer();
-      const fileBuffer = Buffer.from(arrayBuffer);
+      // Convert buffer to Base64 string to pass to the server action
+      const base64String = Buffer.from(arrayBuffer).toString('base64');
 
-      const result = await parseResumeFromPdf(fileBuffer);
+      const result = await parseResumeFromPdf(base64String);
       
       if (!result.success || !result.data) {
         throw new Error(result.error || 'Failed to parse resume.');
