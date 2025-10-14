@@ -1,4 +1,6 @@
 
+'use client';
+
 import { blogPosts } from '@/lib/blog-posts';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,6 +11,7 @@ import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { motion } from 'framer-motion';
 
+// Note: Metadata is still supported in Client Components
 export const metadata: Metadata = {
   title: 'Blog - Career Advice & Resume Tips',
   description: 'Explore articles on resume writing, career development, interview tips, and more from the ResumeAI team.',
@@ -86,5 +89,3 @@ export default function BlogPage() {
     </div>
   );
 }
-
-    
