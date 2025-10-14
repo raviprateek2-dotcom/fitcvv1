@@ -12,7 +12,7 @@ async function PDF(dataBuffer, options) {
     } = options || {};
 
     //PDFJS should be dynamically required
-    const PDFJS = require(`./pdf.js/${version}/build/pdf.js`);
+    const PDFJS = require('./pdf.js/v2.0.550/build/pdf.js');
 
     //make sure data is a buffer
     if (!isBuffer(dataBuffer)) {
