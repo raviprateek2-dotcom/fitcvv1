@@ -1,8 +1,8 @@
 
 'use client';
 
-import { useUser, useFirestore, getCollection } from '@/firebase';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { useUser, useFirestore, getCollection, addDocumentNonBlocking } from '@/firebase';
+import { collection, serverTimestamp } from 'firebase/firestore';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -77,52 +77,55 @@ export default function NewResumePage() {
         }
 
         // All checks passed, create the new resume.
-        try {
-          const resumesCollection = collection(firestore, `users/${user.uid}/resumes`);
-          const newResumeData = {
-            title: 'Untitled Resume',
-            templateId,
-            createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp(),
-            personalInfo: {
-              name: user.displayName || 'Your Name',
-              title: 'Your Professional Title',
-              email: user.email || '',
-              phone: '',
-              location: '',
-              website: '',
-            },
-            summary: 'A brief professional summary about yourself.',
-            experience: [],
-            education: [],
-            skills: [],
-            projects: [],
-            jobDescription: '',
-            coverLetter: '',
-            companyInfo: {
-                name: '',
-                jobTitle: ''
-            },
-            styling: {
-              bodyFontSize: 14,
-              headingFontSize: 18,
-              titleFontSize: 36,
-              accentColor: 'hsl(262.1 83.3% 57.8%)', // Default accent color
-            }
-          };
-
-          const docRef = await addDoc(resumesCollection, newResumeData);
-          // Redirect to the new resume's editor page.
-          router.replace(`/editor/${docRef.id}`);
-        } catch (error) {
-          console.error('Error creating new resume:', error);
-          toast({
-            variant: 'destructive',
-            title: 'Error',
-            description: 'Could not create a new resume. Please try again.'
-          });
-          router.push('/dashboard'); // Redirect to dashboard on error.
+        const resumesCollection = collection(firestore, `users/${user.uid}/resumes`);
+        const newResumeData = {
+        title: 'Untitled Resume',
+        templateId,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        personalInfo: {
+            name: user.displayName || 'Your Name',
+            title: 'Your Professional Title',
+            email: user.email || '',
+            phone: '',
+            location: '',
+            website: '',
+        },
+        summary: 'A brief professional summary about yourself.',
+        experience: [],
+        education: [],
+        skills: [],
+        projects: [],
+        jobDescription: '',
+        coverLetter: '',
+        companyInfo: {
+            name: '',
+            jobTitle: ''
+        },
+        styling: {
+            bodyFontSize: 14,
+            headingFontSize: 18,
+            titleFontSize: 36,
+            accentColor: 'hsl(262.1 83.3% 57.8%)', // Default accent color
         }
+        };
+
+        addDocumentNonBlocking(resumesCollection, newResumeData)
+            .then(docRef => {
+                if (docRef) {
+                    // Redirect to the new resume's editor page.
+                    router.replace(`/editor/${docRef.id}`);
+                } else {
+                    // This could happen if the addDoc promise is rejected due to a permission error and caught internally.
+                    // The error emitter will handle showing the dev overlay, but we need to guide the user.
+                    toast({
+                        variant: "destructive",
+                        title: "Creation Failed",
+                        description: "Could not create the new resume due to a permission error. Check the console for details.",
+                    });
+                    router.push('/dashboard');
+                }
+            });
     };
     
     // If user is not logged in, redirect to login page.

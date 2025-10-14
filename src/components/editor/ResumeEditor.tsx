@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -13,8 +12,8 @@ import React, { useCallback, useEffect, useState, useRef } from 'react';
 import AIContentDialog from './AIContentDialog';
 import AISectionWriterDialog from './AISectionWriterDialog';
 import { ResumePreview, CoverLetterPreview } from './ResumePreview';
-import { useDoc, useUser, useFirestore, useMemoFirebase } from '@/firebase';
-import { doc, setDoc, serverTimestamp, collection } from 'firebase/firestore';
+import { useDoc, useUser, useFirestore, useMemoFirebase, setDocumentNonBlocking } from '@/firebase';
+import { doc, serverTimestamp } from 'firebase/firestore';
 import { Skeleton } from '../ui/skeleton';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
@@ -246,32 +245,29 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   }, [isPrintMode, resumeData]);
 
   // Debounced save function
-  const handleSave = useCallback(async (data: ResumeData) => {
-    if (!resumeDocRef) return;
+  const handleSave = useCallback((dataToSave: ResumeData) => {
+    if (!resumeDocRef || !firestore) return;
     setSaveStatus('saving');
-    try {
-      await setDoc(resumeDocRef, { 
-        ...data,
-        updatedAt: serverTimestamp() 
-      }, { merge: true });
-      
-      // Also update the public resume if it exists
-      if(data.shareId) {
-        const publicResumeRef = doc(firestore, 'publicResumes', data.shareId);
-        await setDoc(publicResumeRef, { ...data, shareId: data.shareId }, { merge: true });
-      }
 
-      setSaveStatus('saved');
-      setTimeout(() => setSaveStatus('idle'), 2000);
-    } catch (error) {
-      setSaveStatus('error');
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: 'Failed to save your resume.',
-      });
+    const updatedData = {
+        ...dataToSave,
+        updatedAt: serverTimestamp()
+    };
+    
+    // Non-blocking save
+    setDocumentNonBlocking(resumeDocRef, updatedData, { merge: true });
+    
+    // Also update the public resume if it exists
+    if(dataToSave.shareId) {
+        const publicResumeRef = doc(firestore, 'publicResumes', dataToSave.shareId);
+        setDocumentNonBlocking(publicResumeRef, { ...dataToSave, shareId: dataToSave.shareId }, { merge: true });
     }
-  }, [resumeDocRef, toast, firestore]);
+
+    // Optimistically update UI
+    setSaveStatus('saved');
+    setTimeout(() => setSaveStatus('idle'), 2000);
+  }, [resumeDocRef, firestore]);
+
 
   // Auto-save useEffect
   useEffect(() => {
@@ -470,7 +466,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     handleFieldChange('templateId', templateId);
   };
   
-  const handleShare = async () => {
+  const handleShare = () => {
     if (!resumeData || !firestore) return;
 
     let shareId = resumeData.shareId;
@@ -479,13 +475,12 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     if (!shareId) {
         shareId = nanoid(10);
         const updatedDataWithShareId = { ...resumeData, shareId };
-        setResumeData(updatedDataWithShareId); // Update local state
-        // The autosave will handle saving this to the user's private resume.
+        setResumeData(updatedDataWithShareId); // Update local state, autosave will persist it.
     }
 
-    // Create or update the public document
+    // Create or update the public document non-blockingly
     const publicResumeRef = doc(firestore, 'publicResumes', shareId);
-    await setDoc(publicResumeRef, { ...resumeData, shareId }, { merge: true });
+    setDocumentNonBlocking(publicResumeRef, { ...resumeData, shareId }, { merge: true });
 
     const shareUrl = `${window.location.origin}/share/${shareId}`;
     navigator.clipboard.writeText(shareUrl);
@@ -887,8 +882,8 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                         )}
                         {resumeData.projects !== undefined && (
                           <AccordionItem value="projects">
-                          <div className="flex items-center justify-between font-semibold">
-                            <AccordionTrigger className="flex-grow">Projects</AccordionTrigger>
+                          <div className="flex items-center">
+                            <AccordionTrigger className="font-semibold flex-grow">Projects</AccordionTrigger>
                             <TooltipProvider>
                               <Tooltip>
                                 <TooltipTrigger asChild>
@@ -953,8 +948,8 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                         )}
                         {resumeData.skills !== undefined && (
                            <AccordionItem value="skills">
-                           <div className="flex items-center justify-between font-semibold">
-                             <AccordionTrigger className="flex-grow">Skills</AccordionTrigger>
+                           <div className="flex items-center">
+                             <AccordionTrigger className="font-semibold flex-grow">Skills</AccordionTrigger>
                              <TooltipProvider>
                                <Tooltip>
                                  <TooltipTrigger asChild>

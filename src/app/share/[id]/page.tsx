@@ -1,8 +1,8 @@
 
 'use client';
 
-import { useCollection, useDoc, useFirestore, useMemoFirebase } from '@/firebase';
-import { addDoc, collection, serverTimestamp, doc } from 'firebase/firestore';
+import { useCollection, useDoc, useFirestore, useMemoFirebase, addDocumentNonBlocking } from '@/firebase';
+import { collection, serverTimestamp, doc } from 'firebase/firestore';
 import { ResumePreview } from '@/components/editor/ResumePreview';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -81,26 +81,25 @@ export default function SharePage({ params }: { params: { id: string } }) {
   }, [feedback]);
 
 
-  const handleSubmitFeedback = async (e: React.FormEvent) => {
+  const handleSubmitFeedback = (e: React.FormEvent) => {
     e.preventDefault();
     if (!feedbackName || !feedbackComment || !feedbackCollectionRef) return;
 
     setIsSubmitting(true);
-    try {
-      await addDoc(feedbackCollectionRef, {
-        name: feedbackName,
-        comment: feedbackComment,
-        createdAt: serverTimestamp(),
-      });
-      toast({ title: 'Success!', description: 'Your feedback has been submitted.' });
-      setFeedbackName('');
-      setFeedbackComment('');
-    } catch (error) {
-      console.error('Error submitting feedback:', error);
-      toast({ variant: 'destructive', title: 'Error', description: 'Could not submit feedback.' });
-    } finally {
-      setIsSubmitting(false);
-    }
+    addDocumentNonBlocking(feedbackCollectionRef, {
+      name: feedbackName,
+      comment: feedbackComment,
+      createdAt: serverTimestamp(),
+    }).then(() => {
+        toast({ title: 'Success!', description: 'Your feedback has been submitted.' });
+        setFeedbackName('');
+        setFeedbackComment('');
+    }).catch(() => {
+        // Error is handled by the non-blocking function's internal catch block
+        toast({ variant: 'destructive', title: 'Error', description: 'Could not submit feedback.' });
+    }).finally(() => {
+        setIsSubmitting(false);
+    });
   };
 
   if (isResumeLoading) {

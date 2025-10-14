@@ -47,6 +47,8 @@ export function addDocumentNonBlocking(colRef: CollectionReference, data: any) {
           requestResourceData: data,
         })
       )
+      // Return a rejected promise so the caller knows the operation failed.
+      throw error;
     });
   return promise;
 }
