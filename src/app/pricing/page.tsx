@@ -1,10 +1,11 @@
+
 'use client';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { useFirestore, useUser } from '@/firebase';
+import { useFirestore, useUser, updateDocumentNonBlocking } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
-import { doc, updateDoc } from 'firebase/firestore';
+import { doc } from 'firebase/firestore';
 import { Check, X, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -36,7 +37,7 @@ export default function PricingPage() {
   const router = useRouter();
   const { toast } = useToast();
 
-  const handleUpgrade = async () => {
+  const handleUpgrade = () => {
     if (!user) {
       router.push('/signup?plan=pro');
       return;
@@ -44,21 +45,12 @@ export default function PricingPage() {
     if (!firestore) return;
 
     const userDocRef = doc(firestore, `users/${user.uid}`);
-    try {
-      await updateDoc(userDocRef, { subscription: 'premium' });
-      toast({
-        title: 'Upgrade Successful!',
-        description: "Welcome to Pro! You now have access to all premium features.",
-      });
-      router.push('/settings');
-    } catch (error) {
-      console.error('Upgrade failed:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Upgrade Failed',
-        description: 'We couldn\'t process your upgrade. Please try again.',
-      });
-    }
+    updateDocumentNonBlocking(userDocRef, { subscription: 'premium' });
+    toast({
+      title: 'Upgrade Successful!',
+      description: "Welcome to Pro! You now have access to all premium features.",
+    });
+    router.push('/settings');
   };
 
   const containerVariants = {
