@@ -10,7 +10,6 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-import pdf from '@/lib/pdf-parse';
 
 // Define types for resume structure
 const PersonalInfoSchema = z.object({
@@ -97,24 +96,23 @@ const parseResumeFlow = ai.defineFlow(
     outputSchema: ParseResumeOutputSchema,
   },
   async (base64String: string) => {
-    // 1. Convert Base64 to Buffer and then parse PDF to get raw text
+    // 1. Convert Base64 to Buffer
     const fileBuffer = Buffer.from(base64String, 'base64');
     
-    // The 'pdf-parse' library is causing persistent build issues.
-    // We will install and use 'pdf-parse' from npm again, but use a dynamic import
-    // to avoid the build-time analysis that seems to be failing.
-    const pdfParse = (await import('pdf-parse')).default;
-    const data = await pdfParse(fileBuffer);
+    // 2. Dynamically import and use pdf-parse
+    // We use a dynamic import to avoid potential build-time issues with Next.js
+    const pdf = (await import('pdf-parse')).default;
+    const data = await pdf(fileBuffer);
     const rawText = data.text;
     
-    // 2. Use AI to structure the text
+    // 3. Use AI to structure the text
     const { output } = await prompt(rawText);
     
     if (!output) {
       throw new Error('AI failed to parse the resume structure.');
     }
     
-    // 3. Add unique IDs to array items
+    // 4. Add unique IDs to array items
     const now = Date.now();
     output.resumeData.experience.forEach((item, index) => item.id = now + index);
     output.resumeData.education.forEach((item, index) => item.id = now + 100 + index);
