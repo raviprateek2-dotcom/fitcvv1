@@ -887,21 +887,19 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                         )}
                         {resumeData.projects !== undefined && (
                           <AccordionItem value="projects">
-                          <AccordionTrigger className="font-semibold">
-                            <div className="flex items-center justify-between w-full">
-                                <span>Projects</span>
-                                <TooltipProvider>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                    <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); removeProjectSection();}} className="text-destructive hover:text-destructive-foreground hover:bg-destructive h-7 w-7 mr-2">
-                                        <MinusCircle className="h-4 w-4" />
-                                    </Button>
-                                    </TooltipTrigger>
-                                    <TooltipContent>Remove Section</TooltipContent>
-                                </Tooltip>
-                                </TooltipProvider>
-                            </div>
-                          </AccordionTrigger>
+                          <div className="flex items-center justify-between font-semibold">
+                            <AccordionTrigger className="flex-grow">Projects</AccordionTrigger>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); removeProjectSection(); }} className="text-destructive hover:text-destructive-foreground hover:bg-destructive h-7 w-7 mr-2">
+                                    <MinusCircle className="h-4 w-4" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>Remove Section</TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </div>
                           <AccordionContent className="space-y-4 pt-4">
                               {resumeData.projects.map((proj) => (
                                   <div key={proj.id} className="p-4 border rounded-lg space-y-4 relative">
@@ -954,55 +952,53 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                           </div>
                         )}
                         {resumeData.skills !== undefined && (
-                          <AccordionItem value="skills">
-                          <AccordionTrigger className="font-semibold">
-                            <div className="flex items-center justify-between w-full">
-                                <span>Skills</span>
-                                <TooltipProvider>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                    <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); removeSkillSection();}} className="text-destructive hover:text-destructive-foreground hover:bg-destructive h-7 w-7 mr-2">
-                                        <MinusCircle className="h-4 w-4" />
-                                    </Button>
-                                    </TooltipTrigger>
-                                    <TooltipContent>Remove Section</TooltipContent>
-                                </Tooltip>
-                                </TooltipProvider>
-                            </div>
-                          </AccordionTrigger>
-                          <AccordionContent className="space-y-4 pt-4">
-                              {resumeData.skills.map((skill) => (
-                              <div key={skill.id} className="p-4 border rounded-lg space-y-4">
-                                  <div className="flex items-center gap-4">
-                                      <div className="flex-grow space-y-2">
-                                          <Label>Skill</Label>
-                                          <Input value={skill.name} onChange={e => handleNestedChange('skills', skill.id, 'name', e.target.value)} />
-                                      </div>
-                                      <div className="space-y-2">
-                                          <Label>Level</Label>
-                                          <Select value={skill.level} onValueChange={value => handleNestedChange('skills', skill.id, 'level', value)}>
-                                              <SelectTrigger className="w-[180px]">
-                                                  <SelectValue placeholder="Select level" />
-                                              </SelectTrigger>
-                                              <SelectContent>
-                                                  <SelectItem value="Beginner">Beginner</SelectItem>
-                                                  <SelectItem value="Intermediate">Intermediate</SelectItem>
-                                                  <SelectItem value="Advanced">Advanced</SelectItem>
-                                                  <SelectItem value="Expert">Expert</SelectItem>
-                                              </SelectContent>
-                                          </Select>
-                                      </div>
-                                      <Button variant="ghost" size="icon" onClick={() => removeSkill(skill.id)} className="text-destructive hover:text-destructive-foreground hover:bg-destructive self-end">
-                                          <Trash2 className="h-4 w-4" />
-                                      </Button>
-                                  </div>
-                              </div>
-                              ))}
-                              <Button variant="outline" onClick={addSkill} className="w-full">
-                                  <PlusCircle className="mr-2 h-4 w-4" /> Add Skill
-                              </Button>
-                          </AccordionContent>
-                          </AccordionItem>
+                           <AccordionItem value="skills">
+                           <div className="flex items-center justify-between font-semibold">
+                             <AccordionTrigger className="flex-grow">Skills</AccordionTrigger>
+                             <TooltipProvider>
+                               <Tooltip>
+                                 <TooltipTrigger asChild>
+                                   <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); removeSkillSection(); }} className="text-destructive hover:text-destructive-foreground hover:bg-destructive h-7 w-7 mr-2">
+                                     <MinusCircle className="h-4 w-4" />
+                                   </Button>
+                                 </TooltipTrigger>
+                                 <TooltipContent>Remove Section</TooltipContent>
+                               </Tooltip>
+                             </TooltipProvider>
+                           </div>
+                           <AccordionContent className="space-y-4 pt-4">
+                               {resumeData.skills.map((skill) => (
+                               <div key={skill.id} className="p-4 border rounded-lg space-y-4">
+                                   <div className="flex items-center gap-4">
+                                       <div className="flex-grow space-y-2">
+                                           <Label>Skill</Label>
+                                           <Input value={skill.name} onChange={e => handleNestedChange('skills', skill.id, 'name', e.target.value)} />
+                                       </div>
+                                       <div className="space-y-2">
+                                           <Label>Level</Label>
+                                           <Select value={skill.level} onValueChange={value => handleNestedChange('skills', skill.id, 'level', value)}>
+                                               <SelectTrigger className="w-[180px]">
+                                                   <SelectValue placeholder="Select level" />
+                                               </SelectTrigger>
+                                               <SelectContent>
+                                                   <SelectItem value="Beginner">Beginner</SelectItem>
+                                                   <SelectItem value="Intermediate">Intermediate</SelectItem>
+                                                   <SelectItem value="Advanced">Advanced</SelectItem>
+                                                   <SelectItem value="Expert">Expert</SelectItem>
+                                               </SelectContent>
+                                           </Select>
+                                       </div>
+                                       <Button variant="ghost" size="icon" onClick={() => removeSkill(skill.id)} className="text-destructive hover:text-destructive-foreground hover:bg-destructive self-end">
+                                           <Trash2 className="h-4 w-4" />
+                                       </Button>
+                                   </div>
+                               </div>
+                               ))}
+                               <Button variant="outline" onClick={addSkill} className="w-full">
+                                   <PlusCircle className="mr-2 h-4 w-4" /> Add Skill
+                               </Button>
+                           </AccordionContent>
+                           </AccordionItem>
                         )}
                         
 
