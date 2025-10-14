@@ -33,7 +33,7 @@ const EducationSchema = z.object({
   id: z.number(),
   institution: z.string().describe("The name of the university or school."),
   degree: z.string().describe("The degree obtained, like 'Bachelor of Science in Computer Science'."),
-  date: z.string().describe("The graduation date or dates of attendance."),
+  date: zstring().describe("The graduation date or dates of attendance."),
 });
 
 const SkillSchema = z.object({
