@@ -544,9 +544,9 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
 
     try {
       const arrayBuffer = await file.arrayBuffer();
-      const fileBuffer = Buffer.from(arrayBuffer);
+      const base64String = Buffer.from(arrayBuffer).toString('base64');
 
-      const result = await parseResumeFromPdf(fileBuffer);
+      const result = await parseResumeFromPdf(base64String);
       
       if (!result.success || !result.data) {
         throw new Error(result.error || 'Failed to parse resume.');
