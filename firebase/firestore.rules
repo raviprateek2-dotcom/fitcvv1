@@ -50,11 +50,11 @@ service cloud.firestore {
       }
 
       function isExistingOwner(userId) {
-          return isOwner(userId) && exists(resource);
+          return isOwner(userId) && resource != null;
       }
 
       allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
+      allow list: if false;
       allow create: if isOwner(userId);
       allow update: if isExistingOwner(userId);
       allow delete: if isExistingOwner(userId);
