@@ -8,6 +8,9 @@ import {
   CollectionReference,
 } from 'firebase/firestore';
 import { WithId } from './use-collection';
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError } from '@/firebase/errors';
+
 
 /**
  * Performs a one-time fetch of a Firestore collection or query.
@@ -29,9 +32,12 @@ export async function getCollection<T = any>(
     });
     return results;
   } catch (error) {
-    console.error("Error fetching collection: ", error);
-    // Depending on requirements, you might want to re-throw the error
-    // or handle it in a specific way (e.g., return an empty array).
-    return [];
+    const permissionError = new FirestorePermissionError({
+      path: (targetRefOrQuery as CollectionReference).path,
+      operation: 'list',
+    });
+    errorEmitter.emit('permission-error', permissionError);
+    // Re-throw the error so the calling function knows the operation failed.
+    throw permissionError;
   }
 }
