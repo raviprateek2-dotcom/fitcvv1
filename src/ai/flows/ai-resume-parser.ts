@@ -97,7 +97,7 @@ const parseResumeFlow = ai.defineFlow(
   },
   async (base64String: string) => {
     // 1. Ensure the base64 string has the data URI prefix
-    const dataUri = base64String.startsWith('data:') 
+    const dataUri = base64String.startsWith('data:application/pdf;base64,') 
         ? base64String 
         : `data:application/pdf;base64,${base64String}`;
 
