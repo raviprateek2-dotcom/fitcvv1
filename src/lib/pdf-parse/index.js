@@ -3,16 +3,16 @@ const fs = require('fs');
 const path = require('path');
 const {isBuffer} = require('util');
 
+//PDFJS should be dynamically required
+const PDFJS = require('./pdf.js/v2.0.550/build/pdf.js');
+
 async function PDF(dataBuffer, options) {
 
     const {
-        version = 'v2.0.550',
+        version = 'v2.0.550', //keep for backwards compatibility
         max = 0,
         pagerender = render_page,
     } = options || {};
-
-    //PDFJS should be dynamically required
-    const PDFJS = require(path.join(__dirname, 'pdf.js/v2.0.550/build/pdf.js'));
 
     //make sure data is a buffer
     if (!isBuffer(dataBuffer)) {
