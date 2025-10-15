@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -101,9 +100,9 @@ type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 type EditorTab = 'content' | 'job-target' | 'cover-letter' | 'design';
 
 const colorSwatches = [
-  'hsl(215, 80%, 50%)',   // Blue
-  'hsl(145, 63%, 42%)',  // Green
-  'hsl(0, 72%, 51%)',     // Red
+  'hsl(221.2, 83.2%, 53.3%)', // Blue
+  'hsl(142.1, 76.2%, 36.3%)', // Green
+  'hsl(0, 84.2%, 60.2%)', // Red
   'hsl(262.1 83.3% 57.8%)', // Purple
   'hsl(24.6 95% 53.1%)',   // Orange
   'hsl(0 0% 9%)',          // Black
@@ -228,11 +227,11 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                 bodyFontSize: 14, 
                 headingFontSize: 18, 
                 titleFontSize: 36,
-                accentColor: 'hsl(215, 80%, 50%)'
+                accentColor: 'hsl(221.2, 83.2%, 53.3%)'
             };
         }
         if (typeof updatedData.styling.accentColor !== 'string') {
-            updatedData.styling.accentColor = 'hsl(215, 80%, 50%)';
+            updatedData.styling.accentColor = 'hsl(221.2, 83.2%, 53.3%)';
         }
 
 
@@ -476,17 +475,24 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
 
     let shareId = resumeData.shareId;
     
-    // If there is no shareId, create one.
+    // If there is no shareId, create one and save it to the user's resume doc.
     if (!shareId) {
         shareId = nanoid(10);
-        // This state update will be picked up by the auto-save useEffect
         setResumeData(prev => (prev ? { ...prev, shareId } : null)); 
     }
 
+    // Create a clean object with only the data needed for the public resume.
+    // Exclude sensitive or internal-only fields.
     const dataToShare = {
-        ...resumeData,
-        shareId,
-        userId: user.uid // Ensure userId is in the shared data
+        title: resumeData.title,
+        personalInfo: resumeData.personalInfo,
+        summary: resumeData.summary,
+        experience: resumeData.experience,
+        education: resumeData.education,
+        skills: resumeData.skills,
+        projects: resumeData.projects,
+        templateId: resumeData.templateId,
+        styling: resumeData.styling,
     };
 
     // Create or update the public document non-blockingly
@@ -497,7 +503,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     navigator.clipboard.writeText(shareUrl);
     toast({
         title: "Share Link Copied!",
-        description: "Anyone with the link can now view your resume."
+        description: "Anyone with the link can now view and leave feedback on your resume."
     });
   };
 
@@ -1126,3 +1132,5 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     </>
   );
 }
+
+    
