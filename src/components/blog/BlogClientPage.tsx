@@ -2,7 +2,7 @@
 'use client';
 
 import { blogPosts } from '@/lib/blog-posts';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
@@ -46,7 +46,7 @@ export function BlogClientPage() {
             const image = PlaceHolderImages.find(img => img.id === post.imageId);
             return (
               <motion.div key={post.slug} variants={itemVariants}>
-                <Card className="group overflow-hidden flex flex-col transition-all duration-300 hover:scale-105 hover:shadow-2xl h-full" variant="neuro">
+                <Card className="group overflow-hidden flex flex-col transition-all duration-300 hover:shadow-2xl h-full" variant="neuro">
                   {image && (
                     <Link href={`/blog/${post.slug}`} className="block overflow-hidden">
                       <Image
@@ -59,14 +59,12 @@ export function BlogClientPage() {
                       />
                     </Link>
                   )}
-                 <CardHeader>
-                      <h2 className="text-xl font-bold font-headline group-hover:text-primary transition-colors">
-                          <Link href={`/blog/${post.slug}`}>{post.title}</Link>
-                      </h2>
-                  </CardHeader>
-                <CardContent className="flex flex-col flex-grow">
-                  <p className="text-muted-foreground text-sm flex-grow">{post.description}</p>
-                  <Button variant="link" asChild className="p-0 h-auto mt-4 self-start">
+                <CardContent className="p-6 flex flex-col flex-grow">
+                  <h2 className="text-xl font-bold font-headline mb-2 group-hover:text-primary transition-colors">
+                      <Link href={`/blog/${post.slug}`}>{post.title}</Link>
+                  </h2>
+                  <p className="text-muted-foreground text-sm flex-grow mb-4">{post.description}</p>
+                  <Button variant="link" asChild className="p-0 h-auto self-start font-semibold">
                       <Link href={`/blog/${post.slug}`}>
                       Read More <ArrowRight className="ml-2 h-4 w-4" />
                       </Link>

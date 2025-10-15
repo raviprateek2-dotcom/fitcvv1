@@ -52,39 +52,39 @@ const MarkdownRenderer = ({ content }: { content: string }) => {
     .map((line, index) => {
       line = line.trim();
       if (line.startsWith('# ')) {
-        return `<h1 key=${index}>${line.substring(2)}</h1>`;
+        return `<h1 key=${index} class="text-3xl font-bold font-headline mt-8 mb-4">${line.substring(2)}</h1>`;
       }
       if (line.startsWith('## ')) {
-        return `<h2 key=${index}>${line.substring(3)}</h2>`;
+        return `<h2 key=${index} class="text-2xl font-bold font-headline mt-6 mb-3">${line.substring(3)}</h2>`;
       }
       if (line.startsWith('### ')) {
-        return `<h3 key=${index}>${line.substring(4)}</h3>`;
+        return `<h3 key=${index} class="text-xl font-bold font-headline mt-4 mb-2">${line.substring(4)}</h3>`;
       }
       if (line.startsWith('- ')) {
         // This will be wrapped in a <ul> later
-        return `<li key=${index}>${line.substring(2)}</li>`;
+        return `<li key=${index} class="ml-5 mb-2">${line.substring(2)}</li>`;
       }
        // Basic bold and italic
       line = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
       line = line.replace(/\*(.*?)\*/g, '<em>$1</em>');
       
       if (line.startsWith('`') && line.endsWith('`')) {
-        return `<code key=${index}>${line.substring(1, line.length - 1)}</code>`;
+        return `<code key=${index} class="bg-muted text-muted-foreground px-2 py-1 rounded-md font-mono text-sm">${line.substring(1, line.length - 1)}</code>`;
       }
       
       if(line === '') {
           return ''; // Return empty string for empty lines
       }
 
-      return `<p key=${index}>${line}</p>`;
+      return `<p key=${index} class="leading-relaxed mb-4">${line}</p>`;
     })
     .filter(line => line !== '') // Remove empty lines
     .join('');
     
     // Wrap consecutive <li> elements in a <ul>
-    const withLists = htmlContent.replace(/(<li>.*?<\/li>)+/gs, '<ul>$&</ul>');
+    const withLists = htmlContent.replace(/(<li>.*?<\/li>)+/gs, '<ul class="list-disc list-outside space-y-2 mb-4">$&</ul>');
 
-  return <div className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-headline prose-a:text-primary hover:prose-a:text-primary/80 prose-strong:font-semibold prose-code:bg-muted prose-code:text-muted-foreground prose-code:px-2 prose-code:py-1 prose-code:rounded-md" dangerouslySetInnerHTML={{ __html: withLists }} />;
+  return <div className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-headline prose-a:text-primary hover:prose-a:text-primary/80 prose-strong:font-semibold" dangerouslySetInnerHTML={{ __html: withLists }} />;
 };
 
 
@@ -99,34 +99,36 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
 
   return (
     <div className="container mx-auto px-4 md:px-6 py-12 md:py-20">
-      <Card className="max-w-4xl mx-auto" variant="neuro">
-        <CardHeader>
-          <Button variant="ghost" asChild className="mb-4 self-start">
-            <Link href="/blog">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Blog
-            </Link>
-          </Button>
-          {image && (
-              <div className="mb-8 overflow-hidden rounded-lg">
-                  <Image
-                      src={image.imageUrl}
-                      alt={post.title}
-                      width={800}
-                      height={400}
-                      data-ai-hint={image.imageHint}
-                      className="w-full h-auto object-cover"
-                      priority
-                  />
-              </div>
-          )}
-          <CardTitle className="text-3xl lg:text-4xl font-headline">{post.title}</CardTitle>
-          <p className="text-muted-foreground pt-2">{post.description}</p>
-        </CardHeader>
-        <CardContent>
-           <MarkdownRenderer content={post.content} />
-        </CardContent>
-      </Card>
+      <div className="max-w-4xl mx-auto">
+        <article>
+            <header className="mb-8">
+                 <Button variant="ghost" asChild className="mb-4 -ml-4">
+                    <Link href="/blog">
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    Back to Blog
+                    </Link>
+                </Button>
+                <h1 className="text-4xl lg:text-5xl font-headline font-extrabold tracking-tight mb-4">{post.title}</h1>
+                <p className="text-lg text-muted-foreground">{post.description}</p>
+                 {image && (
+                    <div className="mt-8 overflow-hidden rounded-2xl shadow-2xl">
+                        <Image
+                            src={image.imageUrl}
+                            alt={post.title}
+                            width={1200}
+                            height={600}
+                            data-ai-hint={image.imageHint}
+                            className="w-full h-auto object-cover"
+                            priority
+                        />
+                    </div>
+                )}
+            </header>
+            <div className="prose prose-lg dark:prose-invert max-w-none">
+                <MarkdownRenderer content={post.content} />
+            </div>
+        </article>
+      </div>
     </div>
   );
 }
