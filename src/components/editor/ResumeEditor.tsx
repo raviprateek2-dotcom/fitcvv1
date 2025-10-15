@@ -213,6 +213,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   const { toast } = useToast();
   
   const [isTitleSuggesting, setIsTitleSuggesting] = useState(false);
+  const [titleSuggestion, setTitleSuggestion] = useState<string | null>(null);
 
 
   useEffect(() => {
@@ -622,20 +623,15 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   const handleSuggestTitle = async () => {
     if (!resumeData?.personalInfo.title) return;
     setIsTitleSuggesting(true);
+    setTitleSuggestion(null);
     try {
       const result = await suggestTitleAction({ currentTitle: resumeData.personalInfo.title });
       if (result.success && result.data) {
         if (result.data.suggestedTitle.toLowerCase() !== resumeData.personalInfo.title.toLowerCase()) {
+          setTitleSuggestion(result.data.suggestedTitle);
           toast({
-            title: 'AI Title Suggestion',
-            description: `We suggest changing "${resumeData.personalInfo.title}" to "${result.data.suggestedTitle}".`,
-            action: (
-              <Button size="sm" onClick={() => {
-                setResumeData(prev => prev ? { ...prev, personalInfo: { ...prev.personalInfo, title: result.data.suggestedTitle }} : null);
-              }}>
-                Apply
-              </Button>
-            )
+            title: 'AI Title Suggestion Ready',
+            description: 'We have a suggestion for your job title.',
           });
         } else {
             toast({ title: 'Title Looks Good!', description: 'Your job title is already professional and clear.' });
@@ -647,6 +643,13 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
        toast({ variant: 'destructive', title: 'Error', description: 'Failed to get title suggestion.' });
     } finally {
       setIsTitleSuggesting(false);
+    }
+  }
+
+  const applyTitleSuggestion = () => {
+    if (titleSuggestion) {
+      setResumeData(prev => prev ? { ...prev, personalInfo: { ...prev.personalInfo, title: titleSuggestion }} : null);
+      setTitleSuggestion(null);
     }
   }
 
@@ -809,7 +812,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                                       <Tooltip>
                                         <TooltipTrigger asChild>
                                           <Button variant="outline" size="icon" onClick={handleSuggestTitle} disabled={isTitleSuggesting}>
-                                            <Sparkles className="h-4 w-4" />
+                                            {isTitleSuggesting ? <Loader2 className="h-4 w-4 animate-spin"/> : <Sparkles className="h-4 w-4" />}
                                           </Button>
                                         </TooltipTrigger>
                                         <TooltipContent>
@@ -818,6 +821,12 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                                       </Tooltip>
                                     </TooltipProvider>
                                   </div>
+                                   {titleSuggestion && (
+                                    <div className="bg-secondary p-2 rounded-md flex items-center justify-between">
+                                      <p className="text-sm">Suggestion: <span className="font-semibold">{titleSuggestion}</span></p>
+                                      <Button size="sm" onClick={applyTitleSuggestion}>Apply</Button>
+                                    </div>
+                                  )}
                                 </div>
                             </div>
                             <div className="space-y-2"><Label>Email</Label><Input name="email" type="email" value={resumeData.personalInfo.email} onChange={handlePersonalInfoChange} /></div>
