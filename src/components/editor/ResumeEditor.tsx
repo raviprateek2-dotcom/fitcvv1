@@ -761,7 +761,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                               />
                               <ProFeatureWrapper isPro={isProUser}>
                                 <Button variant="outline" size="sm" onClick={handleSuggestKeywords} disabled={isAiLoading}>
-                                  <Lightbulb className="mr-2 h-4 w-4" />
+                                  {isAiLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Lightbulb className="mr-2 h-4 w-4" />}
                                   {isAiLoading ? 'Analyzing...' : 'Suggest Keywords'}
                                 </Button>
                               </ProFeatureWrapper>
@@ -1064,3 +1064,5 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     </>
   );
 }
+
+    
