@@ -1,48 +1,15 @@
 
 
-import { blogPosts, type BlogPost } from '@/lib/blog-posts';
+'use client';
+
+import { blogPosts } from '@/lib/blog-posts';
 import { notFound } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-import type { Metadata, ResolvingMetadata } from 'next';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-
-type Props = {
-  params: { slug: string };
-};
-
-export async function generateMetadata({ params }: Props, parent: ResolvingMetadata): Promise<Metadata> {
-  const post = blogPosts.find((p) => p.slug === params.slug);
-
-  if (!post) {
-    return {
-      title: 'Not Found',
-      description: 'The page you are looking for does not exist.',
-    };
-  }
-  
-  const image = PlaceHolderImages.find(img => img.id === post.imageId);
-
-  return {
-    title: post.title,
-    description: post.description,
-    openGraph: {
-        title: post.title,
-        description: post.description,
-        type: 'article',
-        images: image ? [image.imageUrl] : [],
-    }
-  };
-}
-
-export async function generateStaticParams() {
-  return blogPosts.map((post) => ({
-    slug: post.slug,
-  }));
-}
+import { motion } from 'framer-motion';
 
 // Custom markdown-to-HTML renderer
 const MarkdownRenderer = ({ content }: { content: string }) => {
@@ -97,21 +64,46 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
   
   const image = PlaceHolderImages.find(img => img.id === post.imageId);
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
+  };
+
   return (
     <div className="container mx-auto px-4 md:px-6 py-12 md:py-20">
       <div className="max-w-4xl mx-auto">
         <article>
-            <header className="mb-8">
-                 <Button variant="ghost" asChild className="mb-4 -ml-4">
-                    <Link href="/blog">
-                    <ArrowLeft className="mr-2 h-4 w-4" />
-                    Back to Blog
-                    </Link>
-                </Button>
-                <h1 className="text-4xl lg:text-5xl font-headline font-extrabold tracking-tight mb-4">{post.title}</h1>
-                <p className="text-lg text-muted-foreground">{post.description}</p>
+            <motion.header 
+              className="mb-8"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+            >
+                 <motion.div variants={itemVariants}>
+                    <Button variant="ghost" asChild className="mb-4 -ml-4">
+                        <Link href="/blog">
+                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        Back to Blog
+                        </Link>
+                    </Button>
+                  </motion.div>
+                <motion.h1 variants={itemVariants} className="text-4xl lg:text-5xl font-headline font-extrabold tracking-tight mb-4">{post.title}</motion.h1>
+                <motion.p variants={itemVariants} className="text-lg text-muted-foreground">{post.description}</motion.p>
                  {image && (
-                    <div className="mt-8 overflow-hidden rounded-2xl shadow-2xl">
+                    <motion.div 
+                        variants={itemVariants} 
+                        className="mt-8 overflow-hidden rounded-2xl shadow-2xl"
+                    >
                         <Image
                             src={image.imageUrl}
                             alt={post.title}
@@ -121,12 +113,16 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
                             className="w-full h-auto object-cover"
                             priority
                         />
-                    </div>
+                    </motion.div>
                 )}
-            </header>
-            <div className="prose prose-lg dark:prose-invert max-w-none">
+            </motion.header>
+            <motion.div 
+              initial={{opacity: 0}}
+              animate={{opacity: 1}}
+              transition={{delay: 0.5, duration: 0.5}}
+              className="prose prose-lg dark:prose-invert max-w-none">
                 <MarkdownRenderer content={post.content} />
-            </div>
+            </motion.div>
         </article>
       </div>
     </div>
