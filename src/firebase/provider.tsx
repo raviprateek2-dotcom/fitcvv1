@@ -6,7 +6,7 @@ import { Firestore, doc, getDoc } from 'firebase/firestore';
 import { Auth, User, onAuthStateChanged } from 'firebase/auth';
 import { FirebaseErrorListener } from '@/components/FirebaseErrorListener'
 import { useDoc } from './firestore/use-doc';
-import { setDocumentNonBlocking } from '@/firebase';
+import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 
 interface FirebaseProviderProps {
   children: ReactNode;
