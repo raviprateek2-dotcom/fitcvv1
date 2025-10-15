@@ -7,7 +7,7 @@ import type { CoverLetterPreviewProps } from '../ResumePreview';
 export function ExecutiveCoverLetter({ resumeData }: CoverLetterPreviewProps) {
     const { personalInfo, coverLetter, companyInfo, styling } = resumeData;
     const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-    const accentColor = styling?.accentColor || 'hsl(262.1 83.3% 57.8%)';
+    const accentColor = styling?.accentColor || 'hsl(221.2 83.2% 53.3%)';
     
     const dynamicStyles = {
         '--title-font-size': `${styling?.titleFontSize || 36}px`,
@@ -36,3 +36,5 @@ export function ExecutiveCoverLetter({ resumeData }: CoverLetterPreviewProps) {
     </div>
   );
 }
+
+    

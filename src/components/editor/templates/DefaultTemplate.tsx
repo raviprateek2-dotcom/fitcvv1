@@ -30,7 +30,7 @@ const templates: Record<string, { header: string, sectionTitle: string }> = {
 export function DefaultTemplate({ resumeData }: ResumePreviewProps) {
   const { personalInfo, summary, experience, education, skills, projects, templateId = 'modern', styling } = resumeData;
   const templateStyles = templates[templateId] || templates.modern;
-  const accentColor = styling?.accentColor || 'hsl(262.1 83.3% 57.8%)';
+  const accentColor = styling?.accentColor || 'hsl(221.2 83.2% 53.3%)';
   
   const dynamicStyles = {
     '--title-font-size': `${styling?.titleFontSize || 36}px`,
@@ -142,3 +142,5 @@ export function DefaultTemplate({ resumeData }: ResumePreviewProps) {
     </div>
   );
 }
+
+    

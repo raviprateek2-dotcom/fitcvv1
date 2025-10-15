@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Download, PlusCircle, Share2, Trash2, Sparkles, Bot, FileText, Newspaper, PanelLeft, ArrowLeft, Brush, Lock, Lightbulb, Upload, MinusCircle, Loader2 } from 'lucide-react';
+import { Download, PlusCircle, Share2, Trash2, Sparkles, Bot, FileText, Newspaper, PanelLeft, ArrowLeft, Brush, Lock, Lightbulb, Upload, MinusCircle, Loader2, Target } from 'lucide-react';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import AIContentDialog from './AIContentDialog';
 import AISectionWriterDialog from './AISectionWriterDialog';
@@ -97,13 +97,13 @@ type ResumeData = {
 };
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
-type EditorTab = 'resume' | 'cover-letter' | 'design';
+type EditorTab = 'content' | 'job-target' | 'cover-letter' | 'design';
 
 const colorSwatches = [
-  'hsl(217.2 91.2% 59.8%)', // Blue
-  'hsl(262.1 83.3% 57.8%)', // Default Purple
+  'hsl(221.2 83.2% 53.3%)', // Blue
   'hsl(142.1 76.2% 36.3%)', // Green
-  'hsl(346.8 77.2% 49.8%)', // Red
+  'hsl(0 84.2% 60.2%)', // Red
+  'hsl(262.1 83.3% 57.8%)', // Purple
   'hsl(24.6 95% 53.1%)',   // Orange
   'hsl(0 0% 9%)',          // Black
 ];
@@ -203,7 +203,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
 
   const [resumeData, setResumeData] = useState<ResumeData | null>(null);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
-  const [activeTab, setActiveTab] = useState<EditorTab>('resume');
+  const [activeTab, setActiveTab] = useState<EditorTab>('content');
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [isParsing, setIsParsing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -226,11 +226,11 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                 bodyFontSize: 14, 
                 headingFontSize: 18, 
                 titleFontSize: 36,
-                accentColor: 'hsl(217.2 91.2% 59.8%)'
+                accentColor: 'hsl(221.2 83.2% 53.3%)'
             };
         }
         if (typeof updatedData.styling.accentColor !== 'string') {
-            updatedData.styling.accentColor = 'hsl(217.2 91.2% 59.8%)';
+            updatedData.styling.accentColor = 'hsl(221.2 83.2% 53.3%)';
         }
 
 
@@ -674,10 +674,11 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
             <ScrollArea className="h-full">
               <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as EditorTab)} className="w-full">
                 <div className="p-4 border-b">
-                  <TabsList className="grid w-full grid-cols-3">
-                    <TabsTrigger value="resume"><FileText className="mr-2 h-4 w-4"/>Content</TabsTrigger>
-                    <TabsTrigger value="design"><Brush className="mr-2 h-4 w-4"/>Design</TabsTrigger>
+                  <TabsList className="grid w-full grid-cols-4">
+                    <TabsTrigger value="content"><FileText className="mr-2 h-4 w-4"/>Content</TabsTrigger>
+                    <TabsTrigger value="job-target"><Target className="mr-2 h-4 w-4"/>Job Target</TabsTrigger>
                     <TabsTrigger value="cover-letter"><Newspaper className="mr-2 h-4 w-4"/>Cover Letter</TabsTrigger>
+                    <TabsTrigger value="design"><Brush className="mr-2 h-4 w-4"/>Design</TabsTrigger>
                   </TabsList>
                 </div>
                 
@@ -754,38 +755,9 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                     </Accordion>
                 </TabsContent>
 
-                <TabsContent value="resume" className="p-6">
+                <TabsContent value="content" className="p-6">
                   <div className="space-y-6">
-                    <Accordion type="multiple" defaultValue={['ai-tools', 'personal-info', 'summary' ]} className="w-full">
-                        <AccordionItem value="ai-tools">
-                          <AccordionTrigger className="font-semibold">AI & Job Tools</AccordionTrigger>
-                          <AccordionContent className="space-y-4 pt-4">
-                              <Label>Paste the job description here to get tailored AI suggestions and keyword analysis.</Label>
-                              <Textarea 
-                                value={resumeData.jobDescription} 
-                                onChange={e => handleFieldChange('jobDescription', e.target.value)} 
-                                rows={6}
-                                placeholder='e.g., "Seeking a product manager with 5+ years of experience..."'
-                              />
-                              <ProFeatureWrapper isPro={isProUser}>
-                                <Button variant="outline" size="sm" onClick={handleSuggestKeywords} disabled={isAiLoading}>
-                                  {isAiLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Lightbulb className="mr-2 h-4 w-4" />}
-                                  {isAiLoading ? 'Analyzing...' : 'Suggest Keywords'}
-                                </Button>
-                              </ProFeatureWrapper>
-                              {keywordSuggestions.length > 0 && (
-                                <div className="space-y-2 pt-2">
-                                  <Label>Suggested Keywords to Add:</Label>
-                                  <div className="flex flex-wrap gap-2">
-                                    {keywordSuggestions.map((keyword, i) => (
-                                      <Badge key={i} variant="secondary">{keyword}</Badge>
-                                    ))}
-                                  </div>
-                                </div>
-                              )}
-                          </AccordionContent>
-                        </AccordionItem>
-                        
+                    <Accordion type="multiple" defaultValue={['personal-info', 'summary' ]} className="w-full">
                         <AccordionItem value="personal-info">
                         <AccordionTrigger className="font-semibold">Personal Information</AccordionTrigger>
                         <AccordionContent className="space-y-4 pt-4">
@@ -1021,6 +993,34 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                     </Accordion>
                   </div>
                 </TabsContent>
+
+                <TabsContent value="job-target" className="p-6">
+                    <div className="space-y-4 pt-4">
+                        <Label>Paste the job description here to get tailored AI suggestions and keyword analysis.</Label>
+                        <Textarea 
+                          value={resumeData.jobDescription} 
+                          onChange={e => handleFieldChange('jobDescription', e.target.value)} 
+                          rows={12}
+                          placeholder='e.g., "Seeking a product manager with 5+ years of experience..."'
+                        />
+                        <ProFeatureWrapper isPro={isProUser}>
+                          <Button variant="outline" size="sm" onClick={handleSuggestKeywords} disabled={isAiLoading}>
+                            {isAiLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Lightbulb className="mr-2 h-4 w-4" />}
+                            {isAiLoading ? 'Analyzing...' : 'Suggest Keywords'}
+                          </Button>
+                        </ProFeatureWrapper>
+                        {keywordSuggestions.length > 0 && (
+                          <div className="space-y-2 pt-2">
+                            <Label>Suggested Keywords to Add:</Label>
+                            <div className="flex flex-wrap gap-2">
+                              {keywordSuggestions.map((keyword, i) => (
+                                <Badge key={i} variant="secondary">{keyword}</Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                    </div>
+                </TabsContent>
                 
                 <TabsContent value="cover-letter" className="p-6">
                   <div className="space-y-6">
@@ -1059,7 +1059,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
         </aside>
         <main className={cn("flex-grow bg-secondary/50 p-6 h-full print:bg-white print:p-0 transition-all duration-300 ease-in-out", isFormVisible ? 'w-2/3' : 'w-full')}>
           <ScrollArea className="h-full">
-            {activeTab === 'resume' || activeTab === 'design' ? (
+            {activeTab === 'resume' || activeTab === 'design' || activeTab === 'job-target' ? (
               <ResumePreview resumeData={resumeData} />
             ) : (
               <CoverLetterPreview resumeData={resumeData} />
@@ -1070,3 +1070,5 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     </>
   );
 }
+
+    
