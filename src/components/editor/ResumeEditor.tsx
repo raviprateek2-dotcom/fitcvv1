@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Download, Eye, PlusCircle, Share2, Trash2, Sparkles, Bot, FileText, Newspaper, PanelLeft, ArrowLeft, Brush, Lock, Lightbulb, Upload, MinusCircle } from 'lucide-react';
+import { Download, Eye, PlusCircle, Share2, Trash2, Sparkles, Bot, FileText, Newspaper, PanelLeft, ArrowLeft, Brush, Lock, Lightbulb, Upload, MinusCircle, Loader2 } from 'lucide-react';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import AIContentDialog from './AIContentDialog';
 import AISectionWriterDialog from './AISectionWriterDialog';
@@ -653,7 +653,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
               disabled={isParsing}
             />
             <Button variant="outline" size="sm" onClick={() => fileInputRef.current?.click()} disabled={isParsing}>
-              <Upload className="mr-2 h-4 w-4" /> 
+              {isParsing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
               {isParsing ? 'Importing...' : 'Import PDF'}
             </Button>
             <Button variant="outline" size="sm" onClick={handleShare}>
