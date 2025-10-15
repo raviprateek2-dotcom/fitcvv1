@@ -288,30 +288,36 @@ export default function DashboardPage() {
     toast({ title: 'Parsing PDF...', description: 'Our AI is reading your resume. This may take a moment.' });
 
     try {
-      const arrayBuffer = await file.arrayBuffer();
-      const base64String = Buffer.from(arrayBuffer).toString('base64');
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = async () => {
+        const base64String = reader.result as string;
 
-      const result = await parseResumeFromPdf(base64String);
-      
-      if (!result.success || !result.data) {
-        throw new Error(result.error || 'Failed to parse resume.');
-      }
-      
-      const newResumeData = {
-        title: result.data.resumeData.personalInfo.name ? `${result.data.resumeData.personalInfo.name}'s Resume` : 'Imported Resume',
-        templateId: 'modern',
-        content: result.data.resumeData,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
+        const result = await parseResumeFromPdf(base64String);
+        
+        if (!result.success || !result.data) {
+          throw new Error(result.error || 'Failed to parse resume.');
+        }
+        
+        const newResumeData = {
+          title: result.data.resumeData.personalInfo.name ? `${result.data.resumeData.personalInfo.name}'s Resume` : 'Imported Resume',
+          templateId: 'modern',
+          content: result.data.resumeData,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        };
+        
+        addDocumentNonBlocking(resumesQuery, newResumeData)
+          .then(newDocRef => {
+              toast({ title: 'Success!', description: 'Your resume has been imported.' });
+              if (newDocRef) {
+                router.push(`/editor/${newDocRef.id}`);
+              }
+          });
       };
-      
-      addDocumentNonBlocking(resumesQuery, newResumeData)
-        .then(newDocRef => {
-            toast({ title: 'Success!', description: 'Your resume has been imported.' });
-            if (newDocRef) {
-              router.push(`/editor/${newDocRef.id}`);
-            }
-        });
+      reader.onerror = (error) => {
+        throw new Error('Failed to read file.');
+      };
 
     } catch (error: any) {
       console.error('Error parsing or saving PDF resume:', error);
@@ -400,5 +406,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    
