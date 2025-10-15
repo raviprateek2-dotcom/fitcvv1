@@ -896,7 +896,10 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                                     {titleSuggestion && (
                                         <div className="bg-secondary p-2 rounded-md flex items-center justify-between">
                                         <p className="text-sm">Suggestion: <span className="font-semibold">{titleSuggestion}</span></p>
-                                        <Button size="sm" onClick={applyTitleSuggestion}>Apply</Button>
+                                        <div className="flex gap-1">
+                                          <Button size="sm" variant="ghost" onClick={applyTitleSuggestion} className="h-7">Apply</Button>
+                                          <Button size="icon" variant="ghost" onClick={() => setTitleSuggestion(null)} className="h-7 w-7"><XCircle className="h-4 w-4"/></Button>
+                                        </div>
                                         </div>
                                     )}
                                     </div>
