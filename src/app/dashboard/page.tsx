@@ -257,6 +257,11 @@ export default function DashboardPage() {
       updatedAt: serverTimestamp(),
     };
 
+    toast({
+      title: 'Duplicating Resume...',
+      description: `Copying "${resumeToDuplicate.title || 'Untitled Resume'}".`,
+    });
+
     addDocumentNonBlocking(resumesQuery, newResumeData)
       .then(newDocRef => {
         if (newDocRef) {
@@ -269,6 +274,10 @@ export default function DashboardPage() {
     if (!user || !firestore) return;
     const docRef = doc(firestore, `users/${user.uid}/resumes`, resumeId);
     deleteDocumentNonBlocking(docRef);
+    toast({
+      title: 'Resume Deleted',
+      description: 'Your resume has been successfully removed.',
+    });
   };
   
   const handlePdfUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
