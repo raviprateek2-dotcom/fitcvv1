@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -1075,11 +1076,11 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label>Company Name</Label>
-                                <Input name="name" value={resumeData.companyInfo?.name} onChange={handleCompanyInfoChange} />
+                                <Input name="name" value={resumeData.companyInfo?.name || ''} onChange={handleCompanyInfoChange} />
                             </div>
                             <div className="space-y-2">
                                 <Label>Job Title</Label>
-                                <Input name="jobTitle" value={resumeData.companyInfo?.jobTitle} onChange={handleCompanyInfoChange} />
+                                <Input name="jobTitle" value={resumeData.companyInfo?.jobTitle || ''} onChange={handleCompanyInfoChange} />
                             </div>
                         </div>
                     </div>
@@ -1116,7 +1117,3 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     </>
   );
 }
-
-    
-
-    
