@@ -682,7 +682,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                 
                 <TabsContent value="resume" className="p-6">
                   <div className="space-y-6">
-                    <Accordion type="multiple" defaultValue={['personal-info', 'summary', 'design', 'job-description']} className="w-full">
+                    <Accordion type="multiple" defaultValue={['design', 'ai-tools', 'personal-info', 'summary' ]} className="w-full">
                         <AccordionItem value="design">
                           <AccordionTrigger className="font-semibold">Design</AccordionTrigger>
                           <AccordionContent className="space-y-4 pt-4">
@@ -750,34 +750,35 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                           </AccordionContent>
                         </AccordionItem>
 
-                        <AccordionItem value="job-description">
-                        <AccordionTrigger className="font-semibold">Job Description (For AI)</AccordionTrigger>
-                        <AccordionContent className="space-y-4 pt-4">
-                            <Label>Paste the job description here to get tailored AI suggestions.</Label>
-                            <Textarea 
-                              value={resumeData.jobDescription} 
-                              onChange={e => handleFieldChange('jobDescription', e.target.value)} 
-                              rows={6} 
-                            />
-                             <ProFeatureWrapper isPro={isProUser}>
-                               <Button variant="outline" size="sm" onClick={handleSuggestKeywords} disabled={isAiLoading}>
-                                 <Lightbulb className="mr-2 h-4 w-4" />
-                                 {isAiLoading ? 'Analyzing...' : 'Suggest Keywords'}
-                               </Button>
-                             </ProFeatureWrapper>
-                             {keywordSuggestions.length > 0 && (
-                               <div className="space-y-2 pt-2">
-                                 <Label>Suggested Keywords to Add:</Label>
-                                 <div className="flex flex-wrap gap-2">
-                                   {keywordSuggestions.map((keyword, i) => (
-                                     <Badge key={i} variant="secondary">{keyword}</Badge>
-                                   ))}
-                                 </div>
-                               </div>
-                             )}
-                        </AccordionContent>
+                        <AccordionItem value="ai-tools">
+                          <AccordionTrigger className="font-semibold">AI &amp; Job Tools</AccordionTrigger>
+                          <AccordionContent className="space-y-4 pt-4">
+                              <Label>Paste the job description here to get tailored AI suggestions and keyword analysis.</Label>
+                              <Textarea 
+                                value={resumeData.jobDescription} 
+                                onChange={e => handleFieldChange('jobDescription', e.target.value)} 
+                                rows={6}
+                                placeholder='e.g., "Seeking a product manager with 5+ years of experience..."'
+                              />
+                              <ProFeatureWrapper isPro={isProUser}>
+                                <Button variant="outline" size="sm" onClick={handleSuggestKeywords} disabled={isAiLoading}>
+                                  <Lightbulb className="mr-2 h-4 w-4" />
+                                  {isAiLoading ? 'Analyzing...' : 'Suggest Keywords'}
+                                </Button>
+                              </ProFeatureWrapper>
+                              {keywordSuggestions.length > 0 && (
+                                <div className="space-y-2 pt-2">
+                                  <Label>Suggested Keywords to Add:</Label>
+                                  <div className="flex flex-wrap gap-2">
+                                    {keywordSuggestions.map((keyword, i) => (
+                                      <Badge key={i} variant="secondary">{keyword}</Badge>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                          </AccordionContent>
                         </AccordionItem>
-
+                        
                         <AccordionItem value="personal-info">
                         <AccordionTrigger className="font-semibold">Personal Information</AccordionTrigger>
                         <AccordionContent className="space-y-4 pt-4">
