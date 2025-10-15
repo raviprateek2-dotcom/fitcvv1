@@ -77,7 +77,7 @@ export default function SharePage({ params }: { params: { id: string } }) {
   const feedbackCollectionRef = useMemoFirebase(() => {
      if (!resumeDocRef) return null;
      return collection(firestore, resumeDocRef.path, 'feedback');
-  }, [firestore, resumeDocRef]);
+  }, [resumeDocRef]);
 
   const { data: feedback, isLoading: isFeedbackLoading } = useCollection<Feedback>(feedbackCollectionRef);
 
@@ -210,3 +210,5 @@ export default function SharePage({ params }: { params: { id: string } }) {
     </div>
   );
 }
+
+    
