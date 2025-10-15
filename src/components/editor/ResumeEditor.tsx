@@ -264,7 +264,18 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     // Also update the public resume if it exists
     if(dataToSave.shareId) {
         const publicResumeRef = doc(firestore, 'publicResumes', dataToSave.shareId);
-        setDocumentNonBlocking(publicResumeRef, { ...updatedData }, { merge: true });
+        const dataToShare = {
+            title: dataToSave.title,
+            personalInfo: dataToSave.personalInfo,
+            summary: dataToSave.summary,
+            experience: dataToSave.experience,
+            education: dataToSave.education,
+            skills: dataToSave.skills,
+            projects: dataToSave.projects,
+            templateId: dataToSave.templateId,
+            styling: dataToSave.styling,
+        };
+        setDocumentNonBlocking(publicResumeRef, { ...dataToShare }, { merge: true });
     }
 
     // Optimistically update UI
@@ -806,7 +817,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                         <Accordion type="multiple" defaultValue={['personal-info', 'summary' ]} className="w-full">
                             <AccordionItem value="personal-info">
                             <AccordionTrigger className="font-semibold">Personal Information</AccordionTrigger>
-                            <AccordionContent className="space-y-4 pt-4">
+                            <AccordionContent className="space-y-4 pt-4 border rounded-b-lg p-4">
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-2"><Label>Full Name</Label><Input name="name" value={resumeData.personalInfo.name} onChange={handlePersonalInfoChange} /></div>
                                     <div className="space-y-2">
@@ -845,7 +856,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                             
                             <AccordionItem value="summary">
                             <AccordionTrigger className="font-semibold">Professional Summary</AccordionTrigger>
-                            <AccordionContent className="space-y-2 pt-4">
+                            <AccordionContent className="space-y-2 pt-4 border rounded-b-lg p-4">
                                 <Textarea value={resumeData.summary} onChange={e => handleFieldChange('summary', e.target.value)} rows={5} />
                                 <div className="flex gap-2">
                                 <ProFeatureWrapper isPro={isProUser}>
@@ -875,9 +886,9 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
 
                             <AccordionItem value="experience">
                             <AccordionTrigger className="font-semibold">Work Experience</AccordionTrigger>
-                            <AccordionContent className="space-y-4 pt-4">
+                            <AccordionContent className="space-y-4 pt-4 border rounded-b-lg p-4">
                                 {resumeData.experience.map((exp) => (
-                                    <div key={exp.id} className="p-4 border rounded-lg space-y-4 relative">
+                                    <div key={exp.id} className="p-4 border rounded-lg space-y-4 relative bg-secondary/50">
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="space-y-2"><Label>Company</Label><Input value={exp.company} onChange={e => handleNestedChange('experience', exp.id, 'company', e.target.value)} /></div>
                                             <div className="space-y-2"><Label>Role</Label><Input value={exp.role} onChange={e => handleNestedChange('experience', exp.id, 'role', e.target.value)} /></div>
@@ -941,9 +952,9 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                                 </Tooltip>
                                 </TooltipProvider>
                             </div>
-                            <AccordionContent className="space-y-4 pt-4">
+                            <AccordionContent className="space-y-4 pt-4 border rounded-b-lg p-4">
                                 {resumeData.projects.map((proj) => (
-                                    <div key={proj.id} className="p-4 border rounded-lg space-y-4 relative">
+                                    <div key={proj.id} className="p-4 border rounded-lg space-y-4 relative bg-secondary/50">
                                         <div className="space-y-2"><Label>Project Name</Label><Input value={proj.name} onChange={e => handleNestedChange('projects', proj.id, 'name', e.target.value)} /></div>
                                         <div className="space-y-2"><Label>Description</Label><Textarea rows={3} value={proj.description} onChange={e => handleNestedChange('projects', proj.id, 'description', e.target.value)} /></div>
                                         <div className="space-y-2"><Label>Link (Optional)</Label><Input value={proj.link} onChange={e => handleNestedChange('projects', proj.id, 'link', e.target.value)} /></div>
@@ -964,9 +975,9 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
 
                             <AccordionItem value="education">
                             <AccordionTrigger className="font-semibold">Education</AccordionTrigger>
-                            <AccordionContent className="space-y-4 pt-4">
+                            <AccordionContent className="space-y-4 pt-4 border rounded-b-lg p-4">
                                 {resumeData.education.map((edu) => (
-                                    <div key={edu.id} className="p-4 border rounded-lg space-y-4 relative">
+                                    <div key={edu.id} className="p-4 border rounded-lg space-y-4 relative bg-secondary/50">
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="space-y-2"><Label>Institution</Label><Input value={edu.institution} onChange={e => handleNestedChange('education', edu.id, 'institution', e.target.value)} /></div>
                                             <div className="space-y-2"><Label>Degree/Certificate</Label><Input value={edu.degree} onChange={e => handleNestedChange('education', edu.id, 'degree', e.target.value)} /></div>
@@ -1006,9 +1017,9 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                                 </Tooltip>
                                 </TooltipProvider>
                             </div>
-                            <AccordionContent className="space-y-4 pt-4">
+                            <AccordionContent className="space-y-4 pt-4 border rounded-b-lg p-4">
                                 {resumeData.skills.map((skill) => (
-                                <div key={skill.id} className="p-4 border rounded-lg space-y-4">
+                                <div key={skill.id} className="p-4 border rounded-lg space-y-4 bg-secondary/50">
                                     <div className="flex items-center gap-4">
                                         <div className="flex-grow space-y-2">
                                             <Label>Skill</Label>
@@ -1046,7 +1057,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                     </TabsContent>
 
                     <TabsContent value="job-target" className="p-6">
-                        <div className="space-y-4 pt-4">
+                        <div className="space-y-4 pt-4 border rounded-lg p-4">
                             <Label>Paste the job description here to get tailored AI suggestions and keyword analysis.</Label>
                             <Textarea 
                             value={resumeData.jobDescription} 
@@ -1131,3 +1142,5 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     </SidebarProvider>
   );
 }
+
+    
