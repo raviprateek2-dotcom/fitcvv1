@@ -119,6 +119,31 @@
         }
       },
       "required": ["name", "comment", "createdAt"]
+    },
+    "Project": {
+      "title": "Project",
+      "type": "object",
+      "description": "Represents a personal or professional project on a resume.",
+      "properties": {
+        "id": {
+          "type": "number",
+          "description": "A unique identifier for the project entry."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the project."
+        },
+        "description": {
+          "type": "string",
+          "description": "A brief description of the project."
+        },
+        "link": {
+          "type": "string",
+          "description": "A URL link to the project.",
+          "format": "uri"
+        }
+      },
+      "required": ["id", "name", "description"]
     }
   },
   "auth": {
