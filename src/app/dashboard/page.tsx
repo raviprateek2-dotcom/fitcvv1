@@ -28,8 +28,7 @@ import {
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
 import { parseResumeFromPdf } from '@/app/actions/ai-resume-parser';
-import Image from 'next/image';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { AnimatedResume } from '@/components/common/AnimatedResume';
 
 
 type Resume = {
@@ -67,30 +66,19 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
     window.open(printUrl, '_blank');
   };
 
-  const templateImage = PlaceHolderImages.find(img => img.id === `template-${resume.templateId}`);
-
   return (
     <motion.div variants={itemVariants}>
       <Card className="overflow-hidden group flex flex-col h-full transition-all duration-300 hover:shadow-2xl border-transparent hover:border-primary/20" variant="neuro">
         <Link href={`/editor/${resume.id}`} className="block p-4">
           <motion.div
-            className="h-40 bg-secondary rounded-lg flex items-center justify-center mb-4 overflow-hidden relative"
+            className="h-60 bg-secondary rounded-lg flex items-center justify-center mb-4 overflow-hidden relative"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-              {templateImage ? (
-                <Image
-                  src={templateImage.imageUrl}
-                  alt={resume.title || 'Resume preview'}
-                  width={150}
-                  height={212}
-                  data-ai-hint={templateImage.imageHint}
-                  className="object-contain object-top transition-transform duration-500 ease-in-out group-hover:scale-105"
-                />
-              ) : (
-                <FileText className="w-16 h-16 text-muted-foreground/50" />
-              )}
+             <div className="transform scale-[0.5] transition-transform duration-500 ease-in-out group-hover:scale-[0.55]">
+                <AnimatedResume />
+              </div>
           </motion.div>
         </Link>
         <CardHeader className="pt-0">
@@ -145,7 +133,7 @@ const ResumeSkeleton = () => {
     return (
         <Card className="overflow-hidden" variant="neuro">
             <div className="p-4">
-              <Skeleton className="h-40 w-full mb-4" />
+              <Skeleton className="h-60 w-full mb-4" />
             </div>
             <CardHeader className="pt-0">
                  <Skeleton className="h-6 w-3/4 mb-2" />
