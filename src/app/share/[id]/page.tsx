@@ -210,5 +210,3 @@ export default function SharePage({ params }: { params: { id: string } }) {
     </div>
   );
 }
-
-    
