@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Download, PlusCircle, Share2, Trash2, Sparkles, Bot, FileText, Newspaper, Brush, Lock, Lightbulb, Upload, MinusCircle, Loader2, Target, ArrowLeft } from 'lucide-react';
+import { Download, PlusCircle, Share2, Trash2, Sparkles, Bot, FileText, Newspaper, Brush, Lock, Lightbulb, Upload, MinusCircle, Loader2, Target, ArrowLeft, SearchCheck, CheckCircle, XCircle } from 'lucide-react';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import AIContentDialog from './AIContentDialog';
 import AISectionWriterDialog from './AISectionWriterDialog';
@@ -24,12 +24,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { writeCoverLetter as writeCoverLetterAction } from '@/app/actions/ai-cover-letter';
 import { suggestKeywords as suggestKeywordsAction } from '@/app/actions/ai-keyword-suggester';
 import { suggestTitle as suggestTitleAction } from '@/app/actions/ai-title-suggester';
+import { analyzeResume as analyzeResumeAction, AnalyzeResumeOutput } from '@/app/actions/ai-resume-analyzer';
+import { reviewResume as reviewResumeAction, ReviewResumeOutput } from '@/app/actions/ai-resume-review';
 import { Slider } from '../ui/slider';
 import { cn } from '@/lib/utils';
 import { nanoid } from 'nanoid';
 import { Badge } from '../ui/badge';
 import { parseResumeFromPdf } from '@/app/actions/ai-resume-parser';
 import { Sidebar, SidebarContent, SidebarHeader, SidebarInset, SidebarProvider, SidebarTrigger } from '../ui/sidebar';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Progress } from '../ui/progress';
 
 
 // Define types for resume structure
@@ -98,7 +102,7 @@ type ResumeData = {
 };
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
-type EditorTab = 'content' | 'job-target' | 'cover-letter' | 'design';
+type EditorTab = 'content' | 'ai-review' | 'cover-letter' | 'design';
 
 const colorSwatches = [
   'hsl(221.2, 83.2%, 53.3%)', // Blue
@@ -213,6 +217,12 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   
   const [isTitleSuggesting, setIsTitleSuggesting] = useState(false);
   const [titleSuggestion, setTitleSuggestion] = useState<string | null>(null);
+
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisResult, setAnalysisResult] = useState<AnalyzeResumeOutput | null>(null);
+  const [isReviewing, setIsReviewing] = useState(false);
+  const [reviewResult, setReviewResult] = useState<ReviewResumeOutput | null>(null);
+
 
 
   useEffect(() => {
@@ -670,6 +680,53 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     }
   }
 
+  const handleAnalyzeResume = async () => {
+    if (!resumeData || !resumeData.jobDescription) {
+      toast({
+        variant: 'destructive',
+        title: 'Job Description Required',
+        description: 'Please paste a job description to get a match analysis.',
+      });
+      return;
+    }
+    setIsAnalyzing(true);
+    setAnalysisResult(null);
+
+    const resumeContent = JSON.stringify(resumeData);
+
+    try {
+      const result = await analyzeResumeAction({ resumeContent, jobDescription: resumeData.jobDescription });
+      if (result.success && result.data) {
+        setAnalysisResult(result.data);
+      } else {
+        toast({ variant: 'destructive', title: 'Analysis Failed', description: result.error });
+      }
+    } catch (error: any) {
+      toast({ variant: 'destructive', title: 'Error', description: error.message });
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+  
+  const handleReviewResume = async () => {
+      if (!resumeData) return;
+      setIsReviewing(true);
+      setReviewResult(null);
+      const resumeContent = JSON.stringify(resumeData);
+      try {
+          const result = await reviewResumeAction({ resumeContent });
+          if (result.success && result.data) {
+              setReviewResult(result.data);
+          } else {
+              toast({ variant: 'destructive', title: 'Review Failed', description: result.error });
+          }
+      } catch (error: any) {
+          toast({ variant: 'destructive', title: 'Error', description: error.message });
+      } finally {
+          setIsReviewing(false);
+      }
+  };
+
 
   const isProUser = userProfile?.subscription === 'premium';
 
@@ -732,7 +789,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                 <div className="p-4 border-b">
                   <TabsList className="grid w-full grid-cols-4">
                     <TabsTrigger value="content"><FileText className="mr-2 h-4 w-4"/>Content</TabsTrigger>
-                    <TabsTrigger value="job-target"><Target className="mr-2 h-4 w-4"/>Job Target</TabsTrigger>
+                    <TabsTrigger value="ai-review"><SearchCheck className="mr-2 h-4 w-4"/>AI Review</TabsTrigger>
                     <TabsTrigger value="cover-letter"><Newspaper className="mr-2 h-4 w-4"/>Cover Letter</TabsTrigger>
                     <TabsTrigger value="design"><Brush className="mr-2 h-4 w-4"/>Design</TabsTrigger>
                   </TabsList>
@@ -1056,40 +1113,119 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                     </div>
                     </TabsContent>
 
-                    <TabsContent value="job-target" className="p-6">
-                        <div className="space-y-4 pt-4 border rounded-lg p-4">
-                            <Label>Paste the job description here to get tailored AI suggestions and keyword analysis.</Label>
-                            <Textarea 
-                            value={resumeData.jobDescription} 
-                            onChange={e => handleFieldChange('jobDescription', e.target.value)} 
-                            rows={12}
-                            placeholder='e.g., "Seeking a product manager with 5+ years of experience..."'
-                            />
-                            <ProFeatureWrapper isPro={isProUser}>
-                            <Button variant="outline" size="sm" onClick={handleSuggestKeywords} disabled={isAiLoading}>
-                                {isAiLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Lightbulb className="mr-2 h-4 w-4" />}
-                                {isAiLoading ? 'Analyzing...' : 'Suggest Keywords'}
-                            </Button>
-                            </ProFeatureWrapper>
-                            {keywordSuggestions.length > 0 && (
-                            <div className="space-y-2 pt-2">
-                                <Label>Click a keyword to add it to your skills:</Label>
-                                <div className="flex flex-wrap gap-2">
-                                {keywordSuggestions.map((keyword, i) => (
-                                    <Button
-                                    key={i}
-                                    variant="secondary"
-                                    size="sm"
-                                    className="h-auto"
-                                    onClick={() => handleAddKeywordAsSkill(keyword)}
-                                    >
-                                    <PlusCircle className="mr-2 h-3 w-3" />
-                                    {keyword}
-                                    </Button>
-                                ))}
-                                </div>
-                            </div>
-                            )}
+                    <TabsContent value="ai-review" className="p-6">
+                        <div className="space-y-6">
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Overall Resume Review</CardTitle>
+                                    <CardDescription>Get general feedback on your resume's clarity, impact, and structure.</CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    {isReviewing ? (
+                                        <div className="flex items-center justify-center py-4"><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Reviewing...</div>
+                                    ) : reviewResult ? (
+                                        <div className="space-y-4">
+                                            <div>
+                                                <h4 className="font-semibold">Overall Feedback</h4>
+                                                <p className="text-sm text-muted-foreground">{reviewResult.overallFeedback}</p>
+                                            </div>
+                                             <div>
+                                                <h4 className="font-semibold">Positive Points</h4>
+                                                <ul className="list-disc pl-5 space-y-1 text-sm">
+                                                    {reviewResult.positivePoints.map((point, i) => <li key={i} className="text-green-600"><span className="text-muted-foreground">{point}</span></li>)}
+                                                </ul>
+                                            </div>
+                                            <div>
+                                                <h4 className="font-semibold">Areas for Improvement</h4>
+                                                <ul className="list-disc pl-5 space-y-1 text-sm">
+                                                    {reviewResult.areasForImprovement.map((point, i) => <li key={i} className="text-amber-600"><span className="text-muted-foreground">{point}</span></li>)}
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <ProFeatureWrapper isPro={isProUser}>
+                                            <Button onClick={handleReviewResume} className="w-full">
+                                                <Sparkles className="mr-2 h-4 w-4" /> Get AI Feedback
+                                            </Button>
+                                        </ProFeatureWrapper>
+                                    )}
+                                </CardContent>
+                            </Card>
+
+                             <Card>
+                                <CardHeader>
+                                    <CardTitle>Job Description Match Analysis</CardTitle>
+                                    <CardDescription>Paste a job description to see how well your resume matches.</CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    <div>
+                                        <Label>Job Description</Label>
+                                        <Textarea 
+                                            value={resumeData.jobDescription} 
+                                            onChange={e => handleFieldChange('jobDescription', e.target.value)} 
+                                            rows={8}
+                                            placeholder='e.g., "Seeking a product manager with 5+ years of experience..."'
+                                        />
+                                    </div>
+                                    {isAnalyzing ? (
+                                        <div className="flex items-center justify-center py-4"><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Analyzing...</div>
+                                    ) : analysisResult ? (
+                                        <div className="space-y-4">
+                                            <div>
+                                                <Label>Match Score</Label>
+                                                <div className="flex items-center gap-4">
+                                                    <Progress value={analysisResult.matchScore} className="w-full" />
+                                                    <span className="font-bold text-lg">{analysisResult.matchScore}%</span>
+                                                </div>
+                                                <p className="text-xs text-muted-foreground mt-1">{analysisResult.summary}</p>
+                                            </div>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div className="space-y-2">
+                                                    <h4 className="font-semibold text-green-600">Strengths</h4>
+                                                    <ul className="list-none space-y-2 text-sm">
+                                                        {analysisResult.positivePoints.map((point, i) => (
+                                                            <li key={i} className="flex items-start gap-2"><CheckCircle className="h-4 w-4 mt-0.5 text-green-500 shrink-0" />{point}</li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <h4 className="font-semibold text-amber-600">Improvements</h4>
+                                                    <ul className="list-none space-y-2 text-sm">
+                                                        {analysisResult.areasForImprovement.map((point, i) => (
+                                                           <li key={i} className="flex items-start gap-2"><XCircle className="h-4 w-4 mt-0.5 text-amber-500 shrink-0" />{point}</li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ) : null}
+                                    <ProFeatureWrapper isPro={isProUser}>
+                                        <Button onClick={handleAnalyzeResume} disabled={!resumeData.jobDescription} className="w-full">
+                                            <SearchCheck className="mr-2 h-4 w-4" /> Analyze Match
+                                        </Button>
+                                    </ProFeatureWrapper>
+
+                                    {keywordSuggestions.length > 0 && (
+                                    <div className="space-y-2 pt-2">
+                                        <Label>Click a keyword to add it to your skills:</Label>
+                                        <div className="flex flex-wrap gap-2">
+                                        {keywordSuggestions.map((keyword, i) => (
+                                            <Button
+                                            key={i}
+                                            variant="secondary"
+                                            size="sm"
+                                            className="h-auto"
+                                            onClick={() => handleAddKeywordAsSkill(keyword)}
+                                            >
+                                            <PlusCircle className="mr-2 h-3 w-3" />
+                                            {keyword}
+                                            </Button>
+                                        ))}
+                                        </div>
+                                    </div>
+                                    )}
+                                </CardContent>
+                            </Card>
                         </div>
                     </TabsContent>
                     
@@ -1131,7 +1267,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
         </Sidebar>
         <SidebarInset className="bg-secondary/50 no-print p-6 h-full print:bg-white print:p-0">
           <ScrollArea className="h-full">
-            {activeTab === 'resume' || activeTab === 'design' || activeTab === 'job-target' || activeTab === 'content' ? (
+            {activeTab === 'resume' || activeTab === 'design' || activeTab === 'content' || activeTab === 'ai-review' ? (
               <ResumePreview resumeData={resumeData} />
             ) : (
               <CoverLetterPreview resumeData={resumeData} />
@@ -1142,5 +1278,3 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     </SidebarProvider>
   );
 }
-
-    

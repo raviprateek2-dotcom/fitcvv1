@@ -1,7 +1,10 @@
+
 'use server';
 
-import { reviewResume as reviewResumeFlow } from '@/ai/flows/ai-resume-review';
+import { reviewResume as reviewResumeFlow, type ReviewResumeOutput as ReviewResumeOutputFlow } from '@/ai/flows/ai-resume-review';
 import type { ReviewResumeInput } from '@/ai/flows/ai-resume-review';
+
+export type ReviewResumeOutput = ReviewResumeOutputFlow;
 
 export async function reviewResume(input: ReviewResumeInput) {
   try {

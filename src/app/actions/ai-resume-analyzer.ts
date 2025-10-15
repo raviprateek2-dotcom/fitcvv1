@@ -1,7 +1,10 @@
+
 'use server';
 
-import { analyzeResume as analyzeResumeFlow } from '@/ai/flows/ai-resume-analyzer';
+import { analyzeResume as analyzeResumeFlow, type AnalyzeResumeOutput as AnalyzeResumeOutputFlow } from '@/ai/flows/ai-resume-analyzer';
 import type { AnalyzeResumeInput } from '@/ai/flows/ai-resume-analyzer';
+
+export type AnalyzeResumeOutput = AnalyzeResumeOutputFlow;
 
 export async function analyzeResume(input: AnalyzeResumeInput) {
   try {
