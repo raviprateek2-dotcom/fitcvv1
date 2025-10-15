@@ -68,61 +68,61 @@
     },
     {
       "id": "blog-resume-guide",
-      "description": "A person writing on a document with a pen.",
+      "description": "A professional writing on a document at a sunlit desk, focused on crafting the perfect resume.",
       "imageUrl": "https://picsum.photos/seed/blog-resume-guide/800/400",
       "imageHint": "resume writing"
     },
     {
       "id": "blog-resume-mistakes",
-      "description": "A document with red crosses and correction marks.",
+      "description": "A resume on a desk with a red pen circling common mistakes, highlighting errors to avoid.",
       "imageUrl": "https://picsum.photos/seed/blog-resume-mistakes/800/400",
       "imageHint": "document error"
     },
     {
       "id": "blog-ats-bots",
-      "description": "A robot looking at a computer screen with resumes.",
+      "description": "A stylized image of a friendly robot scanning a resume on a computer screen, representing an ATS.",
       "imageUrl": "https://picsum.photos/seed/blog-ats-bots/800/400",
-      "imageHint": "robot computer"
+      "imageHint": "robot resume"
     },
     {
       "id": "blog-action-verbs",
-      "description": "A list of powerful words on a piece of paper.",
+      "description": "A page of a notebook with powerful action verbs highlighted, ready to be used in a resume.",
       "imageUrl": "https://picsum.photos/seed/blog-action-verbs/800/400",
-      "imageHint": "writing text"
+      "imageHint": "writing vocabulary"
     },
     {
       "id": "blog-summary",
-      "description": "A close-up of a professional summary on a resume.",
+      "description": "A close-up view of the professional summary section of a well-crafted, modern resume.",
       "imageUrl": "https://picsum.photos/seed/blog-summary/800/400",
-      "imageHint": "resume profile"
+      "imageHint": "resume headline"
     },
     {
       "id": "blog-cv-resume",
-      "description": "Two documents side-by-side, one a resume and one a CV.",
+      "description": "A side-by-side comparison of a concise one-page resume and a multi-page academic CV.",
       "imageUrl": "https://picsum.photos/seed/blog-cv-resume/800/400",
       "imageHint": "document comparison"
     },
     {
       "id": "blog-skills",
-      "description": "A checklist of skills on a clipboard.",
+      "description": "A neatly organized skills section on a digital resume, with categories for technical and soft skills.",
       "imageUrl": "https://picsum.photos/seed/blog-skills/800/400",
-      "imageHint": "skills checklist"
+      "imageHint": "skills list"
     },
     {
       "id": "blog-cover-letter",
-      "description": "A person writing a letter at a desk.",
+      "description": "A person at a clean desk typing a cover letter on a laptop, with a cup of coffee nearby.",
       "imageUrl": "https://picsum.photos/seed/blog-cover-letter/800/400",
       "imageHint": "writing letter"
     },
     {
       "id": "blog-networking",
-      "description": "A group of people talking and connecting at an event.",
+      "description": "A diverse group of professionals having a positive and engaging conversation at a networking event.",
       "imageUrl": "https://picsum.photos/seed/blog-networking/800/400",
-      "imageHint": "people connecting"
+      "imageHint": "people talking"
     },
     {
       "id": "blog-interview-prep",
-      "description": "A person preparing for an interview with notes and a laptop.",
+      "description": "A desk with a laptop, a notebook with interview questions, a resume, and a cup of coffee.",
       "imageUrl": "https://picsum.photos/seed/blog-interview-prep/800/400",
       "imageHint": "interview preparation"
     }
