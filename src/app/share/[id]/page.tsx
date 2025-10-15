@@ -30,19 +30,25 @@ const SharePageSkeleton = () => (
   <div className="container mx-auto px-4 md:px-6 py-12">
     <div className="grid lg:grid-cols-3 gap-12">
       <div className="lg:col-span-2">
-        <Skeleton className="w-full aspect-[8.5/11]" />
+        <Skeleton className="w-full aspect-[8.5/11] rounded-2xl" />
       </div>
       <div className="space-y-8">
-        <Skeleton className="h-10 w-48" />
-        <div className="space-y-4">
-          <Skeleton className="h-6 w-24" />
-          <Skeleton className="h-10 w-full" />
-        </div>
-        <div className="space-y-4">
-          <Skeleton className="h-6 w-24" />
-          <Skeleton className="h-24 w-full" />
-        </div>
-        <Skeleton className="h-12 w-full" />
+        <Card variant="neuro">
+            <CardHeader>
+                <Skeleton className="h-8 w-48" />
+            </CardHeader>
+            <CardContent className="space-y-6">
+                <div className="space-y-2">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-10 w-full" />
+                </div>
+                <div className="space-y-2">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-24 w-full" />
+                </div>
+                <Skeleton className="h-12 w-full" />
+            </CardContent>
+        </Card>
         <Separator />
         <div className="space-y-6">
             <Skeleton className="h-16 w-full" />
@@ -116,85 +122,88 @@ export default function SharePage({ params }: { params: { id: string } }) {
   }
 
   return (
-    <div className="container mx-auto px-4 md:px-6 py-12">
-      <div className="grid lg:grid-cols-3 gap-12">
-        <div className="lg:col-span-2">
-          <ResumePreview resumeData={resumeData} />
-        </div>
+    <div className="bg-secondary min-h-screen">
+      <div className="container mx-auto px-4 md:px-6 py-12">
+        <div className="grid lg:grid-cols-3 gap-12">
+          <div className="lg:col-span-2">
+            <ResumePreview resumeData={resumeData} />
+          </div>
 
-        <div className="space-y-8">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MessageSquare className="text-primary" />
-                Leave Feedback
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmitFeedback} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Your Name</Label>
-                  <Input
-                    id="name"
-                    value={feedbackName}
-                    onChange={(e) => setFeedbackName(e.target.value)}
-                    placeholder="e.g., Jane Doe"
-                    required
-                    disabled={isSubmitting}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="comment">Comment</Label>
-                  <Textarea
-                    id="comment"
-                    value={feedbackComment}
-                    onChange={(e) => setFeedbackComment(e.target.value)}
-                    placeholder="e.g., 'Great summary! Consider adding more metrics to your experience.'"
-                    required
-                    rows={4}
-                    disabled={isSubmitting}
-                  />
-                </div>
-                <Button type="submit" className="w-full" disabled={isSubmitting}>
-                  {isSubmitting ? 'Submitting...' : 'Submit Feedback'}
-                  <Send className="ml-2 h-4 w-4" />
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
-
-          <Separator />
-
-          <div className="space-y-6">
-            <h3 className="text-xl font-headline font-semibold">Feedback ({sortedFeedback.length})</h3>
-            {isFeedbackLoading ? (
-              <div className="space-y-4">
-                <Skeleton className="h-16 w-full" />
-                <Skeleton className="h-16 w-full" />
-              </div>
-            ) : (
-              sortedFeedback.map((item) => (
-                <div key={item.id} className="flex gap-4">
-                  <Avatar>
-                    <AvatarFallback>{item.name.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <div className="flex justify-between items-center">
-                      <p className="font-semibold">{item.name}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {item.createdAt.toDate().toLocaleDateString()}
-                      </p>
-                    </div>
-                    <p className="text-sm text-muted-foreground">{item.comment}</p>
+          <div className="space-y-8">
+            <Card variant="neuro">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MessageSquare className="text-primary" />
+                  Leave Feedback
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmitFeedback} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Your Name</Label>
+                    <Input
+                      id="name"
+                      value={feedbackName}
+                      onChange={(e) => setFeedbackName(e.target.value)}
+                      placeholder="e.g., Jane Doe"
+                      required
+                      disabled={isSubmitting}
+                    />
                   </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="comment">Comment</Label>
+                    <Textarea
+                      id="comment"
+                      value={feedbackComment}
+                      onChange={(e) => setFeedbackComment(e.target.value)}
+                      placeholder="e.g., 'Great summary! Consider adding more metrics to your experience.'"
+                      required
+                      rows={4}
+                      disabled={isSubmitting}
+                    />
+                  </div>
+                  <Button type="submit" className="w-full" disabled={isSubmitting} variant="neuro">
+                    {isSubmitting ? 'Submitting...' : 'Submit Feedback'}
+                    <Send className="ml-2 h-4 w-4" />
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+
+            <Separator />
+
+            <div className="space-y-6">
+              <h3 className="text-xl font-headline font-semibold">Feedback ({sortedFeedback.length})</h3>
+              {isFeedbackLoading ? (
+                <div className="space-y-4">
+                  <Skeleton className="h-20 w-full rounded-lg" />
+                  <Skeleton className="h-20 w-full rounded-lg" />
                 </div>
-              ))
-            )}
-            { !isFeedbackLoading && sortedFeedback.length === 0 && (
-                <div className="text-center text-muted-foreground py-8">
-                    <p>No feedback yet. Be the first to leave a comment!</p>
-                </div>
-            )}
+              ) : sortedFeedback.length > 0 ? (
+                sortedFeedback.map((item) => (
+                  <Card key={item.id} variant="neuro" className="p-4">
+                    <div className="flex gap-4">
+                      <Avatar>
+                        <AvatarFallback>{item.name.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1">
+                        <div className="flex justify-between items-center mb-1">
+                          <p className="font-semibold">{item.name}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {item.createdAt.toDate().toLocaleDateString()}
+                          </p>
+                        </div>
+                        <p className="text-sm text-muted-foreground">{item.comment}</p>
+                      </div>
+                    </div>
+                  </Card>
+                ))
+              ) : (
+                  <div className="text-center text-muted-foreground py-8 border-2 border-dashed rounded-lg">
+                      <p>No feedback yet. Be the first to leave a comment!</p>
+                  </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
