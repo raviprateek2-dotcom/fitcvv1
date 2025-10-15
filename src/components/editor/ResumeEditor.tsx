@@ -100,8 +100,8 @@ type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 type EditorTab = 'resume' | 'cover-letter' | 'design';
 
 const colorSwatches = [
-  'hsl(262.1 83.3% 57.8%)', // Default Purple
   'hsl(217.2 91.2% 59.8%)', // Blue
+  'hsl(262.1 83.3% 57.8%)', // Default Purple
   'hsl(142.1 76.2% 36.3%)', // Green
   'hsl(346.8 77.2% 49.8%)', // Red
   'hsl(24.6 95% 53.1%)',   // Orange
@@ -226,11 +226,11 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                 bodyFontSize: 14, 
                 headingFontSize: 18, 
                 titleFontSize: 36,
-                accentColor: 'hsl(262.1 83.3% 57.8%)'
+                accentColor: 'hsl(217.2 91.2% 59.8%)'
             };
         }
         if (typeof updatedData.styling.accentColor !== 'string') {
-            updatedData.styling.accentColor = 'hsl(262.1 83.3% 57.8%)';
+            updatedData.styling.accentColor = 'hsl(217.2 91.2% 59.8%)';
         }
 
 
@@ -896,14 +896,13 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                         </AccordionContent>
                         </AccordionItem>
                         
-                        {resumeData.projects === undefined && (
+                        {resumeData.projects === undefined ? (
                           <div className="p-4 border-dashed border-2 rounded-lg flex items-center justify-center">
                             <Button variant="ghost" onClick={addProjectSection}>
                               <PlusCircle className="mr-2 h-4 w-4" /> Add Projects Section
                             </Button>
                           </div>
-                        )}
-                        {resumeData.projects !== undefined && (
+                        ) : (
                           <AccordionItem value="projects">
                           <div className="flex items-center">
                             <AccordionTrigger className="font-semibold flex-grow">Projects</AccordionTrigger>
@@ -962,14 +961,13 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                         </AccordionContent>
                         </AccordionItem>
 
-                        {resumeData.skills === undefined && (
+                        {resumeData.skills === undefined ? (
                           <div className="p-4 border-dashed border-2 rounded-lg flex items-center justify-center">
                             <Button variant="ghost" onClick={addSkillSection}>
                               <PlusCircle className="mr-2 h-4 w-4" /> Add Skills Section
                             </Button>
                           </div>
-                        )}
-                        {resumeData.skills !== undefined && (
+                        ) : (
                            <AccordionItem value="skills">
                            <div className="flex items-center">
                              <AccordionTrigger className="font-semibold flex-grow">Skills</AccordionTrigger>
@@ -1072,7 +1070,3 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     </>
   );
 }
-
-    
-
-    
