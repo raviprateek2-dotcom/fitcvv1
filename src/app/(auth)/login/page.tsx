@@ -97,17 +97,16 @@ export default function LoginPage() {
       <CardHeader className="text-center">
         <div className="flex justify-center mb-4">
             <motion.div
-              animate={{
+              animate={isLoading ? {
                 rotate: [0, 0, -10, 10, -10, 10, 0],
-                y: [0, 0, 0, 0, 0, 0, -100],
-                x: [0, 0, 0, 0, 0, 0, 300],
+                y: [0, 0, 0, 0, 0, 0, -500],
                 opacity: [1, 1, 1, 1, 1, 1, 0],
-              }}
-              transition={{
-                duration: 3,
+              } : {}}
+              transition={isLoading ? {
+                duration: 2,
                 ease: "easeInOut",
                 times: [0, 0.3, 0.4, 0.5, 0.6, 0.7, 1],
-              }}
+              } : {}}
             >
               <Rocket className="h-10 w-10 text-primary" />
             </motion.div>
