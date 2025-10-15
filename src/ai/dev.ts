@@ -9,3 +9,4 @@ import '@/ai/flows/ai-resume-parser.ts';
 import '@/ai/flows/ai-keyword-suggester.ts';
 import '@/ai/flows/ai-title-suggester.ts';
 import '@/ai/flows/ai-resume-analyzer.ts';
+import '@/ai/flows/ai-resume-review.ts';
