@@ -94,70 +94,72 @@ export default function LoginPage() {
   };
 
   return (
-    <Card className="w-full max-w-sm" variant="neuro">
-      <CardHeader className="text-center">
-        <div className="flex justify-center mb-4">
-            <motion.div
-              animate={isLoading ? {
-                rotate: [0, 0, -10, 10, -10, 10, 0],
-                y: [0, 0, 0, 0, 0, 0, -500],
-                opacity: [1, 1, 1, 1, 1, 1, 0],
-              } : {}}
-              transition={isLoading ? {
-                duration: 2,
-                ease: "easeInOut",
-                times: [0, 0.3, 0.4, 0.5, 0.6, 0.7, 1],
-              } : {}}
-            >
-              <Rocket className="h-10 w-10 text-primary" />
-            </motion.div>
-        </div>
-        <CardTitle className="font-headline text-2xl">Welcome Back</CardTitle>
-        <CardDescription>Enter your credentials to access your account.</CardDescription>
-      </CardHeader>
-      <CardContent className="grid gap-4">
-        <Button variant="neuro" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading}>
-          <GoogleIcon className="mr-2 h-4 w-4" />
-          Continue with Google
-        </Button>
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
-          </div>
-        </div>
-        <form onSubmit={handleLogin} className="grid gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" placeholder="m@example.com" required value={email} onChange={(e) => setEmail(e.target.value)} disabled={isLoading} />
-          </div>
-          <div className="grid gap-2">
-            <div className="flex items-center">
-              <Label htmlFor="password">Password</Label>
-              <Link
-                href="/forgot-password"
-                className="ml-auto inline-block text-sm underline"
+    <div className="flex min-h-[calc(100vh-10rem)] items-center justify-center p-4">
+      <Card className="w-full max-w-sm" variant="neuro">
+        <CardHeader className="text-center">
+          <div className="flex justify-center mb-4">
+              <motion.div
+                animate={isLoading ? {
+                  rotate: [0, 0, -10, 10, -10, 10, 0],
+                  y: [0, 0, 0, 0, 0, 0, -500],
+                  opacity: [1, 1, 1, 1, 1, 1, 0],
+                } : {}}
+                transition={isLoading ? {
+                  duration: 2,
+                  ease: "easeInOut",
+                  times: [0, 0.3, 0.4, 0.5, 0.6, 0.7, 1],
+                } : {}}
               >
-                Forgot your password?
-              </Link>
-            </div>
-            <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} disabled={isLoading} />
+                <Rocket className="h-10 w-10 text-primary" />
+              </motion.div>
           </div>
-          <Button variant="neuro" className="w-full" type="submit" disabled={isLoading}>
-            {isLoading ? 'Logging In...' : 'Log In'}
+          <CardTitle className="font-headline text-2xl">Welcome Back</CardTitle>
+          <CardDescription>Enter your credentials to access your account.</CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-4">
+          <Button variant="neuro" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading}>
+            <GoogleIcon className="mr-2 h-4 w-4" />
+            Continue with Google
           </Button>
-        </form>
-      </CardContent>
-      <CardFooter className="flex flex-col gap-4">
-        <div className="text-center text-sm">
-          Don&apos;t have an account?{' '}
-          <Link href="/signup" className="underline">
-            Sign up
-          </Link>
-        </div>
-      </CardFooter>
-    </Card>
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+            </div>
+          </div>
+          <form onSubmit={handleLogin} className="grid gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" type="email" placeholder="m@example.com" required value={email} onChange={(e) => setEmail(e.target.value)} disabled={isLoading} />
+            </div>
+            <div className="grid gap-2">
+              <div className="flex items-center">
+                <Label htmlFor="password">Password</Label>
+                <Link
+                  href="/forgot-password"
+                  className="ml-auto inline-block text-sm underline"
+                >
+                  Forgot your password?
+                </Link>
+              </div>
+              <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} disabled={isLoading} />
+            </div>
+            <Button variant="neuro" className="w-full" type="submit" disabled={isLoading}>
+              {isLoading ? 'Logging In...' : 'Log In'}
+            </Button>
+          </form>
+        </CardContent>
+        <CardFooter className="flex flex-col gap-4">
+          <div className="text-center text-sm">
+            Don&apos;t have an account?{' '}
+            <Link href="/signup" className="underline">
+              Sign up
+            </Link>
+          </div>
+        </CardFooter>
+      </Card>
+    </div>
   );
 }

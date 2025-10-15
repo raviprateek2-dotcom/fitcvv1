@@ -103,61 +103,63 @@ export default function SignupPage() {
   };
 
   return (
-    <Card className="w-full max-w-sm" variant="neuro">
-      <CardHeader className="text-center">
-        <div className="flex justify-center mb-4">
-           <motion.div
-              animate={{
-                y: [0, -10, 0],
-              }}
-              transition={{
-                duration: 2.5,
-                ease: 'easeInOut',
-                repeat: Infinity,
-                repeatType: 'loop',
-              }}
-            >
-              <Rocket className="h-10 w-10 text-primary" />
-            </motion.div>
-        </div>
-        <CardTitle className="font-headline text-2xl">Create an Account</CardTitle>
-        <CardDescription>Start your journey to a perfect resume.</CardDescription>
-      </CardHeader>
-      <CardContent className="grid gap-4">
-        <Button variant="neuro" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading}>
-          <GoogleIcon className="mr-2 h-4 w-4" />
-          Continue with Google
-        </Button>
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t" />
+    <div className="flex min-h-[calc(100vh-10rem)] items-center justify-center p-4">
+      <Card className="w-full max-w-sm" variant="neuro">
+        <CardHeader className="text-center">
+          <div className="flex justify-center mb-4">
+            <motion.div
+                animate={{
+                  y: [0, -10, 0],
+                }}
+                transition={{
+                  duration: 2.5,
+                  ease: 'easeInOut',
+                  repeat: Infinity,
+                  repeatType: 'loop',
+                }}
+              >
+                <Rocket className="h-10 w-10 text-primary" />
+              </motion.div>
           </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
-          </div>
-        </div>
-        <form onSubmit={handleSignup} className="grid gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" placeholder="m@example.com" required value={email} onChange={(e) => setEmail(e.target.value)} disabled={isLoading} />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} disabled={isLoading} />
-          </div>
-          <Button variant="neuro" className="w-full" type="submit" disabled={isLoading}>
-            {isLoading ? 'Creating Account...' : 'Create Account'}
+          <CardTitle className="font-headline text-2xl">Create an Account</CardTitle>
+          <CardDescription>Start your journey to a perfect resume.</CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-4">
+          <Button variant="neuro" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading}>
+            <GoogleIcon className="mr-2 h-4 w-4" />
+            Continue with Google
           </Button>
-        </form>
-      </CardContent>
-      <CardFooter className="flex flex-col gap-4">
-        <div className="text-center text-sm">
-          Already have an account?{' '}
-          <Link href="/login" className="underline">
-            Log in
-          </Link>
-        </div>
-      </CardFooter>
-    </Card>
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+            </div>
+          </div>
+          <form onSubmit={handleSignup} className="grid gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" type="email" placeholder="m@example.com" required value={email} onChange={(e) => setEmail(e.target.value)} disabled={isLoading} />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="password">Password</Label>
+              <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} disabled={isLoading} />
+            </div>
+            <Button variant="neuro" className="w-full" type="submit" disabled={isLoading}>
+              {isLoading ? 'Creating Account...' : 'Create Account'}
+            </Button>
+          </form>
+        </CardContent>
+        <CardFooter className="flex flex-col gap-4">
+          <div className="text-center text-sm">
+            Already have an account?{' '}
+            <Link href="/login" className="underline">
+              Log in
+            </Link>
+          </div>
+        </CardFooter>
+      </Card>
+    </div>
   );
 }

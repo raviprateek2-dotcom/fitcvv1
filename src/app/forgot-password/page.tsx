@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -47,43 +48,45 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <Card className="w-full max-w-sm" variant="neuro">
-      <CardHeader className="text-center">
-        <div className="flex justify-center mb-4">
-          <Rocket className="h-10 w-10 text-primary" />
-        </div>
-        <CardTitle className="font-headline text-2xl">Forgot Password</CardTitle>
-        <CardDescription>
-          Enter your email and we&apos;ll send you a link to reset your password.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handlePasswordReset} className="grid gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="m@example.com"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={isLoading}
-            />
+    <div className="flex min-h-[calc(100vh-10rem)] items-center justify-center p-4">
+      <Card className="w-full max-w-sm" variant="neuro">
+        <CardHeader className="text-center">
+          <div className="flex justify-center mb-4">
+            <Rocket className="h-10 w-10 text-primary" />
           </div>
-          <Button variant="neuro" className="w-full" type="submit" disabled={isLoading}>
-            {isLoading ? 'Sending...' : 'Send Reset Link'}
-          </Button>
-        </form>
-      </CardContent>
-      <CardFooter>
-        <div className="text-center text-sm w-full">
-          Remembered your password?{' '}
-          <Link href="/login" className="underline">
-            Log in
-          </Link>
-        </div>
-      </CardFooter>
-    </Card>
+          <CardTitle className="font-headline text-2xl">Forgot Password</CardTitle>
+          <CardDescription>
+            Enter your email and we&apos;ll send you a link to reset your password.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handlePasswordReset} className="grid gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="m@example.com"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading}
+              />
+            </div>
+            <Button variant="neuro" className="w-full" type="submit" disabled={isLoading}>
+              {isLoading ? 'Sending...' : 'Send Reset Link'}
+            </Button>
+          </form>
+        </CardContent>
+        <CardFooter>
+          <div className="text-center text-sm w-full">
+            Remembered your password?{' '}
+            <Link href="/login" className="underline">
+              Log in
+            </Link>
+          </div>
+        </CardFooter>
+      </Card>
+    </div>
   );
 }
