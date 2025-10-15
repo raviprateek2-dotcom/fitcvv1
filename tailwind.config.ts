@@ -19,8 +19,8 @@ const config = {
     },
     extend: {
       boxShadow: {
-        neuro: '8px 8px 16px rgba(0, 0, 0, 0.25), -8px -8px 16px rgba(255, 255, 255, 0.05), inset 2px 2px 4px rgba(255, 255, 255, 0.1), inset -2px -2px 4px rgba(0, 0, 0, 0.2)',
-        'neuro-inset': 'inset 8px 8px 16px rgba(0, 0, 0, 0.3), inset -8px -8px 16px rgba(255, 255, 255, 0.05)',
+        neuro: '5px 5px 10px #bcbcbc, -5px -5px 10px #ffffff',
+        'neuro-inset': 'inset 5px 5px 10px #bcbcbc, inset -5px -5px 10px #ffffff',
         'cyber-light': '0 0 10px hsl(var(--primary)), 0 0 20px hsl(var(--primary))',
         'cyber-dark': '0 0 15px hsl(var(--accent))',
       },
@@ -67,10 +67,9 @@ const config = {
         },
       },
       borderRadius: {
-        lg: '1rem',
-        md: 'calc(1rem - 4px)',
-        sm: 'calc(1rem - 8px)',
-        '2xl': 'calc(1rem + 8px)',
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 4px)',
+        sm: 'calc(var(--radius) - 8px)',
       },
       keyframes: {
         'accordion-down': {
@@ -81,14 +80,6 @@ const config = {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' },
         },
-        'fade-in': {
-          from: { opacity: '0' },
-          to: { opacity: '1' },
-        },
-        'fade-in-up': {
-          from: { opacity: '0', transform: 'translateY(20px)' },
-          to: { opacity: '1', transform: 'translateY(0)' },
-        },
         shimmer: {
           '0%': { transform: 'translateX(-100%)' },
           '100%': { transform: 'translateX(100%)' },
@@ -97,24 +88,8 @@ const config = {
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'fade-in': 'fade-in 0.6s ease-out forwards',
-        'fade-in-up': 'fade-in-up 0.6s ease-out forwards',
         shimmer: 'shimmer 2s infinite linear',
       },
-      animationDelay: {
-        '100': '100ms',
-        '200': '200ms',
-        '300': '300ms',
-        '400': '400ms',
-        '500': '500ms',
-        '600': '600ms',
-      },
-      backdropBlur: {
-        '2xl': '40px',
-      },
-      saturate: {
-        '180': '1.8',
-      }
     },
   },
   plugins: [require('tailwindcss-animate')],

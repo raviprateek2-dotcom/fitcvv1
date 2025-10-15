@@ -83,7 +83,7 @@ export default function PricingPage() {
           animate="visible"
         >
           <motion.div variants={itemVariants} className="w-full lg:col-span-1">
-            <Card className="shadow-lg bg-card h-full" variant="neuro">
+            <Card className="shadow-lg h-full" variant="neuro">
               <CardHeader className="text-center p-8">
                 <CardTitle className="font-headline text-3xl">Free</CardTitle>
                 <CardDescription>Perfect for getting started and landing your first interview.</CardDescription>
@@ -112,7 +112,7 @@ export default function PricingPage() {
           </motion.div>
 
           <motion.div variants={itemVariants} className="w-full lg:col-span-1">
-            <Card className="shadow-2xl border-2 border-primary/50 bg-card relative h-full" variant="neuro">
+            <Card className="shadow-2xl border-2 border-primary/50 relative h-full" variant="neuro">
                <div className="absolute top-0 -translate-y-1/2 w-full flex justify-center">
                 <div className="bg-primary/20 text-primary px-4 py-1 rounded-full text-sm font-semibold shadow-lg flex items-center gap-2">
                   <Sparkles className="w-4 h-4" />
@@ -143,7 +143,7 @@ export default function PricingPage() {
           </motion.div>
           
           <motion.div variants={itemVariants} className="w-full lg:col-span-1">
-            <Card className="shadow-2xl border-2 border-primary/50 bg-card relative h-full" variant="neuro">
+            <Card className="shadow-2xl border-2 border-primary/50 relative h-full" variant="neuro">
               <CardHeader className="text-center p-8">
                 <CardTitle className="font-headline text-3xl text-primary">Pro 6-Months</CardTitle>
                 <CardDescription>A great option for a dedicated job search period.</CardDescription>
