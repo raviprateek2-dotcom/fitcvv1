@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Download, Eye, PlusCircle, Share2, Trash2, Sparkles, Bot, FileText, Newspaper, PanelLeft, ArrowLeft, Brush, Lock, Lightbulb, Upload, MinusCircle, Loader2 } from 'lucide-react';
+import { Download, PlusCircle, Share2, Trash2, Sparkles, Bot, FileText, Newspaper, PanelLeft, ArrowLeft, Brush, Lock, Lightbulb, Upload, MinusCircle, Loader2 } from 'lucide-react';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import AIContentDialog from './AIContentDialog';
 import AISectionWriterDialog from './AISectionWriterDialog';
@@ -96,7 +96,7 @@ type ResumeData = {
 };
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
-type EditorTab = 'resume' | 'cover-letter';
+type EditorTab = 'resume' | 'cover-letter' | 'design';
 
 const colorSwatches = [
   'hsl(262.1 83.3% 57.8%)', // Default Purple
@@ -632,13 +632,13 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
         <div className="container mx-auto px-4 md:px-6 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-2 flex-grow min-w-0">
              <Button variant="outline" size="icon" onClick={() => setIsFormVisible(!isFormVisible)} className="h-8 w-8">
-                <PanelLeft />
+                <PanelLeft className="h-4 w-4" />
              </Button>
               <Input 
                   value={resumeData.title || ''}
                   onChange={(e) => handleFieldChange('title', e.target.value)}
                   placeholder="Untitled Resume"
-                  className="text-xl font-headline font-semibold h-10 border-none shadow-none focus-visible:ring-0 p-0 flex-grow"
+                  className="text-lg font-headline font-semibold h-10 border-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 p-1 flex-grow bg-transparent"
               />
           </div>
            <div className="flex items-center gap-4">
@@ -663,7 +663,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
               PDF
             </Button>
             <Button variant="outline" size="icon" asChild>
-                <Link href="/dashboard"><ArrowLeft/></Link>
+                <Link href="/dashboard"><ArrowLeft className="h-4 w-4"/></Link>
             </Button>
           </div>
         </div>
@@ -673,20 +673,18 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
             <ScrollArea className="h-full">
               <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as EditorTab)} className="w-full">
                 <div className="p-4 border-b">
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="resume"><FileText className="mr-2"/>Resume</TabsTrigger>
-                    <TabsTrigger value="cover-letter"><Newspaper className="mr-2"/>Cover Letter</TabsTrigger>
+                  <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger value="resume"><FileText className="mr-2 h-4 w-4"/>Content</TabsTrigger>
+                    <TabsTrigger value="design"><Brush className="mr-2 h-4 w-4"/>Design</TabsTrigger>
+                    <TabsTrigger value="cover-letter"><Newspaper className="mr-2 h-4 w-4"/>Cover Letter</TabsTrigger>
                   </TabsList>
                 </div>
                 
-                <TabsContent value="resume" className="p-6">
-                  <div className="space-y-6">
-                    <Accordion type="multiple" defaultValue={['design', 'ai-tools', 'personal-info', 'summary' ]} className="w-full">
-                        <AccordionItem value="design">
-                          <AccordionTrigger className="font-semibold">Design</AccordionTrigger>
+                <TabsContent value="design" className="p-6">
+                    <Accordion type="single" defaultValue="template" collapsible className="w-full">
+                         <AccordionItem value="template">
+                          <AccordionTrigger className="font-semibold">Template</AccordionTrigger>
                           <AccordionContent className="space-y-4 pt-4">
-                            <div className="space-y-2">
-                                <Label>Template</Label>
                                 <Select value={resumeData.templateId} onValueChange={handleTemplateChange}>
                                     <SelectTrigger>
                                         <SelectValue placeholder="Select a template" />
@@ -702,9 +700,13 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                                         ))}
                                     </SelectContent>
                                 </Select>
-                            </div>
+                            </AccordionContent>
+                        </AccordionItem>
+                        <AccordionItem value="styling">
+                          <AccordionTrigger className="font-semibold">Styling</AccordionTrigger>
+                          <AccordionContent className="space-y-4 pt-4">
                             <div className="space-y-2">
-                              <Label>Color Palette</Label>
+                              <Label>Accent Color</Label>
                               <div className="flex flex-wrap gap-2">
                                 {colorSwatches.map(color => (
                                   <button
@@ -748,9 +750,14 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                             </div>
                           </AccordionContent>
                         </AccordionItem>
+                    </Accordion>
+                </TabsContent>
 
+                <TabsContent value="resume" className="p-6">
+                  <div className="space-y-6">
+                    <Accordion type="multiple" defaultValue={['ai-tools', 'personal-info', 'summary' ]} className="w-full">
                         <AccordionItem value="ai-tools">
-                          <AccordionTrigger className="font-semibold">AI &amp; Job Tools</AccordionTrigger>
+                          <AccordionTrigger className="font-semibold">AI & Job Tools</AccordionTrigger>
                           <AccordionContent className="space-y-4 pt-4">
                               <Label>Paste the job description here to get tailored AI suggestions and keyword analysis.</Label>
                               <Textarea 
@@ -1053,7 +1060,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
         </aside>
         <main className={cn("flex-grow bg-secondary/50 p-6 h-full print:bg-white print:p-0 transition-all duration-300 ease-in-out", isFormVisible ? 'w-2/3' : 'w-full')}>
           <ScrollArea className="h-full">
-            {activeTab === 'resume' ? (
+            {activeTab === 'resume' || activeTab === 'design' ? (
               <ResumePreview resumeData={resumeData} />
             ) : (
               <CoverLetterPreview resumeData={resumeData} />
@@ -1064,5 +1071,3 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     </>
   );
 }
-
-    
