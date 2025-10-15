@@ -11,7 +11,9 @@ import Link from 'next/link';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { updateProfile } from 'firebase/auth';
+import { updateProfile, updateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider, deleteUser } from 'firebase/auth';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { signOut } from 'firebase/auth';
 
 const SettingsSkeleton = () => (
   <div className="grid gap-8 md:grid-cols-3">
@@ -62,38 +64,101 @@ export default function SettingsPage() {
   const { toast } = useToast();
   
   const [displayName, setDisplayName] = useState('');
-  const [isSaving, setIsSaving] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState({ newPassword: '', confirmPassword: '' });
+  const [isSaving, setIsSaving] = useState<string | null>(null);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [showReauthDialog, setShowReauthDialog] = useState(false);
+  const [reauthAction, setReauthAction] = useState<(() => Promise<void>) | null>(null);
+
 
   useEffect(() => {
     if (!isUserLoading && !user) {
       router.push('/login');
     }
-    if (user && user.displayName) {
-      setDisplayName(user.displayName);
+    if (user) {
+      setDisplayName(user.displayName || '');
+      setEmail(user.email || '');
     }
   }, [user, isUserLoading, router]);
 
-  const handleProfileUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleReauth = async () => {
+    if (!user || !currentPassword) {
+      toast({ variant: 'destructive', title: 'Error', description: 'Password is required.' });
+      return;
+    }
+    const credential = EmailAuthProvider.credential(user.email!, currentPassword);
+    try {
+      await reauthenticateWithCredential(user, credential);
+      setShowReauthDialog(false);
+      setCurrentPassword('');
+      if (reauthAction) {
+        await reauthAction();
+      }
+    } catch (error) {
+      toast({ variant: 'destructive', title: 'Authentication Failed', description: 'The password you entered is incorrect.' });
+    }
+  };
+
+  const withReauthentication = (action: () => Promise<void>) => async () => {
+    try {
+      await action();
+    } catch (error: any) {
+      if (error.code === 'auth/requires-recent-login') {
+        toast({ variant: 'destructive', title: 'Action Required', description: 'Please re-enter your password to continue.' });
+        setReauthAction(() => action);
+        setShowReauthDialog(true);
+      } else {
+        toast({ variant: 'destructive', title: 'Error', description: error.message || 'An unexpected error occurred.' });
+      }
+    }
+  };
+
+  const handleProfileUpdate = async () => {
     if (!user) return;
-    setIsSaving(true);
+    setIsSaving('profile');
     
     try {
       await updateProfile(user, { displayName });
-      toast({
-        title: 'Success!',
-        description: 'Your profile has been updated.',
-      });
-    } catch (error) {
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: 'Could not update your profile. Please try again.',
-      });
+      toast({ title: 'Success!', description: 'Your name has been updated.' });
+    } catch (error: any) {
+      toast({ variant: 'destructive', title: 'Error', description: error.message });
     } finally {
-      setIsSaving(false);
+      setIsSaving(null);
     }
   };
+
+  const handleEmailUpdate = withReauthentication(async () => {
+    if (!user || !email) return;
+    setIsSaving('email');
+    await updateEmail(user, email);
+    toast({ title: 'Success!', description: 'Your email has been updated. Please log in again.' });
+    await signOut(auth);
+    router.push('/login');
+    setIsSaving(null);
+  });
+  
+  const handlePasswordUpdate = withReauthentication(async () => {
+    if (!user || !password.newPassword) return;
+    if (password.newPassword !== password.confirmPassword) {
+      toast({ variant: 'destructive', title: 'Error', description: 'Passwords do not match.' });
+      return;
+    }
+    setIsSaving('password');
+    await updatePassword(user, password.newPassword);
+    toast({ title: 'Success!', description: 'Your password has been updated.' });
+    setPassword({ newPassword: '', confirmPassword: '' });
+    setIsSaving(null);
+  });
+
+  const handleDeleteAccount = withReauthentication(async () => {
+    if (!user) return;
+    setIsSaving('delete');
+    await deleteUser(user);
+    toast({ title: 'Account Deleted', description: 'Your account has been permanently deleted.' });
+    router.push('/');
+    setIsSaving(null);
+  });
 
   const subscriptionStatus = userProfile?.subscription === 'premium' ? 'Pro' : 'Free';
   
@@ -141,31 +206,104 @@ export default function SettingsPage() {
             </Card>
 
             <Card>
-              <form onSubmit={handleProfileUpdate}>
-                <CardHeader>
-                    <CardTitle>Profile</CardTitle>
-                    <CardDescription>Update your personal information.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
+              <form onSubmit={(e) => { e.preventDefault(); handleProfileUpdate(); }}>
+                <CardHeader><CardTitle>Profile</CardTitle></CardHeader>
+                <CardContent className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="displayName">Full Name</Label>
                     <Input id="displayName" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
                   </div>
+                </CardContent>
+                <CardFooter>
+                  <Button type="submit" disabled={isSaving === 'profile'}>{isSaving === 'profile' ? 'Saving...' : 'Save Name'}</Button>
+                </CardFooter>
+              </form>
+              <form onSubmit={(e) => { e.preventDefault(); handleEmailUpdate(); }}>
+                 <CardContent className="space-y-4 pt-0">
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
-                    <Input id="email" value={user?.email || ''} disabled />
-                     <p className="text-xs text-muted-foreground">Your email address cannot be changed.</p>
+                    <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Button type="submit" disabled={isSaving}>
-                    {isSaving ? 'Saving...' : 'Save Changes'}
-                  </Button>
+                  <Button type="submit" disabled={isSaving === 'email'}>{isSaving === 'email' ? 'Saving...' : 'Update Email'}</Button>
                 </CardFooter>
               </form>
             </Card>
+
+            <Card>
+              <form onSubmit={(e) => { e.preventDefault(); handlePasswordUpdate(); }}>
+                <CardHeader>
+                    <CardTitle>Change Password</CardTitle>
+                    <CardDescription>Update your password. You may be asked to re-authenticate.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="newPassword">New Password</Label>
+                    <Input id="newPassword" type="password" value={password.newPassword} onChange={(e) => setPassword(p => ({...p, newPassword: e.target.value}))} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                    <Input id="confirmPassword" type="password" value={password.confirmPassword} onChange={(e) => setPassword(p => ({...p, confirmPassword: e.target.value}))} />
+                  </div>
+                </CardContent>
+                <CardFooter>
+                  <Button type="submit" disabled={isSaving === 'password'}>{isSaving === 'password' ? 'Saving...' : 'Change Password'}</Button>
+                </CardFooter>
+              </form>
+            </Card>
+
+             <Card className="border-destructive">
+                <CardHeader>
+                    <CardTitle className="text-destructive">Danger Zone</CardTitle>
+                    <CardDescription>These actions are irreversible. Please proceed with caution.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="destructive" disabled={isSaving === 'delete'}>
+                          {isSaving === 'delete' ? 'Deleting...' : 'Delete My Account'}
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This will permanently delete your account, your resumes, and all of your data. This action cannot be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={handleDeleteAccount} className="bg-destructive hover:bg-destructive/90">Yes, delete my account</AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                </CardContent>
+            </Card>
         </div>
       </div>
+      
+       <AlertDialog open={showReauthDialog} onOpenChange={setShowReauthDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Re-authentication Required</AlertDialogTitle>
+            <AlertDialogDescription>For your security, please enter your current password to continue.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="space-y-2">
+            <Label htmlFor="reauth-password">Current Password</Label>
+            <Input
+              id="reauth-password"
+              type="password"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+            />
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setCurrentPassword('')}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleReauth}>Confirm</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
