@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { DependencyList, createContext, useContext, ReactNode, useMemo, useState, useEffect } from 'react';
@@ -205,5 +204,3 @@ export function useMemoFirebase<T>(factory: () => T, deps: DependencyList): T | 
   
   return memoized;
 }
-
-    
