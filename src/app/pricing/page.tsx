@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useFirestore, useUser, updateDocumentNonBlocking } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { doc } from 'firebase/firestore';
-import { Check, X, Sparkles } from 'lucide-react';
+import { Check, X, Sparkles, Star } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
@@ -36,9 +36,9 @@ export default function PricingPage() {
   const router = useRouter();
   const { toast } = useToast();
 
-  const handleUpgrade = () => {
+  const handleUpgrade = (plan: string) => {
     if (!user) {
-      router.push('/signup?plan=pro');
+      router.push(`/signup?plan=${plan}`);
       return;
     }
     if (!firestore) return;
@@ -76,12 +76,12 @@ export default function PricingPage() {
         </div>
 
         <motion.div
-          className="flex flex-col lg:flex-row justify-center items-center lg:items-stretch gap-8"
+          className="grid grid-cols-1 lg:grid-cols-4 justify-center items-stretch gap-8"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
         >
-          <motion.div variants={itemVariants} className="w-full max-w-md">
+          <motion.div variants={itemVariants} className="w-full lg:col-span-1">
             <Card className="shadow-lg bg-card h-full" variant="neuro">
               <CardHeader className="text-center p-8">
                 <CardTitle className="font-headline text-3xl">Free</CardTitle>
@@ -102,7 +102,7 @@ export default function PricingPage() {
                   ))}
                 </ul>
               </CardContent>
-              <CardFooter className="p-8 pt-0">
+              <CardFooter className="p-8 pt-0 mt-auto">
                 <Button variant="outline" className="w-full" asChild>
                   <Link href="/signup">Get Started</Link>
                 </Button>
@@ -110,16 +110,16 @@ export default function PricingPage() {
             </Card>
           </motion.div>
 
-          <motion.div variants={itemVariants} className="w-full max-w-md">
-            <Card className="shadow-2xl border-2 border-primary bg-card relative h-full" variant="neuro">
-              <div className="absolute top-0 -translate-y-1/2 w-full flex justify-center">
-                <div className="bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-semibold shadow-lg flex items-center gap-2">
+          <motion.div variants={itemVariants} className="w-full lg:col-span-1">
+            <Card className="shadow-2xl border-2 border-primary/50 bg-card relative h-full" variant="neuro">
+               <div className="absolute top-0 -translate-y-1/2 w-full flex justify-center">
+                <div className="bg-primary/20 text-primary px-4 py-1 rounded-full text-sm font-semibold shadow-lg flex items-center gap-2">
                   <Sparkles className="w-4 h-4" />
-                  Most Popular
+                  Monthly
                 </div>
               </div>
               <CardHeader className="text-center p-8">
-                <CardTitle className="font-headline text-3xl text-primary">Pro</CardTitle>
+                <CardTitle className="font-headline text-3xl text-primary">Pro Monthly</CardTitle>
                 <CardDescription>Unlock all features to land your dream job, faster.</CardDescription>
                 <div className="text-5xl font-bold mt-4">₹499<span className="text-lg font-normal text-muted-foreground">/month</span></div>
               </CardHeader>
@@ -133,13 +133,70 @@ export default function PricingPage() {
                   ))}
                 </ul>
               </CardContent>
-              <CardFooter className="p-8 pt-0">
-                <Button className="w-full" onClick={handleUpgrade} variant="default">
+              <CardFooter className="p-8 pt-0 mt-auto">
+                <Button className="w-full" onClick={() => handleUpgrade('pro-monthly')} variant="default">
                   Go Pro
                 </Button>
               </CardFooter>
             </Card>
           </motion.div>
+          
+          <motion.div variants={itemVariants} className="w-full lg:col-span-1">
+            <Card className="shadow-2xl border-2 border-primary/50 bg-card relative h-full" variant="neuro">
+              <CardHeader className="text-center p-8">
+                <CardTitle className="font-headline text-3xl text-primary">Pro 6-Months</CardTitle>
+                <CardDescription>A great option for a dedicated job search period.</CardDescription>
+                <div className="text-5xl font-bold mt-4">₹999<span className="text-lg font-normal text-muted-foreground">/6 mo.</span></div>
+              </CardHeader>
+              <CardContent className="p-8 pt-0">
+                 <ul className="space-y-4">
+                  {proFeatures.map((feature) => (
+                    <li key={feature} className="flex items-center gap-3">
+                      <Check className="h-5 w-5 text-primary flex-shrink-0" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+              <CardFooter className="p-8 pt-0 mt-auto">
+                <Button className="w-full" onClick={() => handleUpgrade('pro-6-months')} variant="default">
+                  Choose Plan
+                </Button>
+              </CardFooter>
+            </Card>
+          </motion.div>
+
+          <motion.div variants={itemVariants} className="w-full lg:col-span-1">
+            <Card className="shadow-2xl border-2 border-accent bg-card relative h-full" variant="neuro">
+              <div className="absolute top-0 -translate-y-1/2 w-full flex justify-center">
+                <div className="bg-accent text-accent-foreground px-4 py-1 rounded-full text-sm font-semibold shadow-lg flex items-center gap-2">
+                  <Star className="w-4 h-4" />
+                  Best Value
+                </div>
+              </div>
+              <CardHeader className="text-center p-8">
+                <CardTitle className="font-headline text-3xl text-accent">Pro Yearly</CardTitle>
+                <CardDescription>Get a full year of premium access and save big.</CardDescription>
+                <div className="text-5xl font-bold mt-4">₹1499<span className="text-lg font-normal text-muted-foreground">/year</span></div>
+              </CardHeader>
+              <CardContent className="p-8 pt-0">
+                <ul className="space-y-4">
+                  {proFeatures.map((feature) => (
+                    <li key={feature} className="flex items-center gap-3">
+                      <Check className="h-5 w-5 text-accent flex-shrink-0" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+              <CardFooter className="p-8 pt-0 mt-auto">
+                <Button className="w-full" onClick={() => handleUpgrade('pro-yearly')} variant="default" style={{backgroundColor: 'hsl(var(--accent))', color: 'hsl(var(--accent-foreground))'}}>
+                  Choose Plan
+                </Button>
+              </CardFooter>
+            </Card>
+          </motion.div>
+
         </motion.div>
         <p className="text-center text-muted-foreground text-sm mt-12">All prices are in INR. You can cancel your subscription at any time.</p>
       </div>
