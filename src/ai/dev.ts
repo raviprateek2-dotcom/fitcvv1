@@ -8,3 +8,4 @@ import '@/ai/flows/ai-cover-letter-writer.ts';
 import '@/ai/flows/ai-resume-parser.ts';
 import '@/ai/flows/ai-keyword-suggester.ts';
 import '@/ai/flows/ai-title-suggester.ts';
+import '@/ai/flows/ai-resume-analyzer.ts';
