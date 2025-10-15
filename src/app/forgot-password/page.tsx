@@ -11,6 +11,7 @@ import { sendPasswordResetEmail } from 'firebase/auth';
 import { Rocket } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -52,7 +53,19 @@ export default function ForgotPasswordPage() {
       <Card className="w-full max-w-sm" variant="neuro">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
-            <Rocket className="h-10 w-10 text-primary" />
+            <motion.div
+                animate={{
+                  y: [0, -10, 0],
+                }}
+                transition={{
+                  duration: 2.5,
+                  ease: 'easeInOut',
+                  repeat: Infinity,
+                  repeatType: 'loop',
+                }}
+              >
+                <Rocket className="h-10 w-10 text-primary" />
+              </motion.div>
           </div>
           <CardTitle className="font-headline text-2xl">Forgot Password</CardTitle>
           <CardDescription>
