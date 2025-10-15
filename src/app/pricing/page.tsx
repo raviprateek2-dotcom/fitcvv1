@@ -71,10 +71,15 @@ export default function PricingPage() {
   return (
     <div className="bg-background">
       <div className="container mx-auto px-4 md:px-6 py-12 md:py-20">
-        <div className="text-center mb-12">
+        <motion.div 
+          className="text-center mb-12"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
           <h1 className="text-4xl font-headline font-bold tracking-tight sm:text-5xl">Simple, Transparent Pricing</h1>
           <p className="mt-4 text-lg text-muted-foreground">Choose the plan that's right for you. No hidden fees.</p>
-        </div>
+        </motion.div>
 
         <motion.div
           className="grid grid-cols-1 lg:grid-cols-4 justify-center items-stretch gap-8"
@@ -83,13 +88,13 @@ export default function PricingPage() {
           animate="visible"
         >
           <motion.div variants={itemVariants} className="w-full lg:col-span-1">
-            <Card className="shadow-lg h-full" variant="neuro">
+            <Card className="shadow-lg h-full flex flex-col" variant="neuro">
               <CardHeader className="text-center p-8">
                 <CardTitle className="font-headline text-3xl">Free</CardTitle>
                 <CardDescription>Perfect for getting started and landing your first interview.</CardDescription>
                 <div className="text-5xl font-bold mt-4">$0<span className="text-lg font-normal text-muted-foreground">/month</span></div>
               </CardHeader>
-              <CardContent className="p-8 pt-0">
+              <CardContent className="p-8 pt-0 flex-grow">
                 <ul className="space-y-4">
                   {freeFeatures.map((feature) => (
                     <li key={feature.text} className="flex items-center gap-3">
@@ -112,7 +117,7 @@ export default function PricingPage() {
           </motion.div>
 
           <motion.div variants={itemVariants} className="w-full lg:col-span-1">
-            <Card className="shadow-2xl border-2 border-primary/50 relative h-full" variant="neuro">
+            <Card className="shadow-2xl border-2 border-primary/50 relative h-full flex flex-col" variant="neuro">
                <div className="absolute top-0 -translate-y-1/2 w-full flex justify-center">
                 <div className="bg-primary/20 text-primary px-4 py-1 rounded-full text-sm font-semibold shadow-lg flex items-center gap-2">
                   <Sparkles className="w-4 h-4" />
@@ -124,7 +129,7 @@ export default function PricingPage() {
                 <CardDescription>Unlock all features to land your dream job, faster.</CardDescription>
                 <div className="text-5xl font-bold mt-4">₹499<span className="text-lg font-normal text-muted-foreground">/month</span></div>
               </CardHeader>
-              <CardContent className="p-8 pt-0">
+              <CardContent className="p-8 pt-0 flex-grow">
                 <ul className="space-y-4">
                   {proFeatures.map((feature) => (
                     <li key={feature} className="flex items-center gap-3">
@@ -143,13 +148,13 @@ export default function PricingPage() {
           </motion.div>
           
           <motion.div variants={itemVariants} className="w-full lg:col-span-1">
-            <Card className="shadow-2xl border-2 border-primary/50 relative h-full" variant="neuro">
+            <Card className="shadow-2xl border-2 border-primary/50 relative h-full flex flex-col" variant="neuro">
               <CardHeader className="text-center p-8">
                 <CardTitle className="font-headline text-3xl text-primary">Pro 6-Months</CardTitle>
                 <CardDescription>A great option for a dedicated job search period.</CardDescription>
                 <div className="text-5xl font-bold mt-4">₹999<span className="text-lg font-normal text-muted-foreground">/6 mo.</span></div>
               </CardHeader>
-              <CardContent className="p-8 pt-0">
+              <CardContent className="p-8 pt-0 flex-grow">
                  <ul className="space-y-4">
                   {proFeatures.map((feature) => (
                     <li key={feature} className="flex items-center gap-3">
@@ -168,7 +173,7 @@ export default function PricingPage() {
           </motion.div>
 
           <motion.div variants={itemVariants} className="w-full lg:col-span-1">
-            <Card className="shadow-2xl border-2 border-accent bg-card relative h-full" variant="neuro">
+            <Card className="shadow-2xl border-2 border-accent bg-card relative h-full flex flex-col" variant="neuro">
               <div className="absolute top-0 -translate-y-1/2 w-full flex justify-center">
                 <div className="bg-accent text-accent-foreground px-4 py-1 rounded-full text-sm font-semibold shadow-lg flex items-center gap-2">
                   <Star className="w-4 h-4" />
@@ -180,7 +185,7 @@ export default function PricingPage() {
                 <CardDescription>Get a full year of premium access and save big.</CardDescription>
                 <div className="text-5xl font-bold mt-4">₹1499<span className="text-lg font-normal text-muted-foreground">/year</span></div>
               </CardHeader>
-              <CardContent className="p-8 pt-0">
+              <CardContent className="p-8 pt-0 flex-grow">
                 <ul className="space-y-4">
                   {proFeatures.map((feature) => (
                     <li key={feature} className="flex items-center gap-3">
