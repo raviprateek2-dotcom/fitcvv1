@@ -82,10 +82,15 @@ export default function TemplatesPage() {
   return (
     <div className="bg-secondary">
       <div className="container mx-auto px-4 md:px-6 py-12 md:py-20">
-        <div className="text-center mb-12">
+        <motion.div
+          className="text-center mb-12"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
           <h1 className="text-4xl font-headline font-bold tracking-tight sm:text-5xl">Choose Your Template</h1>
           <p className="mt-4 text-lg text-muted-foreground">Select a professionally designed template to start building your resume.</p>
-        </div>
+        </motion.div>
 
         <motion.div
           className="grid gap-8 md:grid-cols-2 lg:grid-cols-3"
