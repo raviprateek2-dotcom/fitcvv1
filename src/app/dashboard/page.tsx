@@ -8,7 +8,7 @@ import { useFirestore } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, PlusCircle, ArrowRight, Upload, FileText, Download } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, ArrowRight, Upload, FileText } from 'lucide-react';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useMemoFirebase } from '@/firebase/provider';
@@ -43,8 +43,8 @@ type Resume = {
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, scale: 0.95, y: 20 },
-  visible: { opacity: 1, scale: 1, y: 0 },
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100 } },
 };
 
 
@@ -73,7 +73,12 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
     <motion.div variants={itemVariants}>
       <Card className="overflow-hidden group flex flex-col h-full transition-all duration-300 hover:shadow-2xl border-transparent hover:border-primary/20" variant="neuro">
         <Link href={`/editor/${resume.id}`} className="block p-4">
-          <div className="h-40 bg-secondary rounded-lg flex items-center justify-center mb-4 overflow-hidden relative">
+          <motion.div
+            className="h-40 bg-secondary rounded-lg flex items-center justify-center mb-4 overflow-hidden relative"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
               {templateImage ? (
                 <Image
                   src={templateImage.imageUrl}
@@ -81,12 +86,12 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
                   width={150}
                   height={212}
                   data-ai-hint={templateImage.imageHint}
-                  className="object-contain object-top transition-transform duration-300 group-hover:scale-105"
+                  className="object-contain object-top transition-transform duration-500 ease-in-out group-hover:scale-105"
                 />
               ) : (
                 <FileText className="w-16 h-16 text-muted-foreground/50" />
               )}
-          </div>
+          </motion.div>
         </Link>
         <CardHeader className="pt-0">
           <CardTitle className="text-lg font-semibold truncate">
@@ -156,7 +161,10 @@ const ResumeSkeleton = () => {
 
 const LoadingState = () => (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-        {[...Array(4)].map((_, i) => <ResumeSkeleton key={i} />)}
+      <ResumeSkeleton />
+      <ResumeSkeleton />
+      <ResumeSkeleton />
+      <ResumeSkeleton />
     </div>
 );
 
@@ -168,13 +176,37 @@ const EmptyState = ({ onPdfUploadClick }: { onPdfUploadClick: () => void; }) => 
     >
       <Card variant="neuro" className="text-center py-16 md:py-24 bg-gradient-to-br from-background to-secondary/50">
         <CardContent className="flex flex-col items-center">
-          <div className="p-4 bg-primary/10 rounded-full mb-6">
+          <motion.div 
+            className="p-4 bg-primary/10 rounded-full mb-6"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+          >
             <FileText className="w-12 h-12 text-primary" />
-          </div>
-          <h2 className="text-3xl font-headline font-bold mb-4">Create Your First Resume</h2>
-          <p className="text-muted-foreground mb-8 text-lg max-w-2xl mx-auto">Welcome! Start by choosing a professional template or importing an existing resume.</p>
+          </motion.div>
+          <motion.h2 
+            className="text-3xl font-headline font-bold mb-4"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            Create Your First Resume
+          </motion.h2>
+          <motion.p 
+            className="text-muted-foreground mb-8 text-lg max-w-2xl mx-auto"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            Welcome! Start by choosing a professional template or importing an existing resume.
+          </motion.p>
           
-          <div className="flex flex-col sm:flex-row gap-4">
+          <motion.div 
+            className="flex flex-col sm:flex-row gap-4"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+          >
              <Button size="lg" className="group" variant="outline" onClick={onPdfUploadClick}>
               <Upload className="mr-2 h-5 w-5" />
               Import from PDF
@@ -185,7 +217,7 @@ const EmptyState = ({ onPdfUploadClick }: { onPdfUploadClick: () => void; }) => 
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
-          </div>
+          </motion.div>
         </CardContent>
       </Card>
     </motion.div>
@@ -257,9 +289,9 @@ export default function DashboardPage() {
       }
       
       const newResumeData = {
-        ...result.data.resumeData,
         title: result.data.resumeData.personalInfo.name ? `${result.data.resumeData.personalInfo.name}'s Resume` : 'Imported Resume',
         templateId: 'modern',
+        content: result.data.resumeData,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       };
