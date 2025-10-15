@@ -100,9 +100,9 @@ type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 type EditorTab = 'content' | 'job-target' | 'cover-letter' | 'design';
 
 const colorSwatches = [
-  'hsl(221.2 83.2% 53.3%)', // Blue
-  'hsl(142.1 76.2% 36.3%)', // Green
-  'hsl(0 84.2% 60.2%)', // Red
+  'hsl(215, 80%, 50%)',   // Blue
+  'hsl(145, 63%, 42%)',  // Green
+  'hsl(0, 72%, 51%)',     // Red
   'hsl(262.1 83.3% 57.8%)', // Purple
   'hsl(24.6 95% 53.1%)',   // Orange
   'hsl(0 0% 9%)',          // Black
@@ -226,11 +226,11 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                 bodyFontSize: 14, 
                 headingFontSize: 18, 
                 titleFontSize: 36,
-                accentColor: 'hsl(221.2 83.2% 53.3%)'
+                accentColor: 'hsl(215, 80%, 50%)'
             };
         }
         if (typeof updatedData.styling.accentColor !== 'string') {
-            updatedData.styling.accentColor = 'hsl(221.2 83.2% 53.3%)';
+            updatedData.styling.accentColor = 'hsl(215, 80%, 50%)';
         }
 
 
@@ -532,6 +532,43 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
       toast({ variant: 'destructive', title: 'Error', description: error.message });
     } finally {
       setIsAiLoading(false);
+    }
+  };
+
+  const handleAddKeywordAsSkill = (keyword: string) => {
+    if (!resumeData) return;
+
+    // Check if skills section exists, if not, create it
+    const skillsExist = resumeData.skills !== undefined;
+    let currentSkills = resumeData.skills || [];
+
+    // Check for duplicates (case-insensitive)
+    const isDuplicate = currentSkills.some(skill => skill.name.toLowerCase() === keyword.toLowerCase());
+    if (isDuplicate) {
+      toast({
+        title: 'Skill Already Exists',
+        description: `"${keyword}" is already in your skills list.`,
+      });
+      return;
+    }
+
+    const newSkill: Skill = {
+      id: Date.now(),
+      name: keyword,
+      level: 'Advanced', // Default level
+    };
+
+    const updatedSkills = [...currentSkills, newSkill];
+
+    setResumeData(prev => ({
+      ...prev!,
+      skills: updatedSkills,
+    }));
+    
+    if (!skillsExist) {
+        toast({ title: 'Skills Section Added', description: `The "Skills" section was created and "${keyword}" was added.` });
+    } else {
+        toast({ title: 'Skill Added', description: `"${keyword}" has been added to your skills.` });
     }
   };
   
@@ -1011,10 +1048,19 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                         </ProFeatureWrapper>
                         {keywordSuggestions.length > 0 && (
                           <div className="space-y-2 pt-2">
-                            <Label>Suggested Keywords to Add:</Label>
+                            <Label>Click a keyword to add it to your skills:</Label>
                             <div className="flex flex-wrap gap-2">
                               {keywordSuggestions.map((keyword, i) => (
-                                <Badge key={i} variant="secondary">{keyword}</Badge>
+                                <Button
+                                  key={i}
+                                  variant="secondary"
+                                  size="sm"
+                                  className="h-auto"
+                                  onClick={() => handleAddKeywordAsSkill(keyword)}
+                                >
+                                  <PlusCircle className="mr-2 h-3 w-3" />
+                                  {keyword}
+                                </Button>
                               ))}
                             </div>
                           </div>
@@ -1059,7 +1105,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
         </aside>
         <main className={cn("flex-grow bg-secondary/50 p-6 h-full print:bg-white print:p-0 transition-all duration-300 ease-in-out", isFormVisible ? 'w-2/3' : 'w-full')}>
           <ScrollArea className="h-full">
-            {activeTab === 'resume' || activeTab === 'design' || activeTab === 'job-target' ? (
+            {activeTab === 'resume' || activeTab === 'design' || activeTab === 'job-target' || activeTab === 'content' ? (
               <ResumePreview resumeData={resumeData} />
             ) : (
               <CoverLetterPreview resumeData={resumeData} />
@@ -1070,5 +1116,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     </>
   );
 }
+
+    
 
     
