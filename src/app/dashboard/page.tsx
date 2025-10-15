@@ -8,7 +8,7 @@ import { useFirestore } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, PlusCircle, ArrowRight, Upload, FileText } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, ArrowRight, Upload, FileText, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useMemoFirebase } from '@/firebase/provider';
@@ -365,7 +365,11 @@ export default function DashboardPage() {
         <h1 className="text-3xl font-headline font-bold">My Resumes</h1>
         <div className="flex items-center gap-2">
            <Button variant="outline" onClick={() => fileInputRef.current?.click()} disabled={isParsing}>
-              <Upload className="mr-2 h-4 w-4" /> 
+              {isParsing ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Upload className="mr-2 h-4 w-4" />
+              )}
               {isParsing ? 'Importing...' : 'Import from PDF'}
             </Button>
           <Button asChild variant="neuro">
@@ -396,3 +400,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
