@@ -33,29 +33,8 @@ const suggestTitleFlow = ai.defineFlow(
     outputSchema: SuggestTitleOutputSchema,
   },
   async (input) => {
-    
-    const { output } = await ai.generate({
-        prompt: `Based on the user's current job title of "${input.currentTitle}", find the best matching professional title using the available tool.`,
-        tools: [getStandardizedJobTitle],
-        output: {
-            format: 'tool-request',
-            schema: z.object({
-                toolRequest: z.object({
-                    name: z.literal('getStandardizedJobTitle'),
-                    input: z.object({ userTitle: z.string() })
-                })
-            })
-        }
-    });
-
-    if (!output || !output.toolRequest) {
-        // Fallback if the model doesn't request the tool
-        return { suggestedTitle: input.currentTitle };
-    }
-    
-    // Call the tool that the LLM requested
-    const toolResult = await getStandardizedJobTitle(output.toolRequest.input);
-
-    return { suggestedTitle: toolResult };
+    // Directly call the tool to get the standardized title.
+    const standardizedTitle = await getStandardizedJobTitle({ userTitle: input.currentTitle });
+    return { suggestedTitle: standardizedTitle };
   }
 );

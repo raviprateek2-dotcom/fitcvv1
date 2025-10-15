@@ -20,8 +20,7 @@ export const getStandardizedJobTitle = ai.defineTool(
     outputSchema: z.string().describe('The most appropriate standardized job title from the provided list.'),
   },
   async ({ userTitle }) => {
-    // In a real scenario, this could involve a more complex search or fuzzy matching.
-    // For this example, we'll ask the LLM to pick the best fit from a predefined list.
+    // Ask the LLM to pick the best fit from the predefined list.
     const { text } = await ai.generate({
       prompt: `From the following list of professional titles, which one is the best fit for the title "${userTitle}"?
 
