@@ -8,7 +8,7 @@ import { useFirestore } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, PlusCircle, ArrowRight, Upload } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, ArrowRight, Upload, FileText, Download } from 'lucide-react';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useMemoFirebase } from '@/firebase/provider';
@@ -23,7 +23,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
@@ -61,27 +60,31 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
   }, [resume.updatedAt]);
 
   const handleDownloadPdf = () => {
-    // Navigate to the editor and trigger print from there
     const printUrl = `/editor/${resume.id}?print=true`;
     window.open(printUrl, '_blank');
   };
 
   return (
     <motion.div variants={itemVariants}>
-      <Card className="overflow-hidden group flex flex-col h-full transition-all duration-300 hover:scale-105 hover:shadow-2xl" variant="neuro">
-        <CardHeader>
+      <Card className="overflow-hidden group flex flex-col h-full transition-all duration-300 hover:shadow-2xl border-transparent hover:border-primary/20" variant="neuro">
+        <Link href={`/editor/${resume.id}`} className="block p-4">
+          <div className="h-40 bg-secondary rounded-lg flex items-center justify-center mb-4">
+              <FileText className="w-16 h-16 text-muted-foreground/50" />
+          </div>
+        </Link>
+        <CardHeader className="pt-0">
           <CardTitle className="text-lg font-semibold truncate">
             <Link href={`/editor/${resume.id}`} className="hover:underline">
               {resume.title || 'Untitled Resume'}
             </Link>
           </CardTitle>
-          <CardDescription>Template: {resume.templateId}</CardDescription>
+          <CardDescription>Updated {updatedAt}</CardDescription>
         </CardHeader>
-        <CardContent className="flex-grow">
-          {/* Can add a small preview or stats here in the future */}
-        </CardContent>
-        <CardFooter className="p-4 pt-0 flex justify-between items-center text-sm text-muted-foreground">
-          <span>Updated {updatedAt}</span>
+        
+        <CardFooter className="p-4 pt-0 mt-auto flex justify-between items-center text-sm text-muted-foreground">
+          <Button variant="ghost" asChild>
+            <Link href={`/editor/${resume.id}`}>Edit</Link>
+          </Button>
           <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -90,9 +93,6 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem asChild>
-                <Link href={`/editor/${resume.id}`}>Edit</Link>
-              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => onDuplicate(resume)}>Duplicate</DropdownMenuItem>
               <DropdownMenuItem onClick={handleDownloadPdf}>Download PDF</DropdownMenuItem>
               <AlertDialog>
@@ -123,15 +123,15 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
 const ResumeSkeleton = () => {
     return (
         <Card className="overflow-hidden" variant="neuro">
-            <CardHeader className="p-4">
+            <div className="p-4">
+              <Skeleton className="h-40 w-full mb-4" />
+            </div>
+            <CardHeader className="pt-0">
                  <Skeleton className="h-6 w-3/4 mb-2" />
                  <Skeleton className="h-4 w-1/2" />
             </CardHeader>
-            <CardContent className="p-4">
-               
-            </CardContent>
             <CardFooter className="p-4 pt-0 flex justify-between items-center">
-                <Skeleton className="h-4 w-1/3" />
+                <Skeleton className="h-9 w-20" />
                 <Skeleton className="h-8 w-8 rounded-full" />
             </CardFooter>
         </Card>
@@ -145,46 +145,34 @@ const LoadingState = () => (
 );
 
 const EmptyState = () => (
-    <Card variant="neuro" className="text-center py-16 md:py-24">
-      <CardContent>
-        <h2 className="text-3xl font-headline font-bold mb-4">Welcome to ResumeAI!</h2>
-        <p className="text-muted-foreground mb-8 text-lg max-w-2xl mx-auto">Let's create a resume that gets you hired. Follow these simple steps to get started.</p>
-        
-        <div className="grid md:grid-cols-3 gap-8 text-left mb-10 max-w-4xl mx-auto">
-            <Card variant="neuro">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-3"><div className="flex-shrink-0 bg-primary/10 text-primary rounded-full h-8 w-8 flex items-center justify-center font-bold">1</div>Choose a Template</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <p className="text-sm text-muted-foreground">Pick a design that matches your style and industry.</p>
-                </CardContent>
-            </Card>
-            <Card variant="neuro">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-3"><div className="flex-shrink-0 bg-primary/10 text-primary rounded-full h-8 w-8 flex items-center justify-center font-bold">2</div>Fill in Your Details</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <p className="text-sm text-muted-foreground">Use our AI assistant to craft compelling content.</p>
-                </CardContent>
-            </Card>
-            <Card variant="neuro">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-3"><div className="flex-shrink-0 bg-primary/10 text-primary rounded-full h-8 w-8 flex items-center justify-center font-bold">3</div>Download & Apply</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <p className="text-sm text-muted-foreground">Export your new resume as a PDF and start applying.</p>
-                </CardContent>
-            </Card>
-        </div>
-
-        <Button asChild size="lg" className="group" variant="neuro">
-          <Link href="/templates">
-            Start by Choosing a Template
-            <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-          </Link>
-        </Button>
-      </CardContent>
-    </Card>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: 'easeOut' }}
+    >
+      <Card variant="neuro" className="text-center py-16 md:py-24 bg-gradient-to-br from-background to-secondary/50">
+        <CardContent className="flex flex-col items-center">
+          <div className="p-4 bg-primary/10 rounded-full mb-6">
+            <FileText className="w-12 h-12 text-primary" />
+          </div>
+          <h2 className="text-3xl font-headline font-bold mb-4">Create Your First Resume</h2>
+          <p className="text-muted-foreground mb-8 text-lg max-w-2xl mx-auto">Welcome! Start by choosing a professional template or importing an existing resume.</p>
+          
+          <div className="flex gap-4">
+             <Button size="lg" className="group" variant="outline" onClick={() => document.getElementById('pdf-upload-button')?.click()}>
+              <Upload className="mr-2 h-5 w-5" />
+              Import from PDF
+            </Button>
+            <Button asChild size="lg" className="group" variant="neuro">
+              <Link href="/templates">
+                Choose a Template
+                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
 );
 
 
@@ -212,7 +200,6 @@ export default function DashboardPage() {
   const handleDuplicate = (resumeToDuplicate: Resume) => {
     if (!user || !resumesQuery) return;
     
-    // Omitting 'id' as it will be auto-generated by Firestore for the new document.
     const { id, ...resumeContent } = resumeToDuplicate;
     
     const newResumeData = {
@@ -245,7 +232,6 @@ export default function DashboardPage() {
 
     try {
       const arrayBuffer = await file.arrayBuffer();
-      // Convert buffer to Base64 string to pass to the server action
       const base64String = Buffer.from(arrayBuffer).toString('base64');
 
       const result = await parseResumeFromPdf(base64String);
@@ -257,7 +243,7 @@ export default function DashboardPage() {
       const newResumeData = {
         ...result.data.resumeData,
         title: result.data.resumeData.personalInfo.name ? `${result.data.resumeData.personalInfo.name}'s Resume` : 'Imported Resume',
-        templateId: 'modern', // Default template
+        templateId: 'modern',
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       };
@@ -279,7 +265,6 @@ export default function DashboardPage() {
       });
     } finally {
       setIsParsing(false);
-      // Reset file input
       if(fileInputRef.current) fileInputRef.current.value = '';
     }
   };
@@ -298,15 +283,10 @@ export default function DashboardPage() {
     return (
         <div className="container mx-auto px-4 md:px-6 py-12">
             <div className="flex items-center justify-between mb-8">
-                <h1 className="text-3xl font-headline font-bold">My Resumes</h1>
+                <Skeleton className="h-8 w-48" />
                 <div className="flex gap-2">
-                    <Button variant="outline" disabled><Upload className="mr-2 h-4 w-4" /> Import from PDF</Button>
-                    <Button asChild variant="neuro">
-                    <Link href="/templates">
-                        <PlusCircle className="mr-2 h-4 w-4" />
-                        Create New Resume
-                    </Link>
-                    </Button>
+                    <Skeleton className="h-10 w-36" />
+                    <Skeleton className="h-10 w-40" />
                 </div>
             </div>
             <LoadingState />
@@ -327,7 +307,7 @@ export default function DashboardPage() {
               className="hidden"
               disabled={isParsing}
             />
-           <Button variant="outline" onClick={() => fileInputRef.current?.click()} disabled={isParsing}>
+           <Button id="pdf-upload-button" variant="outline" onClick={() => fileInputRef.current?.click()} disabled={isParsing}>
               <Upload className="mr-2 h-4 w-4" /> 
               {isParsing ? 'Importing...' : 'Import from PDF'}
             </Button>
