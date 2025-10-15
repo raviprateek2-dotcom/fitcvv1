@@ -46,42 +46,45 @@ export async function generateStaticParams() {
 
 // Custom markdown-to-HTML renderer
 const MarkdownRenderer = ({ content }: { content: string }) => {
+  // This is a simple renderer. For a real app, a library like 'marked' or 'react-markdown' would be better.
   const htmlContent = content
     .split('\n')
     .map((line, index) => {
       line = line.trim();
       if (line.startsWith('# ')) {
-        return `<h1 key=${index} class="text-3xl font-bold font-headline mt-8 mb-4">${line.substring(2)}</h1>`;
+        return `<h1 key=${index}>${line.substring(2)}</h1>`;
       }
       if (line.startsWith('## ')) {
-        return `<h2 key=${index} class="text-2xl font-bold font-headline mt-6 mb-3">${line.substring(3)}</h2>`;
+        return `<h2 key=${index}>${line.substring(3)}</h2>`;
       }
       if (line.startsWith('### ')) {
-        return `<h3 key=${index} class="text-xl font-bold font-headline mt-4 mb-2">${line.substring(4)}</h3>`;
+        return `<h3 key=${index}>${line.substring(4)}</h3>`;
       }
       if (line.startsWith('- ')) {
-        return `<li key=${index} class="mb-2">${line.substring(2)}</li>`;
+        // This will be wrapped in a <ul> later
+        return `<li key=${index}>${line.substring(2)}</li>`;
       }
-      // Basic bold and italic
+       // Basic bold and italic
       line = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
       line = line.replace(/\*(.*?)\*/g, '<em>$1</em>');
       
       if (line.startsWith('`') && line.endsWith('`')) {
-        return `<p key=${index} class="my-4"><code class="bg-muted text-muted-foreground rounded-md px-2 py-1 font-mono text-sm">${line.substring(1, line.length - 1)}</code></p>`;
+        return `<code key=${index}>${line.substring(1, line.length - 1)}</code>`;
       }
       
       if(line === '') {
-          return '<br />';
+          return ''; // Return empty string for empty lines
       }
 
-      return `<p key=${index} class="mb-4 leading-relaxed">${line}</p>`;
+      return `<p key=${index}>${line}</p>`;
     })
+    .filter(line => line !== '') // Remove empty lines
     .join('');
     
-    // Wrap lists
-    const withLists = htmlContent.replace(/<li>(.*?)<\/li>(?!<li)/gs, '<li>$1</li></ul>').replace(/(<li>.*?<\/li>)/, '<ul class="list-disc pl-6 my-4 space-y-2">$1');
+    // Wrap consecutive <li> elements in a <ul>
+    const withLists = htmlContent.replace(/(<li>.*?<\/li>)+/gs, '<ul>$&</ul>');
 
-  return <div className="prose prose-lg dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: withLists }} />;
+  return <div className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-headline prose-a:text-primary hover:prose-a:text-primary/80 prose-strong:font-semibold prose-code:bg-muted prose-code:text-muted-foreground prose-code:px-2 prose-code:py-1 prose-code:rounded-md" dangerouslySetInnerHTML={{ __html: withLists }} />;
 };
 
 
