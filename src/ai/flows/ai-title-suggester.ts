@@ -31,17 +31,24 @@ const suggestTitleFlow = ai.defineFlow(
     name: 'suggestTitleFlow',
     inputSchema: SuggestTitleInputSchema,
     outputSchema: SuggestTitleOutputSchema,
+    stream: true,
   },
-  async (input) => {
-    const { output } = await ai.generate({
+  async (input, stream) => {
+    const {stream: responseStream, response} = await ai.generate({
       prompt: `Based on the user's current job title, find the best matching professional title.`,
       tools: [getStandardizedJobTitle],
       input: {
         currentTitle: input.currentTitle,
       },
+      stream: true,
     });
+    
+    for await (const chunk of responseStream) {
+        stream.chunk(chunk.text || '');
+    }
 
-    const toolResponse = output.toolRequest?.toolResponse;
+    const finalResponse = await response;
+    const toolResponse = finalResponse.toolRequest?.toolResponse;
 
     if (toolResponse && toolResponse.result) {
         return { suggestedTitle: toolResponse.result as string };

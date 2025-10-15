@@ -13,9 +13,9 @@ const professionalTitles = [
 export const getStandardizedJobTitle = ai.defineTool(
   {
     name: 'getStandardizedJobTitle',
-    description: 'Provides a list of standardized, professional job titles to normalize an informal one.',
+    description: 'Compares a user-provided job title against a list of standardized professional titles and returns the best match.',
     inputSchema: z.object({
-        userTitle: z.string().describe("The user's informal job title, e.g., 'Code Wizard'"),
+        userTitle: z.string().describe("The user's informal or non-standard job title, e.g., 'Code Wizard'"),
     }),
     outputSchema: z.string().describe('The most appropriate standardized job title from the provided list.'),
   },
