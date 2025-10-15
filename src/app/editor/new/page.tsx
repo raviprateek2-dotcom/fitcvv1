@@ -40,6 +40,12 @@ export default function NewResumePage() {
           return;
         }
 
+        // If user is not logged in, redirect to login page.
+        if (!user) {
+            router.push(`/login?redirect=/templates`);
+            return;
+        }
+
         // The logic for PDF uploads is handled on the dashboard, so we only proceed if there is a templateId
         if (!templateId) {
             router.push('/dashboard');
@@ -49,7 +55,7 @@ export default function NewResumePage() {
         const isProUser = userProfile?.subscription === 'premium';
         const isPremiumTemplate = premiumTemplates.includes(templateId);
 
-        // If a free user tries to access a premium template, block them.
+        // Block free users from using premium templates
         if (isPremiumTemplate && !isProUser) {
             toast({
                 variant: 'destructive',
@@ -60,7 +66,7 @@ export default function NewResumePage() {
             return;
         }
         
-        // For free users, check if they already have a resume.
+        // Block free users from creating more than one resume
         if (!isProUser) {
             const resumesCollection = collection(firestore, `users/${user.uid}/resumes`);
             const existingResumes = await getCollection(resumesCollection);
@@ -71,7 +77,7 @@ export default function NewResumePage() {
                     title: 'Free Plan Limit Reached',
                     description: 'You can only create one resume on the Free plan. Please upgrade to create more.',
                 });
-                router.push('/pricing');
+                router.push('/dashboard'); // Redirect to dashboard instead of pricing
                 return;
             }
         }
@@ -79,35 +85,35 @@ export default function NewResumePage() {
         // All checks passed, create the new resume.
         const resumesCollection = collection(firestore, `users/${user.uid}/resumes`);
         const newResumeData = {
-        title: 'Untitled Resume',
-        templateId,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-        personalInfo: {
-            name: user.displayName || 'Your Name',
-            title: 'Your Professional Title',
-            email: user.email || '',
-            phone: '',
-            location: '',
-            website: '',
-        },
-        summary: 'A brief professional summary about yourself.',
-        experience: [],
-        education: [],
-        skills: [],
-        projects: [],
-        jobDescription: '',
-        coverLetter: '',
-        companyInfo: {
-            name: '',
-            jobTitle: ''
-        },
-        styling: {
-            bodyFontSize: 14,
-            headingFontSize: 18,
-            titleFontSize: 36,
-            accentColor: 'hsl(262.1 83.3% 57.8%)', // Default accent color
-        }
+            title: 'Untitled Resume',
+            templateId,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+            personalInfo: {
+                name: user.displayName || 'Your Name',
+                title: 'Your Professional Title',
+                email: user.email || '',
+                phone: '',
+                location: '',
+                website: '',
+            },
+            summary: 'A brief professional summary about yourself.',
+            experience: [],
+            education: [],
+            skills: [],
+            projects: [],
+            jobDescription: '',
+            coverLetter: '',
+            companyInfo: {
+                name: '',
+                jobTitle: ''
+            },
+            styling: {
+                bodyFontSize: 14,
+                headingFontSize: 18,
+                titleFontSize: 36,
+                accentColor: 'hsl(262.1 83.3% 57.8%)', // Default accent color
+            }
         };
 
         addDocumentNonBlocking(resumesCollection, newResumeData)
@@ -127,12 +133,6 @@ export default function NewResumePage() {
                 }
             });
     };
-    
-    // If user is not logged in, redirect to login page.
-    if (!isUserLoading && !user) {
-        router.push(`/login?redirect=/templates`);
-        return;
-    }
     
     createResumeFlow();
 
