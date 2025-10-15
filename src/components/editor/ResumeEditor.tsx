@@ -1159,7 +1159,15 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div>
-                                        <Label>Job Description</Label>
+                                        <div className="flex justify-between items-center mb-2">
+                                            <Label>Job Description</Label>
+                                            <ProFeatureWrapper isPro={isProUser}>
+                                                <Button variant="outline" size="sm" onClick={handleSuggestKeywords} disabled={isAiLoading || !resumeData.jobDescription}>
+                                                    {isAiLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Lightbulb className="mr-2 h-4 w-4"/>}
+                                                    Suggest Keywords
+                                                </Button>
+                                            </ProFeatureWrapper>
+                                        </div>
                                         <Textarea 
                                             value={resumeData.jobDescription} 
                                             onChange={e => handleFieldChange('jobDescription', e.target.value)} 
@@ -1167,6 +1175,25 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                                             placeholder='e.g., "Seeking a product manager with 5+ years of experience..."'
                                         />
                                     </div>
+                                    {keywordSuggestions.length > 0 && (
+                                    <div className="space-y-2 pt-2">
+                                        <Label>Click a keyword to add it to your skills:</Label>
+                                        <div className="flex flex-wrap gap-2">
+                                        {keywordSuggestions.map((keyword, i) => (
+                                            <Button
+                                            key={i}
+                                            variant="secondary"
+                                            size="sm"
+                                            className="h-auto"
+                                            onClick={() => handleAddKeywordAsSkill(keyword)}
+                                            >
+                                            <PlusCircle className="mr-2 h-3 w-3" />
+                                            {keyword}
+                                            </Button>
+                                        ))}
+                                        </div>
+                                    </div>
+                                    )}
                                     {isAnalyzing ? (
                                         <div className="flex items-center justify-center py-4"><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Analyzing...</div>
                                     ) : analysisResult ? (
@@ -1204,26 +1231,6 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                                             <SearchCheck className="mr-2 h-4 w-4" /> Analyze Match
                                         </Button>
                                     </ProFeatureWrapper>
-
-                                    {keywordSuggestions.length > 0 && (
-                                    <div className="space-y-2 pt-2">
-                                        <Label>Click a keyword to add it to your skills:</Label>
-                                        <div className="flex flex-wrap gap-2">
-                                        {keywordSuggestions.map((keyword, i) => (
-                                            <Button
-                                            key={i}
-                                            variant="secondary"
-                                            size="sm"
-                                            className="h-auto"
-                                            onClick={() => handleAddKeywordAsSkill(keyword)}
-                                            >
-                                            <PlusCircle className="mr-2 h-3 w-3" />
-                                            {keyword}
-                                            </Button>
-                                        ))}
-                                        </div>
-                                    </div>
-                                    )}
                                 </CardContent>
                             </Card>
                         </div>
@@ -1267,10 +1274,10 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
         </Sidebar>
         <SidebarInset className="bg-secondary/50 no-print p-6 h-full print:bg-white print:p-0">
           <ScrollArea className="h-full">
-            {activeTab === 'resume' || activeTab === 'design' || activeTab === 'content' || activeTab === 'ai-review' ? (
-              <ResumePreview resumeData={resumeData} />
-            ) : (
+            {activeTab === 'cover-letter' ? (
               <CoverLetterPreview resumeData={resumeData} />
+            ) : (
+              <ResumePreview resumeData={resumeData} />
             )}
           </ScrollArea>
         </SidebarInset>
