@@ -160,7 +160,7 @@ const LoadingState = () => (
     </div>
 );
 
-const EmptyState = () => (
+const EmptyState = ({ onPdfUploadClick }: { onPdfUploadClick: () => void; }) => (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -174,8 +174,8 @@ const EmptyState = () => (
           <h2 className="text-3xl font-headline font-bold mb-4">Create Your First Resume</h2>
           <p className="text-muted-foreground mb-8 text-lg max-w-2xl mx-auto">Welcome! Start by choosing a professional template or importing an existing resume.</p>
           
-          <div className="flex gap-4">
-             <Button size="lg" className="group" variant="outline" onClick={() => document.getElementById('pdf-upload-button')?.click()}>
+          <div className="flex flex-col sm:flex-row gap-4">
+             <Button size="lg" className="group" variant="outline" onClick={onPdfUploadClick}>
               <Upload className="mr-2 h-5 w-5" />
               Import from PDF
             </Button>
@@ -298,9 +298,9 @@ export default function DashboardPage() {
   if (isUserLoading || !user) {
     return (
         <div className="container mx-auto px-4 md:px-6 py-12">
-            <div className="flex items-center justify-between mb-8">
-                <Skeleton className="h-8 w-48" />
-                <div className="flex gap-2">
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+                <Skeleton className="h-9 w-48" />
+                <div className="flex items-center gap-2">
                     <Skeleton className="h-10 w-36" />
                     <Skeleton className="h-10 w-40" />
                 </div>
@@ -312,18 +312,18 @@ export default function DashboardPage() {
 
   return (
     <div className="container mx-auto px-4 md:px-6 py-12">
+       <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handlePdfUpload}
+          accept="application/pdf"
+          className="hidden"
+          disabled={isParsing}
+        />
       <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
         <h1 className="text-3xl font-headline font-bold">My Resumes</h1>
         <div className="flex items-center gap-2">
-           <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handlePdfUpload}
-              accept="application/pdf"
-              className="hidden"
-              disabled={isParsing}
-            />
-           <Button id="pdf-upload-button" variant="outline" onClick={() => fileInputRef.current?.click()} disabled={isParsing}>
+           <Button variant="outline" onClick={() => fileInputRef.current?.click()} disabled={isParsing}>
               <Upload className="mr-2 h-4 w-4" /> 
               {isParsing ? 'Importing...' : 'Import from PDF'}
             </Button>
@@ -350,10 +350,8 @@ export default function DashboardPage() {
           ))}
         </motion.div>
       ) : !isLoading && (
-        <EmptyState />
+        <EmptyState onPdfUploadClick={() => fileInputRef.current?.click()} />
       )}
     </div>
   );
 }
-
-    
