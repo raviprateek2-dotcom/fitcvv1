@@ -121,7 +121,7 @@ export default function PricingPage() {
               <CardHeader className="text-center p-8">
                 <CardTitle className="font-headline text-3xl text-primary">Pro</CardTitle>
                 <CardDescription>Unlock all features to land your dream job, faster.</CardDescription>
-                <div className="text-5xl font-bold mt-4">$19<span className="text-lg font-normal text-muted-foreground">/month</span></div>
+                <div className="text-5xl font-bold mt-4">₹499<span className="text-lg font-normal text-muted-foreground">/month</span></div>
               </CardHeader>
               <CardContent className="p-8 pt-0">
                 <ul className="space-y-4">
@@ -141,7 +141,7 @@ export default function PricingPage() {
             </Card>
           </motion.div>
         </motion.div>
-        <p className="text-center text-muted-foreground text-sm mt-12">All prices are in USD. You can cancel your subscription at any time.</p>
+        <p className="text-center text-muted-foreground text-sm mt-12">All prices are in INR. You can cancel your subscription at any time.</p>
       </div>
     </div>
   );
