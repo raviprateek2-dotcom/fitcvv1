@@ -1,3 +1,4 @@
+
 import type { Config } from 'tailwindcss';
 
 const config = {
@@ -19,8 +20,8 @@ const config = {
     },
     extend: {
       boxShadow: {
-        neuro: '5px 5px 10px #bcbcbc, -5px -5px 10px #ffffff',
-        'neuro-inset': 'inset 5px 5px 10px #bcbcbc, inset -5px -5px 10px #ffffff',
+        neuro: '5px 5px 10px hsl(var(--neuro-shadow-light)), -5px -5px 10px hsl(var(--neuro-shadow-dark))',
+        'neuro-inset': 'inset 5px 5px 10px hsl(var(--neuro-shadow-light)), inset -5px -5px 10px hsl(var(--neuro-shadow-dark))',
         'cyber-light': '0 0 10px hsl(var(--primary)), 0 0 20px hsl(var(--primary))',
         'cyber-dark': '0 0 15px hsl(var(--accent))',
       },
