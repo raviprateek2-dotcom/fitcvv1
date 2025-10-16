@@ -22,8 +22,6 @@ const config = {
       boxShadow: {
         neuro: '5px 5px 10px hsl(var(--neuro-shadow-light)), -5px -5px 10px hsl(var(--neuro-shadow-dark))',
         'neuro-inset': 'inset 5px 5px 10px hsl(var(--neuro-shadow-light)), inset -5px -5px 10px hsl(var(--neuro-shadow-dark))',
-        'cyber-light': '0 0 10px hsl(var(--primary)), 0 0 20px hsl(var(--primary))',
-        'cyber-dark': '0 0 15px hsl(var(--accent))',
       },
       backgroundImage: {
         'gradient-glass': 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%)',
