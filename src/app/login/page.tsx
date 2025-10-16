@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -7,11 +8,12 @@ import { Label } from '@/components/ui/label';
 import { useAuth, useUser } from '@/firebase';
 import { initiateEmailSignIn, initiateGoogleSignIn } from '@/firebase/non-blocking-login';
 import { useToast } from '@/hooks/use-toast';
-import { Rocket } from 'lucide-react';
+import { Rocket, Info } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -112,7 +114,19 @@ export default function LoginPage() {
                 <Rocket className="h-10 w-10 text-primary" />
               </motion.div>
           </div>
-          <CardTitle className="font-headline text-2xl">Welcome Back</CardTitle>
+          <CardTitle className="font-headline text-2xl flex items-center justify-center gap-2">
+            Welcome Back
+             <TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <p className="font-sans text-sm">Use <strong className="font-semibold">test@test.com</strong> / <strong className="font-semibold">password</strong> for a dummy Pro account.</p>
+                    </TooltipContent>
+                </Tooltip>
+             </TooltipProvider>
+          </CardTitle>
           <CardDescription>Enter your credentials to access your account.</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">

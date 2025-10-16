@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { DependencyList, createContext, useContext, ReactNode, useMemo, useState, useEffect } from 'react';
@@ -107,9 +108,10 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
           const userDocRef = doc(firestore, `users/${firebaseUser.uid}`);
           getDoc(userDocRef).then(docSnap => {
             if (!docSnap.exists()) {
+              const isDummyUser = firebaseUser.email === 'test@test.com';
               const newUserProfile: UserProfile = {
                 email: firebaseUser.email || '',
-                subscription: 'free',
+                subscription: isDummyUser ? 'premium' : 'free',
                 profilePhotoUrl: firebaseUser.photoURL || '',
               };
               // Set the doc non-blockingly, don't wait for it to complete.
