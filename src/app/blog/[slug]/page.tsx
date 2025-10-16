@@ -10,6 +10,8 @@ import { ArrowLeft } from 'lucide-react';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import type { BlogPost } from '@/lib/blog-posts';
 
 // Custom markdown-to-HTML renderer
 const MarkdownRenderer = ({ content }: { content: string }) => {
@@ -56,10 +58,23 @@ const MarkdownRenderer = ({ content }: { content: string }) => {
 
 
 export default function BlogPostPage({ params }: { params: { slug: string } }) {
-  const post = blogPosts.find((p) => p.slug === params.slug);
+  const [post, setPost] = useState<BlogPost | undefined>(undefined);
+
+  useEffect(() => {
+    // Since this is a client component, we handle the promise-like params here
+    const slug = (params as any).slug;
+    const foundPost = blogPosts.find((p) => p.slug === slug);
+    if (!foundPost) {
+      notFound();
+    } else {
+      setPost(foundPost);
+    }
+  }, [params]);
+
 
   if (!post) {
-    notFound();
+    // You can return a loading skeleton here if needed
+    return null;
   }
   
   const image = PlaceHolderImages.find(img => img.id === post.imageId);
