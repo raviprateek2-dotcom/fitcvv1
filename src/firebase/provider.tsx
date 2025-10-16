@@ -19,6 +19,7 @@ interface FirebaseProviderProps {
 export type UserProfile = {
   email: string;
   subscription: 'free' | 'premium';
+  profilePhotoUrl?: string;
 };
 
 // Internal state for user authentication
@@ -109,6 +110,7 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
               const newUserProfile: UserProfile = {
                 email: firebaseUser.email || '',
                 subscription: 'free',
+                profilePhotoUrl: firebaseUser.photoURL || '',
               };
               // Set the doc non-blockingly, don't wait for it to complete.
               setDocumentNonBlocking(userDocRef, newUserProfile, { merge: false });

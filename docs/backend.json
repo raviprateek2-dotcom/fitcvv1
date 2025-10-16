@@ -22,7 +22,7 @@
         },
         "profilePhotoUrl": {
           "type": "string",
-          "description": "URL of the user's profile photo stored in Cloud Storage.",
+          "description": "URL or Data URI of the user's profile photo.",
           "format": "uri"
         }
       },

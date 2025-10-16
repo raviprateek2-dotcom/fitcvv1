@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useUser, useAuth } from '@/firebase';
+import { useUser, useAuth, updateDocumentNonBlocking } from '@/firebase';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
@@ -14,6 +14,11 @@ import { useToast } from '@/hooks/use-toast';
 import { updateProfile, updateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider, deleteUser } from 'firebase/auth';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { signOut } from 'firebase/auth';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Bot, Loader2, Sparkles, User as UserIcon } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
+import { generateAvatar } from '@/app/actions/ai-avatar-generator';
 
 const SettingsSkeleton = () => (
   <div className="grid gap-8 md:grid-cols-3">
@@ -30,6 +35,19 @@ const SettingsSkeleton = () => (
                       <Skeleton className="h-8 w-16" />
                   </div>
                   <Skeleton className="h-10 w-36" />
+              </div>
+          </CardContent>
+      </Card>
+      <Card>
+          <CardHeader>
+              <Skeleton className="h-7 w-40" />
+              <Skeleton className="h-4 w-72" />
+          </CardHeader>
+          <CardContent className="flex items-center gap-6">
+              <Skeleton className="h-24 w-24 rounded-full" />
+              <div className="space-y-2">
+                 <Skeleton className="h-10 w-48" />
+                 <Skeleton className="h-4 w-64" />
               </div>
           </CardContent>
       </Card>
@@ -70,6 +88,9 @@ export default function SettingsPage() {
   const [currentPassword, setCurrentPassword] = useState('');
   const [showReauthDialog, setShowReauthDialog] = useState(false);
   const [reauthAction, setReauthAction] = useState<(() => Promise<void>) | null>(null);
+  const [avatarGenPrompt, setAvatarGenPrompt] = useState('');
+  const [isGeneratingAvatar, setIsGeneratingAvatar] = useState(false);
+  const [generatedAvatar, setGeneratedAvatar] = useState<string | null>(null);
 
 
   useEffect(() => {
@@ -159,6 +180,46 @@ export default function SettingsPage() {
     router.push('/');
     setIsSaving(null);
   });
+  
+  const handleGenerateAvatar = async () => {
+    if (!avatarGenPrompt) return;
+    setIsGeneratingAvatar(true);
+    setGeneratedAvatar(null);
+    try {
+        const result = await generateAvatar({ prompt: avatarGenPrompt });
+        if (result.success && result.data) {
+            setGeneratedAvatar(result.data.imageDataUri);
+        } else {
+            toast({ variant: 'destructive', title: 'Avatar Generation Failed', description: result.error });
+        }
+    } catch (error: any) {
+        toast({ variant: 'destructive', title: 'Error', description: error.message });
+    } finally {
+        setIsGeneratingAvatar(false);
+    }
+  }
+
+  const handleSaveAvatar = async () => {
+    if (!user || !generatedAvatar) return;
+    setIsSaving('avatar');
+    try {
+        // Update Firebase Auth profile
+        await updateProfile(user, { photoURL: generatedAvatar });
+
+        // Update Firestore profile
+        const userDocRef = doc(auth.app.firestore, `users/${user.uid}`);
+        updateDocumentNonBlocking(userDocRef, { profilePhotoUrl: generatedAvatar });
+        
+        toast({ title: 'Avatar Updated!', description: 'Your new profile picture has been saved.' });
+        setGeneratedAvatar(null);
+        setAvatarGenPrompt('');
+    } catch (error: any) {
+        toast({ variant: 'destructive', title: 'Error', description: 'Could not save your new avatar.' });
+    } finally {
+        setIsSaving(null);
+    }
+  };
+
 
   const subscriptionStatus = userProfile?.subscription === 'premium' ? 'Pro' : 'Free';
   
@@ -202,6 +263,72 @@ export default function SettingsPage() {
                           : 'You are currently on the Free plan. Upgrade to Pro to unlock unlimited resumes, advanced AI features, and more.'
                         }
                     </p>
+                </CardContent>
+            </Card>
+            
+            <Card>
+                 <CardHeader>
+                    <CardTitle>Profile Picture</CardTitle>
+                    <CardDescription>Update your avatar. You can generate a new one with AI.</CardDescription>
+                </CardHeader>
+                <CardContent className="flex items-center gap-6">
+                    <Avatar className="h-24 w-24 border">
+                        <AvatarImage src={user.photoURL || userProfile?.profilePhotoUrl} alt="User Avatar" />
+                        <AvatarFallback>
+                            <UserIcon className="h-10 w-10 text-muted-foreground" />
+                        </AvatarFallback>
+                    </Avatar>
+                    <Dialog>
+                        <DialogTrigger asChild>
+                           <Button variant="outline">
+                             <Sparkles className="mr-2 h-4 w-4" />
+                             Generate AI Avatar
+                           </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[425px]">
+                            <DialogHeader>
+                                <DialogTitle>Generate AI Avatar</DialogTitle>
+                                <DialogDescription>
+                                    Describe the avatar you want to create. Be creative!
+                                </DialogDescription>
+                            </DialogHeader>
+                            <div className="grid gap-4 py-4">
+                               <div className="space-y-2">
+                                    <Label htmlFor="avatar-prompt">Prompt</Label>
+                                    <Textarea id="avatar-prompt" placeholder="e.g., 'a software engineer, minimalist line art style'" value={avatarGenPrompt} onChange={(e) => setAvatarGenPrompt(e.target.value)} />
+                               </div>
+                               {isGeneratingAvatar ? (
+                                 <div className="flex items-center justify-center h-48 bg-secondary rounded-md">
+                                     <div className="text-center">
+                                        <Bot className="h-12 w-12 text-primary animate-pulse mx-auto" />
+                                        <p className="mt-2 text-sm text-muted-foreground">Generating your avatar...</p>
+                                     </div>
+                                 </div>
+                               ) : generatedAvatar ? (
+                                    <div className="flex justify-center">
+                                        <Avatar className="h-48 w-48 border-4 border-primary">
+                                            <AvatarImage src={generatedAvatar} />
+                                            <AvatarFallback>AI</AvatarFallback>
+                                        </Avatar>
+                                    </div>
+                               ) : (
+                                   <div className="flex items-center justify-center h-48 bg-secondary rounded-md text-muted-foreground">
+                                       Your generated image will appear here.
+                                   </div>
+                               )}
+                            </div>
+                            <DialogFooter>
+                                {generatedAvatar && (
+                                    <Button variant="secondary" onClick={() => setGeneratedAvatar(null)}>Clear</Button>
+                                )}
+                                <Button onClick={handleGenerateAvatar} disabled={isGeneratingAvatar || !avatarGenPrompt}>
+                                    {isGeneratingAvatar ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Sparkles className="mr-2 h-4 w-4" />}
+                                    {isGeneratingAvatar ? "Generating..." : "Generate"}
+                                </Button>
+                                {generatedAvatar && <Button onClick={handleSaveAvatar} disabled={isSaving === 'avatar'}>{isSaving === 'avatar' ? 'Saving...' : 'Save Avatar'}</Button>}
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
                 </CardContent>
             </Card>
 
