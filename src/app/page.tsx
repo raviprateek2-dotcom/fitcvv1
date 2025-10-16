@@ -17,113 +17,6 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { AnimatedResume } from '@/components/common/AnimatedResume';
 
 
-const MotionSection = ({ children, className }: { children: React.ReactNode, className?: string }) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"],
-  });
-
-  const opacity = useTransform(scrollYProgress, [0.1, 0.4, 0.9], [0, 1, 0]);
-  const y = useTransform(scrollYProgress, [0.1, 0.4], ["30px", "0px"]);
-
-
-  return (
-    <motion.section ref={ref} style={{ opacity, y }} className={className}>
-      {children}
-    </motion.section>
-  );
-};
-
-const MotionCard = ({ children }: { children: React.ReactNode }) => {
-    const ref = useRef<HTMLDivElement>(null);
-    const { scrollYProgress } = useScroll({
-        target: ref,
-        offset: ["start end", "end start"],
-    });
-
-    const opacity = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
-    const scale = useTransform(scrollYProgress, [0, 0.5], [0.9, 1]);
-    const rotateX = useTransform(scrollYProgress, [0, 0.5], ["15deg", "0deg"]);
-
-    return (
-        <motion.div ref={ref} style={{ opacity, scale, rotateX }}>
-            {children}
-        </motion.div>
-    );
-};
-
-const HeroTextMotion = ({ children }: { children: React.ReactNode }) => {
-    const ref = useRef<HTMLDivElement>(null);
-    const { scrollYProgress } = useScroll({
-        target: ref,
-        offset: ["start start", "end start"]
-    });
-    const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-    const y = useTransform(scrollYProgress, [0, 0.5], ["0px", "-50px"]);
-
-    return (
-        <motion.div ref={ref} style={{ opacity, y }}>
-            {children}
-        </motion.div>
-    );
-}
-
-const features = [
-  {
-    icon: <DraftingCompass className="w-8 h-8 text-primary" />,
-    title: 'Intuitive Editor',
-    description: 'Effortlessly build and customize your resume with our user-friendly drag and drop editor.',
-  },
-  {
-    icon: <FileText className="w-8 h-8 text-primary" />,
-    title: 'Professional Templates',
-    description: 'Choose from a variety of modern, classic, and creative templates designed by experts.',
-  },
-  {
-    icon: <Sparkles className="w-8 h-8 text-primary" />,
-    title: 'AI Content Writer',
-    description: 'Let our AI write compelling resume content tailored to your target job in seconds.',
-  },
-  {
-    icon: <Zap className="w-8 h-8 text-primary" />,
-    title: 'ATS-Optimized',
-    description: 'Craft a resume that is optimized to pass through Applicant Tracking Systems and get seen by recruiters.',
-  },
-];
-
-const testimonials = [
-  {
-    quote: "ResumeAI transformed my job search. The AI writer is a game-changer, and I got more interviews in a week than I did in a month.",
-    author: "Sarah J.",
-    title: "Software Engineer",
-    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
-    rating: 5,
-  },
-  {
-    quote: "As a recent graduate, I was struggling to write a professional resume. This tool made it so easy, and the templates are beautiful. Highly recommended!",
-    author: "Michael B.",
-    title: "Marketing Graduate",
-    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026705d",
-    rating: 5,
-  },
-  {
-    quote: "I needed to update my resume quickly for a promotion. The intuitive editor and professional results saved me hours of work.",
-    author: "Emily K.",
-    title: "Project Manager",
-    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026706d",
-    rating: 4,
-  },
-   {
-    quote: "The cover letter generator is pure magic. It perfectly captured my experience and tailored it to the job description. I got the job!",
-    author: "David L.",
-    title: "UX Designer",
-    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026707d",
-    rating: 5,
-  },
-];
-
-
 const GridPatternBackground = () => {
     const ref = useRef(null);
     const { scrollYProgress } = useScroll({
@@ -164,79 +57,80 @@ const GridPatternBackground = () => {
     );
 };
 
-const howItWorksContainerVariants: Variants = {
-  visible: {
-    transition: {
-      staggerChildren: 0.3,
-    },
-  },
+const sectionVariants: Variants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: {
+            duration: 0.6,
+            ease: "easeOut",
+            staggerChildren: 0.2
+        }
+    }
 };
 
-const howItWorksItemVariants: Variants = {
-  hidden: { opacity: 0, x: -50 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: {
-      type: 'spring',
-      stiffness: 100,
-    },
-  },
+const itemVariants: Variants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } }
 };
 
-const iconVariants: Variants = {
-  hidden: { scale: 0, opacity: 0 },
-  visible: {
-    scale: 1,
-    opacity: 1,
-    transition: {
-      delay: 0.2,
-      type: 'spring',
-      stiffness: 200,
-      damping: 10
-    },
-  },
-};
 
-const featureListVariants: Variants = {
-  visible: {
-    transition: {
-      staggerChildren: 0.2,
-    },
+const features = [
+  {
+    title: 'AI Content Suggestions',
+    description: 'Get AI-powered suggestions to improve your resume content and make it more effective.',
+    icon: <Sparkles className="w-6 h-6 text-primary"/>
   },
-};
+  {
+    title: 'Customizable Templates',
+    description: 'Choose from a variety of professionally designed templates to match your style.',
+    icon: <DraftingCompass className="w-6 h-6 text-primary"/>
+  },
+  {
+    title: 'ATS Compatibility Check',
+    description: 'Ensure your resume is optimized for Applicant Tracking Systems to get past the bots.',
+    icon: <Zap className="w-6 h-6 text-primary"/>
+  },
+];
 
-const featureItemVariants: Variants = {
-  hidden: { opacity: 0, x: -50 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: {
-      duration: 0.5,
-      ease: 'easeOut',
-    },
+const testimonials = [
+  {
+    author: 'Sarah L.',
+    title: 'Software Engineer',
+    quote: 'ResumeAI helped me land my dream job in just two weeks! The AI suggestions were a game-changer.',
+    avatar: 'https://i.pravatar.cc/150?img=1',
+    rating: 5,
   },
-};
-
-const listVariants: Variants = {
-  visible: {
-    transition: {
-      staggerChildren: 0.2,
-    },
+  {
+    author: 'John D.',
+    title: 'Product Manager',
+    quote: 'I\'ve never felt more confident about my resume. The templates are modern and professional.',
+    avatar: 'https://i.pravatar.cc/150?img=2',
+    rating: 5,
   },
-};
-
-const listItemVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.5,
-      ease: 'easeOut',
-    },
+  {
+    author: 'Emily C.',
+    title: 'UX Designer',
+    quote: 'As a designer, I appreciate the attention to detail in the templates. A fantastic tool!',
+    avatar: 'https://i.pravatar.cc/150?img=3',
+    rating: 5,
   },
-};
+   {
+    author: 'Mike R.',
+    title: 'Marketing Director',
+    quote: 'The ATS checker gave me peace of mind. I started getting more callbacks almost immediately after using ResumeAI.',
+    avatar: 'https://i.pravatar.cc/150?img=4',
+    rating: 5,
+  },
+  {
+    author: 'Jessica B.',
+    title: 'Recent Graduate',
+    quote: 'I was struggling to create my first resume. This tool made it so easy and helped me look professional.',
+    avatar: 'https://i.pravatar.cc/150?img=5',
+    rating: 5,
+  }
+];
 
 
 export default function Home() {
@@ -250,11 +144,15 @@ export default function Home() {
         <GridPatternBackground />
         <div className="container mx-auto px-4 md:px-6 relative z-10">
             <div className="grid md:grid-cols-2 gap-12 items-center">
-              <HeroTextMotion>
+              <motion.div
+                 initial="hidden"
+                 animate="visible"
+                 variants={sectionVariants}
+              >
                 <div 
                   className="space-y-6 text-center md:text-left"
                 >
-                  <h1 className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl">
+                  <motion.h1 variants={itemVariants} className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl">
                     Don't just write a resume.
                     <br />
                     <span className="text-primary transition-all duration-300 inline-block min-h-[60px] sm:min-h-[70px] md:min-h-[80px]">
@@ -265,22 +163,25 @@ export default function Home() {
                         "Showcase your skills."
                       ]} />
                     </span>
-                  </h1>
-                  <p className="max-w-lg mx-auto md:mx-0 text-muted-foreground md:text-xl">
+                  </motion.h1>
+                  <motion.p variants={itemVariants} className="max-w-lg mx-auto md:mx-0 text-muted-foreground md:text-xl">
                     Create a professional, ATS-optimized resume in minutes. Let our AI guide you to landing your dream job.
-                  </p>
-                  <div className="flex flex-col gap-4 sm:flex-row justify-center md:justify-start">
+                  </motion.p>
+                  <motion.div variants={itemVariants} className="flex flex-col gap-4 sm:flex-row justify-center md:justify-start">
                     <Button asChild size="lg" className="group" variant='neuro'>
                       <Link href="/templates">
                         Create My Resume
                         <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                       </Link>
                     </Button>
-                  </div>
+                  </motion.div>
                 </div>
-              </HeroTextMotion>
+              </motion.div>
               <motion.div 
                 className="hidden md:flex justify-center items-center"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
                 style={{ perspective: '1000px' }}
               >
                  <div className="relative w-full h-full min-h-[450px]">
@@ -312,40 +213,43 @@ export default function Home() {
       </section>
 
       {/* How It Works Section */}
-      <MotionSection className="relative w-full py-20 md:py-32">
+      <motion.section 
+        className="relative w-full py-20 md:py-32"
+        variants={sectionVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
+      >
         <div id="how-it-works" className="container mx-auto px-4 md:px-6">
               <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
-                  <div className="inline-block rounded-lg bg-card/50 backdrop-blur-sm px-3 py-1 text-sm font-medium border">How It Works</div>
-                  <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Three Simple Steps to Your Dream Job</h2>
+                  <motion.div variants={itemVariants} className="inline-block rounded-lg bg-card/50 backdrop-blur-sm px-3 py-1 text-sm font-medium border">How It Works</motion.div>
+                  <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Three Simple Steps to Your Dream Job</motion.h2>
               </div>
               <motion.div
-                 variants={howItWorksContainerVariants}
-                 initial="hidden"
-                 whileInView="visible"
-                 viewport={{ once: true, amount: 0.5 }}
+                 variants={sectionVariants}
                  className="mx-auto grid items-start gap-8 sm:max-w-4xl sm:grid-cols-3 md:gap-12"
               >
-                  <motion.div variants={howItWorksItemVariants}>
+                  <motion.div variants={itemVariants}>
                     <div className="flex flex-col gap-4 items-center text-center p-6 transition-all duration-300 hover:scale-105">
-                      <motion.div variants={iconVariants} className="bg-primary/10 p-4 rounded-full">
+                      <motion.div variants={itemVariants} className="bg-primary/10 p-4 rounded-full">
                          <FileText className="w-8 h-8 text-primary"/>
                       </motion.div>
                       <h3 className="text-xl font-bold font-headline">1. Select a Template</h3>
                       <p className="text-muted-foreground">Choose from our library of professionally designed and ATS-friendly resume templates.</p>
                     </div>
                   </motion.div>
-                  <motion.div variants={howItWorksItemVariants}>
+                  <motion.div variants={itemVariants}>
                    <div className="flex flex-col gap-4 items-center text-center p-6 transition-all duration-300 hover:scale-105">
-                      <motion.div variants={iconVariants} className="bg-primary/10 p-4 rounded-full">
+                      <motion.div variants={itemVariants} className="bg-primary/10 p-4 rounded-full">
                          <Sparkles className="w-8 h-8 text-primary"/>
                       </motion.div>
                       <h3 className="text-xl font-bold font-headline">2. Perfect with AI</h3>
                       <p className="text-muted-foreground">Use our AI assistant to write compelling bullet points, summaries, and cover letters.</p>
                    </div>
                   </motion.div>
-                  <motion.div variants={howItWorksItemVariants}>
+                  <motion.div variants={itemVariants}>
                    <div className="flex flex-col gap-4 items-center text-center p-6 transition-all duration-300 hover:scale-105">
-                      <motion.div variants={iconVariants} className="bg-primary/10 p-4 rounded-full">
+                      <motion.div variants={itemVariants} className="bg-primary/10 p-4 rounded-full">
                          <Zap className="w-8 h-8 text-primary"/>
                       </motion.div>
                       <h3 className="text-xl font-bold font-headline">3. Download & Apply</h3>
@@ -354,28 +258,31 @@ export default function Home() {
                   </motion.div>
               </motion.div>
           </div>
-      </MotionSection>
+      </motion.section>
 
       {/* Features Section */}
-      <MotionSection className="relative w-full py-20 md:py-32">
+      <motion.section 
+        className="relative w-full py-20 md:py-32"
+        variants={sectionVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
+      >
         <div id="features" className="container mx-auto px-4 md:px-6">
             <div className="grid md:grid-cols-2 gap-16 items-center">
-                <div className="space-y-8">
-                    <div className="space-y-4">
+                <motion.div variants={sectionVariants} className="space-y-8">
+                    <motion.div variants={itemVariants} className="space-y-4">
                       <div className="inline-block rounded-lg bg-secondary px-3 py-1 text-sm font-medium">Everything You Need</div>
                       <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Features that help you stand out</h2>
-                    </div>
+                    </motion.div>
                     <motion.ul
-                      variants={featureListVariants}
-                      initial="hidden"
-                      whileInView="visible"
-                      viewport={{ once: true, amount: 0.2 }}
+                      variants={sectionVariants}
                       className="grid sm:grid-cols-1 gap-8"
                     >
                         {features.map((feature, index) => (
                           <motion.li 
                             key={index}
-                            variants={featureItemVariants}
+                            variants={itemVariants}
                             className="flex items-start gap-4 transition-all duration-300 hover:bg-secondary/50 p-4 rounded-lg hover:scale-105"
                           >
                               <div className="bg-primary/10 p-3 rounded-full mt-1">
@@ -388,20 +295,26 @@ export default function Home() {
                           </motion.li>
                         ))}
                     </motion.ul>
-                </div>
-                 <div className="hidden md:flex justify-center items-center">
+                </motion.div>
+                 <motion.div variants={itemVariants} className="hidden md:flex justify-center items-center">
                     <AnimatedResume templateId='executive' />
-                 </div>
+                 </motion.div>
             </div>
         </div>
-      </MotionSection>
+      </motion.section>
 
       {/* Testimonials Section */}
-      <MotionSection className="relative w-full py-20 md:py-32">
+      <motion.section 
+        className="relative w-full py-20 md:py-32"
+        variants={sectionVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
+      >
         <div id="testimonials" className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
-            <div className="inline-block rounded-lg bg-card/50 backdrop-blur-sm border px-3 py-1 text-sm font-medium">What Our Users Say</div>
-            <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Loved by Job Seekers Worldwide</h2>
+            <motion.div variants={itemVariants} className="inline-block rounded-lg bg-card/50 backdrop-blur-sm border px-3 py-1 text-sm font-medium">What Our Users Say</motion.div>
+            <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Loved by Job Seekers Worldwide</motion.h2>
           </div>
           <div>
             <Carousel
@@ -412,7 +325,7 @@ export default function Home() {
               <CarouselContent>
                 {testimonials.map((testimonial, index) => (
                   <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
-                    <div className="p-1 h-full">
+                    <motion.div variants={itemVariants} className="p-1 h-full">
                       <Card className="flex flex-col justify-between h-full p-8 transition-all duration-300 hover:scale-105 hover:shadow-2xl" variant="neuro">
                         <CardContent className="p-0 flex flex-col gap-6">
                           <div className="flex">
@@ -433,7 +346,7 @@ export default function Home() {
                           </div>
                         </CardContent>
                       </Card>
-                    </div>
+                    </motion.div>
                   </CarouselItem>
                 ))}
               </CarouselContent>
@@ -442,41 +355,44 @@ export default function Home() {
             </Carousel>
           </div>
         </div>
-      </MotionSection>
+      </motion.section>
 
       {/* Why Us Section */}
-      <MotionSection className="relative w-full py-20 md:py-32">
+      <motion.section 
+        className="relative w-full py-20 md:py-32"
+        variants={sectionVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.5 }}
+      >
           <div className="container mx-auto px-4 md:px-6">
                <motion.div
-                 variants={listVariants}
-                 initial="hidden"
-                 whileInView="visible"
-                 viewport={{ once: true, amount: 0.5 }}
+                 variants={sectionVariants}
                  className="space-y-8 max-w-3xl mx-auto text-center"
                >
-                  <motion.h2 variants={listItemVariants} className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Don't just write a resume. Design your future.</motion.h2>
+                  <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Don't just write a resume. Design your future.</motion.h2>
                   <motion.ul
-                    variants={listVariants}
+                    variants={sectionVariants}
                     className="space-y-4 text-xl inline-flex flex-col items-start text-left"
                   >
-                    <motion.li variants={listItemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>AI-powered content suggestions.</span></motion.li>
-                    <motion.li variants={listItemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>Professionally designed templates.</span></motion.li>
-                    <motion.li variants={listItemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>Intuitive real-time editor.</span></motion.li>
+                    <motion.li variants={itemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>AI-powered content suggestions.</span></motion.li>
+                    <motion.li variants={itemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>Professionally designed templates.</span></motion.li>
+                    <motion.li variants={itemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>Intuitive real-time editor.</span></motion.li>
                   </motion.ul>
               </motion.div>
           </div>
-      </MotionSection>
+      </motion.section>
 
       {/* Blog Section */}
-      <MotionSection className="relative w-full py-20 md:py-32">
+      <motion.section 
+        className="relative w-full py-20 md:py-32"
+        variants={sectionVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.2 }}
+      >
         <div id="blog" className="container mx-auto px-4 md:px-6">
-          <motion.div
-            variants={listVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.2 }}
-          >
-            <motion.div variants={listItemVariants} className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
+            <motion.div variants={itemVariants} className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
               <div className="inline-block rounded-lg bg-card/50 backdrop-blur-sm border px-3 py-1 text-sm font-medium">From Our Blog</div>
               <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Career Advice & Resume Tips</h2>
               <p className="max-w-[600px] text-muted-foreground md:text-lg">
@@ -484,13 +400,13 @@ export default function Home() {
               </p>
             </motion.div>
             <motion.div
-              variants={listVariants}
+              variants={sectionVariants}
               className="grid gap-8 md:grid-cols-3"
             >
               {blogPosts.slice(0, 3).map((post) => {
                   const image = PlaceHolderImages.find(img => img.id === post.imageId);
                   return (
-                      <motion.div variants={listItemVariants} key={post.slug}>
+                      <motion.div variants={itemVariants} key={post.slug}>
                         <Card className="group overflow-hidden flex flex-col h-full transition-all duration-300 hover:scale-105 hover:shadow-2xl" variant="neuro">
                            {image && (
                               <Link href={`/blog/${post.slug}`} className="block overflow-hidden relative h-48">
@@ -521,31 +437,30 @@ export default function Home() {
               })}
             </motion.div>
              <motion.div
-                variants={listItemVariants}
+                variants={itemVariants}
                 className="text-center mt-12"
              >
                   <Button asChild size="lg" variant="outline">
                       <Link href="/blog">View All Articles</Link>
                   </Button>
               </motion.div>
-          </motion.div>
         </div>
-      </MotionSection>
+      </motion.section>
 
       {/* Final CTA */}
-      <MotionSection className="relative w-full py-20 md:py-32">
-        <motion.div
-          variants={listVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.5 }}
-          className="container mx-auto px-4 md:px-6 text-center"
-        >
-          <motion.h2 variants={listItemVariants} className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Ready to Build Your Future?</motion.h2>
-          <motion.p variants={listItemVariants} className="mx-auto max-w-[600px] text-muted-foreground md:text-xl mt-4">
+      <motion.section 
+        className="relative w-full py-20 md:py-32"
+        variants={sectionVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.5 }}
+      >
+        <div className="container mx-auto px-4 md:px-6 text-center">
+          <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Ready to Build Your Future?</motion.h2>
+          <motion.p variants={itemVariants} className="mx-auto max-w-[600px] text-muted-foreground md:text-xl mt-4">
             Start for free and see how ResumeAI can transform your job search. No credit card required.
           </motion.p>
-          <motion.div variants={listItemVariants} className="mt-8">
+          <motion.div variants={itemVariants} className="mt-8">
             <Button asChild size="lg" className="group" variant='neuro'>
               <Link href="/templates">
                 Create Your Resume Now
@@ -553,8 +468,8 @@ export default function Home() {
               </Link>
             </Button>
           </motion.div>
-        </motion.div>
-      </MotionSection>
+        </div>
+      </motion.section>
     </div>
   );
 }
