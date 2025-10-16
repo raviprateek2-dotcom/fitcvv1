@@ -10,8 +10,9 @@ import { ArrowLeft } from 'lucide-react';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, use } from 'react';
 import type { BlogPost } from '@/lib/blog-posts';
+import type { Metadata } from 'next';
 
 // Custom markdown-to-HTML renderer
 const MarkdownRenderer = ({ content }: { content: string }) => {
@@ -56,25 +57,53 @@ const MarkdownRenderer = ({ content }: { content: string }) => {
   return <div className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-headline prose-a:text-primary hover:prose-a:text-primary/80 prose-strong:font-semibold" dangerouslySetInnerHTML={{ __html: withLists }} />;
 };
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:9002';
 
-export default function BlogPostPage({ params }: { params: { slug: string } }) {
-  const [post, setPost] = useState<BlogPost | undefined>(undefined);
-
-  useEffect(() => {
-    // Since this is a client component, we handle the promise-like params here
-    const slug = (params as any).slug;
-    const foundPost = blogPosts.find((p) => p.slug === slug);
-    if (!foundPost) {
-      notFound();
-    } else {
-      setPost(foundPost);
-    }
-  }, [params]);
-
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const post = blogPosts.find((p) => p.slug === params.slug);
 
   if (!post) {
-    // You can return a loading skeleton here if needed
-    return null;
+    return {};
+  }
+  
+  const imageUrl = PlaceHolderImages.find(img => img.id === post.imageId)?.imageUrl || `${siteUrl}/og-image.png`;
+
+  return {
+    title: post.title,
+    description: post.description,
+    openGraph: {
+      title: post.title,
+      description: post.description,
+      url: `${siteUrl}/blog/${post.slug}`,
+      type: 'article',
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.description,
+      images: [imageUrl],
+    },
+    alternates: {
+      canonical: `${siteUrl}/blog/${post.slug}`,
+    },
+  };
+}
+
+
+export default function BlogPostPage({ params }: { params: { slug: string } }) {
+  const resolvedParams = use(params);
+  const post = blogPosts.find((p) => p.slug === resolvedParams.slug);
+
+  if (!post) {
+    notFound();
   }
   
   const image = PlaceHolderImages.find(img => img.id === post.imageId);
@@ -93,9 +122,40 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
   };
+  
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `${siteUrl}/blog/${post.slug}`,
+    },
+    headline: post.title,
+    description: post.description,
+    image: image?.imageUrl,
+    author: {
+      '@type': 'Organization',
+      name: 'ResumeAI Team',
+       url: siteUrl,
+    },
+    publisher: {
+        '@type': 'Organization',
+        name: 'ResumeAI',
+        logo: {
+            '@type': 'ImageObject',
+            url: `${siteUrl}/icon.png`,
+        },
+    },
+    datePublished: new Date().toISOString(), // In a real app, you'd store and use the actual publish date
+    dateModified: new Date().toISOString(),
+  };
 
   return (
     <div className="container mx-auto px-4 md:px-6 py-12 md:py-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
       <div className="max-w-4xl mx-auto">
         <article>
             <motion.header 

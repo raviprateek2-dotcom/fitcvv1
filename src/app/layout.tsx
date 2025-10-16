@@ -24,27 +24,37 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:9002';
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'ResumeAI - Build Your Perfect Resume',
+    default: 'ResumeAI - Build Your Perfect Resume with AI',
     template: '%s | ResumeAI',
   },
   description:
-    'Create a professional resume in minutes with our AI-powered builder, customizable templates, and expert guidance. Land your dream job with ResumeAI.',
-  keywords: ['resume builder', 'AI resume', 'professional resume', 'resume templates', 'resume editor', 'cv builder'],
+    'Create a professional, ATS-optimized resume in minutes with our AI-powered builder, customizable templates, and expert guidance. Land your dream job faster with ResumeAI.',
+  keywords: ['resume builder', 'AI resume', 'professional resume', 'resume templates', 'cv builder', 'job application', 'career tools'],
+  authors: [{ name: 'ResumeAI Team', url: siteUrl }],
+  creator: 'ResumeAI Team',
+  manifest: '/manifest.json',
   openGraph: {
-    title: 'ResumeAI - Build Your Perfect Resume',
-    description: 'AI-powered resume builder to help you land your dream job.',
+    type: 'website',
+    locale: 'en_US',
     url: siteUrl,
+    title: 'ResumeAI - The Smartest Way to Build Your Resume',
+    description: 'Create a job-winning resume in minutes with AI-powered suggestions and beautiful, professional templates.',
     siteName: 'ResumeAI',
     images: [
       {
-        url: `${siteUrl}/og-image.png`, // Must be an absolute URL
+        url: `${siteUrl}/og-image.png`,
         width: 1200,
         height: 630,
-        alt: 'ResumeAI Hero Image',
+        alt: 'A hero image showing a resume being created on ResumeAI',
       },
     ],
-    locale: 'en_US',
-    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'ResumeAI - The Smartest Way to Build Your Resume',
+    description: 'Create a job-winning resume in minutes with AI-powered suggestions and professional templates.',
+    images: [`${siteUrl}/og-image.png`],
+    creator: '@ResumeAI',
   },
   robots: {
     index: true,
@@ -57,14 +67,11 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'ResumeAI - The Smartest Way to Build Your Resume',
-    description: 'Create a job-winning resume in minutes with AI-powered suggestions and professional templates.',
-    // images: [`${siteUrl}/twitter-image.png`], // Must be an absolute URL
-  },
   alternates: {
     canonical: siteUrl,
+    types: {
+      'application/rss+xml': `${siteUrl}/rss.xml`,
+    }
   },
 };
 
