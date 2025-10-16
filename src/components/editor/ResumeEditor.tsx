@@ -1133,15 +1133,15 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                                                 <p className="text-sm text-muted-foreground">{reviewResult.overallFeedback}</p>
                                             </div>
                                              <div>
-                                                <h4 className="font-semibold">Positive Points</h4>
-                                                <ul className="list-disc pl-5 space-y-1 text-sm">
-                                                    {reviewResult.positivePoints.map((point, i) => <li key={i} className="text-green-600"><span className="text-muted-foreground">{point}</span></li>)}
+                                                <h4 className="font-semibold text-green-600">Positive Points</h4>
+                                                <ul className="list-none space-y-2 text-sm mt-2">
+                                                    {reviewResult.positivePoints.map((point, i) => <li key={i} className="flex items-start gap-2"><CheckCircle className="h-4 w-4 mt-0.5 text-green-500 shrink-0" />{point}</li>)}
                                                 </ul>
                                             </div>
                                             <div>
-                                                <h4 className="font-semibold">Areas for Improvement</h4>
-                                                <ul className="list-disc pl-5 space-y-1 text-sm">
-                                                    {reviewResult.areasForImprovement.map((point, i) => <li key={i} className="text-amber-600"><span className="text-muted-foreground">{point}</span></li>)}
+                                                <h4 className="font-semibold text-amber-600">Areas for Improvement</h4>
+                                                <ul className="list-none space-y-2 text-sm mt-2">
+                                                    {reviewResult.areasForImprovement.map((point, i) => <li key={i} className="flex items-start gap-2"><XCircle className="h-4 w-4 mt-0.5 text-amber-500 shrink-0" />{point}</li>)}
                                                 </ul>
                                             </div>
                                         </div>
@@ -1288,6 +1288,3 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     </SidebarProvider>
   );
 }
-
-
-    

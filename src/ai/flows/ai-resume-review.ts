@@ -22,7 +22,8 @@ const ReviewResumeOutputSchema = z.object({
   positivePoints: z.array(z.string()).describe('A list of 2-3 specific things the resume does well in terms of structure, clarity, or impact.'),
   areasForImprovement: z.array(z.string()).describe('A list of 2-3 specific, actionable suggestions to improve the resume\'s general effectiveness.'),
 });
-export type ReviewResumeOutput = z;
+export type ReviewResumeOutput = z.infer<typeof ReviewResumeOutputSchema>;
+
 export async function reviewResume(input: ReviewResumeInput): Promise<ReviewResumeOutput> {
   return reviewResumeFlow(input);
 }
