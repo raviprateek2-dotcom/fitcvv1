@@ -24,8 +24,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { writeCoverLetter as writeCoverLetterAction } from '@/app/actions/ai-cover-letter';
 import { suggestKeywords as suggestKeywordsAction } from '@/app/actions/ai-keyword-suggester';
 import { suggestTitle as suggestTitleAction } from '@/app/actions/ai-title-suggester';
-import { analyzeResume as analyzeResumeAction, AnalyzeResumeOutput } from '@/app/actions/ai-resume-analyzer';
-import { reviewResume as reviewResumeAction, ReviewResumeOutput } from '@/app/actions/ai-resume-review';
+import { analyzeResume as analyzeResumeAction, type AnalyzeResumeOutput } from '@/app/actions/ai-resume-analyzer';
+import { reviewResume as reviewResumeAction, type ReviewResumeOutput } from '@/app/actions/ai-resume-review';
 import { Slider } from '../ui/slider';
 import { cn } from '@/lib/utils';
 import { nanoid } from 'nanoid';
@@ -1288,5 +1288,6 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     </SidebarProvider>
   );
 }
+
 
     
