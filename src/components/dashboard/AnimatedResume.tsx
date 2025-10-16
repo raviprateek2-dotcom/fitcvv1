@@ -154,3 +154,4 @@ export function AnimatedResume({ templateId = 'modern', className }: AnimatedRes
     </motion.div>
   );
 }
+

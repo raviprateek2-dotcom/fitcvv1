@@ -77,7 +77,7 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
             transition={{ duration: 0.5, delay: 0.2 }}
           >
              <div className="transform scale-[0.5] transition-transform duration-500 ease-in-out group-hover:scale-[0.55]">
-                <AnimatedResume />
+                <AnimatedResume templateId={resume.templateId} />
               </div>
           </motion.div>
         </Link>

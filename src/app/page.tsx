@@ -300,10 +300,10 @@ export default function Home() {
                         repeatType: 'loop',
                       }}
                     >
-                      <AnimatedResume />
+                      <AnimatedResume templateId='professional'/>
                     </motion.div>
                     <motion.div className="relative z-10">
-                      <AnimatedResume />
+                      <AnimatedResume templateId='modern'/>
                     </motion.div>
                   </div>
               </motion.div>
@@ -389,8 +389,8 @@ export default function Home() {
                         ))}
                     </motion.ul>
                 </div>
-                 <div className="hidden md:flex justify-center">
-                    <AnimatedResume />
+                 <div className="hidden md:flex justify-center items-center">
+                    <AnimatedResume templateId='executive' />
                  </div>
             </div>
         </div>
