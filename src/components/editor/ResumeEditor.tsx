@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Download, PlusCircle, Share2, Trash2, Sparkles, Bot, FileText, Newspaper, Brush, Lock, Lightbulb, Upload, MinusCircle, Loader2, Target, ArrowLeft, SearchCheck, CheckCircle, XCircle } from 'lucide-react';
+import { Download, PlusCircle, Share2, Trash2, Sparkles, Bot, FileText, Newspaper, Brush, Lock, Lightbulb, Upload, MinusCircle, Loader2, SearchCheck, CheckCircle, XCircle, ArrowLeft } from 'lucide-react';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import AIContentDialog from './AIContentDialog';
 import AISectionWriterDialog from './AISectionWriterDialog';
@@ -1288,3 +1288,5 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     </SidebarProvider>
   );
 }
+
+    
