@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -31,7 +30,6 @@ import { cn } from '@/lib/utils';
 import { nanoid } from 'nanoid';
 import { Badge } from '../ui/badge';
 import { parseResumeFromPdf } from '@/app/actions/ai-resume-parser';
-import { Sidebar, SidebarContent, SidebarHeader, SidebarInset, SidebarProvider, SidebarTrigger } from '../ui/sidebar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Progress } from '../ui/progress';
 
@@ -243,6 +241,8 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
         if (typeof updatedData.styling.accentColor !== 'string') {
             updatedData.styling.accentColor = 'hsl(221.2, 83.2%, 53.3%)';
         }
+        if (updatedData.skills === undefined) updatedData.skills = [];
+        if (updatedData.projects === undefined) updatedData.projects = [];
 
 
         setResumeData(updatedData);
@@ -743,11 +743,10 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   }
 
   return (
-    <SidebarProvider>
+    <>
       <header className="bg-background border-b sticky top-0 z-10 no-print">
         <div className="container mx-auto px-4 md:px-6 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-2 flex-grow min-w-0">
-             <SidebarTrigger className="h-8 w-8"/>
               <Input 
                   value={resumeData.title || ''}
                   onChange={(e) => handleFieldChange('title', e.target.value)}
@@ -782,222 +781,215 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
           </div>
         </div>
       </header>
-       <div className="flex flex-grow h-[calc(100vh-4rem)]">
-        <Sidebar collapsible="icon">
-            <SidebarContent>
-              <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as EditorTab)} className="w-full h-full flex flex-col">
-                <div className="p-4 border-b">
-                  <TabsList className="grid w-full grid-cols-4">
-                    <TabsTrigger value="content"><FileText className="mr-2 h-4 w-4"/>Content</TabsTrigger>
-                    <TabsTrigger value="ai-review"><SearchCheck className="mr-2 h-4 w-4"/>AI Review</TabsTrigger>
-                    <TabsTrigger value="cover-letter"><Newspaper className="mr-2 h-4 w-4"/>Cover Letter</TabsTrigger>
-                    <TabsTrigger value="design"><Brush className="mr-2 h-4 w-4"/>Design</TabsTrigger>
-                  </TabsList>
-                </div>
-                
-                <ScrollArea className="flex-grow">
-                    <TabsContent value="design" className="p-6">
-                        <Accordion type="single" defaultValue="template" collapsible className="w-full">
-                            <AccordionItem value="template">
-                            <AccordionTrigger className="font-semibold">Template</AccordionTrigger>
-                            <AccordionContent className="space-y-4 pt-4">
-                                    <Select value={resumeData.templateId} onValueChange={handleTemplateChange}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select a template" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {availableTemplates.map(template => (
-                                                <SelectItem key={template.id} value={template.id} disabled={template.isPremium && !isProUser}>
-                                                    <div className="flex items-center gap-2">
-                                                        {template.name}
-                                                        {template.isPremium && <span className="text-xs bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full">PRO</span>}
-                                                    </div>
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </AccordionContent>
-                            </AccordionItem>
-                            <AccordionItem value="styling">
-                            <AccordionTrigger className="font-semibold">Styling</AccordionTrigger>
-                            <AccordionContent className="space-y-4 pt-4">
-                                <div className="space-y-2">
-                                <Label>Accent Color</Label>
-                                <div className="flex flex-wrap gap-2">
-                                    {colorSwatches.map(color => (
-                                    <button
-                                        key={color}
-                                        type="button"
-                                        onClick={() => handleStylingChange('accentColor', color)}
-                                        className={cn(
-                                        "w-8 h-8 rounded-full border-2 transition-all",
-                                        resumeData.styling?.accentColor === color ? 'border-primary ring-2 ring-primary' : 'border-transparent'
-                                        )}
-                                        style={{ backgroundColor: color }}
-                                    >
-                                        <span className="sr-only">Set color to {color}</span>
-                                    </button>
-                                    ))}
-                                </div>
-                                </div>
-                                <div className="space-y-2">
-                                <Label>Title Font Size: {resumeData.styling?.titleFontSize}px</Label>
-                                <Slider
-                                    value={[resumeData.styling?.titleFontSize || 36]}
-                                    onValueChange={([val]) => handleStylingChange('titleFontSize', val)}
-                                    min={24} max={60} step={1}
-                                />
-                                </div>
-                                <div className="space-y-2">
-                                <Label>Heading Font Size: {resumeData.styling?.headingFontSize}px</Label>
-                                <Slider
-                                    value={[resumeData.styling?.headingFontSize || 18]}
-                                    onValueChange={([val]) => handleStylingChange('headingFontSize', val)}
-                                    min={14} max={32} step={1}
-                                />
-                                </div>
-                                <div className="space-y-2">
-                                <Label>Body Font Size: {resumeData.styling?.bodyFontSize}px</Label>
-                                <Slider
-                                    value={[resumeData.styling?.bodyFontSize || 14]}
-                                    onValueChange={([val]) => handleStylingChange('bodyFontSize', val)}
-                                    min={10} max={18} step={0.5}
-                                />
-                                </div>
-                            </AccordionContent>
-                            </AccordionItem>
-                        </Accordion>
-                    </TabsContent>
+       <div className="grid md:grid-cols-[450px_1fr] h-[calc(100vh-4rem)]">
+        <div className="border-r no-print">
+            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as EditorTab)} className="w-full h-full flex flex-col">
+              <div className="p-4 border-b">
+                <TabsList className="grid w-full grid-cols-4">
+                  <TabsTrigger value="content"><FileText className="mr-2 h-4 w-4"/>Content</TabsTrigger>
+                  <TabsTrigger value="ai-review"><SearchCheck className="mr-2 h-4 w-4"/>AI Review</TabsTrigger>
+                  <TabsTrigger value="cover-letter"><Newspaper className="mr-2 h-4 w-4"/>Cover Letter</TabsTrigger>
+                  <TabsTrigger value="design"><Brush className="mr-2 h-4 w-4"/>Design</TabsTrigger>
+                </TabsList>
+              </div>
+              
+              <ScrollArea className="flex-grow">
+                  <TabsContent value="design" className="p-6">
+                      <Accordion type="single" defaultValue="template" collapsible className="w-full">
+                          <AccordionItem value="template">
+                          <AccordionTrigger className="font-semibold">Template</AccordionTrigger>
+                          <AccordionContent className="space-y-4 pt-4">
+                                  <Select value={resumeData.templateId} onValueChange={handleTemplateChange}>
+                                      <SelectTrigger>
+                                          <SelectValue placeholder="Select a template" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                          {availableTemplates.map(template => (
+                                              <SelectItem key={template.id} value={template.id} disabled={template.isPremium && !isProUser}>
+                                                  <div className="flex items-center gap-2">
+                                                      {template.name}
+                                                      {template.isPremium && <span className="text-xs bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full">PRO</span>}
+                                                  </div>
+                                              </SelectItem>
+                                          ))}
+                                      </SelectContent>
+                                  </Select>
+                              </AccordionContent>
+                          </AccordionItem>
+                          <AccordionItem value="styling">
+                          <AccordionTrigger className="font-semibold">Styling</AccordionTrigger>
+                          <AccordionContent className="space-y-4 pt-4">
+                              <div className="space-y-2">
+                              <Label>Accent Color</Label>
+                              <div className="flex flex-wrap gap-2">
+                                  {colorSwatches.map(color => (
+                                  <button
+                                      key={color}
+                                      type="button"
+                                      onClick={() => handleStylingChange('accentColor', color)}
+                                      className={cn(
+                                      "w-8 h-8 rounded-full border-2 transition-all",
+                                      resumeData.styling?.accentColor === color ? 'border-primary ring-2 ring-primary' : 'border-transparent'
+                                      )}
+                                      style={{ backgroundColor: color }}
+                                  >
+                                      <span className="sr-only">Set color to {color}</span>
+                                  </button>
+                                  ))}
+                              </div>
+                              </div>
+                              <div className="space-y-2">
+                              <Label>Title Font Size: {resumeData.styling?.titleFontSize}px</Label>
+                              <Slider
+                                  value={[resumeData.styling?.titleFontSize || 36]}
+                                  onValueChange={([val]) => handleStylingChange('titleFontSize', val)}
+                                  min={24} max={60} step={1}
+                              />
+                              </div>
+                              <div className="space-y-2">
+                              <Label>Heading Font Size: {resumeData.styling?.headingFontSize}px</Label>
+                              <Slider
+                                  value={[resumeData.styling?.headingFontSize || 18]}
+                                  onValueChange={([val]) => handleStylingChange('headingFontSize', val)}
+                                  min={14} max={32} step={1}
+                              />
+                              </div>
+                              <div className="space-y-2">
+                              <Label>Body Font Size: {resumeData.styling?.bodyFontSize}px</Label>
+                              <Slider
+                                  value={[resumeData.styling?.bodyFontSize || 14]}
+                                  onValueChange={([val]) => handleStylingChange('bodyFontSize', val)}
+                                  min={10} max={18} step={0.5}
+                              />
+                              </div>
+                          </AccordionContent>
+                          </AccordionItem>
+                      </Accordion>
+                  </TabsContent>
 
-                    <TabsContent value="content" className="p-6">
-                    <div className="space-y-6">
-                        <Accordion type="multiple" defaultValue={['personal-info', 'summary' ]} className="w-full">
-                            <AccordionItem value="personal-info">
-                            <AccordionTrigger className="font-semibold">Personal Information</AccordionTrigger>
-                            <AccordionContent className="space-y-4 pt-4 border rounded-b-lg p-4">
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2"><Label>Full Name</Label><Input name="name" value={resumeData.personalInfo.name} onChange={handlePersonalInfoChange} /></div>
-                                    <div className="space-y-2">
-                                    <Label>Job Title</Label>
-                                    <div className="flex items-center gap-2">
-                                        <Input name="title" value={resumeData.personalInfo.title} onChange={handlePersonalInfoChange} className="flex-grow"/>
-                                        <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                            <Button variant="outline" size="icon" onClick={handleSuggestTitle} disabled={isTitleSuggesting}>
-                                                {isTitleSuggesting ? <Loader2 className="h-4 w-4 animate-spin"/> : <Sparkles className="h-4 w-4" />}
-                                            </Button>
-                                            </TooltipTrigger>
-                                            <TooltipContent>
-                                            <p>AI Suggest Professional Title</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                        </TooltipProvider>
-                                    </div>
-                                    {titleSuggestion && (
-                                        <div className="bg-secondary p-2 rounded-md flex items-center justify-between">
-                                        <p className="text-sm">Suggestion: <span className="font-semibold">{titleSuggestion}</span></p>
-                                        <div className="flex gap-1">
-                                          <Button size="sm" variant="ghost" onClick={applyTitleSuggestion} className="h-7">Apply</Button>
-                                          <Button size="icon" variant="ghost" onClick={() => setTitleSuggestion(null)} className="h-7 w-7"><XCircle className="h-4 w-4"/></Button>
-                                        </div>
-                                        </div>
-                                    )}
-                                    </div>
-                                </div>
-                                <div className="space-y-2"><Label>Email</Label><Input name="email" type="email" value={resumeData.personalInfo.email} onChange={handlePersonalInfoChange} /></div>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2"><Label>Phone</Label><Input name="phone" value={resumeData.personalInfo.phone} onChange={handlePersonalInfoChange} /></div>
-                                    <div className="space-y-2"><Label>Location</Label><Input name="location" value={resumeData.personalInfo.location} onChange={handlePersonalInfoChange} /></div>
-                                </div>
-                                <div className="space-y-2"><Label>Website/Portfolio</Label><Input name="website" value={resumeData.personalInfo.website} onChange={handlePersonalInfoChange} /></div>
-                            </AccordionContent>
-                            </AccordionItem>
-                            
-                            <AccordionItem value="summary">
-                            <AccordionTrigger className="font-semibold">Professional Summary</AccordionTrigger>
-                            <AccordionContent className="space-y-2 pt-4 border rounded-b-lg p-4">
-                                <Textarea value={resumeData.summary} onChange={e => handleFieldChange('summary', e.target.value)} rows={5} />
-                                <div className="flex gap-2">
-                                <ProFeatureWrapper isPro={isProUser}>
-                                    <AISectionWriterDialog
-                                    sectionName="Professional Summary"
-                                    jobDescription={resumeData.jobDescription}
-                                    existingContent={resumeData.summary}
-                                    onApply={(newContent) => handleFieldChange('summary', newContent)}
-                                    >
-                                    <Button variant="outline" size="sm">
-                                        <Bot className="mr-2 h-4 w-4" />
-                                        AI Writer
-                                    </Button>
-                                    </AISectionWriterDialog>
-                                </ProFeatureWrapper>
-                                <ProFeatureWrapper isPro={isProUser}>
-                                    <AIContentDialog 
-                                    sectionName="Professional Summary" 
-                                    currentContent={resumeData.summary}
-                                    jobDescription={resumeData.jobDescription}
-                                    onApply={(newContent) => handleFieldChange('summary', newContent)}
-                                    />
-                                </ProFeatureWrapper>
-                                </div>
-                            </AccordionContent>
-                            </AccordionItem>
+                  <TabsContent value="content" className="p-6">
+                  <div className="space-y-6">
+                      <Accordion type="multiple" defaultValue={['personal-info', 'summary' ]} className="w-full">
+                          <AccordionItem value="personal-info">
+                          <AccordionTrigger className="font-semibold">Personal Information</AccordionTrigger>
+                          <AccordionContent className="space-y-4 pt-4 border rounded-b-lg p-4">
+                              <div className="grid grid-cols-2 gap-4">
+                                  <div className="space-y-2"><Label>Full Name</Label><Input name="name" value={resumeData.personalInfo.name} onChange={handlePersonalInfoChange} /></div>
+                                  <div className="space-y-2">
+                                  <Label>Job Title</Label>
+                                  <div className="flex items-center gap-2">
+                                      <Input name="title" value={resumeData.personalInfo.title} onChange={handlePersonalInfoChange} className="flex-grow"/>
+                                      <TooltipProvider>
+                                      <Tooltip>
+                                          <TooltipTrigger asChild>
+                                          <Button variant="outline" size="icon" onClick={handleSuggestTitle} disabled={isTitleSuggesting}>
+                                              {isTitleSuggesting ? <Loader2 className="h-4 w-4 animate-spin"/> : <Sparkles className="h-4 w-4" />}
+                                          </Button>
+                                          </TooltipTrigger>
+                                          <TooltipContent>
+                                          <p>AI Suggest Professional Title</p>
+                                          </TooltipContent>
+                                      </Tooltip>
+                                      </TooltipProvider>
+                                  </div>
+                                  {titleSuggestion && (
+                                      <div className="bg-secondary p-2 rounded-md flex items-center justify-between">
+                                      <p className="text-sm">Suggestion: <span className="font-semibold">{titleSuggestion}</span></p>
+                                      <div className="flex gap-1">
+                                        <Button size="sm" variant="ghost" onClick={applyTitleSuggestion} className="h-7">Apply</Button>
+                                        <Button size="icon" variant="ghost" onClick={() => setTitleSuggestion(null)} className="h-7 w-7"><XCircle className="h-4 w-4"/></Button>
+                                      </div>
+                                      </div>
+                                  )}
+                                  </div>
+                              </div>
+                              <div className="space-y-2"><Label>Email</Label><Input name="email" type="email" value={resumeData.personalInfo.email} onChange={handlePersonalInfoChange} /></div>
+                              <div className="grid grid-cols-2 gap-4">
+                                  <div className="space-y-2"><Label>Phone</Label><Input name="phone" value={resumeData.personalInfo.phone} onChange={handlePersonalInfoChange} /></div>
+                                  <div className="space-y-2"><Label>Location</Label><Input name="location" value={resumeData.personalInfo.location} onChange={handlePersonalInfoChange} /></div>
+                              </div>
+                              <div className="space-y-2"><Label>Website/Portfolio</Label><Input name="website" value={resumeData.personalInfo.website} onChange={handlePersonalInfoChange} /></div>
+                          </AccordionContent>
+                          </AccordionItem>
+                          
+                          <AccordionItem value="summary">
+                          <AccordionTrigger className="font-semibold">Professional Summary</AccordionTrigger>
+                          <AccordionContent className="space-y-2 pt-4 border rounded-b-lg p-4">
+                              <Textarea value={resumeData.summary} onChange={e => handleFieldChange('summary', e.target.value)} rows={5} />
+                              <div className="flex gap-2">
+                              <ProFeatureWrapper isPro={isProUser}>
+                                  <AISectionWriterDialog
+                                  sectionName="Professional Summary"
+                                  jobDescription={resumeData.jobDescription}
+                                  existingContent={resumeData.summary}
+                                  onApply={(newContent) => handleFieldChange('summary', newContent)}
+                                  >
+                                  <Button variant="outline" size="sm">
+                                      <Bot className="mr-2 h-4 w-4" />
+                                      AI Writer
+                                  </Button>
+                                  </AISectionWriterDialog>
+                              </ProFeatureWrapper>
+                              <ProFeatureWrapper isPro={isProUser}>
+                                  <AIContentDialog 
+                                  sectionName="Professional Summary" 
+                                  currentContent={resumeData.summary}
+                                  jobDescription={resumeData.jobDescription}
+                                  onApply={(newContent) => handleFieldChange('summary', newContent)}
+                                  />
+                              </ProFeatureWrapper>
+                              </div>
+                          </AccordionContent>
+                          </AccordionItem>
 
-                            <AccordionItem value="experience">
-                            <AccordionTrigger className="font-semibold">Work Experience</AccordionTrigger>
-                            <AccordionContent className="space-y-4 pt-4 border rounded-b-lg p-4">
-                                {resumeData.experience.map((exp) => (
-                                    <div key={exp.id} className="p-4 border rounded-lg space-y-4 relative bg-secondary/50">
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div className="space-y-2"><Label>Company</Label><Input value={exp.company} onChange={e => handleNestedChange('experience', exp.id, 'company', e.target.value)} /></div>
-                                            <div className="space-y-2"><Label>Role</Label><Input value={exp.role} onChange={e => handleNestedChange('experience', exp.id, 'role', e.target.value)} /></div>
-                                        </div>
-                                        <div className="space-y-2"><Label>Date</Label><Input value={exp.date} onChange={e => handleNestedChange('experience', exp.id, 'date', e.target.value)} /></div>
-                                        <div className="space-y-2"><Label>Description</Label><Textarea rows={4} value={exp.description} onChange={e => handleNestedChange('experience', exp.id, 'description', e.target.value)} /></div>
-                                        <div className="flex justify-between items-center">
-                                        <div className="flex gap-2">
-                                            <ProFeatureWrapper isPro={isProUser}>
-                                                <AISectionWriterDialog
-                                                    sectionName={`Work Experience at ${exp.company}`}
-                                                    jobDescription={resumeData.jobDescription}
-                                                    existingContent={exp.description}
-                                                    onApply={(newContent) => handleNestedChange('experience', exp.id, 'description', newContent)}
-                                                >
-                                                    <Button variant="outline" size="sm">
-                                                        <Bot className="mr-2 h-4 w-4" />
-                                                        AI Writer
-                                                    </Button>
-                                                </AISectionWriterDialog>
-                                            </ProFeatureWrapper>
-                                            <ProFeatureWrapper isPro={isProUser}>
-                                                <AIContentDialog 
-                                                    sectionName={`Experience at ${exp.company}`}
-                                                    currentContent={exp.description}
-                                                    jobDescription={resumeData.jobDescription}
-                                                    onApply={(newContent) => handleNestedChange('experience', exp.id, 'description', newContent)}
-                                                />
-                                            </ProFeatureWrapper>
-                                        </div>
-                                        <Button variant="ghost" size="icon" onClick={() => removeExperience(exp.id)} className="text-destructive hover:text-destructive-foreground hover:bg-destructive">
-                                            <Trash2 className="h-4 w-4" />
-                                        </Button>
-                                        </div>
-                                    </div>
-                                ))}
-                                <Button variant="outline" onClick={addExperience} className="w-full">
-                                <PlusCircle className="mr-2 h-4 w-4" /> Add Experience
-                                </Button>
-                            </AccordionContent>
-                            </AccordionItem>
-                            
-                            {resumeData.projects === undefined ? (
-                            <div className="p-4 border-dashed border-2 rounded-lg flex items-center justify-center">
-                                <Button variant="ghost" onClick={addProjectSection}>
-                                <PlusCircle className="mr-2 h-4 w-4" /> Add Projects Section
-                                </Button>
-                            </div>
-                            ) : (
+                          <AccordionItem value="experience">
+                          <AccordionTrigger className="font-semibold">Work Experience</AccordionTrigger>
+                          <AccordionContent className="space-y-4 pt-4 border rounded-b-lg p-4">
+                              {resumeData.experience.map((exp) => (
+                                  <div key={exp.id} className="p-4 border rounded-lg space-y-4 relative bg-secondary/50">
+                                      <div className="grid grid-cols-2 gap-4">
+                                          <div className="space-y-2"><Label>Company</Label><Input value={exp.company} onChange={e => handleNestedChange('experience', exp.id, 'company', e.target.value)} /></div>
+                                          <div className="space-y-2"><Label>Role</Label><Input value={exp.role} onChange={e => handleNestedChange('experience', exp.id, 'role', e.target.value)} /></div>
+                                      </div>
+                                      <div className="space-y-2"><Label>Date</Label><Input value={exp.date} onChange={e => handleNestedChange('experience', exp.id, 'date', e.target.value)} /></div>
+                                      <div className="space-y-2"><Label>Description</Label><Textarea rows={4} value={exp.description} onChange={e => handleNestedChange('experience', exp.id, 'description', e.target.value)} /></div>
+                                      <div className="flex justify-between items-center">
+                                      <div className="flex gap-2">
+                                          <ProFeatureWrapper isPro={isProUser}>
+                                              <AISectionWriterDialog
+                                                  sectionName={`Work Experience at ${exp.company}`}
+                                                  jobDescription={resumeData.jobDescription}
+                                                  existingContent={exp.description}
+                                                  onApply={(newContent) => handleNestedChange('experience', exp.id, 'description', newContent)}
+                                              >
+                                                  <Button variant="outline" size="sm">
+                                                      <Bot className="mr-2 h-4 w-4" />
+                                                      AI Writer
+                                                  </Button>
+                                              </AISectionWriterDialog>
+                                          </ProFeatureWrapper>
+                                          <ProFeatureWrapper isPro={isProUser}>
+                                              <AIContentDialog 
+                                                  sectionName={`Experience at ${exp.company}`}
+                                                  currentContent={exp.description}
+                                                  jobDescription={resumeData.jobDescription}
+                                                  onApply={(newContent) => handleNestedChange('experience', exp.id, 'description', newContent)}
+                                              />
+                                          </ProFeatureWrapper>
+                                      </div>
+                                      <Button variant="ghost" size="icon" onClick={() => removeExperience(exp.id)} className="text-destructive hover:text-destructive-foreground hover:bg-destructive">
+                                          <Trash2 className="h-4 w-4" />
+                                      </Button>
+                                      </div>
+                                  </div>
+                              ))}
+                              <Button variant="outline" onClick={addExperience} className="w-full">
+                              <PlusCircle className="mr-2 h-4 w-4" /> Add Experience
+                              </Button>
+                          </AccordionContent>
+                          </AccordionItem>
+                          
+                          {'projects' in resumeData ? (
                             <AccordionItem value="projects">
                             <div className="flex items-center">
                                 <AccordionTrigger className="font-semibold flex-grow">Projects</AccordionTrigger>
@@ -1013,7 +1005,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                                 </TooltipProvider>
                             </div>
                             <AccordionContent className="space-y-4 pt-4 border rounded-b-lg p-4">
-                                {resumeData.projects.map((proj) => (
+                                {resumeData.projects?.map((proj) => (
                                     <div key={proj.id} className="p-4 border rounded-lg space-y-4 relative bg-secondary/50">
                                         <div className="space-y-2"><Label>Project Name</Label><Input value={proj.name} onChange={e => handleNestedChange('projects', proj.id, 'name', e.target.value)} /></div>
                                         <div className="space-y-2"><Label>Description</Label><Textarea rows={3} value={proj.description} onChange={e => handleNestedChange('projects', proj.id, 'description', e.target.value)} /></div>
@@ -1030,39 +1022,38 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                                 </Button>
                             </AccordionContent>
                             </AccordionItem>
-                            )}
-                            
-
-                            <AccordionItem value="education">
-                            <AccordionTrigger className="font-semibold">Education</AccordionTrigger>
-                            <AccordionContent className="space-y-4 pt-4 border rounded-b-lg p-4">
-                                {resumeData.education.map((edu) => (
-                                    <div key={edu.id} className="p-4 border rounded-lg space-y-4 relative bg-secondary/50">
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div className="space-y-2"><Label>Institution</Label><Input value={edu.institution} onChange={e => handleNestedChange('education', edu.id, 'institution', e.target.value)} /></div>
-                                            <div className="space-y-2"><Label>Degree/Certificate</Label><Input value={edu.degree} onChange={e => handleNestedChange('education', edu.id, 'degree', e.target.value)} /></div>
-                                        </div>
-                                        <div className="space-y-2"><Label>Date</Label><Input value={edu.date} onChange={e => handleNestedChange('education', edu.id, 'date', e.target.value)} /></div>
-                                        <div className="flex justify-end">
-                                            <Button variant="ghost" size="icon" onClick={() => removeEducation(edu.id)} className="text-destructive hover:text-destructive-foreground hover:bg-destructive">
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                    </div>
-                                ))}
-                                <Button variant="outline" onClick={addEducation} className="w-full">
-                                    <PlusCircle className="mr-2 h-4 w-4" /> Add Education
-                                </Button>
-                            </AccordionContent>
-                            </AccordionItem>
-
-                            {resumeData.skills === undefined ? (
-                            <div className="p-4 border-dashed border-2 rounded-lg flex items-center justify-center">
-                                <Button variant="ghost" onClick={addSkillSection}>
-                                <PlusCircle className="mr-2 h-4 w-4" /> Add Skills Section
+                            ) : (
+                               <div className="p-4 border-dashed border-2 rounded-lg flex items-center justify-center">
+                                <Button variant="ghost" onClick={addProjectSection}>
+                                <PlusCircle className="mr-2 h-4 w-4" /> Add Projects Section
                                 </Button>
                             </div>
-                            ) : (
+                            )}
+
+                          <AccordionItem value="education">
+                          <AccordionTrigger className="font-semibold">Education</AccordionTrigger>
+                          <AccordionContent className="space-y-4 pt-4 border rounded-b-lg p-4">
+                              {resumeData.education.map((edu) => (
+                                  <div key={edu.id} className="p-4 border rounded-lg space-y-4 relative bg-secondary/50">
+                                      <div className="grid grid-cols-2 gap-4">
+                                          <div className="space-y-2"><Label>Institution</Label><Input value={edu.institution} onChange={e => handleNestedChange('education', edu.id, 'institution', e.target.value)} /></div>
+                                          <div className="space-y-2"><Label>Degree/Certificate</Label><Input value={edu.degree} onChange={e => handleNestedChange('education', edu.id, 'degree', e.target.value)} /></div>
+                                      </div>
+                                      <div className="space-y-2"><Label>Date</Label><Input value={edu.date} onChange={e => handleNestedChange('education', edu.id, 'date', e.target.value)} /></div>
+                                      <div className="flex justify-end">
+                                          <Button variant="ghost" size="icon" onClick={() => removeEducation(edu.id)} className="text-destructive hover:text-destructive-foreground hover:bg-destructive">
+                                              <Trash2 className="h-4 w-4" />
+                                          </Button>
+                                      </div>
+                                  </div>
+                              ))}
+                              <Button variant="outline" onClick={addEducation} className="w-full">
+                                  <PlusCircle className="mr-2 h-4 w-4" /> Add Education
+                              </Button>
+                          </AccordionContent>
+                          </AccordionItem>
+                          
+                          {'skills' in resumeData ? (
                             <AccordionItem value="skills">
                             <div className="flex items-center">
                                 <AccordionTrigger className="font-semibold flex-grow">Skills</AccordionTrigger>
@@ -1078,7 +1069,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                                 </TooltipProvider>
                             </div>
                             <AccordionContent className="space-y-4 pt-4 border rounded-b-lg p-4">
-                                {resumeData.skills.map((skill) => (
+                                {resumeData.skills?.map((skill) => (
                                 <div key={skill.id} className="p-4 border rounded-lg space-y-4 bg-secondary/50">
                                     <div className="flex items-center gap-4">
                                         <div className="flex-grow space-y-2">
@@ -1110,172 +1101,177 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                                 </Button>
                             </AccordionContent>
                             </AccordionItem>
-                            )}
-                            
-                        </Accordion>
-                    </div>
-                    </TabsContent>
-
-                    <TabsContent value="ai-review" className="p-6">
-                        <div className="space-y-6">
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>Overall Resume Review</CardTitle>
-                                    <CardDescription>Get general feedback on your resume's clarity, impact, and structure.</CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    {isReviewing ? (
-                                        <div className="flex items-center justify-center py-4"><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Reviewing...</div>
-                                    ) : reviewResult ? (
-                                        <div className="space-y-4">
-                                            <div>
-                                                <h4 className="font-semibold">Overall Feedback</h4>
-                                                <p className="text-sm text-muted-foreground">{reviewResult.overallFeedback}</p>
-                                            </div>
-                                             <div>
-                                                <h4 className="font-semibold text-green-600">Positive Points</h4>
-                                                <ul className="list-none space-y-2 text-sm mt-2">
-                                                    {reviewResult.positivePoints.map((point, i) => <li key={i} className="flex items-start gap-2"><CheckCircle className="h-4 w-4 mt-0.5 text-green-500 shrink-0" />{point}</li>)}
-                                                </ul>
-                                            </div>
-                                            <div>
-                                                <h4 className="font-semibold text-amber-600">Areas for Improvement</h4>
-                                                <ul className="list-none space-y-2 text-sm mt-2">
-                                                    {reviewResult.areasForImprovement.map((point, i) => <li key={i} className="flex items-start gap-2"><XCircle className="h-4 w-4 mt-0.5 text-amber-500 shrink-0" />{point}</li>)}
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <ProFeatureWrapper isPro={isProUser}>
-                                            <Button onClick={handleReviewResume} className="w-full">
-                                                <Sparkles className="mr-2 h-4 w-4" /> Get AI Feedback
-                                            </Button>
-                                        </ProFeatureWrapper>
-                                    )}
-                                </CardContent>
-                            </Card>
-
-                             <Card>
-                                <CardHeader>
-                                    <CardTitle>Job Description Match Analysis</CardTitle>
-                                    <CardDescription>Paste a job description to see how well your resume matches.</CardDescription>
-                                </CardHeader>
-                                <CardContent className="space-y-4">
-                                    <div>
-                                        <div className="flex justify-between items-center mb-2">
-                                            <Label>Job Description</Label>
-                                            <ProFeatureWrapper isPro={isProUser}>
-                                                <Button variant="outline" size="sm" onClick={handleSuggestKeywords} disabled={isAiLoading || !resumeData.jobDescription}>
-                                                    {isAiLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Lightbulb className="mr-2 h-4 w-4"/>}
-                                                    Suggest Keywords
-                                                </Button>
-                                            </ProFeatureWrapper>
-                                        </div>
-                                        <Textarea 
-                                            value={resumeData.jobDescription} 
-                                            onChange={e => handleFieldChange('jobDescription', e.target.value)} 
-                                            rows={8}
-                                            placeholder='e.g., "Seeking a product manager with 5+ years of experience..."'
-                                        />
-                                    </div>
-                                    {keywordSuggestions.length > 0 && (
-                                    <div className="space-y-2 pt-2">
-                                        <Label>Click a keyword to add it to your skills:</Label>
-                                        <div className="flex flex-wrap gap-2">
-                                        {keywordSuggestions.map((keyword, i) => (
-                                            <Button
-                                            key={i}
-                                            variant="secondary"
-                                            size="sm"
-                                            className="h-auto"
-                                            onClick={() => handleAddKeywordAsSkill(keyword)}
-                                            >
-                                            <PlusCircle className="mr-2 h-3 w-3" />
-                                            {keyword}
-                                            </Button>
-                                        ))}
-                                        </div>
-                                    </div>
-                                    )}
-                                    {isAnalyzing ? (
-                                        <div className="flex items-center justify-center py-4"><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Analyzing...</div>
-                                    ) : analysisResult ? (
-                                        <div className="space-y-4">
-                                            <div>
-                                                <Label>Match Score</Label>
-                                                <div className="flex items-center gap-4">
-                                                    <Progress value={analysisResult.matchScore} className="w-full" />
-                                                    <span className="font-bold text-lg">{analysisResult.matchScore}%</span>
-                                                </div>
-                                                <p className="text-xs text-muted-foreground mt-1">{analysisResult.summary}</p>
-                                            </div>
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                <div className="space-y-2">
-                                                    <h4 className="font-semibold text-green-600">Strengths</h4>
-                                                    <ul className="list-none space-y-2 text-sm">
-                                                        {analysisResult.positivePoints.map((point, i) => (
-                                                            <li key={i} className="flex items-start gap-2"><CheckCircle className="h-4 w-4 mt-0.5 text-green-500 shrink-0" />{point}</li>
-                                                        ))}
-                                                    </ul>
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <h4 className="font-semibold text-amber-600">Improvements</h4>
-                                                    <ul className="list-none space-y-2 text-sm">
-                                                        {analysisResult.areasForImprovement.map((point, i) => (
-                                                           <li key={i} className="flex items-start gap-2"><XCircle className="h-4 w-4 mt-0.5 text-amber-500 shrink-0" />{point}</li>
-                                                        ))}
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ) : null}
-                                    <ProFeatureWrapper isPro={isProUser}>
-                                        <Button onClick={handleAnalyzeResume} disabled={!resumeData.jobDescription} className="w-full">
-                                            <SearchCheck className="mr-2 h-4 w-4" /> Analyze Match
-                                        </Button>
-                                    </ProFeatureWrapper>
-                                </CardContent>
-                            </Card>
-                        </div>
-                    </TabsContent>
-                    
-                    <TabsContent value="cover-letter" className="p-6">
-                    <div className="space-y-6">
-                        <div className="p-4 border rounded-lg space-y-4">
-                            <h3 className="font-semibold text-lg">Target Role</h3>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <Label>Company Name</Label>
-                                    <Input name="name" value={resumeData.companyInfo?.name || ''} onChange={handleCompanyInfoChange} />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label>Job Title</Label>
-                                    <Input name="jobTitle" value={resumeData.companyInfo?.jobTitle || ''} onChange={handleCompanyInfoChange} />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="p-4 border rounded-lg space-y-4">
-                            <h3 className="font-semibold text-lg">Cover Letter Content</h3>
-                            <Textarea 
-                                value={resumeData.coverLetter}
-                                onChange={e => handleFieldChange('coverLetter', e.target.value)}
-                                rows={15}
-                                placeholder="Your generated cover letter will appear here..."
-                            />
-                            <ProFeatureWrapper isPro={isProUser}>
-                                <Button onClick={handleWriteCoverLetter} disabled={isAiLoading}>
-                                <Bot className="mr-2 h-4 w-4" />
-                                {isAiLoading ? 'Generating...' : 'AI Generate'}
+                          ) : (
+                             <div className="p-4 border-dashed border-2 rounded-lg flex items-center justify-center">
+                                <Button variant="ghost" onClick={addSkillSection}>
+                                <PlusCircle className="mr-2 h-4 w-4" /> Add Skills Section
                                 </Button>
-                            </ProFeatureWrapper>
-                        </div>
-                    </div>
-                    </TabsContent>
-                </ScrollArea>
-              </Tabs>
-            </SidebarContent>
-        </Sidebar>
-        <SidebarInset className="bg-secondary/50 no-print p-6 h-full print:bg-white print:p-0">
+                            </div>
+                          )}
+                          
+                      </Accordion>
+                  </div>
+                  </TabsContent>
+
+                  <TabsContent value="ai-review" className="p-6">
+                      <div className="space-y-6">
+                          <Card>
+                              <CardHeader>
+                                  <CardTitle>Overall Resume Review</CardTitle>
+                                  <CardDescription>Get general feedback on your resume's clarity, impact, and structure.</CardDescription>
+                              </CardHeader>
+                              <CardContent>
+                                  {isReviewing ? (
+                                      <div className="flex items-center justify-center py-4"><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Reviewing...</div>
+                                  ) : reviewResult ? (
+                                      <div className="space-y-4">
+                                          <div>
+                                              <h4 className="font-semibold">Overall Feedback</h4>
+                                              <p className="text-sm text-muted-foreground">{reviewResult.overallFeedback}</p>
+                                          </div>
+                                           <div>
+                                              <h4 className="font-semibold text-green-600">Positive Points</h4>
+                                              <ul className="list-none space-y-2 text-sm mt-2">
+                                                  {reviewResult.positivePoints.map((point, i) => <li key={i} className="flex items-start gap-2"><CheckCircle className="h-4 w-4 mt-0.5 text-green-500 shrink-0" />{point}</li>)}
+                                              </ul>
+                                          </div>
+                                          <div>
+                                              <h4 className="font-semibold text-amber-600">Areas for Improvement</h4>
+                                              <ul className="list-none space-y-2 text-sm mt-2">
+                                                  {reviewResult.areasForImprovement.map((point, i) => <li key={i} className="flex items-start gap-2"><XCircle className="h-4 w-4 mt-0.5 text-amber-500 shrink-0" />{point}</li>)}
+                                              </ul>
+                                          </div>
+                                      </div>
+                                  ) : (
+                                      <ProFeatureWrapper isPro={isProUser}>
+                                          <Button onClick={handleReviewResume} className="w-full">
+                                              <Sparkles className="mr-2 h-4 w-4" /> Get AI Feedback
+                                          </Button>
+                                      </ProFeatureWrapper>
+                                  )}
+                              </CardContent>
+                          </Card>
+
+                           <Card>
+                              <CardHeader>
+                                  <CardTitle>Job Description Match Analysis</CardTitle>
+                                  <CardDescription>Paste a job description to see how well your resume matches.</CardDescription>
+                              </CardHeader>
+                              <CardContent className="space-y-4">
+                                  <div>
+                                      <div className="flex justify-between items-center mb-2">
+                                          <Label>Job Description</Label>
+                                          <ProFeatureWrapper isPro={isProUser}>
+                                              <Button variant="outline" size="sm" onClick={handleSuggestKeywords} disabled={isAiLoading || !resumeData.jobDescription}>
+                                                  {isAiLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Lightbulb className="mr-2 h-4 w-4"/>}
+                                                  Suggest Keywords
+                                              </Button>
+                                          </ProFeatureWrapper>
+                                      </div>
+                                      <Textarea 
+                                          value={resumeData.jobDescription} 
+                                          onChange={e => handleFieldChange('jobDescription', e.target.value)} 
+                                          rows={8}
+                                          placeholder='e.g., "Seeking a product manager with 5+ years of experience..."'
+                                      />
+                                  </div>
+                                  {keywordSuggestions.length > 0 && (
+                                  <div className="space-y-2 pt-2">
+                                      <Label>Click a keyword to add it to your skills:</Label>
+                                      <div className="flex flex-wrap gap-2">
+                                      {keywordSuggestions.map((keyword, i) => (
+                                          <Button
+                                          key={i}
+                                          variant="secondary"
+                                          size="sm"
+                                          className="h-auto"
+                                          onClick={() => handleAddKeywordAsSkill(keyword)}
+                                          >
+                                          <PlusCircle className="mr-2 h-3 w-3" />
+                                          {keyword}
+                                          </Button>
+                                      ))}
+                                      </div>
+                                  </div>
+                                  )}
+                                  {isAnalyzing ? (
+                                      <div className="flex items-center justify-center py-4"><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Analyzing...</div>
+                                  ) : analysisResult ? (
+                                      <div className="space-y-4">
+                                          <div>
+                                              <Label>Match Score</Label>
+                                              <div className="flex items-center gap-4">
+                                                  <Progress value={analysisResult.matchScore} className="w-full" />
+                                                  <span className="font-bold text-lg">{analysisResult.matchScore}%</span>
+                                              </div>
+                                              <p className="text-xs text-muted-foreground mt-1">{analysisResult.summary}</p>
+                                          </div>
+                                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                              <div className="space-y-2">
+                                                  <h4 className="font-semibold text-green-600">Strengths</h4>
+                                                  <ul className="list-none space-y-2 text-sm">
+                                                      {analysisResult.positivePoints.map((point, i) => (
+                                                          <li key={i} className="flex items-start gap-2"><CheckCircle className="h-4 w-4 mt-0.5 text-green-500 shrink-0" />{point}</li>
+                                                      ))}
+                                                  </ul>
+                                              </div>
+                                              <div className="space-y-2">
+                                                  <h4 className="font-semibold text-amber-600">Improvements</h4>
+                                                  <ul className="list-none space-y-2 text-sm">
+                                                      {analysisResult.areasForImprovement.map((point, i) => (
+                                                         <li key={i} className="flex items-start gap-2"><XCircle className="h-4 w-4 mt-0.5 text-amber-500 shrink-0" />{point}</li>
+                                                      ))}
+                                                  </ul>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  ) : null}
+                                  <ProFeatureWrapper isPro={isProUser}>
+                                      <Button onClick={handleAnalyzeResume} disabled={!resumeData.jobDescription} className="w-full">
+                                          <SearchCheck className="mr-2 h-4 w-4" /> Analyze Match
+                                      </Button>
+                                  </ProFeatureWrapper>
+                              </CardContent>
+                          </Card>
+                      </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="cover-letter" className="p-6">
+                  <div className="space-y-6">
+                      <div className="p-4 border rounded-lg space-y-4">
+                          <h3 className="font-semibold text-lg">Target Role</h3>
+                          <div className="grid grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                  <Label>Company Name</Label>
+                                  <Input name="name" value={resumeData.companyInfo?.name || ''} onChange={handleCompanyInfoChange} />
+                              </div>
+                              <div className="space-y-2">
+                                  <Label>Job Title</Label>
+                                  <Input name="jobTitle" value={resumeData.companyInfo?.jobTitle || ''} onChange={handleCompanyInfoChange} />
+                              </div>
+                          </div>
+                      </div>
+                      <div className="p-4 border rounded-lg space-y-4">
+                          <h3 className="font-semibold text-lg">Cover Letter Content</h3>
+                          <Textarea 
+                              value={resumeData.coverLetter}
+                              onChange={e => handleFieldChange('coverLetter', e.target.value)}
+                              rows={15}
+                              placeholder="Your generated cover letter will appear here..."
+                          />
+                          <ProFeatureWrapper isPro={isProUser}>
+                              <Button onClick={handleWriteCoverLetter} disabled={isAiLoading}>
+                              <Bot className="mr-2 h-4 w-4" />
+                              {isAiLoading ? 'Generating...' : 'AI Generate'}
+                              </Button>
+                          </ProFeatureWrapper>
+                      </div>
+                  </div>
+                  </TabsContent>
+              </ScrollArea>
+            </Tabs>
+        </div>
+        <div className="bg-secondary/50 no-print p-6 h-full print:bg-white print:p-0">
           <ScrollArea className="h-full">
             {activeTab === 'cover-letter' ? (
               <CoverLetterPreview resumeData={resumeData} />
@@ -1283,10 +1279,8 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
               <ResumePreview resumeData={resumeData} />
             )}
           </ScrollArea>
-        </SidebarInset>
+        </div>
       </div>
-    </SidebarProvider>
+    </>
   );
 }
-
-    
