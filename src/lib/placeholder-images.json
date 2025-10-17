@@ -4,25 +4,25 @@
       "id": "hero-image",
       "description": "A person working on a laptop in a modern workspace.",
       "imageUrl": "https://picsum.photos/seed/hero-image/800/600",
-      "imageHint": "professional workspace computer"
+      "imageHint": "professional workspace"
     },
     {
       "id": "why-us-image",
       "description": "A split image showing a plain document transforming into a beautifully designed resume.",
       "imageUrl": "https://picsum.photos/seed/why-us/600/500",
-      "imageHint": "resume before after"
+      "imageHint": "resume design"
     },
     {
       "id": "template-modern",
       "description": "A preview of a modern resume template.",
       "imageUrl": "https://picsum.photos/seed/template-modern/400/566",
-      "imageHint": "resume modern"
+      "imageHint": "modern resume"
     },
     {
       "id": "template-classic",
       "description": "A preview of a classic resume template.",
       "imageUrl": "https://picsum.photos/seed/template-classic/400/566",
-      "imageHint": "document layout"
+      "imageHint": "classic document"
     },
     {
       "id": "template-creative",
@@ -34,19 +34,19 @@
       "id": "template-minimalist",
       "description": "A preview of a minimalist resume template.",
       "imageUrl": "https://picsum.photos/seed/template-minimalist/400/566",
-      "imageHint": "simple resume"
+      "imageHint": "minimalist layout"
     },
     {
       "id": "template-professional",
       "description": "A preview of a professional resume template.",
       "imageUrl": "https://picsum.photos/seed/template-professional/400/566",
-      "imageHint": "corporate resume"
+      "imageHint": "corporate document"
     },
     {
       "id": "template-executive",
       "description": "A preview of an executive resume template with a sidebar.",
       "imageUrl": "https://picsum.photos/seed/template-executive/400/566",
-      "imageHint": "executive resume"
+      "imageHint": "executive paper"
     },
     {
       "id": "dashboard-resume-1",
@@ -69,62 +69,122 @@
     {
       "id": "blog-resume-guide",
       "description": "A professional writing on a document at a sunlit desk, focused on crafting the perfect resume.",
-      "imageUrl": "https://picsum.photos/seed/blog-resume-guide/800/400",
+      "imageUrl": "https://picsum.photos/seed/blog-writing/800/400",
       "imageHint": "resume writing"
     },
     {
       "id": "blog-resume-mistakes",
       "description": "A resume on a desk with a red pen circling common mistakes, highlighting errors to avoid.",
-      "imageUrl": "https://picsum.photos/seed/blog-resume-mistakes/800/400",
-      "imageHint": "document error"
+      "imageUrl": "https://picsum.photos/seed/blog-errors/800/400",
+      "imageHint": "document errors"
     },
     {
       "id": "blog-ats-bots",
       "description": "A stylized image of a friendly robot scanning a resume on a computer screen, representing an ATS.",
-      "imageUrl": "https://picsum.photos/seed/blog-ats-bots/800/400",
-      "imageHint": "robot resume"
+      "imageUrl": "https://picsum.photos/seed/blog-robot/800/400",
+      "imageHint": "robot reading"
     },
     {
       "id": "blog-action-verbs",
       "description": "A page of a notebook with powerful action verbs highlighted, ready to be used in a resume.",
-      "imageUrl": "https://picsum.photos/seed/blog-action-verbs/800/400",
-      "imageHint": "writing vocabulary"
+      "imageUrl": "https://picsum.photos/seed/blog-verbs/800/400",
+      "imageHint": "writing words"
     },
     {
       "id": "blog-summary",
       "description": "A close-up view of the professional summary section of a well-crafted, modern resume.",
-      "imageUrl": "https://picsum.photos/seed/blog-summary/800/400",
-      "imageHint": "resume headline"
+      "imageUrl": "https://picsum.photos/seed/blog-section/800/400",
+      "imageHint": "resume summary"
     },
     {
       "id": "blog-cv-resume",
       "description": "A side-by-side comparison of a concise one-page resume and a multi-page academic CV.",
-      "imageUrl": "https://picsum.photos/seed/blog-cv-resume/800/400",
+      "imageUrl": "https://picsum.photos/seed/blog-comparison/800/400",
       "imageHint": "document comparison"
     },
     {
       "id": "blog-skills",
       "description": "A neatly organized skills section on a digital resume, with categories for technical and soft skills.",
-      "imageUrl": "https://picsum.photos/seed/blog-skills/800/400",
-      "imageHint": "skills list"
+      "imageUrl": "https://picsum.photos/seed/blog-skills-section/800/400",
+      "imageHint": "skills chart"
     },
     {
       "id": "blog-cover-letter",
       "description": "A person at a clean desk typing a cover letter on a laptop, with a cup of coffee nearby.",
-      "imageUrl": "https://picsum.photos/seed/blog-cover-letter/800/400",
+      "imageUrl": "https://picsum.photos/seed/blog-typing/800/400",
       "imageHint": "writing letter"
     },
     {
       "id": "blog-networking",
       "description": "A diverse group of professionals having a positive and engaging conversation at a networking event.",
-      "imageUrl": "https://picsum.photos/seed/blog-networking/800/400",
+      "imageUrl": "https://picsum.photos/seed/blog-people/800/400",
       "imageHint": "people talking"
     },
     {
       "id": "blog-interview-prep",
       "description": "A desk with a laptop, a notebook with interview questions, a resume, and a cup of coffee.",
-      "imageUrl": "https://picsum.photos/seed/blog-interview-prep/800/400",
+      "imageUrl": "https://picsum.photos/seed/blog-preparation/800/400",
       "imageHint": "interview preparation"
+    },
+    {
+      "id": "blog-soft-skills",
+      "description": "Two people shaking hands in a modern office, symbolizing teamwork and communication.",
+      "imageUrl": "https://picsum.photos/seed/blog-teamwork/800/400",
+      "imageHint": "teamwork communication"
+    },
+    {
+      "id": "blog-resume-gaps",
+      "description": "A bridge spanning a gap between two cliffs, symbolizing bridging an employment gap.",
+      "imageUrl": "https://picsum.photos/seed/blog-bridge/800/400",
+      "imageHint": "bridging gap"
+    },
+    {
+      "id": "blog-tech-skills",
+      "description": "A futuristic digital interface showing code and data streams, representing technology.",
+      "imageUrl": "https://picsum.photos/seed/blog-future-tech/800/400",
+      "imageHint": "technology code"
+    },
+    {
+      "id": "blog-linkedin",
+      "description": "A person's professional profile on a laptop screen, highlighting the LinkedIn interface.",
+      "imageUrl": "https://picsum.photos/seed/blog-social-profile/800/400",
+      "imageHint": "social profile"
+    },
+    {
+      "id": "blog-follow-up",
+      "description": "A person writing a thank-you note on elegant stationery with a fountain pen.",
+      "imageUrl": "https://picsum.photos/seed/blog-thank-you/800/400",
+      "imageHint": "writing note"
+    },
+    {
+      "id": "blog-raise-request",
+      "description": "A graph showing upward growth and a piggy bank, symbolizing a salary increase.",
+      "imageUrl": "https://picsum.photos/seed/blog-salary-growth/800/400",
+      "imageHint": "salary growth"
+    },
+    {
+      "id": "blog-burnout",
+      "description": "A person meditating peacefully in a quiet, natural setting to represent stress relief.",
+      "imageUrl": "https://picsum.photos/seed/blog-meditation/800/400",
+      "imageHint": "stress relief"
+    },
+    {
+      "id": "blog-interview-question",
+      "description": "Two people in a job interview, with one asking a question and the other thinking of an answer.",
+      "imageUrl": "https://picsum.photos/seed/blog-job-interview/800/400",
+      "imageHint": "job interview"
+    },
+    {
+      "id": "blog-portfolio",
+      "description": "A beautifully designed personal portfolio website showcased on a large monitor.",
+      "imageUrl": "https://picsum.photos/seed/blog-website-design/800/400",
+      "imageHint": "website design"
+    },
+    {
+      "id": "blog-resign",
+      "description": "A person shaking hands with their manager in an office, leaving on positive terms.",
+      "imageUrl": "https://picsum.photos/seed/blog-handshake/800/400",
+      "imageHint": "professional handshake"
     }
   ]
 }
