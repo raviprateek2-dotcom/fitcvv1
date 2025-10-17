@@ -68,7 +68,7 @@
     },
     {
       "id": "blog-resume-guide",
-      "description": "A professional writing on a document at a sunlit desk, focused on crafting the perfect resume.",
+      "description": "A person carefully writing on a document at a well-lit desk, focused on crafting the perfect resume.",
       "imageUrl": "https://picsum.photos/seed/blog-writing/800/400",
       "imageHint": "resume writing"
     },
@@ -80,25 +80,25 @@
     },
     {
       "id": "blog-ats-bots",
-      "description": "A stylized image of a friendly robot scanning a resume on a computer screen, representing an ATS.",
+      "description": "A stylized image of a friendly robot scanning a resume on a computer screen, representing an Applicant Tracking System.",
       "imageUrl": "https://picsum.photos/seed/blog-robot/800/400",
       "imageHint": "robot reading"
     },
     {
       "id": "blog-action-verbs",
-      "description": "A page of a notebook with powerful action verbs highlighted, ready to be used in a resume.",
+      "description": "A close-up of a resume with powerful action verbs like 'Accelerated' and 'Engineered' highlighted.",
       "imageUrl": "https://picsum.photos/seed/blog-verbs/800/400",
-      "imageHint": "writing words"
+      "imageHint": "action words"
     },
     {
       "id": "blog-summary",
-      "description": "A close-up view of the professional summary section of a well-crafted, modern resume.",
+      "description": "The top section of a professional resume, with the summary section clearly visible and well-written.",
       "imageUrl": "https://picsum.photos/seed/blog-section/800/400",
       "imageHint": "resume summary"
     },
     {
       "id": "blog-cv-resume",
-      "description": "A side-by-side comparison of a concise one-page resume and a multi-page academic CV.",
+      "description": "A side-by-side comparison of a concise one-page resume and a multi-page academic CV on a wooden table.",
       "imageUrl": "https://picsum.photos/seed/blog-comparison/800/400",
       "imageHint": "document comparison"
     },
@@ -110,79 +110,79 @@
     },
     {
       "id": "blog-cover-letter",
-      "description": "A person at a clean desk typing a cover letter on a laptop, with a cup of coffee nearby.",
+      "description": "A person at a clean desk typing a professional cover letter on a laptop, with a cup of coffee nearby.",
       "imageUrl": "https://picsum.photos/seed/blog-typing/800/400",
       "imageHint": "writing letter"
     },
     {
       "id": "blog-networking",
-      "description": "A diverse group of professionals having a positive and engaging conversation at a networking event.",
+      "description": "A diverse group of professionals having a positive and engaging conversation at a modern networking event.",
       "imageUrl": "https://picsum.photos/seed/blog-people/800/400",
       "imageHint": "people talking"
     },
     {
       "id": "blog-interview-prep",
-      "description": "A desk with a laptop, a notebook with interview questions, a resume, and a cup of coffee.",
+      "description": "A desk with a laptop, a notebook with interview questions, a resume, and a cup of coffee ready for interview prep.",
       "imageUrl": "https://picsum.photos/seed/blog-preparation/800/400",
       "imageHint": "interview preparation"
     },
     {
       "id": "blog-soft-skills",
-      "description": "Two people shaking hands in a modern office, symbolizing teamwork and communication.",
+      "description": "Two people shaking hands in a modern office, symbolizing teamwork, communication and agreement.",
       "imageUrl": "https://picsum.photos/seed/blog-teamwork/800/400",
-      "imageHint": "teamwork communication"
+      "imageHint": "business handshake"
     },
     {
       "id": "blog-resume-gaps",
-      "description": "A bridge spanning a gap between two cliffs, symbolizing bridging an employment gap.",
+      "description": "A bridge spanning a gap between two cliffs against a sunrise, symbolizing bridging an employment gap.",
       "imageUrl": "https://picsum.photos/seed/blog-bridge/800/400",
       "imageHint": "bridging gap"
     },
     {
       "id": "blog-tech-skills",
-      "description": "A futuristic digital interface showing code and data streams, representing technology.",
+      "description": "A futuristic digital interface showing lines of code and data streams, representing modern technology.",
       "imageUrl": "https://picsum.photos/seed/blog-future-tech/800/400",
       "imageHint": "technology code"
     },
     {
       "id": "blog-linkedin",
-      "description": "A person's professional profile on a laptop screen, highlighting the LinkedIn interface.",
+      "description": "A person's professional profile on a laptop screen, highlighting the LinkedIn interface for job searching.",
       "imageUrl": "https://picsum.photos/seed/blog-social-profile/800/400",
       "imageHint": "social profile"
     },
     {
       "id": "blog-follow-up",
-      "description": "A person writing a thank-you note on elegant stationery with a fountain pen.",
+      "description": "A person writing a thoughtful thank-you note on elegant stationery with a fountain pen after an interview.",
       "imageUrl": "https://picsum.photos/seed/blog-thank-you/800/400",
       "imageHint": "writing note"
     },
     {
       "id": "blog-raise-request",
-      "description": "A graph showing upward growth and a piggy bank, symbolizing a salary increase.",
+      "description": "A rising bar graph next to a piggy bank, clearly symbolizing a salary increase and financial growth.",
       "imageUrl": "https://picsum.photos/seed/blog-salary-growth/800/400",
       "imageHint": "salary growth"
     },
     {
       "id": "blog-burnout",
-      "description": "A person meditating peacefully in a quiet, natural setting to represent stress relief.",
+      "description": "A person meditating peacefully in a quiet, natural setting to represent stress relief and managing burnout.",
       "imageUrl": "https://picsum.photos/seed/blog-meditation/800/400",
       "imageHint": "stress relief"
     },
     {
       "id": "blog-interview-question",
-      "description": "Two people in a job interview, with one asking a question and the other thinking of an answer.",
+      "description": "Two people in a professional job interview, with the interviewer asking a question and the candidate thinking of an answer.",
       "imageUrl": "https://picsum.photos/seed/blog-job-interview/800/400",
       "imageHint": "job interview"
     },
     {
       "id": "blog-portfolio",
-      "description": "A beautifully designed personal portfolio website showcased on a large monitor.",
+      "description": "A beautifully designed personal portfolio website showcased on a large, clean monitor display.",
       "imageUrl": "https://picsum.photos/seed/blog-website-design/800/400",
       "imageHint": "website design"
     },
     {
       "id": "blog-resign",
-      "description": "A person shaking hands with their manager in an office, leaving on positive terms.",
+      "description": "A person shaking hands with their manager across a desk in an office, leaving a job on positive terms.",
       "imageUrl": "https://picsum.photos/seed/blog-handshake/800/400",
       "imageHint": "professional handshake"
     }
