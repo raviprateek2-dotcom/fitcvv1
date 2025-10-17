@@ -112,8 +112,7 @@ export default function Home() {
                   className="space-y-6 text-center md:text-left"
                 >
                   <motion.h1 variants={itemVariants} className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl">
-                    Don't just write a resume.
-                    <br />
+                    Don't just write a resume. {' '}
                     <span className="text-primary transition-all duration-300 inline-block min-h-[60px] sm:min-h-[70px] md:min-h-[80px]">
                       <TypingAnimation phrases={[
                         "Design your future.",
@@ -137,7 +136,7 @@ export default function Home() {
                 </div>
               </motion.div>
               <motion.div 
-                className="hidden md:flex justify-center items-center"
+                className="hidden md:flex justify-center items-center mr-[-4rem]"
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
