@@ -7,7 +7,7 @@ import { ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 import type { BlogPost } from '@/lib/blog-posts';
 import type { ImagePlaceholder } from '@/lib/placeholder-images';
-import { AnimatedArticle } from '../common/AnimatedArticle';
+import { AnimatedResume } from '../common/AnimatedResume';
 
 
 // Custom markdown-to-HTML renderer
@@ -133,7 +133,7 @@ export function BlogPostClient({ post, image }: BlogPostClientProps) {
                     variants={itemVariants} 
                     className="mt-8 overflow-hidden rounded-2xl shadow-2xl h-64 w-full max-w-2xl mx-auto"
                 >
-                    <AnimatedArticle className="h-full w-full" />
+                    <AnimatedResume className="h-full w-full" />
                 </motion.div>
             </motion.header>
             <motion.div 

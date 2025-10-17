@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { AnimatedArticle } from '../common/AnimatedArticle';
+import { AnimatedResume } from '../common/AnimatedResume';
 
 export function BlogClientPage() {
   const containerVariants = {
@@ -52,7 +52,7 @@ export function BlogClientPage() {
                 <Card className="group overflow-hidden flex flex-col transition-all duration-300 hover:shadow-2xl h-full" variant="neuro">
                   <Link href={`/blog/${post.slug}`} className="block overflow-hidden p-4">
                     <div className="h-48 w-full">
-                       <AnimatedArticle className="h-full w-full"/>
+                       <AnimatedResume className="h-full w-full"/>
                     </div>
                   </Link>
                 <CardContent className="p-6 pt-0 flex flex-col flex-grow">
