@@ -10,52 +10,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import Autoplay from "embla-carousel-autoplay";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { motion, useScroll, useTransform, Variants } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { TypingAnimation } from '@/components/common/TypingAnimation';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { AnimatedResume } from '@/components/common/AnimatedResume';
-
-
-const GridPatternBackground = () => {
-    const ref = useRef(null);
-    const { scrollYProgress } = useScroll({
-      target: ref,
-      offset: ["start start", "end start"]
-    });
-    const y = useTransform(scrollYProgress, [0, 1], ['0%', '50%']);
-  
-    return (
-      <div ref={ref} className="absolute inset-0 z-0 overflow-hidden">
-        <motion.div
-          style={{ y }}
-          className="absolute inset-0"
-        >
-          <div className="absolute inset-0 bg-background" />
-          <svg
-            className="absolute inset-0 h-full w-full stroke-secondary"
-            aria-hidden="true"
-          >
-            <defs>
-              <pattern
-                id="grid-pattern"
-                width="72"
-                height="72"
-                patternUnits="userSpaceOnUse"
-                x="50%"
-                y="-1"
-                patternTransform="translate(0 -1)"
-              >
-                <path d="M0 72V0h72" fill="none" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#grid-pattern)" />
-          </svg>
-          <div className="absolute inset-0 bg-gradient-to-b from-background via-background/80 to-background" />
-        </motion.div>
-      </div>
-    );
-};
 
 const sectionVariants: Variants = {
     hidden: { opacity: 0, y: 30 },
@@ -141,7 +100,7 @@ export default function Home() {
       
       {/* Hero Section */}
       <section ref={ref} className="w-full py-20 md:py-32 relative h-auto mb-20">
-        <GridPatternBackground />
+         <div className="absolute inset-0 -z-10 h-full w-full bg-background bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#374151_1px,transparent_1px)] [background-size:16px_16px]"></div>
         <div className="container mx-auto px-4 md:px-6 relative z-10">
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <motion.div
