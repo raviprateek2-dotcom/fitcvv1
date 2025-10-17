@@ -52,15 +52,13 @@ const MarkdownRenderer = ({ content }: { content: string }) => {
   return <div className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-headline prose-a:text-primary hover:prose-a:text-primary/80 prose-strong:font-semibold" dangerouslySetInnerHTML={{ __html: withLists }} />;
 };
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:9002';
-
-
 interface BlogPostClientProps {
     post: BlogPost;
     image?: ImagePlaceholder;
+    structuredDataJSON: string;
 }
 
-export function BlogPostClient({ post, image }: BlogPostClientProps) {
+export function BlogPostClient({ post, image, structuredDataJSON }: BlogPostClientProps) {
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -76,39 +74,12 @@ export function BlogPostClient({ post, image }: BlogPostClientProps) {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
   };
-  
-  const structuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `${siteUrl}/blog/${post.slug}`,
-    },
-    headline: post.title,
-    description: post.description,
-    image: image?.imageUrl,
-    author: {
-      '@type': 'Organization',
-      name: 'ResumeAI Team',
-       url: siteUrl,
-    },
-    publisher: {
-        '@type': 'Organization',
-        name: 'ResumeAI',
-        logo: {
-            '@type': 'ImageObject',
-            url: `${siteUrl}/icon.png`,
-        },
-    },
-    datePublished: new Date().toISOString(), // In a real app, you'd store and use the actual publish date
-    dateModified: new Date().toISOString(),
-  };
 
   return (
     <div className="container mx-auto px-4 md:px-6 py-12 md:py-20">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        dangerouslySetInnerHTML={{ __html: structuredDataJSON }}
       />
       <div className="max-w-4xl mx-auto">
         <article>
@@ -156,5 +127,3 @@ export function BlogPostClient({ post, image }: BlogPostClientProps) {
     </div>
   );
 }
-
-    

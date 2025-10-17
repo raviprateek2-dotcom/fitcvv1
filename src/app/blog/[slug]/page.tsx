@@ -14,7 +14,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     return {};
   }
   
-  const imageUrl = PlaceHolderImages.find(img => img.id === post.imageId)?.imageUrl || `${siteUrl}/og-image.png`;
+  const image = PlaceHolderImages.find(img => img.id === post.imageId);
+  const imageUrl = image?.imageUrl || `${siteUrl}/og-image.png`;
 
   return {
     title: post.title,
@@ -55,5 +56,34 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
   
   const image = PlaceHolderImages.find(img => img.id === post.imageId);
 
-  return <BlogPostClient post={post} image={image} />;
+  // Generate structured data on the server to prevent hydration errors
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `${siteUrl}/blog/${post.slug}`,
+    },
+    headline: post.title,
+    description: post.description,
+    image: image?.imageUrl,
+    author: {
+      '@type': 'Organization',
+      name: 'ResumeAI Team',
+       url: siteUrl,
+    },
+    publisher: {
+        '@type': 'Organization',
+        name: 'ResumeAI',
+        logo: {
+            '@type': 'ImageObject',
+            url: `${siteUrl}/icon.png`,
+        },
+    },
+    // Use a static date to avoid hydration mismatch. In a real app, this would come from the post data.
+    datePublished: '2024-01-01T00:00:00Z',
+    dateModified: '2024-01-01T00:00:00Z',
+  };
+
+  return <BlogPostClient post={post} image={image} structuredDataJSON={JSON.stringify(structuredData)} />;
 }
