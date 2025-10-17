@@ -136,7 +136,7 @@ export default function Home() {
                 </div>
               </motion.div>
               <motion.div 
-                className="hidden md:flex justify-center items-center mr-[-4rem]"
+                className="hidden md:flex justify-center items-center ml-8"
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
@@ -431,5 +431,7 @@ export default function Home() {
     </div>
   );
 }
+
+    
 
     
