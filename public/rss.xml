@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>ResumeAI Blog</title>
+  <link>http://localhost:9002/blog</link>
+  <description>Career Advice & Resume Tips from the ResumeAI team.</description>
+  <atom:link href="http://localhost:9002/rss.xml" rel="self" type="application/rss+xml" />
+  <item>
+    <title>The Ultimate Guide to Writing a Resume That Gets Noticed in 2024</title>
+    <link>http://localhost:9002/blog/ultimate-resume-guide-2024</link>
+    <guid>http://localhost:9002/blog/ultimate-resume-guide-2024</guid>
+    <pubDate>Mon, 01 Jan 2024 00:00:00 GMT</pubDate>
+    <description>Learn the essential strategies to craft a resume that stands out to recruiters and hiring managers in today's competitive job market.</description>
+  </item>
+  <item>
+    <title>5 Common Resume Mistakes (and How to Avoid Them)</title>
+    <link>http://localhost:9002/blog/5-common-resume-mistakes</link>
+    <guid>http://localhost:9002/blog/5-common-resume-mistakes</guid>
+    <pubDate>Mon, 01 Jan 2024 00:00:00 GMT</pubDate>
+    <description>Don't let these simple mistakes cost you your dream job. Learn how to identify and fix the most common resume pitfalls.</description>
+  </item>
+  <item>
+    <title>How to Beat the Bots: Optimizing Your Resume for ATS</title>
+    <link>http://localhost:9002/blog/how-to-beat-ats</link>
+    <guid>http://localhost:9002/blog/how-to-beat-ats</guid>
+    <pubDate>Mon, 01 Jan 2024 00:00:00 GMT</pubDate>
+    <description>Learn the secrets to creating an Applicant Tracking System (ATS) friendly resume that ensures your application gets seen by a human.</description>
+  </item>
+</channel>
+</rss>
