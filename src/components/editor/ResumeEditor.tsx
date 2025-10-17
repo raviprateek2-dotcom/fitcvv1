@@ -701,7 +701,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
       } else {
         toast({ variant: 'destructive', title: 'Analysis Failed', description: result.error });
       }
-    } catch (error: any) => {
+    } catch (error: any) {
       toast({ variant: 'destructive', title: 'Error', description: error.message });
     } finally {
       setIsAnalyzing(false);
