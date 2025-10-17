@@ -1288,3 +1288,5 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     </SidebarProvider>
   );
 }
+
+    
