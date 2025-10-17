@@ -12,9 +12,8 @@ import Autoplay from "embla-carousel-autoplay";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { motion, Variants } from 'framer-motion';
 import { TypingAnimation } from '@/components/common/TypingAnimation';
-import Image from 'next/image';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { AnimatedResume } from '@/components/common/AnimatedResume';
+import { AnimatedArticle } from '@/components/common/AnimatedArticle';
 
 const sectionVariants: Variants = {
     hidden: { opacity: 0, y: 30 },
@@ -363,23 +362,13 @@ export default function Home() {
               className="grid gap-8 md:grid-cols-3"
             >
               {blogPosts.slice(0, 3).map((post) => {
-                  const image = PlaceHolderImages.find(img => img.id === post.imageId);
                   return (
                       <motion.div variants={itemVariants} key={post.slug}>
                         <Card className="group overflow-hidden flex flex-col h-full transition-all duration-300 hover:scale-105 hover:shadow-2xl" variant="neuro">
-                           {image && (
-                              <Link href={`/blog/${post.slug}`} className="block overflow-hidden relative h-48">
-                                <Image
-                                  src={image.imageUrl}
-                                  alt={post.title}
-                                  width={400}
-                                  height={200}
-                                  data-ai-hint={image.imageHint}
-                                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                />
-                              </Link>
-                           )}
-                            <CardContent className="p-6 flex flex-col flex-grow">
+                            <Link href={`/blog/${post.slug}`} className="block overflow-hidden relative h-48 p-4">
+                                <AnimatedArticle className="h-full w-full" />
+                            </Link>
+                            <CardContent className="p-6 pt-0 flex flex-col flex-grow">
                             <h3 className="text-xl font-bold font-headline mb-2 group-hover:text-primary transition-colors">
                                 <Link href={`/blog/${post.slug}`}>{post.title}</Link>
                             </h3>

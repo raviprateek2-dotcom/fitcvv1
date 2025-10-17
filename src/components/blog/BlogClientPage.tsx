@@ -6,9 +6,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import Image from 'next/image';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { motion } from 'framer-motion';
+import { AnimatedArticle } from '../common/AnimatedArticle';
 
 export function BlogClientPage() {
   const containerVariants = {
@@ -48,23 +47,15 @@ export function BlogClientPage() {
           animate="visible"
         >
           {blogPosts.map((post) => {
-            const image = PlaceHolderImages.find(img => img.id === post.imageId);
             return (
               <motion.div key={post.slug} variants={itemVariants}>
                 <Card className="group overflow-hidden flex flex-col transition-all duration-300 hover:shadow-2xl h-full" variant="neuro">
-                  {image && (
-                    <Link href={`/blog/${post.slug}`} className="block overflow-hidden">
-                      <Image
-                          src={image.imageUrl}
-                          alt={post.title}
-                          width={400}
-                          height={200}
-                          data-ai-hint={image.imageHint}
-                          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    </Link>
-                  )}
-                <CardContent className="p-6 flex flex-col flex-grow">
+                  <Link href={`/blog/${post.slug}`} className="block overflow-hidden p-4">
+                    <div className="h-48 w-full">
+                       <AnimatedArticle className="h-full w-full"/>
+                    </div>
+                  </Link>
+                <CardContent className="p-6 pt-0 flex flex-col flex-grow">
                   <h2 className="text-xl font-bold font-headline mb-2 group-hover:text-primary transition-colors">
                       <Link href={`/blog/${post.slug}`}>{post.title}</Link>
                   </h2>
