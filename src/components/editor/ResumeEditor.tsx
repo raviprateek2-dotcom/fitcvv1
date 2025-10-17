@@ -5,7 +5,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Download, Share2, Sparkles, Bot, Newspaper, Brush, Loader2, SearchCheck, ArrowLeft, Upload, FileText, CheckCircle, XCircle, PlusCircle } from 'lucide-react';
+import { Download, Share2, Sparkles, Bot, Newspaper, Brush, Loader2, SearchCheck, ArrowLeft, Upload, CheckCircle, XCircle, PlusCircle, FileText } from 'lucide-react';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { ResumePreview, CoverLetterPreview } from './ResumePreview';
 import { useDoc, useUser, useFirestore, useMemoFirebase, setDocumentNonBlocking } from '@/firebase';
@@ -24,7 +24,7 @@ import { cn } from '@/lib/utils';
 import { nanoid } from 'nanoid';
 import { Badge } from '../ui/badge';
 import { parseResumeFromPdf } from '@/app/actions/ai-resume-parser';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/card';
 import { Progress } from '../ui/progress';
 import { PersonalInfoSection } from './sections/PersonalInfoSection';
 import { SummarySection } from './sections/SummarySection';
@@ -803,3 +803,5 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     </div>
   );
 }
+
+    
