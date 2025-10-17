@@ -3,7 +3,7 @@
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/componentsui/textarea";
+import { Textarea } from "@/components/ui/textarea";
 import { Bot, Sparkles } from "lucide-react";
 import AIContentDialog from "../AIContentDialog";
 import AISectionWriterDialog from "../AISectionWriterDialog";
