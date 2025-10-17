@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Download, PlusCircle, Share2, Trash2, Sparkles, Bot, FileText, Newspaper, Brush, Lock, Lightbulb, Upload, MinusCircle, Loader2, SearchCheck, CheckCircle, XCircle, ArrowLeft, ChevronsUpDown } from 'lucide-react';
+import { Download, PlusCircle, Share2, Trash2, Sparkles, Bot, FileText, Newspaper, Brush, Lock, Lightbulb, Upload, MinusCircle, Loader2, SearchCheck, CheckCircle, XCircle, ArrowLeft } from 'lucide-react';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import AIContentDialog from './AIContentDialog';
 import AISectionWriterDialog from './AISectionWriterDialog';
@@ -33,7 +33,6 @@ import { Badge } from '../ui/badge';
 import { parseResumeFromPdf } from '@/app/actions/ai-resume-parser';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Progress } from '../ui/progress';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 
 // Define types for resume structure
@@ -124,8 +123,8 @@ const availableTemplates = [
 
 const EditorLoadingSkeleton = () => {
     return (
-        <div className="flex h-[calc(100vh-4rem)]">
-            <div className="w-1/3 p-6 space-y-6 border-r">
+        <div className="grid grid-cols-1 md:grid-cols-3 h-[calc(100vh-4rem)]">
+            <div className="col-span-1 p-6 space-y-6 border-r overflow-y-auto">
                  <Skeleton className="h-10 w-1/2" />
                  <div className="space-y-4">
                     <Skeleton className="h-12 w-full" />
@@ -134,7 +133,7 @@ const EditorLoadingSkeleton = () => {
                     <Skeleton className="h-12 w-full" />
                  </div>
             </div>
-            <div className="w-2/3 p-6">
+            <div className="col-span-2 p-6 bg-secondary/50">
                 <Skeleton className="w-full h-full" />
             </div>
         </div>
@@ -222,9 +221,6 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   const [analysisResult, setAnalysisResult] = useState<AnalyzeResumeOutput | null>(null);
   const [isReviewing, setIsReviewing] = useState(false);
   const [reviewResult, setReviewResult] = useState<ReviewResumeOutput | null>(null);
-  const [isEditorOpen, setIsEditorOpen] = useState(true);
-
-
 
   useEffect(() => {
     if (initialResumeData && !initialDataRef.current) {
@@ -379,7 +375,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
         education: prev.education.filter(edu => edu.id !== id)
     } : null));
   };
-
+  
   const addSkillSection = () => {
     setResumeData(prev => (prev ? {
       ...prev,
@@ -408,7 +404,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
           skills: (prev.skills || []).filter(skill => skill.id !== id)
       } : null));
   };
-
+  
   const addProjectSection = () => {
     setResumeData(prev => (prev ? {
       ...prev,
@@ -437,7 +433,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
       projects: (prev.projects || []).filter(p => p.id !== id)
     } : null));
   };
-  
+
   const handlePrint = () => {
     window.print();
   };
@@ -784,16 +780,9 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
           </div>
         </div>
       </header>
-       <div className="flex flex-col h-[calc(100vh-4rem)]">
-        <Collapsible open={isEditorOpen} onOpenChange={setIsEditorOpen} className="no-print border-b">
-          <CollapsibleTrigger asChild>
-             <div className="bg-background p-2 flex items-center justify-center cursor-pointer hover:bg-secondary">
-                 <ChevronsUpDown className="h-4 w-4 text-muted-foreground" />
-                 <span className="text-xs text-muted-foreground ml-2">{isEditorOpen ? 'Collapse Editor' : 'Expand Editor'}</span>
-             </div>
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as EditorTab)} className="w-full bg-background">
+       <div className="grid grid-cols-1 md:grid-cols-3 h-[calc(100vh-8rem)] no-print">
+        <div className="col-span-1 border-r bg-background">
+            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as EditorTab)} className="h-full flex flex-col">
               <div className="p-4 border-b">
                 <TabsList className="grid w-full grid-cols-4">
                   <TabsTrigger value="content"><FileText className="mr-2 h-4 w-4"/>Content</TabsTrigger>
@@ -803,7 +792,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                 </TabsList>
               </div>
               
-              <ScrollArea className="h-full max-h-[40vh]">
+              <ScrollArea className="flex-grow">
                   <TabsContent value="design" className="p-6">
                       <Accordion type="single" defaultValue="template" collapsible className="w-full">
                           <AccordionItem value="template">
@@ -999,32 +988,37 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                           </AccordionContent>
                           </AccordionItem>
                           
-                           <AccordionItem value="projects">
-                              <div className="flex items-center">
+                          <AccordionItem value="projects">
+                            <div className="flex items-center">
                                 <AccordionTrigger className="font-semibold flex-grow">Projects</AccordionTrigger>
-                                {resumeData.projects !== undefined && (
-                                <TooltipProvider>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                    <Button variant="ghost" size="icon" onClick={() => removeProjectSection()} className="text-destructive hover:text-destructive-foreground hover:bg-destructive h-7 w-7">
-                                        <MinusCircle className="h-4 w-4" />
-                                    </Button>
-                                    </TooltipTrigger>
-                                    <TooltipContent>Remove Section</TooltipContent>
-                                </Tooltip>
-                                </TooltipProvider>
-                                )}
-                              </div>
-                              <AccordionContent className="space-y-4 pt-4 border rounded-b-lg p-4">
                                 {resumeData.projects === undefined ? (
-                                    <div className="p-4 border-dashed border-2 rounded-lg flex items-center justify-center">
-                                      <Button variant="ghost" onClick={addProjectSection}>
-                                      <PlusCircle className="mr-2 h-4 w-4" /> Add Projects Section
-                                      </Button>
-                                  </div>
+                                    <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <Button variant="ghost" size="icon" onClick={addProjectSection} className="h-7 w-7">
+                                                <PlusCircle className="h-4 w-4" />
+                                            </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>Add Projects Section</TooltipContent>
+                                    </Tooltip>
+                                    </TooltipProvider>
                                 ) : (
-                                  <>
-                                    {resumeData.projects?.map((proj) => (
+                                    <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                        <Button variant="ghost" size="icon" onClick={removeProjectSection} className="text-destructive hover:text-destructive-foreground hover:bg-destructive h-7 w-7">
+                                            <MinusCircle className="h-4 w-4" />
+                                        </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>Remove Projects Section</TooltipContent>
+                                    </Tooltip>
+                                    </TooltipProvider>
+                                )}
+                            </div>
+                            {resumeData.projects !== undefined && (
+                                <AccordionContent className="space-y-4 pt-4 border rounded-b-lg p-4">
+                                <>
+                                    {resumeData.projects.map((proj) => (
                                         <div key={proj.id} className="p-4 border rounded-lg space-y-4 relative bg-secondary/50">
                                             <div className="space-y-2"><Label>Project Name</Label><Input value={proj.name} onChange={e => handleNestedChange('projects', proj.id, 'name', e.target.value)} /></div>
                                             <div className="space-y-2"><Label>Description</Label><Textarea rows={3} value={proj.description} onChange={e => handleNestedChange('projects', proj.id, 'description', e.target.value)} /></div>
@@ -1039,10 +1033,10 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                                     <Button variant="outline" onClick={addProject} className="w-full">
                                         <PlusCircle className="mr-2 h-4 w-4" /> Add Project
                                     </Button>
-                                  </>
-                                )}
-                            </AccordionContent>
-                            </AccordionItem>
+                                </>
+                                </AccordionContent>
+                            )}
+                          </AccordionItem>
 
                           <AccordionItem value="education">
                           <AccordionTrigger className="font-semibold">Education</AccordionTrigger>
@@ -1067,32 +1061,37 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                           </AccordionContent>
                           </AccordionItem>
                           
-                           <AccordionItem value="skills">
+                          <AccordionItem value="skills">
                                 <div className="flex items-center">
                                   <AccordionTrigger className="font-semibold flex-grow">Skills</AccordionTrigger>
-                                  {resumeData.skills !== undefined && (
-                                  <TooltipProvider>
-                                  <Tooltip>
-                                      <TooltipTrigger asChild>
-                                      <Button variant="ghost" size="icon" onClick={() => removeSkillSection()} className="text-destructive hover:text-destructive-foreground hover:bg-destructive h-7 w-7">
-                                          <MinusCircle className="h-4 w-4" />
-                                      </Button>
-                                      </TooltipTrigger>
-                                      <TooltipContent>Remove Section</TooltipContent>
-                                  </Tooltip>
-                                  </TooltipProvider>
+                                   {resumeData.skills === undefined ? (
+                                     <TooltipProvider>
+                                     <Tooltip>
+                                         <TooltipTrigger asChild>
+                                             <Button variant="ghost" size="icon" onClick={addSkillSection} className="h-7 w-7">
+                                                 <PlusCircle className="h-4 w-4" />
+                                             </Button>
+                                         </TooltipTrigger>
+                                         <TooltipContent>Add Skills Section</TooltipContent>
+                                     </Tooltip>
+                                     </TooltipProvider>
+                                  ) : (
+                                    <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                        <Button variant="ghost" size="icon" onClick={removeSkillSection} className="text-destructive hover:text-destructive-foreground hover:bg-destructive h-7 w-7">
+                                            <MinusCircle className="h-4 w-4" />
+                                        </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>Remove Skills Section</TooltipContent>
+                                    </Tooltip>
+                                    </TooltipProvider>
                                   )}
                                 </div>
-                                <AccordionContent className="space-y-4 pt-4 border rounded-b-lg p-4">
-                                    {resumeData.skills === undefined ? (
-                                      <div className="p-4 border-dashed border-2 rounded-lg flex items-center justify-center">
-                                          <Button variant="ghost" onClick={addSkillSection}>
-                                          <PlusCircle className="mr-2 h-4 w-4" /> Add Skills Section
-                                          </Button>
-                                      </div>
-                                    ) : (
+                                 {resumeData.skills !== undefined && (
+                                    <AccordionContent className="space-y-4 pt-4 border rounded-b-lg p-4">
                                       <>
-                                        {resumeData.skills?.map((skill) => (
+                                        {resumeData.skills.map((skill) => (
                                         <div key={skill.id} className="p-4 border rounded-lg space-y-4 bg-secondary/50">
                                             <div className="flex items-center gap-4">
                                                 <div className="flex-grow space-y-2">
@@ -1123,8 +1122,8 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                                             <PlusCircle className="mr-2 h-4 w-4" /> Add Skill
                                         </Button>
                                       </>
-                                    )}
-                                </AccordionContent>
+                                    </AccordionContent>
+                                 )}
                                 </AccordionItem>
                           
                       </Accordion>
@@ -1288,19 +1287,21 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                   </TabsContent>
               </ScrollArea>
             </Tabs>
-        </CollapsibleContent>
-        </Collapsible>
-
-        <div className="bg-secondary/50 no-print p-6 flex-grow overflow-auto print:bg-white print:p-0">
-          <div className="mx-auto">
-            {activeTab === 'cover-letter' ? (
-              <CoverLetterPreview resumeData={resumeData} />
-            ) : (
-              <ResumePreview resumeData={resumeData} />
-            )}
-          </div>
+        </div>
+        <div className="col-span-2 bg-secondary/50 no-print">
+          <ScrollArea className="h-full">
+             <div className="p-10 mx-auto">
+                {activeTab === 'cover-letter' ? (
+                  <CoverLetterPreview resumeData={resumeData} />
+                ) : (
+                  <ResumePreview resumeData={resumeData} />
+                )}
+              </div>
+          </ScrollArea>
         </div>
       </div>
     </>
   );
 }
+
+    
