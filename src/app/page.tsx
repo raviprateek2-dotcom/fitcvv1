@@ -112,7 +112,7 @@ export default function Home() {
                   className="space-y-6 text-center md:text-left"
                 >
                   <motion.h1 variants={itemVariants} className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl">
-                    Don't just write a resume. {' '}
+                    <span className="whitespace-nowrap">Don't just write a resume.</span>&nbsp;
                     <span className="text-primary transition-all duration-300 inline-block min-h-[60px] sm:min-h-[70px] md:min-h-[80px]">
                       <TypingAnimation phrases={[
                         "Design your future.",
