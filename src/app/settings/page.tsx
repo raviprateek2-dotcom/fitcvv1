@@ -19,6 +19,7 @@ import { Bot, Loader2, Sparkles, User as UserIcon } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { generateAvatar } from '@/app/actions/ai-avatar-generator';
+import { doc } from 'firebase/firestore';
 
 const SettingsSkeleton = () => (
   <div className="grid gap-8 md:grid-cols-3">
@@ -76,7 +77,7 @@ const SettingsSkeleton = () => (
 
 
 export default function SettingsPage() {
-  const { user, isUserLoading, userProfile, isProfileLoading } = useUser();
+  const { user, isUserLoading, userProfile, isProfileLoading, firestore } = useUser();
   const auth = useAuth();
   const router = useRouter();
   const { toast } = useToast();
@@ -200,14 +201,14 @@ export default function SettingsPage() {
   }
 
   const handleSaveAvatar = async () => {
-    if (!user || !generatedAvatar) return;
+    if (!user || !generatedAvatar || !firestore) return;
     setIsSaving('avatar');
     try {
         // Update Firebase Auth profile
         await updateProfile(user, { photoURL: generatedAvatar });
 
         // Update Firestore profile
-        const userDocRef = doc(auth.app.firestore, `users/${user.uid}`);
+        const userDocRef = doc(firestore, `users/${user.uid}`);
         updateDocumentNonBlocking(userDocRef, { profilePhotoUrl: generatedAvatar });
         
         toast({ title: 'Avatar Updated!', description: 'Your new profile picture has been saved.' });

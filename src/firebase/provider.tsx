@@ -64,6 +64,7 @@ export interface UserHookResult { // Renamed from UserAuthHookResult for consist
   userError: Error | null;
   userProfile: UserProfile | null;
   isProfileLoading: boolean;
+  firestore: Firestore | null;
 }
 
 // React Context
@@ -157,7 +158,7 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
  * Hook to access core Firebase services and user authentication state.
  * Throws error if core services are not available or used outside provider.
  */
-export const useFirebase = (): FirebaseServicesAndUser => {
+export const useFirebase = (): FirebaseServicesAndUser & { firestore: Firestore } => {
   const context = useContext(FirebaseContext);
 
   if (context === undefined) {
