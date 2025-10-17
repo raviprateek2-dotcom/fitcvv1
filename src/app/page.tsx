@@ -123,7 +123,9 @@ export default function Home() {
                     </span>
                   </motion.h1>
                   <motion.p variants={itemVariants} className="max-w-lg mx-auto md:mx-0 text-muted-foreground md:text-xl">
-                    Create a professional, ATS-optimized resume in minutes. Let our AI guide you to landing your dream job.
+                    <span>Create a professional, ATS-optimized resume in minutes.</span>
+                    <br />
+                    <span>Let our AI guide you to landing your dream job.</span>
                   </motion.p>
                   <motion.div variants={itemVariants} className="flex flex-col gap-4 sm:flex-row justify-center md:justify-start">
                     <Button asChild size="lg" className="group" variant='neuro'>
