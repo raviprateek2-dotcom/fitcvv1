@@ -33,6 +33,8 @@ import { EducationSection } from './sections/EducationSection';
 import { SkillsSection } from './sections/SkillsSection';
 import { ProjectsSection } from './sections/ProjectsSection';
 import type { ResumeData, Styling, Skill } from './types';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '../ui/textarea';
 
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
