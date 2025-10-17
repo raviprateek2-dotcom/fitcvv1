@@ -690,6 +690,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     }
     setIsAnalyzing(true);
     setAnalysisResult(null);
+    setReviewResult(null); // Clear other result
 
     const resumeContent = JSON.stringify(resumeData);
 
@@ -700,7 +701,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
       } else {
         toast({ variant: 'destructive', title: 'Analysis Failed', description: result.error });
       }
-    } catch (error: any) {
+    } catch (error: any) => {
       toast({ variant: 'destructive', title: 'Error', description: error.message });
     } finally {
       setIsAnalyzing(false);
@@ -711,6 +712,8 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
       if (!resumeData) return;
       setIsReviewing(true);
       setReviewResult(null);
+      setAnalysisResult(null); // Clear other result
+
       const resumeContent = JSON.stringify(resumeData);
       try {
           const result = await reviewResumeAction({ resumeContent });
@@ -1131,126 +1134,112 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                   </TabsContent>
 
                   <TabsContent value="ai-review" className="p-6">
-                      <div className="space-y-6">
-                          <Card>
-                              <CardHeader>
-                                  <CardTitle>Overall Resume Review</CardTitle>
-                                  <CardDescription>Get general feedback on your resume's clarity, impact, and structure.</CardDescription>
-                              </CardHeader>
-                              <CardContent>
-                                  {isReviewing ? (
-                                      <div className="flex items-center justify-center py-4"><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Reviewing...</div>
-                                  ) : reviewResult ? (
-                                      <div className="space-y-4">
-                                          <div>
-                                              <h4 className="font-semibold">Overall Feedback</h4>
-                                              <p className="text-sm text-muted-foreground">{reviewResult.overallFeedback}</p>
-                                          </div>
-                                           <div>
-                                              <h4 className="font-semibold text-green-600">Positive Points</h4>
-                                              <ul className="list-none space-y-2 text-sm mt-2">
-                                                  {reviewResult.positivePoints.map((point, i) => <li key={i} className="flex items-start gap-2"><CheckCircle className="h-4 w-4 mt-0.5 text-green-500 shrink-0" />{point}</li>)}
-                                              </ul>
-                                          </div>
-                                          <div>
-                                              <h4 className="font-semibold text-amber-600">Areas for Improvement</h4>
-                                              <ul className="list-none space-y-2 text-sm mt-2">
-                                                  {reviewResult.areasForImprovement.map((point, i) => <li key={i} className="flex items-start gap-2"><XCircle className="h-4 w-4 mt-0.5 text-amber-500 shrink-0" />{point}</li>)}
-                                              </ul>
-                                          </div>
-                                      </div>
-                                  ) : (
-                                      <ProFeatureWrapper isPro={isProUser}>
-                                          <Button onClick={handleReviewResume} className="w-full">
-                                              <Sparkles className="mr-2 h-4 w-4" /> Get AI Feedback
-                                          </Button>
-                                      </ProFeatureWrapper>
-                                  )}
-                              </CardContent>
-                          </Card>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>AI Analysis</CardTitle>
+                            <CardDescription>Get general feedback or analyze your resume against a specific job description.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                             <div>
+                                <div className="flex justify-between items-center mb-2">
+                                    <Label htmlFor="job-description-analysis">Job Description</Label>
+                                    <ProFeatureWrapper isPro={isProUser}>
+                                        <Button variant="outline" size="sm" onClick={handleSuggestKeywords} disabled={isAiLoading || !resumeData.jobDescription}>
+                                            {isAiLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Lightbulb className="mr-2 h-4 w-4"/>}
+                                            Suggest Keywords
+                                        </Button>
+                                    </ProFeatureWrapper>
+                                </div>
+                                <Textarea 
+                                    id="job-description-analysis"
+                                    value={resumeData.jobDescription} 
+                                    onChange={e => handleFieldChange('jobDescription', e.target.value)} 
+                                    rows={8}
+                                    placeholder='Paste a job description here...'
+                                />
+                            </div>
 
-                           <Card>
-                              <CardHeader>
-                                  <CardTitle>Job Description Match Analysis</CardTitle>
-                                  <CardDescription>Paste a job description to see how well your resume matches.</CardDescription>
-                              </CardHeader>
-                              <CardContent className="space-y-4">
-                                  <div>
-                                      <div className="flex justify-between items-center mb-2">
-                                          <Label>Job Description</Label>
-                                          <ProFeatureWrapper isPro={isProUser}>
-                                              <Button variant="outline" size="sm" onClick={handleSuggestKeywords} disabled={isAiLoading || !resumeData.jobDescription}>
-                                                  {isAiLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Lightbulb className="mr-2 h-4 w-4"/>}
-                                                  Suggest Keywords
-                                              </Button>
-                                          </ProFeatureWrapper>
-                                      </div>
-                                      <Textarea 
-                                          value={resumeData.jobDescription} 
-                                          onChange={e => handleFieldChange('jobDescription', e.target.value)} 
-                                          rows={8}
-                                          placeholder='e.g., "Seeking a product manager with 5+ years of experience..."'
-                                      />
-                                  </div>
-                                  {keywordSuggestions.length > 0 && (
-                                  <div className="space-y-2 pt-2">
-                                      <Label>Click a keyword to add it to your skills:</Label>
-                                      <div className="flex flex-wrap gap-2">
-                                      {keywordSuggestions.map((keyword, i) => (
-                                          <Button
-                                          key={i}
-                                          variant="secondary"
-                                          size="sm"
-                                          className="h-auto"
-                                          onClick={() => handleAddKeywordAsSkill(keyword)}
-                                          >
-                                          <PlusCircle className="mr-2 h-3 w-3" />
-                                          {keyword}
-                                          </Button>
-                                      ))}
-                                      </div>
-                                  </div>
-                                  )}
-                                  {isAnalyzing ? (
-                                      <div className="flex items-center justify-center py-4"><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Analyzing...</div>
-                                  ) : analysisResult ? (
-                                      <div className="space-y-4">
-                                          <div>
-                                              <Label>Match Score</Label>
-                                              <div className="flex items-center gap-4">
-                                                  <Progress value={analysisResult.matchScore} className="w-full" />
-                                                  <span className="font-bold text-lg">{analysisResult.matchScore}%</span>
-                                              </div>
-                                              <p className="text-xs text-muted-foreground mt-1">{analysisResult.summary}</p>
-                                          </div>
-                                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                              <div className="space-y-2">
-                                                  <h4 className="font-semibold text-green-600">Strengths</h4>
-                                                  <ul className="list-none space-y-2 text-sm">
-                                                      {analysisResult.positivePoints.map((point, i) => (
-                                                          <li key={i} className="flex items-start gap-2"><CheckCircle className="h-4 w-4 mt-0.5 text-green-500 shrink-0" />{point}</li>
-                                                      ))}
-                                                  </ul>
-                                              </div>
-                                              <div className="space-y-2">
-                                                  <h4 className="font-semibold text-amber-600">Improvements</h4>
-                                                  <ul className="list-none space-y-2 text-sm">
-                                                      {analysisResult.areasForImprovement.map((point, i) => (
-                                                         <li key={i} className="flex items-start gap-2"><XCircle className="h-4 w-4 mt-0.5 text-amber-500 shrink-0" />{point}</li>
-                                                      ))}
-                                                  </ul>
-                                              </div>
-                                          </div>
-                                      </div>
-                                  ) : null}
-                                  <ProFeatureWrapper isPro={isProUser}>
-                                      <Button onClick={handleAnalyzeResume} disabled={!resumeData.jobDescription} className="w-full">
-                                          <SearchCheck className="mr-2 h-4 w-4" /> Analyze Match
+                            {keywordSuggestions.length > 0 && (
+                            <div className="space-y-2 pt-2">
+                                <Label>Click a keyword to add it to your skills:</Label>
+                                <div className="flex flex-wrap gap-2">
+                                {keywordSuggestions.map((keyword, i) => (
+                                    <Button key={i} variant="secondary" size="sm" className="h-auto" onClick={() => handleAddKeywordAsSkill(keyword)}>
+                                        <PlusCircle className="mr-2 h-3 w-3" />{keyword}
+                                    </Button>
+                                ))}
+                                </div>
+                            </div>
+                            )}
+
+                            {(isAnalyzing || isReviewing) ? (
+                                <div className="flex items-center justify-center py-8"><Loader2 className="mr-2 h-5 w-5 animate-spin" />Analyzing...</div>
+                            ) : analysisResult ? (
+                                <div className="space-y-4 pt-4">
+                                    <h3 className="font-semibold">Match Analysis Result</h3>
+                                    <div>
+                                        <Label>Match Score</Label>
+                                        <div className="flex items-center gap-4">
+                                            <Progress value={analysisResult.matchScore} className="w-full" />
+                                            <span className="font-bold text-lg">{analysisResult.matchScore}%</span>
+                                        </div>
+                                        <p className="text-xs text-muted-foreground mt-1">{analysisResult.summary}</p>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <h4 className="font-semibold text-green-600">Strengths</h4>
+                                            <ul className="list-none space-y-2 text-sm">
+                                                {analysisResult.positivePoints.map((point, i) => (
+                                                    <li key={i} className="flex items-start gap-2"><CheckCircle className="h-4 w-4 mt-0.5 text-green-500 shrink-0" />{point}</li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <h4 className="font-semibold text-amber-600">Improvements</h4>
+                                            <ul className="list-none space-y-2 text-sm">
+                                                {analysisResult.areasForImprovement.map((point, i) => (
+                                                    <li key={i} className="flex items-start gap-2"><XCircle className="h-4 w-4 mt-0.5 text-amber-500 shrink-0" />{point}</li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : reviewResult ? (
+                                 <div className="space-y-4 pt-4">
+                                    <h3 className="font-semibold">General Feedback</h3>
+                                    <div>
+                                        <h4 className="font-semibold">Overall Feedback</h4>
+                                        <p className="text-sm text-muted-foreground">{reviewResult.overallFeedback}</p>
+                                    </div>
+                                    <div>
+                                        <h4 className="font-semibold text-green-600">Positive Points</h4>
+                                        <ul className="list-none space-y-2 text-sm mt-2">
+                                            {reviewResult.positivePoints.map((point, i) => <li key={i} className="flex items-start gap-2"><CheckCircle className="h-4 w-4 mt-0.5 text-green-500 shrink-0" />{point}</li>)}
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <h4 className="font-semibold text-amber-600">Areas for Improvement</h4>
+                                        <ul className="list-none space-y-2 text-sm mt-2">
+                                            {reviewResult.areasForImprovement.map((point, i) => <li key={i} className="flex items-start gap-2"><XCircle className="h-4 w-4 mt-0.5 text-amber-500 shrink-0" />{point}</li>)}
+                                        </ul>
+                                    </div>
+                                </div>
+                            ) : null}
+                            
+                            <div className="flex flex-col sm:flex-row gap-2 pt-4">
+                                <ProFeatureWrapper isPro={isProUser}>
+                                    <Button onClick={handleAnalyzeResume} disabled={!resumeData.jobDescription || isAnalyzing || isReviewing} className="w-full">
+                                        <SearchCheck className="mr-2 h-4 w-4" /> Analyze Match
+                                    </Button>
+                                </ProFeatureWrapper>
+                                <ProFeatureWrapper isPro={isProUser}>
+                                     <Button onClick={handleReviewResume} disabled={isAnalyzing || isReviewing} className="w-full" variant="secondary">
+                                          <Sparkles className="mr-2 h-4 w-4" /> Get General Feedback
                                       </Button>
-                                  </ProFeatureWrapper>
-                              </CardContent>
-                          </Card>
-                      </div>
+                                </ProFeatureWrapper>
+                            </div>
+                        </CardContent>
+                    </Card>
                   </TabsContent>
                   
                   <TabsContent value="cover-letter" className="p-6">
@@ -1304,4 +1293,3 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   );
 }
 
-    
