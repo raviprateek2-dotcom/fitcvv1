@@ -1,11 +1,11 @@
 
 'use client';
 
-import { Accordion } from '@/components/ui/accordion';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Download, Share2, Sparkles, Bot, Newspaper, Brush, Loader2, SearchCheck, ArrowLeft, Upload } from 'lucide-react';
+import { Download, Share2, Sparkles, Bot, Newspaper, Brush, Loader2, SearchCheck, ArrowLeft, Upload, FileText, CheckCircle, XCircle, PlusCircle } from 'lucide-react';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { ResumePreview, CoverLetterPreview } from './ResumePreview';
 import { useDoc, useUser, useFirestore, useMemoFirebase, setDocumentNonBlocking } from '@/firebase';
@@ -801,5 +801,3 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     </div>
   );
 }
-
-    
