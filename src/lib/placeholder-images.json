@@ -65,6 +65,126 @@
       "description": "Thumbnail of a graphic designer resume.",
       "imageUrl": "https://picsum.photos/seed/dash-resume3/300/200",
       "imageHint": "portfolio preview"
+    },
+    {
+      "id": "blog-resume-guide",
+      "description": "A person writing or editing a document on a desk.",
+      "imageUrl": "https://picsum.photos/seed/write-guide/600/400",
+      "imageHint": "writing resume"
+    },
+    {
+      "id": "blog-resume-mistakes",
+      "description": "A document with a red X or cross mark over it.",
+      "imageUrl": "https://picsum.photos/seed/wrong-document/600/400",
+      "imageHint": "wrong paper"
+    },
+    {
+      "id": "blog-ats-bots",
+      "description": "An illustration of a robot scanning a document.",
+      "imageUrl": "https://picsum.photos/seed/robot-scan/600/400",
+      "imageHint": "robot document"
+    },
+    {
+      "id": "blog-action-verbs",
+      "description": "A list of powerful words on a notebook.",
+      "imageUrl": "https://picsum.photos/seed/powerful-words/600/400",
+      "imageHint": "action words"
+    },
+    {
+      "id": "blog-summary",
+      "description": "A close-up of the summary section of a resume.",
+      "imageUrl": "https://picsum.photos/seed/summary-closeup/600/400",
+      "imageHint": "resume summary"
+    },
+    {
+      "id": "blog-cv-resume",
+      "description": "Two documents side-by-side, one short (resume) and one long (CV).",
+      "imageUrl": "https://picsum.photos/seed/document-comparison/600/400",
+      "imageHint": "document comparison"
+    },
+    {
+      "id": "blog-skills",
+      "description": "A word cloud or collection of skill-related icons.",
+      "imageUrl": "https://picsum.photos/seed/skills-cloud/600/400",
+      "imageHint": "skills concept"
+    },
+    {
+      "id": "blog-cover-letter",
+      "description": "A person writing a formal letter.",
+      "imageUrl": "https://picsum.photos/seed/writing-letter/600/400",
+      "imageHint": "writing letter"
+    },
+    {
+      "id": "blog-networking",
+      "description": "An abstract illustration of interconnected people or nodes.",
+      "imageUrl": "https://picsum.photos/seed/people-network/600/400",
+      "imageHint": "people network"
+    },
+    {
+      "id": "blog-interview-prep",
+      "description": "A person sitting at a desk preparing for an interview, with notes and a laptop.",
+      "imageUrl": "https://picsum.photos/seed/interview-desk/600/400",
+      "imageHint": "interview preparation"
+    },
+    {
+      "id": "blog-soft-skills",
+      "description": "Icons representing communication, teamwork, and problem-solving.",
+      "imageUrl": "https://picsum.photos/seed/soft-skills/600/400",
+      "imageHint": "teamwork communication"
+    },
+    {
+      "id": "blog-resume-gaps",
+      "description": "A timeline with a noticeable gap in the middle.",
+      "imageUrl": "https://picsum.photos/seed/timeline-gap/600/400",
+      "imageHint": "timeline gap"
+    },
+    {
+      "id": "blog-tech-skills",
+      "description": "A futuristic screen displaying code and data.",
+      "imageUrl": "https://picsum.photos/seed/tech-screen/600/400",
+      "imageHint": "code screen"
+    },
+    {
+      "id": "blog-linkedin",
+      "description": "A person's profile page on a professional social network.",
+      "imageUrl": "https://picsum.photos/seed/profile-page/600/400",
+      "imageHint": "profile page"
+    },
+    {
+      "id": "blog-follow-up",
+      "description": "A person sending an email on a laptop.",
+      "imageUrl": "https://picsum.photos/seed/sending-email/600/400",
+      "imageHint": "sending email"
+    },
+    {
+      "id": "blog-raise-request",
+      "description": "A graph showing upward growth and a piggy bank.",
+      "imageUrl": "https://picsum.photos/seed/salary-growth/600/400",
+      "imageHint": "growth chart"
+    },
+    {
+      "id": "blog-burnout",
+      "description": "A person looking tired or stressed while sitting at a desk.",
+      "imageUrl": "https://picsum.photos/seed/job-stress/600/400",
+      "imageHint": "frustrated person"
+    },
+    {
+      "id": "blog-interview-question",
+      "description": "A person talking to an interviewer across a table.",
+      "imageUrl": "https://picsum.photos/seed/interview-talk/600/400",
+      "imageHint": "job interview"
+    },
+    {
+      "id": "blog-portfolio",
+      "description": "A grid layout of different website or project designs.",
+      "imageUrl": "https://picsum.photos/seed/design-grid/600/400",
+      "imageHint": "portfolio grid"
+    },
+    {
+      "id": "blog-resign",
+      "description": "A person shaking hands with their manager while holding an envelope.",
+      "imageUrl": "https://picsum.photos/seed/handshake-goodbye/600/400",
+      "imageHint": "professional handshake"
     }
   ]
 }

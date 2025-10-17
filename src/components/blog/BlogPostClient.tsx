@@ -7,8 +7,7 @@ import { ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 import type { BlogPost } from '@/lib/blog-posts';
 import type { ImagePlaceholder } from '@/lib/placeholder-images';
-import { AnimatedResume } from '../common/AnimatedResume';
-
+import Image from 'next/image';
 
 // Custom markdown-to-HTML renderer
 const MarkdownRenderer = ({ content }: { content: string }) => {
@@ -129,12 +128,21 @@ export function BlogPostClient({ post, image }: BlogPostClientProps) {
                   </motion.div>
                 <motion.h1 variants={itemVariants} className="text-4xl lg:text-5xl font-headline font-extrabold tracking-tight mb-4">{post.title}</motion.h1>
                 <motion.p variants={itemVariants} className="text-lg text-muted-foreground">{post.description}</motion.p>
-                <motion.div 
-                    variants={itemVariants} 
-                    className="mt-8 overflow-hidden rounded-2xl shadow-2xl h-64 w-full max-w-2xl mx-auto"
-                >
-                    <AnimatedResume className="h-full w-full" />
-                </motion.div>
+                {image && (
+                  <motion.div 
+                      variants={itemVariants} 
+                      className="mt-8 overflow-hidden rounded-2xl shadow-2xl"
+                  >
+                      <Image
+                        src={image.imageUrl}
+                        alt={post.title}
+                        width={1200}
+                        height={630}
+                        priority
+                        className="w-full h-auto object-cover"
+                      />
+                  </motion.div>
+                )}
             </motion.header>
             <motion.div 
               initial={{opacity: 0}}
@@ -148,3 +156,5 @@ export function BlogPostClient({ post, image }: BlogPostClientProps) {
     </div>
   );
 }
+
+    

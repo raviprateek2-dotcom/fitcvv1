@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { AnimatedResume } from '../common/AnimatedResume';
+import Image from 'next/image';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export function BlogClientPage() {
   const containerVariants = {
@@ -47,15 +48,23 @@ export function BlogClientPage() {
           animate="visible"
         >
           {blogPosts.map((post) => {
+            const image = PlaceHolderImages.find(img => img.id === post.imageId);
             return (
               <motion.div key={post.slug} variants={itemVariants}>
                 <Card className="group overflow-hidden flex flex-col transition-all duration-300 hover:shadow-2xl h-full" variant="neuro">
-                  <Link href={`/blog/${post.slug}`} className="block overflow-hidden p-4">
-                    <div className="h-48 w-full">
-                       <AnimatedResume className="h-full w-full"/>
-                    </div>
+                  <Link href={`/blog/${post.slug}`} className="block overflow-hidden">
+                    {image && (
+                      <Image
+                        src={image.imageUrl}
+                        alt={post.title}
+                        width={600}
+                        height={400}
+                        data-ai-hint={image.imageHint}
+                        className="w-full h-48 object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
+                      />
+                    )}
                   </Link>
-                <CardContent className="p-6 pt-0 flex flex-col flex-grow">
+                <CardContent className="p-6 flex flex-col flex-grow">
                   <h2 className="text-xl font-bold font-headline mb-2 group-hover:text-primary transition-colors">
                       <Link href={`/blog/${post.slug}`}>{post.title}</Link>
                   </h2>
@@ -75,3 +84,5 @@ export function BlogClientPage() {
     </div>
   );
 }
+
+    
