@@ -123,8 +123,8 @@ const availableTemplates = [
 
 const EditorLoadingSkeleton = () => {
     return (
-        <div className="grid grid-cols-1 md:grid-cols-3 h-[calc(100vh-4rem)]">
-            <div className="col-span-1 p-6 space-y-6 border-r overflow-y-auto">
+        <div className="flex h-[calc(100vh-4rem)]">
+            <div className="w-1/3 p-6 space-y-6 border-r overflow-y-auto">
                  <Skeleton className="h-10 w-1/2" />
                  <div className="space-y-4">
                     <Skeleton className="h-12 w-full" />
@@ -133,7 +133,7 @@ const EditorLoadingSkeleton = () => {
                     <Skeleton className="h-12 w-full" />
                  </div>
             </div>
-            <div className="col-span-2 p-6 bg-secondary/50">
+            <div className="w-2/3 p-6 bg-secondary/50">
                 <Skeleton className="w-full h-full" />
             </div>
         </div>
@@ -783,8 +783,8 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
           </div>
         </div>
       </header>
-       <div className="grid grid-cols-1 md:grid-cols-3 h-[calc(100vh-8rem)] no-print">
-        <div className="col-span-1 border-r bg-background">
+       <div className="flex h-[calc(100vh-8rem)] no-print">
+        <div className="w-1/3 border-r bg-background flex flex-col">
             <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as EditorTab)} className="h-full flex flex-col">
               <div className="p-4 border-b">
                 <TabsList className="grid w-full grid-cols-4">
@@ -1277,7 +1277,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
               </ScrollArea>
             </Tabs>
         </div>
-        <div className="col-span-2 bg-secondary/50 no-print">
+        <div className="w-2/3 bg-secondary/50 no-print">
           <ScrollArea className="h-full">
              <div className="p-10 mx-auto">
                 {activeTab === 'cover-letter' ? (
@@ -1292,3 +1292,5 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     </>
   );
 }
+
+    
