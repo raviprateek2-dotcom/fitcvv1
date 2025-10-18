@@ -9,8 +9,8 @@
     {
       "id": "why-us-image",
       "description": "A split image showing a plain document transforming into a beautifully designed resume.",
-      "imageUrl": "https://images.unsplash.com/photo-1693045181676-57199422ee66?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxyZXN1bWUlMjBkZXNpZ258ZW58MHx8fHwxNzYwNzU1MDU5fDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "resume design"
+      "imageUrl": "https://images.unsplash.com/photo-1556740758-90de374c12ad?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1740&q=80",
+      "imageHint": "resume builder interface"
     },
     {
       "id": "template-modern",
