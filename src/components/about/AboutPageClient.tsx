@@ -125,14 +125,14 @@ export function AboutPageClient() {
             <div className="container mx-auto px-4 md:px-6 text-center">
                 <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold">Meet the Founder</motion.h2>
                 <motion.div variants={itemVariants} className="flex flex-col items-center gap-4 mt-8 max-w-3xl mx-auto">
-                    <Avatar className="h-32 w-32 border-4 border-primary">
+                    <Avatar className="h-40 w-40 border-4 border-primary">
                         <AvatarImage src="https://i.pravatar.cc/150?u=ravi" alt="Ravi Prateek" />
                         <AvatarFallback>RP</AvatarFallback>
                     </Avatar>
                     <h3 className="text-2xl font-bold font-headline mb-0">Ravi Prateek</h3>
                     <p className="text-muted-foreground -mt-3">Founder & CEO</p>
                     <p className="text-lg">
-                        As a seasoned professional in the tech industry, Ravi experienced firsthand how a well-crafted resume can open doors. He founded ResumeAI with the vision of making expert career tools accessible to everyone. Ravi is passionate about technology, design, and helping people succeed.
+                        I am an Engineer MBA. As a seasoned professional in the tech industry, I experienced firsthand how a well-crafted resume can open doors. I founded ResumeAI with the vision of making expert career tools accessible to everyone. I am passionate about technology, design, and helping people succeed.
                     </p>
                 </motion.div>
             </div>
