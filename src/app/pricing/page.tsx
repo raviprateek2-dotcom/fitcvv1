@@ -82,12 +82,12 @@ export default function PricingPage() {
         </motion.div>
 
         <motion.div
-          className="grid grid-cols-1 lg:grid-cols-4 justify-center items-stretch gap-8"
+          className="grid grid-cols-1 lg:grid-cols-2 justify-center items-stretch gap-8 max-w-4xl mx-auto"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
         >
-          <motion.div variants={itemVariants} className="w-full lg:col-span-1">
+          <motion.div variants={itemVariants} className="w-full">
             <Card className="shadow-lg h-full flex flex-col" variant="neuro">
               <CardHeader className="text-center p-8">
                 <CardTitle className="font-headline text-3xl">Free</CardTitle>
@@ -116,21 +116,20 @@ export default function PricingPage() {
             </Card>
           </motion.div>
 
-          <motion.div variants={itemVariants} className="w-full lg:col-span-1">
+          <motion.div variants={itemVariants} className="w-full">
             <Card className="shadow-2xl border-2 border-primary/50 relative h-full flex flex-col" variant="neuro">
                <div className="absolute top-0 -translate-y-1/2 w-full flex justify-center">
                 <div className="bg-primary/20 text-primary px-4 py-1 rounded-full text-sm font-semibold shadow-lg flex items-center gap-2">
                   <Sparkles className="w-4 h-4" />
-                  Monthly
+                  Pro Plan
                 </div>
               </div>
               <CardHeader className="text-center p-8">
-                <CardTitle className="font-headline text-3xl text-primary">Pro Monthly</CardTitle>
+                <CardTitle className="font-headline text-3xl text-primary">Go Pro</CardTitle>
                 <CardDescription>Unlock all features to land your dream job, faster.</CardDescription>
-                <div className="text-5xl font-bold mt-4">₹499<span className="text-lg font-normal text-muted-foreground">/month</span></div>
               </CardHeader>
               <CardContent className="p-8 pt-0 flex-grow">
-                <ul className="space-y-4">
+                <ul className="space-y-4 mb-8">
                   {proFeatures.map((feature) => (
                     <li key={feature} className="flex items-center gap-3">
                       <Check className="h-5 w-5 text-primary flex-shrink-0" />
@@ -138,76 +137,41 @@ export default function PricingPage() {
                     </li>
                   ))}
                 </ul>
-              </CardContent>
-              <CardFooter className="p-8 pt-0 mt-auto">
-                <Button className="w-full" onClick={() => handleUpgrade('pro-monthly')} variant="default">
-                  Go Pro
-                </Button>
-              </CardFooter>
-            </Card>
-          </motion.div>
-          
-          <motion.div variants={itemVariants} className="w-full lg:col-span-1">
-            <Card className="shadow-2xl border-2 border-primary/50 relative h-full flex flex-col" variant="neuro">
-              <CardHeader className="text-center p-8">
-                <CardTitle className="font-headline text-3xl text-primary">Pro 6-Months</CardTitle>
-                <CardDescription>A great option for a dedicated job search period.</CardDescription>
-                <div className="text-5xl font-bold mt-4">₹999<span className="text-lg font-normal text-muted-foreground">/6 mo.</span></div>
-              </CardHeader>
-              <CardContent className="p-8 pt-0 flex-grow">
-                 <ul className="space-y-4">
-                  {proFeatures.map((feature) => (
-                    <li key={feature} className="flex items-center gap-3">
-                      <Check className="h-5 w-5 text-primary flex-shrink-0" />
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-              <CardFooter className="p-8 pt-0 mt-auto">
-                <Button className="w-full" onClick={() => handleUpgrade('pro-6-months')} variant="default">
-                  Choose Plan
-                </Button>
-              </CardFooter>
-            </Card>
-          </motion.div>
-
-          <motion.div variants={itemVariants} className="w-full lg:col-span-1">
-            <Card className="shadow-2xl border-2 border-accent bg-card relative h-full flex flex-col" variant="neuro">
-              <div className="absolute top-0 -translate-y-1/2 w-full flex justify-center">
-                <div className="bg-accent text-accent-foreground px-4 py-1 rounded-full text-sm font-semibold shadow-lg flex items-center gap-2">
-                  <Star className="w-4 h-4" />
-                  Best Value
+                <div className="space-y-4">
+                    <div className="border p-4 rounded-lg flex justify-between items-center">
+                        <div>
+                            <p className="font-semibold">Monthly</p>
+                            <p className="text-2xl font-bold">₹499</p>
+                        </div>
+                        <Button onClick={() => handleUpgrade('pro-monthly')}>Choose Plan</Button>
+                    </div>
+                     <div className="border p-4 rounded-lg flex justify-between items-center">
+                        <div>
+                            <p className="font-semibold">6 Months</p>
+                            <p className="text-2xl font-bold">₹999</p>
+                        </div>
+                        <Button onClick={() => handleUpgrade('pro-6-months')}>Choose Plan</Button>
+                    </div>
+                     <div className="border-2 border-accent p-4 rounded-lg flex justify-between items-center relative">
+                         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                            <div className="bg-accent text-accent-foreground px-3 py-0.5 rounded-full text-xs font-semibold flex items-center gap-1">
+                                <Star className="w-3 h-3" />
+                                Best Value
+                            </div>
+                        </div>
+                        <div>
+                            <p className="font-semibold text-accent">Yearly</p>
+                            <p className="text-2xl font-bold">₹1499</p>
+                        </div>
+                        <Button onClick={() => handleUpgrade('pro-yearly')} variant="default" style={{backgroundColor: 'hsl(var(--accent))', color: 'hsl(var(--accent-foreground))'}}>Choose Plan</Button>
+                    </div>
                 </div>
-              </div>
-              <CardHeader className="text-center p-8">
-                <CardTitle className="font-headline text-3xl text-accent">Pro Yearly</CardTitle>
-                <CardDescription>Get a full year of premium access and save big.</CardDescription>
-                <div className="text-5xl font-bold mt-4">₹1499<span className="text-lg font-normal text-muted-foreground">/year</span></div>
-              </CardHeader>
-              <CardContent className="p-8 pt-0 flex-grow">
-                <ul className="space-y-4">
-                  {proFeatures.map((feature) => (
-                    <li key={feature} className="flex items-center gap-3">
-                      <Check className="h-5 w-5 text-accent flex-shrink-0" />
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
               </CardContent>
-              <CardFooter className="p-8 pt-0 mt-auto">
-                <Button className="w-full" onClick={() => handleUpgrade('pro-yearly')} variant="default" style={{backgroundColor: 'hsl(var(--accent))', color: 'hsl(var(--accent-foreground))'}}>
-                  Choose Plan
-                </Button>
-              </CardFooter>
             </Card>
           </motion.div>
-
         </motion.div>
         <p className="text-center text-muted-foreground text-sm mt-12">All prices are in INR. You can cancel your subscription at any time.</p>
       </div>
     </div>
   );
 }
-
-    
