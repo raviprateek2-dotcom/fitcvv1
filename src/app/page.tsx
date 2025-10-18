@@ -196,7 +196,7 @@ export default function Home() {
                 <motion.div variants={sectionVariants} className="space-y-8">
                     <motion.div variants={itemVariants} className="space-y-4">
                       <div className="inline-block rounded-lg bg-secondary px-3 py-1 text-sm font-medium">Everything You Need</div>
-                      <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Features that help you stand out</h2>
+                      <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl animate-shimmer-text bg-200% bg-gradient-to-r from-primary via-foreground to-accent bg-clip-text text-transparent">Features that help you stand out</h2>
                     </motion.div>
                     <motion.ul
                       variants={sectionVariants}
