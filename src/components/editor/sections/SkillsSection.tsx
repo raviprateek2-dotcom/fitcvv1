@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { MinusCircle, PlusCircle, Trash2 } from "lucide-react";
 import type { ResumeData } from "../types";
 
@@ -62,38 +61,19 @@ export function SkillsSection({ resumeData, setResumeData }: SkillsSectionProps)
         } : null));
     };
 
+    const hasSkillsSection = resumeData.skills !== undefined;
+
     return (
         <AccordionItem value="skills">
-            <div className="flex items-center">
-                <AccordionTrigger className="font-semibold text-lg flex-grow">Skills</AccordionTrigger>
-                {resumeData.skills === undefined ? (
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" onClick={addSkillSection} className="h-7 w-7">
-                                    <PlusCircle className="h-4 w-4" />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>Add Skills Section</TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
+            <AccordionTrigger className="font-semibold text-lg">Skills</AccordionTrigger>
+            <AccordionContent className="space-y-4 pt-4 border bg-secondary/30 rounded-b-lg p-4">
+                {!hasSkillsSection ? (
+                     <Button variant="outline" onClick={addSkillSection} className="w-full">
+                        <PlusCircle className="mr-2 h-4 w-4" /> Add Skills Section
+                    </Button>
                 ) : (
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" onClick={removeSkillSection} className="text-destructive hover:text-destructive-foreground hover:bg-destructive h-7 w-7">
-                                    <MinusCircle className="h-4 w-4" />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>Remove Skills Section</TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
-                )}
-            </div>
-            {resumeData.skills !== undefined && (
-                <AccordionContent className="space-y-4 pt-4 border bg-secondary/30 rounded-b-lg p-4">
                     <>
-                        {resumeData.skills.map((skill) => (
+                        {resumeData.skills && resumeData.skills.map((skill) => (
                             <div key={skill.id} className="p-4 border rounded-lg space-y-4 bg-background">
                                 <div className="flex items-center gap-4">
                                     <div className="flex-grow space-y-2">
@@ -121,13 +101,14 @@ export function SkillsSection({ resumeData, setResumeData }: SkillsSectionProps)
                             </div>
                         ))}
                         <Button variant="outline" onClick={addSkill} className="w-full">
-                            <PlusCircle className="mr-2 h-4 w-4" /> Add Skill
+                            <PlusCircle className="mr-2 h-4 w-4" /> Add Another Skill
+                        </Button>
+                        <Button variant="ghost" onClick={removeSkillSection} className="w-full text-destructive hover:text-destructive">
+                            <MinusCircle className="mr-2 h-4 w-4" /> Remove Skills Section
                         </Button>
                     </>
-                </AccordionContent>
-            )}
+                )}
+            </AccordionContent>
         </AccordionItem>
     );
 }
-
-    

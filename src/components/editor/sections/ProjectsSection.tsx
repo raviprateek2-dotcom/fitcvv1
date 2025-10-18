@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { MinusCircle, PlusCircle, Trash2 } from "lucide-react";
 import type { ResumeData } from "../types";
 
@@ -61,39 +60,20 @@ export function ProjectsSection({ resumeData, setResumeData }: ProjectsSectionPr
             projects: (prev.projects || []).filter(p => p.id !== id)
         } : null));
     };
+    
+    const hasProjectsSection = resumeData.projects !== undefined;
 
     return (
         <AccordionItem value="projects">
-            <div className="flex items-center">
-                <AccordionTrigger className="font-semibold text-lg flex-grow">Projects</AccordionTrigger>
-                {resumeData.projects === undefined ? (
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" onClick={addProjectSection} className="h-7 w-7">
-                                    <PlusCircle className="h-4 w-4" />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>Add Projects Section</TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
+            <AccordionTrigger className="font-semibold text-lg">Projects</AccordionTrigger>
+            <AccordionContent className="space-y-4 pt-4 border bg-secondary/30 rounded-b-lg p-4">
+                {!hasProjectsSection ? (
+                    <Button variant="outline" onClick={addProjectSection} className="w-full">
+                        <PlusCircle className="mr-2 h-4 w-4" /> Add Projects Section
+                    </Button>
                 ) : (
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" onClick={removeProjectSection} className="text-destructive hover:text-destructive-foreground hover:bg-destructive h-7 w-7">
-                                    <MinusCircle className="h-4 w-4" />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>Remove Projects Section</TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
-                )}
-            </div>
-            {resumeData.projects !== undefined && (
-                <AccordionContent className="space-y-4 pt-4 border bg-secondary/30 rounded-b-lg p-4">
                     <>
-                        {resumeData.projects.map((proj) => (
+                        {resumeData.projects && resumeData.projects.map((proj) => (
                             <div key={proj.id} className="p-4 border rounded-lg space-y-4 relative bg-background">
                                 <div className="space-y-2"><Label>Project Name</Label><Input value={proj.name} onChange={e => handleNestedChange('projects', proj.id, 'name', e.target.value)} /></div>
                                 <div className="space-y-2"><Label>Description (use bullet points)</Label><Textarea rows={3} value={proj.description} onChange={e => handleNestedChange('projects', proj.id, 'description', e.target.value)} /></div>
@@ -106,13 +86,14 @@ export function ProjectsSection({ resumeData, setResumeData }: ProjectsSectionPr
                             </div>
                         ))}
                         <Button variant="outline" onClick={addProject} className="w-full">
-                            <PlusCircle className="mr-2 h-4 w-4" /> Add Project
+                            <PlusCircle className="mr-2 h-4 w-4" /> Add Another Project
+                        </Button>
+                        <Button variant="ghost" onClick={removeProjectSection} className="w-full text-destructive hover:text-destructive">
+                            <MinusCircle className="mr-2 h-4 w-4" /> Remove Projects Section
                         </Button>
                     </>
-                </AccordionContent>
-            )}
+                )}
+            </AccordionContent>
         </AccordionItem>
     );
 }
-
-    

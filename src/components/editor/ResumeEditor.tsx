@@ -364,11 +364,11 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
 
   const handleAddKeywordAsSkill = (keyword: string) => {
     if (!resumeData) return;
-
+  
     // Check if skills section exists, if not, create it
     const skillsExist = resumeData.skills !== undefined;
     let currentSkills = resumeData.skills || [];
-
+  
     // Check for duplicates (case-insensitive)
     const isDuplicate = currentSkills.some(skill => skill.name.toLowerCase() === keyword.toLowerCase());
     if (isDuplicate) {
@@ -378,15 +378,16 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
       });
       return;
     }
-
+  
     const newSkill: Skill = {
       id: Date.now(),
       name: keyword,
       level: 'Advanced', // Default level
     };
-
+  
     const updatedSkills = [...currentSkills, newSkill];
-
+  
+    // Use the setResumeData function to update the state
     setResumeData(prev => ({
       ...prev!,
       skills: updatedSkills,
