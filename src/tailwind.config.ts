@@ -19,15 +19,15 @@ const config = {
       },
     },
     extend: {
+      backgroundSize: {
+        '200%': '200%',
+      },
       boxShadow: {
         neuro: '5px 5px 10px hsl(var(--neuro-shadow-light)), -5px -5px 10px hsl(var(--neuro-shadow-dark))',
         'neuro-inset': 'inset 5px 5px 10px hsl(var(--neuro-shadow-light)), inset -5px -5px 10px hsl(var(--neuro-shadow-dark))',
       },
       backgroundImage: {
         'gradient-glass': 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%)',
-      },
-      backgroundSize: {
-        '200%': '200%',
       },
       fontFamily: {
         body: ['var(--font-body)', 'sans-serif'],
