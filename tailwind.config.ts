@@ -91,8 +91,8 @@ const config = {
           '100%': { transform: 'translateX(100%)' },
         },
         'shimmer-text': {
-          '0%': { backgroundPosition: '200% 0' },
-          '100%': { backgroundPosition: '-200% 0' },
+          '0%, 100%': { backgroundPosition: '200% center' },
+          '50%': { backgroundPosition: '-200% center' },
         },
       },
       animation: {
