@@ -36,6 +36,7 @@ import type { ResumeData, Styling, Skill } from './types';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '../ui/textarea';
 import { ScrollArea } from '../ui/scroll-area';
+import { ProFeatureWrapper } from './ProFeatureWrapper';
 
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
@@ -752,17 +753,19 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                             ) : null }
 
                         </CardContent>
-                        <CardFooter className="flex flex-wrap gap-2 pt-4 border-t">
-                            <Button onClick={handleAnalyzeResume} disabled={!resumeData.jobDescription || isAnalyzing || isReviewing || isAiLoading} className="flex-1">
-                                <SearchCheck className="mr-2 h-4 w-4" /> Analyze Match
-                            </Button>
-                            <Button onClick={handleSuggestKeywords} disabled={!resumeData.jobDescription || isAnalyzing || isReviewing || isAiLoading} className="flex-1" variant="secondary">
-                                <KeySquare className="mr-2 h-4 w-4" /> Suggest Keywords
-                            </Button>
-                             <Button onClick={handleReviewResume} disabled={isAnalyzing || isReviewing || isAiLoading} className="w-full" variant="ghost">
-                                <Sparkles className="mr-2 h-4 w-4" /> Get General Feedback
-                            </Button>
-                        </CardFooter>
+                        <ProFeatureWrapper isPro={isProUser}>
+                            <CardFooter className="flex flex-wrap gap-2 pt-4 border-t">
+                                <Button onClick={handleAnalyzeResume} disabled={!resumeData.jobDescription || isAnalyzing || isReviewing || isAiLoading} className="flex-1">
+                                    <SearchCheck className="mr-2 h-4 w-4" /> Analyze Match
+                                </Button>
+                                <Button onClick={handleSuggestKeywords} disabled={!resumeData.jobDescription || isAnalyzing || isReviewing || isAiLoading} className="flex-1" variant="secondary">
+                                    <KeySquare className="mr-2 h-4 w-4" /> Suggest Keywords
+                                </Button>
+                                <Button onClick={handleReviewResume} disabled={isAnalyzing || isReviewing || isAiLoading} className="w-full" variant="ghost">
+                                    <Sparkles className="mr-2 h-4 w-4" /> Get General Feedback
+                                </Button>
+                            </CardFooter>
+                        </ProFeatureWrapper>
                     </Card>
                   </TabsContent>
                   
