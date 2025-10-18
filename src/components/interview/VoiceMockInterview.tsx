@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { mockInterview } from '@/app/actions/ai-mock-interviewer';
 import { aiNarrate } from '@/app/actions/ai-narrator';
-import { Loader2, Mic, MicOff, RefreshCw, Volume2, Ear } from 'lucide-react';
+import { Loader2, Mic, MicOff, RefreshCw, Volume2, Ear, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const interviewQuestions = [
@@ -19,7 +19,7 @@ const interviewQuestions = [
   "Why should we hire you?",
 ];
 
-type InterviewState = 'idle' | 'listening' | 'processing' | 'speaking' | 'generatingQuestionAudio';
+type InterviewState = 'idle' | 'listening' | 'processing' | 'speaking' | 'generatingQuestionAudio' | 'unsupported';
 
 export function VoiceMockInterview() {
   const [currentQuestion, setCurrentQuestion] = useState('');
@@ -40,35 +40,49 @@ export function VoiceMockInterview() {
     getNewQuestion();
   }, []);
 
-  // Initialize Speech Recognition API
+  // Initialize Speech Recognition API and check for browser support
   useEffect(() => {
-    if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      recognitionRef.current = new SpeechRecognition();
-      const recognition = recognitionRef.current;
+    if (typeof window !== 'undefined') {
+        const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognitionAPI) {
+            recognitionRef.current = new SpeechRecognitionAPI();
+            const recognition = recognitionRef.current;
 
-      recognition.continuous = true;
-      recognition.interimResults = true;
-      recognition.lang = 'en-US';
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
 
-      recognition.onresult = (event) => {
-        let finalTranscript = '';
-        for (let i = event.resultIndex; i < event.results.length; ++i) {
-          if (event.results[i].isFinal) {
-            finalTranscript += event.results[i][0].transcript;
-          }
+            recognition.onresult = (event) => {
+                let finalTranscript = '';
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) {
+                    finalTranscript += event.results[i][0].transcript;
+                }
+                }
+                if (finalTranscript) {
+                setTranscript(prev => prev + finalTranscript + ' ');
+                }
+            };
+
+            recognition.onerror = (event) => {
+                if (event.error !== 'no-speech') {
+                    toast({ variant: 'destructive', title: 'Speech Recognition Error', description: event.error });
+                }
+                setInterviewState('idle');
+            };
+            
+            recognition.onend = () => {
+                // Automatically move to processing if we were listening
+                if (interviewState === 'listening') {
+                    setInterviewState('processing');
+                    processTranscript();
+                }
+            };
+        } else {
+            setInterviewState('unsupported');
         }
-        if (finalTranscript) {
-          setTranscript(prev => prev + finalTranscript + ' ');
-        }
-      };
-
-      recognition.onerror = (event) => {
-        toast({ variant: 'destructive', title: 'Speech Recognition Error', description: event.error });
-        setInterviewState('idle');
-      };
     }
-  }, [toast]);
+  }, [toast, interviewState]); // Re-run if state changes, to handle onend logic properly
   
   const getNewQuestion = () => {
     let nextQuestion;
@@ -79,11 +93,14 @@ export function VoiceMockInterview() {
     setTranscript('');
     setFeedbackAudio(null);
     setQuestionAudio(null);
-    setInterviewState('idle');
+    // Only reset to idle if not in an unsupported state
+    if (interviewState !== 'unsupported') {
+      setInterviewState('idle');
+    }
   };
 
   const readQuestionAloud = async () => {
-    if (interviewState !== 'idle') return;
+    if (interviewState !== 'idle' || interviewState === 'unsupported') return;
 
     if (questionAudio && audioRef.current) {
         audioRef.current.src = questionAudio;
@@ -112,10 +129,9 @@ export function VoiceMockInterview() {
   const handleToggleListening = () => {
     if (interviewState === 'listening') {
       recognitionRef.current?.stop();
-      setInterviewState('processing');
-      processTranscript();
+      // onend will trigger processing
     } else {
-      if (!recognitionRef.current) {
+      if (!recognitionRef.current || interviewState === 'unsupported') {
         toast({ variant: 'destructive', title: 'Browser Not Supported', description: 'Speech recognition is not supported in this browser.' });
         return;
       }
@@ -207,24 +223,31 @@ export function VoiceMockInterview() {
                         size="lg" 
                         className="rounded-full w-24 h-24 text-lg"
                         onClick={handleToggleListening}
-                        disabled={interviewState === 'processing' || interviewState === 'speaking' || interviewState === 'generatingQuestionAudio'}
+                        disabled={interviewState === 'processing' || interviewState === 'speaking' || interviewState === 'generatingQuestionAudio' || interviewState === 'unsupported'}
                         variant={interviewState === 'listening' ? 'destructive' : 'default'}
                     >
                          {interviewState === 'listening' && <MicOff />}
                          {interviewState === 'idle' && <Mic />}
+                         {interviewState === 'unsupported' && <MicOff />}
                          {interviewState === 'processing' && <Loader2 className="animate-spin" />}
                          {interviewState === 'speaking' && <Volume2 />}
                           {interviewState === 'generatingQuestionAudio' && <Loader2 className="animate-spin" />}
                      </Button>
                  </motion.div>
                 
-                 <p className="text-sm text-muted-foreground min-h-[20px]">
-                    {interviewState === 'idle' && "Click the mic to start recording"}
-                    {interviewState === 'listening' && "Listening... Click to stop."}
+                 <div className="text-sm text-muted-foreground min-h-[40px] text-center">
+                    {interviewState === 'idle' && "Click the mic to start recording your answer."}
+                    {interviewState === 'listening' && "Listening... Click to stop and get feedback."}
                     {interviewState === 'processing' && "Analyzing your answer..."}
                     {interviewState === 'speaking' && "Providing feedback..."}
                     {interviewState === 'generatingQuestionAudio' && "Generating question audio..."}
-                 </p>
+                    {interviewState === 'unsupported' && (
+                        <div className="flex items-center gap-2 p-2 rounded-md border border-amber-500/50 bg-amber-500/10 text-amber-700 dark:text-amber-400">
+                            <AlertCircle className="h-4 w-4" />
+                            <p>Voice features are not supported in your browser.</p>
+                        </div>
+                    )}
+                 </div>
                 
                 {transcript && (
                     <div className="w-full p-4 bg-secondary rounded-md max-h-40 overflow-y-auto">
