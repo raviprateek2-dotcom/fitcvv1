@@ -653,11 +653,11 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                             setResumeData={setResumeData}
                             isProUser={isProUser}
                         />
-                        <ProjectsSection
+                        <EducationSection
                             resumeData={resumeData}
                             setResumeData={setResumeData}
                         />
-                         <EducationSection
+                        <ProjectsSection
                             resumeData={resumeData}
                             setResumeData={setResumeData}
                         />
@@ -812,3 +812,5 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     </div>
   );
 }
+
+    

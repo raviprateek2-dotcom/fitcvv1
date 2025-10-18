@@ -114,3 +114,5 @@ export function ProjectsSection({ resumeData, setResumeData }: ProjectsSectionPr
         </AccordionItem>
     );
 }
+
+    
