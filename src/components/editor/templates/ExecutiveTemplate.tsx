@@ -102,7 +102,14 @@ export function ExecutiveTemplate({ resumeData }: ResumePreviewProps) {
                                 <h4 className="font-bold text-md font-headline text-gray-900">{proj.name}</h4>
                                 {proj.link && <a href={proj.link} target="_blank" rel="noopener noreferrer" className="text-xs text-[var(--accent-color)] hover:underline font-medium">View Project</a>}
                             </div>
-                            <p className="text-sm mt-1 text-gray-600 leading-relaxed">{proj.description}</p>
+                            <ul className="list-disc pl-5 space-y-1.5 leading-relaxed text-sm text-gray-600 mt-1">
+                                {proj.description.split('\n').map((line, index) => {
+                                    const trimmedLine = line.trim();
+                                    if (!trimmedLine) return null;
+                                    const cleanedLine = trimmedLine.replace(/^[-*]\s*/, '');
+                                    return <li key={index}>{cleanedLine}</li>;
+                                })}
+                            </ul>
                             </div>
                         ))}
                         </div>

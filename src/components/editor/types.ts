@@ -62,3 +62,7 @@ export type ResumeData = {
   styling?: Styling;
   shareId?: string;
 };
+
+export interface CoverLetterPreviewProps {
+  resumeData: ResumeData;
+}
