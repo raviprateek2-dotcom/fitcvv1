@@ -3,49 +3,49 @@
     {
       "id": "hero-image",
       "description": "A person working on a laptop in a modern workspace.",
-      "imageUrl": "https://picsum.photos/seed/hero-image/800/600",
+      "imageUrl": "https://images.unsplash.com/photo-1758876202983-c36dd5019142?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxwcm9mZXNzaW9uYWwlMjB3b3Jrc3BhY2V8ZW58MHx8fHwxNzYwNzM0NjcwfDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "professional workspace"
     },
     {
       "id": "why-us-image",
       "description": "A split image showing a plain document transforming into a beautifully designed resume.",
-      "imageUrl": "https://picsum.photos/seed/why-us/600/500",
+      "imageUrl": "https://images.unsplash.com/photo-1693045181676-57199422ee66?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxyZXN1bWUlMjBkZXNpZ258ZW58MHx8fHwxNzYwNzU1MDU5fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "resume design"
     },
     {
       "id": "template-modern",
       "description": "A preview of a modern resume template.",
-      "imageUrl": "https://picsum.photos/seed/template-modern/400/566",
+      "imageUrl": "https://images.unsplash.com/photo-1601115422093-266e8dc8f49d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxtb2Rlcm4lMjByZXN1bWV8ZW58MHx8fHwxNzYwNzU1MDU5fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "modern resume"
     },
     {
       "id": "template-classic",
       "description": "A preview of a classic resume template.",
-      "imageUrl": "https://picsum.photos/seed/template-classic/400/566",
+      "imageUrl": "https://images.unsplash.com/photo-1707116700313-9fc47fc0d0c6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxjbGFzc2ljJTIwZG9jdW1lbnR8ZW58MHx8fHwxNzYwNzU1MDU4fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "classic document"
     },
     {
       "id": "template-creative",
       "description": "A preview of a creative resume template.",
-      "imageUrl": "https://picsum.photos/seed/template-creative/400/566",
+      "imageUrl": "https://images.unsplash.com/photo-1611241893603-3c359704e0ee?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjcmVhdGl2ZSUyMGRlc2lnbnxlbnwwfHx8fDE3NjA3NTUwNTh8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "creative design"
     },
     {
       "id": "template-minimalist",
       "description": "A preview of a minimalist resume template.",
-      "imageUrl": "https://picsum.photos/seed/template-minimalist/400/566",
+      "imageUrl": "https://images.unsplash.com/photo-1755719401540-606de50408d0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxtaW5pbWFsaXN0JTIwbGF5b3V0fGVufDB8fHx8MTc2MDc1NTA1OHww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "minimalist layout"
     },
     {
       "id": "template-professional",
       "description": "A preview of a professional resume template.",
-      "imageUrl": "https://picsum.photos/seed/template-professional/400/566",
+      "imageUrl": "https://images.unsplash.com/photo-1758518729912-bf3a84c400e0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxjb3Jwb3JhdGUlMjBkb2N1bWVudHxlbnwwfHx8fDE3NjA3NTUwNTh8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "corporate document"
     },
     {
       "id": "template-executive",
       "description": "A preview of an executive resume template with a sidebar.",
-      "imageUrl": "https://picsum.photos/seed/template-executive/400/566",
+      "imageUrl": "https://images.unsplash.com/photo-1592411039486-7310c6cadf8f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxleGVjdXRpdmUlMjBwYXBlcnxlbnwwfHx8fDE3NjA3NTUwNTh8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "executive paper"
     },
     {
@@ -57,7 +57,7 @@
     {
       "id": "dashboard-resume-2",
       "description": "Thumbnail of a marketing manager resume.",
-      "imageUrl": "https://picsum.photos/seed/dash-resume2/300/200",
+      "imageUrl": "https://images.unsplash.com/flagged/photo-1550585109-611b4d36af04?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxkb2N1bWVudCUyMHByZXZpZXd8ZW58MHx8fHwxNzYwNzU1MDU4fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "document preview"
     },
     {
@@ -69,25 +69,25 @@
     {
       "id": "blog-resume-guide",
       "description": "A person writing or editing a document on a desk.",
-      "imageUrl": "https://picsum.photos/seed/write-guide/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1634245482527-60ac666a8c9f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx3cml0aW5nJTIwcmVzdW1lfGVufDB8fHx8MTc2MDc1NTA1OHww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "writing resume"
     },
     {
       "id": "blog-resume-mistakes",
       "description": "A document with a red X or cross mark over it.",
-      "imageUrl": "https://picsum.photos/seed/wrong-document/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1593547014324-50d0c454ac27?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx3cm9uZyUyMHBhcGVyfGVufDB8fHx8MTc2MDc1NTA1OHww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "wrong paper"
     },
     {
       "id": "blog-ats-bots",
       "description": "An illustration of a robot scanning a document.",
-      "imageUrl": "https://picsum.photos/seed/robot-scan/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1593377202145-c5e97fd065f4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxyb2JvdCUyMGRvY3VtZW50fGVufDB8fHx8MTc2MDc1NTA1OHww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "robot document"
     },
     {
       "id": "blog-action-verbs",
       "description": "A list of powerful words on a notebook.",
-      "imageUrl": "https://picsum.photos/seed/powerful-words/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1685022407983-1100320a9754?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxhY3Rpb24lMjB3b3Jkc3xlbnwwfHx8fDE3NjA3NTUwNTh8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "action words"
     },
     {
@@ -99,37 +99,37 @@
     {
       "id": "blog-cv-resume",
       "description": "Two documents side-by-side, one short (resume) and one long (CV).",
-      "imageUrl": "https://picsum.photos/seed/document-comparison/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1759894508843-a0d45fe52ea9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxkb2N1bWVudCUyMGNvbXBhcmlzb258ZW58MHx8fHwxNzYwNzU1MDU4fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "document comparison"
     },
     {
       "id": "blog-skills",
       "description": "A word cloud or collection of skill-related icons.",
-      "imageUrl": "https://picsum.photos/seed/skills-cloud/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1743004144302-5ddc985c2a9e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxza2lsbHMlMjBjb25jZXB0fGVufDB8fHx8MTc2MDc1NTA1OHww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "skills concept"
     },
     {
       "id": "blog-cover-letter",
       "description": "A person writing a formal letter.",
-      "imageUrl": "https://picsum.photos/seed/writing-letter/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1588338949401-8fd705bca823?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8d3JpdGluZyUyMGxldHRlcnxlbnwwfHx8fDE3NjA3NTUwNTh8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "writing letter"
     },
     {
       "id": "blog-networking",
       "description": "An abstract illustration of interconnected people or nodes.",
-      "imageUrl": "https://picsum.photos/seed/people-network/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1571978289967-56c98e5c67b7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxwZW9wbGUlMjBuZXR3b3JrfGVufDB8fHx8MTc2MDc1NTA1OHww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "people network"
     },
     {
       "id": "blog-interview-prep",
       "description": "A person sitting at a desk preparing for an interview, with notes and a laptop.",
-      "imageUrl": "https://picsum.photos/seed/interview-desk/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1549923746-9507eec27243?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxpbnRlcnZpZXclMjBwcmVwYXJhdGlvbnxlbnwwfHx8fDE3NjA3NTUwNTh8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "interview preparation"
     },
     {
       "id": "blog-soft-skills",
       "description": "Icons representing communication, teamwork, and problem-solving.",
-      "imageUrl": "https://picsum.photos/seed/soft-skills/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1760624591122-e587b406b391?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHx0ZWFtd29yayUyMGNvbW11bmljYXRpb258ZW58MHx8fHwxNzYwNzU1MDU5fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "teamwork communication"
     },
     {
@@ -141,49 +141,49 @@
     {
       "id": "blog-tech-skills",
       "description": "A futuristic screen displaying code and data.",
-      "imageUrl": "https://picsum.photos/seed/tech-screen/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1650600538903-ec09f670c391?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxjb2RlJTIwc2NyZWVufGVufDB8fHx8MTc2MDczNDc3MHww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "code screen"
     },
     {
       "id": "blog-linkedin",
       "description": "A person's profile page on a professional social network.",
-      "imageUrl": "https://picsum.photos/seed/profile-page/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1746014600751-831d8d49efaa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxwcm9maWxlJTIwcGFnZXxlbnwwfHx8fDE3NjA3NTUwNTh8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "profile page"
     },
     {
       "id": "blog-follow-up",
       "description": "A person sending an email on a laptop.",
-      "imageUrl": "https://picsum.photos/seed/sending-email/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1683117927786-f146451082fb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxzZW5kaW5nJTIwZW1haWx8ZW58MHx8fHwxNzYwNzU1MDU4fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "sending email"
     },
     {
       "id": "blog-raise-request",
       "description": "A graph showing upward growth and a piggy bank.",
-      "imageUrl": "https://picsum.photos/seed/salary-growth/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1543286386-713bdd548da4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxncm93dGglMjBjaGFydHxlbnwwfHx8fDE3NjA3Mzk4NzJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "growth chart"
     },
     {
       "id": "blog-burnout",
       "description": "A person looking tired or stressed while sitting at a desk.",
-      "imageUrl": "https://picsum.photos/seed/job-stress/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1758272422816-539dcab0eea6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8ZnJ1c3RyYXRlZCUyMHBlcnNvbnxlbnwwfHx8fDE3NjA3MzEwNTl8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "frustrated person"
     },
     {
       "id": "blog-interview-question",
       "description": "A person talking to an interviewer across a table.",
-      "imageUrl": "https://picsum.photos/seed/interview-talk/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1573496130407-57329f01f769?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxqb2IlMjBpbnRlcnZpZXd8ZW58MHx8fHwxNzYwNzMxNzc3fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "job interview"
     },
     {
       "id": "blog-portfolio",
       "description": "A grid layout of different website or project designs.",
-      "imageUrl": "https://picsum.photos/seed/design-grid/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1567406485713-7a6f1abcccde?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxwb3J0Zm9saW8lMjBncmlkfGVufDB8fHx8MTc2MDc1NTA1OHww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "portfolio grid"
     },
     {
       "id": "blog-resign",
       "description": "A person shaking hands with their manager while holding an envelope.",
-      "imageUrl": "https://picsum.photos/seed/handshake-goodbye/600/400",
+      "imageUrl": "https://images.unsplash.com/photo-1638262052640-82e94d64664a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBoYW5kc2hha2V8ZW58MHx8fHwxNzYwNzU1MDU4fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "professional handshake"
     }
   ]
