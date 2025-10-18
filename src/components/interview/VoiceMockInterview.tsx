@@ -240,11 +240,3 @@ export function VoiceMockInterview() {
     </section>
   );
 }
-
-// Add this to your globals.d.ts or at the top of the file
-declare global {
-  interface Window {
-    SpeechRecognition: typeof SpeechRecognition;
-    webkitSpeechRecognition: typeof SpeechRecognition;
-  }
-}
