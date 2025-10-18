@@ -80,7 +80,7 @@ const prompt = ai.definePrompt({
   - For 'experience', capture the company, role, dates, and a description with bullet points.
   - For 'skills', identify each skill and assign a reasonable proficiency level ('Beginner', 'Intermediate', 'Advanced', 'Expert') based on context. Default to 'Advanced' if unsure.
   - For 'projects', extract the project name, a description, and a URL if available.
-  - Generate a unique numeric 'id' for each item in the arrays (experience, education, skills, projects) starting from Date.now() and incrementing.
+  - Generate a unique numeric 'id' for each item in the arrays (experience, education, skills, projects). For the ID, just use a placeholder like 0 or 1, as it will be replaced later.
   - Make sure the output strictly adheres to the provided JSON schema.
 
   Resume PDF to Parse:
@@ -109,13 +109,7 @@ const parseResumeFlow = ai.defineFlow(
       throw new Error('AI failed to parse the resume structure.');
     }
     
-    // 3. Add unique IDs to array items
-    const now = Date.now();
-    output.resumeData.experience.forEach((item, index) => item.id = now + index);
-    output.resumeData.education.forEach((item, index) => item.id = now + 100 + index);
-    output.resumeData.skills.forEach((item, index) => item.id = now + 200 + index);
-    output.resumeData.projects.forEach((item, index) => item.id = now + 300 + index);
-
     return output;
   }
 );
+
