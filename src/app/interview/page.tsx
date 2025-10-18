@@ -13,6 +13,10 @@ import { blogPosts } from '@/lib/blog-posts';
 import { MockInterview } from '@/components/interview/MockInterview';
 import { TypingAnimation } from '@/components/common/TypingAnimation';
 import { motion } from 'framer-motion';
+import { VoiceMockInterview } from '@/components/interview/VoiceMockInterview';
+import { useUser } from '@/firebase';
+import { ProFeatureWrapper } from '@/components/editor/ProFeatureWrapper';
+
 
 const featuredBlogs = blogPosts.filter(p => [
     'job-interview-checklist',
@@ -38,6 +42,9 @@ const itemVariants = {
 
 
 export default function InterviewPage() {
+    const { userProfile } = useUser();
+    const isProUser = userProfile?.subscription === 'premium';
+
   return (
     <div className="bg-secondary">
         <motion.div 
@@ -60,6 +67,14 @@ export default function InterviewPage() {
                 </motion.p>
             </CardHeader>
             <CardContent className="p-8 md:p-12 grid gap-12">
+                
+                <motion.div variants={itemVariants}>
+                    <ProFeatureWrapper isPro={!!isProUser}>
+                        <VoiceMockInterview />
+                    </ProFeatureWrapper>
+                </motion.div>
+
+                <motion.div variants={itemVariants}><Separator /></motion.div>
 
                 <motion.div variants={itemVariants}><MockInterview /></motion.div>
 
