@@ -12,7 +12,6 @@ import Autoplay from "embla-carousel-autoplay";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { motion, type Variants } from 'framer-motion';
 import { TypingAnimation } from '@/components/common/TypingAnimation';
-import { AnimatedResume } from '@/components/common/AnimatedResume';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
@@ -108,7 +107,10 @@ export default function Home() {
                 variants={sectionVariants}
                 className="flex flex-col items-center text-center space-y-6"
             >
-                <motion.h1 variants={itemVariants} className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl">
+                <motion.h1 
+                  variants={itemVariants} 
+                  className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl bg-gradient-to-r from-foreground via-muted-foreground to-foreground bg-200% bg-clip-text text-transparent animate-shimmer-text"
+                >
                     Don't just write a resume
                 </motion.h1>
                  <motion.div variants={itemVariants} className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl min-h-[60px] sm:min-h-[70px] md:min-h-[80px] lg:min-h-[90px]">
@@ -221,9 +223,6 @@ export default function Home() {
                         ))}
                     </motion.ul>
                 </motion.div>
-                 <motion.div variants={itemVariants} className="hidden md:flex justify-center items-center">
-                    <AnimatedResume templateId='executive' />
-                 </motion.div>
             </div>
         </div>
       </motion.section>

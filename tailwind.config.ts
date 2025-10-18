@@ -26,6 +26,9 @@ const config = {
       backgroundImage: {
         'gradient-glass': 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%)',
       },
+      backgroundSize: {
+        '200%': '200%',
+      },
       fontFamily: {
         body: ['var(--font-body)', 'sans-serif'],
         headline: ['var(--font-headline)', 'sans-serif'],
@@ -83,11 +86,16 @@ const config = {
           '0%': { transform: 'translateX(-100%)' },
           '100%': { transform: 'translateX(100%)' },
         },
+        'shimmer-text': {
+          '0%': { backgroundPosition: '200% 0' },
+          '100%': { backgroundPosition: '-200% 0' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         shimmer: 'shimmer 2s infinite linear',
+        'shimmer-text': 'shimmer-text 5s linear infinite',
       },
     },
   },
