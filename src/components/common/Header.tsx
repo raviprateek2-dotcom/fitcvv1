@@ -139,7 +139,7 @@ export function Header() {
 }
 
 function UserMenu() {
-  const { user } = useUser();
+  const { user, userProfile } = useUser();
   const auth = useAuth();
 
   const handleLogout = async () => {
@@ -149,15 +149,26 @@ function UserMenu() {
       console.error('Error signing out:', error);
     }
   };
+  
+  const getInitials = (name: string) => {
+    if (!name) return '';
+    const names = name.split(' ');
+    if (names.length === 1) return names[0].charAt(0).toUpperCase();
+    return `${names[0].charAt(0)}${names[names.length - 1].charAt(0)}`.toUpperCase();
+  }
+
+  const avatarSrc = user?.photoURL || userProfile?.profilePhotoUrl || undefined;
+  const fallbackText = getInitials(user?.displayName || '');
+
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
-            <AvatarImage src={user?.photoURL || ''} alt="User avatar" />
+            <AvatarImage src={avatarSrc} alt="User avatar" />
             <AvatarFallback>
-              <User className="h-5 w-5" />
+                {fallbackText ? fallbackText : <User className="h-5 w-5" />}
             </AvatarFallback>
           </Avatar>
         </Button>

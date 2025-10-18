@@ -276,7 +276,7 @@ export default function SettingsPage() {
                 </CardHeader>
                 <CardContent className="flex items-center gap-6">
                     <Avatar className="h-24 w-24 border">
-                        <AvatarImage src={user.photoURL || userProfile?.profilePhotoUrl} alt="User Avatar" />
+                        <AvatarImage src={user.photoURL || userProfile?.profilePhotoUrl || undefined} alt="User Avatar" />
                         <AvatarFallback>
                             <UserIcon className="h-10 w-10 text-muted-foreground" />
                         </AvatarFallback>
