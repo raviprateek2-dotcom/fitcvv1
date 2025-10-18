@@ -1,9 +1,12 @@
 
+'use client';
+
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { ArrowRight, Bot, BrainCircuit, CalendarClock, Sparkles } from 'lucide-react';
 import Link from 'next/link';
+import { BehavioralQuestionAnalyzer } from '@/components/interview/BehavioralQuestionAnalyzer';
 
 const featuredBlogs = [
     {
@@ -39,6 +42,10 @@ export default function InterviewPage() {
             </CardHeader>
             <CardContent className="p-8 md:p-12 grid gap-12">
 
+                <BehavioralQuestionAnalyzer />
+
+                <Separator />
+                
                 {/* Featured Blogs Section */}
                 <section>
                     <h2 className="text-2xl font-headline font-bold mb-6 text-center">From Our Blog: Interview Insights</h2>
@@ -71,10 +78,6 @@ export default function InterviewPage() {
                             <div className="p-4 border rounded-lg bg-background/50">
                                 <h3 className="font-semibold flex items-center gap-2"><Bot /> AI Mock Interviewer</h3>
                                 <p className="text-sm text-muted-foreground mt-1">Practice your answers with an AI that gives real-time feedback on your clarity, confidence, and content.</p>
-                            </div>
-                            <div className="p-4 border rounded-lg bg-background/50">
-                                <h3 className="font-semibold flex items-center gap-2"><BrainCircuit /> Behavioral Question Analyzer</h3>
-                                <p className="text-sm text-muted-foreground mt-1">Get AI-powered suggestions on how to structure your stories using the STAR method for maximum impact.</p>
                             </div>
                         </div>
                     </section>
