@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Accordion } from '@/components/ui/accordion';
@@ -37,6 +36,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '../ui/textarea';
 import { ScrollArea } from '../ui/scroll-area';
 import { ProFeatureWrapper } from './ProFeatureWrapper';
+import { AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
 
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
@@ -816,5 +816,3 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     </div>
   );
 }
-
-    
