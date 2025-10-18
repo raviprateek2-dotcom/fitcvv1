@@ -14,8 +14,7 @@ import { TypingAnimation } from '@/components/common/TypingAnimation';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
-export default function Home() {
-  const sectionVariants: Variants = {
+const sectionVariants: Variants = {
     hidden: { opacity: 0, y: 30 },
     visible: {
         opacity: 1,
@@ -26,14 +25,14 @@ export default function Home() {
             staggerChildren: 0.2
         }
     }
-  };
+};
 
-  const itemVariants: Variants = {
-      hidden: { opacity: 0, y: 20 },
-      visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } }
-  };
+const itemVariants: Variants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } }
+};
 
-  const features = [
+const features = [
     {
       title: 'AI Content Suggestions',
       description: 'Get AI-powered suggestions to improve your resume content and make it more effective.',
@@ -49,9 +48,9 @@ export default function Home() {
       description: 'Ensure your resume is optimized for Applicant Tracking Systems to get past the bots.',
       icon: <Zap className="w-6 h-6 text-primary"/>
     },
-  ];
+];
 
-  const testimonials = [
+const testimonials = [
     {
       author: 'Sarah L.',
       title: 'Software Engineer',
@@ -87,8 +86,9 @@ export default function Home() {
       avatar: 'https://i.pravatar.cc/150?img=5',
       rating: 5,
     }
-  ];
+];
 
+export default function Home() {
   return (
     <div className="flex flex-col items-center bg-background text-foreground overflow-x-hidden">
       
@@ -372,7 +372,7 @@ export default function Home() {
         variants={sectionVariants}
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, amount: 0.5 }}
+        viewport={{ once: true, amount: 0.2 }}
       >
         <div className="container mx-auto px-4 md:px-6 text-center">
           <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Ready to Build Your Future?</motion.h2>
