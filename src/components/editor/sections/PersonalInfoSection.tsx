@@ -109,5 +109,3 @@ export function PersonalInfoSection({ resumeData, setResumeData, isProUser }: Pe
         </AccordionItem>
     );
 }
-
-    
