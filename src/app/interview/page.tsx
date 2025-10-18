@@ -7,24 +7,16 @@ import { Separator } from '@/components/ui/separator';
 import { ArrowRight, Bot, BrainCircuit, CalendarClock, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { BehavioralQuestionAnalyzer } from '@/components/interview/BehavioralQuestionAnalyzer';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
+import Image from 'next/image';
+import { blogPosts } from '@/lib/blog-posts';
 
-const featuredBlogs = [
-    {
-        title: "The Ultimate Interview Checklist",
-        description: "Walk into your interview with confidence by following our comprehensive preparation guide.",
-        slug: "/blog/job-interview-checklist"
-    },
-    {
-        title: "How to Answer 'Tell Me About Yourself'",
-        description: "Craft the perfect, concise answer to this common opening question.",
-        slug: "/blog/answer-tell-me-about-yourself"
-    },
-    {
-        title: "The Art of the Follow-Up Email",
-        description: "A great follow-up email can be the final touch that seals the deal. Learn how to write one that gets a response.",
-        slug: "/blog/follow-up-email-guide"
-    }
-]
+const featuredBlogs = blogPosts.filter(p => [
+    'job-interview-checklist',
+    'answer-tell-me-about-yourself',
+    'follow-up-email-guide'
+].includes(p.slug));
+
 
 export default function InterviewPage() {
   return (
@@ -49,22 +41,36 @@ export default function InterviewPage() {
                 {/* Featured Blogs Section */}
                 <section>
                     <h2 className="text-2xl font-headline font-bold mb-6 text-center">From Our Blog: Interview Insights</h2>
-                    <div className="grid md:grid-cols-3 gap-6">
-                        {featuredBlogs.map(post => (
-                            <Card key={post.slug} className="flex flex-col group hover:border-primary/50 transition-colors">
-                                <CardHeader>
-                                    <CardTitle className="font-headline text-lg group-hover:text-primary">{post.title}</CardTitle>
-                                </CardHeader>
-                                <CardContent className="flex-grow">
-                                    <p className="text-sm text-muted-foreground">{post.description}</p>
+                    <div className="grid md:grid-cols-3 gap-8">
+                        {featuredBlogs.map(post => {
+                            const image = PlaceHolderImages.find(img => img.id === post.imageId);
+                            return (
+                            <Card key={post.slug} className="group overflow-hidden flex flex-col h-full transition-all duration-300 hover:scale-105 hover:shadow-2xl" variant="neuro">
+                                <Link href={`/blog/${post.slug}`} className="block overflow-hidden">
+                                    {image && (
+                                    <Image
+                                        src={image.imageUrl}
+                                        alt={post.title}
+                                        width={600}
+                                        height={400}
+                                        data-ai-hint={image.imageHint}
+                                        className="w-full h-48 object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
+                                    />
+                                    )}
+                                </Link>
+                                <CardContent className="p-6 flex flex-col flex-grow">
+                                <h3 className="text-xl font-bold font-headline mb-2 group-hover:text-primary transition-colors">
+                                    <Link href={`/blog/${post.slug}`}>{post.title}</Link>
+                                </h3>
+                                <p className="text-muted-foreground text-sm mb-4 flex-grow">{post.description}</p>
+                                <Button variant="link" asChild className="p-0 h-auto self-start">
+                                    <Link href={`/blog/${post.slug}`}>
+                                    Read More <ArrowRight className="ml-2 h-4 w-4" />
+                                    </Link>
+                                </Button>
                                 </CardContent>
-                                <CardFooter>
-                                    <Button variant="link" asChild className="p-0">
-                                        <Link href={post.slug}>Read More <ArrowRight className="ml-2 h-4 w-4" /></Link>
-                                    </Button>
-                                </CardFooter>
                             </Card>
-                        ))}
+                        )})}
                     </div>
                 </section>
                 
