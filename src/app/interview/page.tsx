@@ -12,10 +12,11 @@ import Image from 'next/image';
 import { blogPosts } from '@/lib/blog-posts';
 import { MockInterview } from '@/components/interview/MockInterview';
 import { TypingAnimation } from '@/components/common/TypingAnimation';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { VoiceMockInterview } from '@/components/interview/VoiceMockInterview';
 import { useUser } from '@/firebase';
 import { ProFeatureWrapper } from '@/components/editor/ProFeatureWrapper';
+import { useState, useEffect } from 'react';
 
 
 const featuredBlogs = blogPosts.filter(p => [
@@ -23,6 +24,25 @@ const featuredBlogs = blogPosts.filter(p => [
     'answer-tell-me-about-yourself',
     'follow-up-email-guide'
 ].includes(p.slug));
+
+const encouragingNotes = [
+    {
+        title: "A Note on Making Space for Grace",
+        text: "The job search is a journey filled with ups and downs. It's easy to be hard on yourself after a tough interview or a rejection. Remember to give yourself grace. Every interview is a learning experience, not a final judgment. Celebrate the small wins, learn from the challenges, and trust in your process and your worth. Your career is a marathon, not a sprint. Be kind to yourself along the way."
+    },
+    {
+        title: "Embrace the 'Not Yets'",
+        text: "Every rejection is not a 'no,' but a 'not yet.' It's a redirection towards a better-fitting opportunity. Each application and interview sharpens your skills and clarifies what you truly want. Stay open, stay resilient, and trust that the right door will open at the right time. Your persistence is your greatest asset."
+    },
+    {
+        title: "You Are More Than Your Job Title",
+        text: "It's important to remember that your job does not define your worth. You are a whole person with unique talents, passions, and relationships. The job search is just one part of your life. Take time to do things that bring you joy and connect with people who support you. A balanced life fuels a more effective job search."
+    },
+    {
+        title: "Focus on What You Can Control",
+        text: "You can't control the hiring manager's decision, but you can control your effort, your attitude, and your preparation. Focus on crafting a great resume, networking genuinely, and preparing thoroughly for each interview. Celebrate your efforts, not just the outcomes. By focusing on your actions, you build momentum and confidence."
+    }
+];
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -40,10 +60,25 @@ const itemVariants = {
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
 };
 
+const noteVariants = {
+    initial: { opacity: 0, y: 10 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -10 },
+};
+
 
 export default function InterviewPage() {
     const { userProfile } = useUser();
     const isProUser = userProfile?.subscription === 'premium';
+    const [noteIndex, setNoteIndex] = useState(0);
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            setNoteIndex(prevIndex => (prevIndex + 1) % encouragingNotes.length);
+        }, 15000); // Change note every 15 seconds
+
+        return () => clearInterval(intervalId);
+    }, []);
 
   return (
     <div className="bg-secondary">
@@ -126,11 +161,22 @@ export default function InterviewPage() {
                 
                 <motion.div variants={itemVariants}><Separator /></motion.div>
 
-                <motion.section variants={itemVariants} className="text-center bg-primary/5 dark:bg-primary/10 p-8 rounded-2xl border border-primary/20">
-                     <h2 className="text-2xl font-headline font-bold mb-4">A Note on Making Space for Grace</h2>
-                     <p className="max-w-3xl mx-auto text-muted-foreground leading-relaxed">
-                        The job search is a journey filled with ups and downs. It's easy to be hard on yourself after a tough interview or a rejection. Remember to give yourself grace. Every interview is a learning experience, not a final judgment. Celebrate the small wins, learn from the challenges, and trust in your process and your worth. Your career is a marathon, not a sprint. Be kind to yourself along the way.
-                     </p>
+                <motion.section variants={itemVariants} className="text-center bg-primary/5 dark:bg-primary/10 p-8 rounded-2xl border border-primary/20 min-h-[240px]">
+                    <AnimatePresence mode="wait">
+                         <motion.div
+                            key={noteIndex}
+                            variants={noteVariants}
+                            initial="initial"
+                            animate="animate"
+                            exit="exit"
+                            transition={{ duration: 0.5, ease: 'easeInOut' }}
+                         >
+                            <h2 className="text-2xl font-headline font-bold mb-4">{encouragingNotes[noteIndex].title}</h2>
+                            <p className="max-w-3xl mx-auto text-muted-foreground leading-relaxed">
+                                {encouragingNotes[noteIndex].text}
+                            </p>
+                        </motion.div>
+                    </AnimatePresence>
                 </motion.section>
 
             </CardContent>
