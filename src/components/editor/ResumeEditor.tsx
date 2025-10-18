@@ -35,6 +35,7 @@ import { ProjectsSection } from './sections/ProjectsSection';
 import type { ResumeData, Styling, Skill } from './types';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '../ui/textarea';
+import { ScrollArea } from '../ui/scroll-area';
 
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
@@ -550,7 +551,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
         </div>
       </header>
        <div className="flex-grow flex overflow-hidden no-print">
-        <div className="w-1/3 border-r bg-background flex flex-col">
+        <ScrollArea className="w-1/3 border-r bg-background">
             <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as EditorTab)} className="h-full flex flex-col">
               <div className="p-4 border-b">
                 <TabsList className="grid w-full grid-cols-4">
@@ -797,8 +798,8 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                   </TabsContent>
               </div>
             </Tabs>
-        </div>
-        <div className="w-2/3 bg-secondary/50 overflow-y-auto">
+        </ScrollArea>
+        <ScrollArea className="w-2/3 bg-secondary/50">
              <div className="p-10 mx-auto">
                 {activeTab === 'cover-letter' ? (
                   <CoverLetterPreview resumeData={resumeData} />
@@ -806,7 +807,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                   <ResumePreview resumeData={resumeData} />
                 )}
               </div>
-        </div>
+        </ScrollArea>
       </div>
     </div>
   );
