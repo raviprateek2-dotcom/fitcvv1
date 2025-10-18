@@ -112,3 +112,5 @@ export function SkillsSection({ resumeData, setResumeData }: SkillsSectionProps)
         </AccordionItem>
     );
 }
+
+    

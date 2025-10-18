@@ -72,3 +72,5 @@ export function EducationSection({ resumeData, setResumeData }: EducationSection
 }
 
     
+
+    
