@@ -2,7 +2,7 @@
 'use client';
 
 import { useCollection, useUser } from '@/firebase';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import { addDoc, doc, serverTimestamp, collection } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
 import { Button } from '@/components/ui/button';
