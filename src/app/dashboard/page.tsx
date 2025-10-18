@@ -28,7 +28,8 @@ import {
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
 import { parseResumeFromPdf } from '@/app/actions/ai-resume-parser';
-import { AnimatedResume } from '@/components/common/AnimatedResume';
+import Image from 'next/image';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 
 type Resume = {
@@ -65,23 +66,35 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
     const printUrl = `/editor/${resume.id}?print=true`;
     window.open(printUrl, '_blank');
   };
+  
+  const templateImage = PlaceHolderImages.find(img => img.id === `template-${resume.templateId}`);
 
   return (
     <motion.div variants={itemVariants}>
       <Card className="overflow-hidden group flex flex-col h-full transition-all duration-300 hover:shadow-2xl border-transparent hover:border-primary/20" variant="neuro">
-        <Link href={`/editor/${resume.id}`} className="block p-4">
+        <Link href={`/editor/${resume.id}`} className="block overflow-hidden">
           <motion.div
-            className="h-60 bg-secondary rounded-lg flex items-center justify-center mb-4 overflow-hidden relative"
+            className="h-60 bg-secondary rounded-t-lg flex items-center justify-center relative"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-             <div className="transform scale-[0.5] transition-transform duration-500 ease-in-out group-hover:scale-[0.55]">
-                <AnimatedResume templateId={resume.templateId} />
-              </div>
+             {templateImage ? (
+                <Image
+                    src={templateImage.imageUrl}
+                    alt={resume.title || 'Resume preview'}
+                    width={400}
+                    height={566}
+                    className="w-auto h-full object-contain transition-transform duration-500 ease-in-out group-hover:scale-105"
+                />
+             ) : (
+                <div className="w-full h-full bg-muted flex items-center justify-center">
+                    <FileText className="w-16 h-16 text-muted-foreground" />
+                </div>
+             )}
           </motion.div>
         </Link>
-        <CardHeader className="pt-0">
+        <CardHeader className="pt-4">
           <CardTitle className="text-lg font-semibold truncate">
             <Link href={`/editor/${resume.id}`} className="hover:underline">
               {resume.title || 'Untitled Resume'}
@@ -394,3 +407,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
