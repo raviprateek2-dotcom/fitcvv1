@@ -263,60 +263,6 @@ export default function Home() {
         </div>
       </motion.section>
 
-      {/* Testimonials Section */}
-      <motion.section 
-        className="relative w-full py-20 md:py-32"
-        variants={sectionVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
-      >
-        <div id="testimonials" className="container mx-auto px-4 md:px-6">
-          <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
-            <motion.div variants={itemVariants} className="inline-block rounded-lg bg-card/50 backdrop-blur-sm border px-3 py-1 text-sm font-medium">What Our Users Say</motion.div>
-            <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Loved by Job Seekers Worldwide</motion.h2>
-          </div>
-          <div>
-            <Carousel
-              opts={{ align: "start", loop: true }}
-              plugins={[Autoplay({ delay: 5000 })]}
-              className="w-full max-w-6xl mx-auto"
-            >
-              <CarouselContent>
-                {testimonials.map((testimonial, index) => (
-                  <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
-                    <motion.div variants={itemVariants} className="p-1 h-full">
-                      <Card className="flex flex-col justify-between h-full p-8 transition-all duration-300 hover:scale-105 hover:shadow-2xl" variant="neuro">
-                        <CardContent className="p-0 flex flex-col gap-6">
-                          <div className="flex">
-                              {[...Array(5)].map((_, i) => (
-                                  <svg key={i} className={`w-5 h-5 ${i < testimonial.rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground/50'}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                              ))}
-                          </div>
-                          <p className="text-lg text-muted-foreground flex-grow">"{testimonial.quote}"</p>
-                          <div className="flex items-center gap-4 pt-6 border-t">
-                            <Avatar>
-                              <AvatarImage src={testimonial.avatar} alt={testimonial.author} />
-                              <AvatarFallback>{testimonial.author.charAt(0)}</AvatarFallback>
-                            </Avatar>
-                            <div>
-                              <p className="font-semibold text-lg">{testimonial.author}</p>
-                              <p className="text-md text-muted-foreground">{testimonial.title}</p>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious className="hidden sm:flex" />
-              <CarouselNext className="hidden sm:flex" />
-            </Carousel>
-          </div>
-        </div>
-      </motion.section>
-
       {/* Why Us Section */}
       <motion.section 
         className="relative w-full py-20 md:py-32"
@@ -407,6 +353,60 @@ export default function Home() {
         </div>
       </motion.section>
 
+      {/* Testimonials Section */}
+      <motion.section 
+        className="relative w-full py-20 md:py-32"
+        variants={sectionVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
+      >
+        <div id="testimonials" className="container mx-auto px-4 md:px-6">
+          <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
+            <motion.div variants={itemVariants} className="inline-block rounded-lg bg-card/50 backdrop-blur-sm border px-3 py-1 text-sm font-medium">What Our Users Say</motion.div>
+            <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Loved by Job Seekers Worldwide</motion.h2>
+          </div>
+          <div>
+            <Carousel
+              opts={{ align: "start", loop: true }}
+              plugins={[Autoplay({ delay: 5000 })]}
+              className="w-full max-w-6xl mx-auto"
+            >
+              <CarouselContent>
+                {testimonials.map((testimonial, index) => (
+                  <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                    <motion.div variants={itemVariants} className="p-1 h-full">
+                      <Card className="flex flex-col justify-between h-full p-8 transition-all duration-300 hover:scale-105 hover:shadow-2xl" variant="neuro">
+                        <CardContent className="p-0 flex flex-col gap-6">
+                          <div className="flex">
+                              {[...Array(5)].map((_, i) => (
+                                  <svg key={i} className={`w-5 h-5 ${i < testimonial.rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground/50'}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                              ))}
+                          </div>
+                          <p className="text-lg text-muted-foreground flex-grow">"{testimonial.quote}"</p>
+                          <div className="flex items-center gap-4 pt-6 border-t">
+                            <Avatar>
+                              <AvatarImage src={testimonial.avatar} alt={testimonial.author} />
+                              <AvatarFallback>{testimonial.author.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <p className="font-semibold text-lg">{testimonial.author}</p>
+                              <p className="text-md text-muted-foreground">{testimonial.title}</p>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="hidden sm:flex" />
+              <CarouselNext className="hidden sm:flex" />
+            </Carousel>
+          </div>
+        </div>
+      </motion.section>
+
       {/* Final CTA */}
       <motion.section 
         className="relative w-full py-20 md:py-32"
@@ -433,7 +433,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
-
-    
