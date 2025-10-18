@@ -364,7 +364,7 @@ Many people think cover letters are a thing of the past, but a well-written, tho
 
 ## Rule #1: Don't Just Repeat Your Resume
 
-Your cover letter should complement your resume, not regurgitate it. Use it to expand on your most relevant achievements and explain *why* you are the perfect fit for the role and the company culture. It's the "why" behind the "what."
+Your cover letter should complement your resume, not regurgitate it. Use it to expand on your most relevant achievements and explain *why* you are the perfect fit for the role and the company. It's the "why" behind the "what."
 
 ## The Modern 3-Paragraph Formula
 

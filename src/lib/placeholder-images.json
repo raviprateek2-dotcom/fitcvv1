@@ -57,7 +57,7 @@
     {
       "id": "dashboard-resume-2",
       "description": "Thumbnail of a marketing manager resume.",
-      "imageUrl": "https://images.unsplash.com/flagged/photo-1550585109-611b4d36af04?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxkb2N1bWVudCUyMHByZXZpZXd8ZW58MHx8fHwxNzYwNzU1MDU4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/flagged/photo-1550585109-611b4d36af04?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxkb2N1bWVudCUyMHByZXZpZXd8ZW58MHx8fHwxNzYwNzU1MDU4fDA&ixlib-rb-4.1.0&q=80&w=1080",
       "imageHint": "document preview"
     },
     {
@@ -75,19 +75,19 @@
     {
       "id": "blog-resume-mistakes",
       "description": "A document with a red X or cross mark over it.",
-      "imageUrl": "https://images.unsplash.com/photo-1593547014324-50d0c454ac27?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx3cm9uZyUyMHBhcGVyfGVufDB8fHx8MTc2MDc1NTA1OHww&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1593547014324-50d0c454ac27?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx3cm9uZyUyMHBhcGVyfGVufDB8fHx8MTc2MDc1NTA1OHww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "wrong paper"
     },
     {
       "id": "blog-ats-bots",
       "description": "An illustration of a robot scanning a document.",
-      "imageUrl": "https://images.unsplash.com/photo-1593377202145-c5e97fd065f4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxyb2JvdCUyMGRvY3VtZW50fGVufDB8fHx8MTc2MDc1NTA1OHww&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1593377202145-c5e97fd065f4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxyb2JvdCUyMGRvY3VtZW50fGVufDB8fHx8MTc2MDc1NTA1OHww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "robot document"
     },
     {
       "id": "blog-action-verbs",
       "description": "A list of powerful words on a notebook.",
-      "imageUrl": "https://images.unsplash.com/photo-1685022407983-1100320a9754?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxhY3Rpb24lMjB3b3Jkc3xlbnwwfHx8fDE3NjA3NTUwNTh8MA&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1685022407983-1100320a9754?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxhY3Rpb24lMjB3b3Jkc3xlbnwwfHx8fDE3NjA3NTUwNTh8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "action words"
     },
     {
@@ -111,13 +111,13 @@
     {
       "id": "blog-cover-letter",
       "description": "A person writing a formal letter.",
-      "imageUrl": "https://images.unsplash.com/photo-1588338949401-8fd705bca823?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8d3JpdGluZyUyMGxldHRlcnxlbnwwfHx8fDE3NjA3NTUwNTh8MA&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1588338949401-8fd705bca823?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8d3JpdGluZyUyMGxldHRlcnxlbnwwfHx8fDE3NjA3NTUwNTh8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "writing letter"
     },
     {
       "id": "blog-networking",
       "description": "An abstract illustration of interconnected people or nodes.",
-      "imageUrl": "https://images.unsplash.com/photo-1571978289967-56c98e5c67b7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxwZW9wbGUlMjBuZXR3b3JrfGVufDB8fHx8MTc2MDc1NTA1OHww&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1571978289967-56c98e5c67b7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxwZW9wbGUlMjBuZXR3b3JrfGVufDB8fHx8MTc2MDc1NTA1OHww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "people network"
     },
     {
@@ -141,25 +141,25 @@
     {
       "id": "blog-tech-skills",
       "description": "A futuristic screen displaying code and data.",
-      "imageUrl": "https://images.unsplash.com/photo-1650600538903-ec09f670c391?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxjb2RlJTIwc2NyZWVufGVufDB8fHx8MTc2MDczNDc3MHww&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1650600538903-ec09f670c391?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxjb2RlJTIwc2NyZWVufGVufDB8fHx8MTc2MDczNDc3MHww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "code screen"
     },
     {
       "id": "blog-linkedin",
       "description": "A person's profile page on a professional social network.",
-      "imageUrl": "https://images.unsplash.com/photo-1746014600751-831d8d49efaa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxwcm9maWxlJTIwcGFnZXxlbnwwfHx8fDE3NjA3NTUwNTh8MA&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1746014600751-831d8d49efaa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxwcm9maWxlJTIwcGFnZXxlbnwwfHx8fDE3NjA3NTUwNTh8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "profile page"
     },
     {
       "id": "blog-follow-up",
       "description": "A person sending an email on a laptop.",
-      "imageUrl": "https://images.unsplash.com/photo-1683117927786-f146451082fb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxzZW5kaW5nJTIwZW1haWx8ZW58MHx8fHwxNzYwNzU1MDU4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1683117927786-f146451082fb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxzZW5kaW5nJTIwZW1haWx8ZW58MHx8fHwxNzYwNzU1MDU4fDA&ixlib-rb-4.1.0&q=80&w=1080",
       "imageHint": "sending email"
     },
     {
       "id": "blog-raise-request",
       "description": "A graph showing upward growth and a piggy bank.",
-      "imageUrl": "https://images.unsplash.com/photo-1543286386-713bdd548da4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxncm93dGglMjBjaGFydHxlbnwwfHx8fDE3NjA3Mzk4NzJ8MA&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1543286386-713bdd548da4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxncm93dGglMjBjaGFydHxlbnwwfHx8fDE3NjA3Mzk4NzJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "growth chart"
     },
     {
@@ -171,7 +171,7 @@
     {
       "id": "blog-interview-question",
       "description": "A person talking to an interviewer across a table.",
-      "imageUrl": "https://images.unsplash.com/photo-1573496130407-57329f01f769?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxqb2IlMjBpbnRlcnZpZXd8ZW58MHx8fHwxNzYwNzMxNzc3fDA&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1573496130407-57329f01f769?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxqb2IlMjBpbnRlcnZpZXd8ZW58MHx8fHwxNzYwNzMxNzc3fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "job interview"
     },
     {
