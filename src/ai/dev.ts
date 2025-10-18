@@ -13,6 +13,5 @@ import '@/ai/flows/ai-resume-review.ts';
 import '@/ai/flows/ai-avatar-generator.ts';
 import '@/ai/flows/ai-behavioral-question-analyzer.ts';
 import '@/ai/flows/ai-mock-interviewer.ts';
-import '@/ai/flows/ai-resume-parser.ts';
 import '@/ai/flows/ai-narrator.ts';
 import '@/ai/tools/title-normalizer.ts';
