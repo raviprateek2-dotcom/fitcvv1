@@ -41,5 +41,3 @@ export const ProFeatureWrapper: React.FC<ProFeatureWrapperProps> = ({ isPro, chi
       </TooltipProvider>
     );
   };
-
-    
