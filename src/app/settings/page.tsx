@@ -20,6 +20,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Textarea } from '@/components/ui/textarea';
 import { generateAvatar } from '@/app/actions/ai-avatar-generator';
 import { doc } from 'firebase/firestore';
+import { ProFeatureWrapper } from '@/components/editor/ProFeatureWrapper';
 
 const SettingsSkeleton = () => (
   <div className="grid gap-8 md:grid-cols-3">
@@ -223,6 +224,7 @@ export default function SettingsPage() {
 
 
   const subscriptionStatus = userProfile?.subscription === 'premium' ? 'Pro' : 'Free';
+  const isProUser = userProfile?.subscription === 'premium';
   
   if (isUserLoading || isProfileLoading || !user) {
     return (
@@ -279,57 +281,59 @@ export default function SettingsPage() {
                             <UserIcon className="h-10 w-10 text-muted-foreground" />
                         </AvatarFallback>
                     </Avatar>
-                    <Dialog>
-                        <DialogTrigger asChild>
-                           <Button variant="outline">
-                             <Sparkles className="mr-2 h-4 w-4" />
-                             Generate AI Avatar
-                           </Button>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-[425px]">
-                            <DialogHeader>
-                                <DialogTitle>Generate AI Avatar</DialogTitle>
-                                <DialogDescription>
-                                    Describe the avatar you want to create. Be creative!
-                                </DialogDescription>
-                            </DialogHeader>
-                            <div className="grid gap-4 py-4">
-                               <div className="space-y-2">
-                                    <Label htmlFor="avatar-prompt">Prompt</Label>
-                                    <Textarea id="avatar-prompt" placeholder="e.g., 'a software engineer, minimalist line art style'" value={avatarGenPrompt} onChange={(e) => setAvatarGenPrompt(e.target.value)} />
-                               </div>
-                               {isGeneratingAvatar ? (
-                                 <div className="flex items-center justify-center h-48 bg-secondary rounded-md">
-                                     <div className="text-center">
-                                        <Bot className="h-12 w-12 text-primary animate-pulse mx-auto" />
-                                        <p className="mt-2 text-sm text-muted-foreground">Generating your avatar...</p>
-                                     </div>
-                                 </div>
-                               ) : generatedAvatar ? (
-                                    <div className="flex justify-center">
-                                        <Avatar className="h-48 w-48 border-4 border-primary">
-                                            <AvatarImage src={generatedAvatar} />
-                                            <AvatarFallback>AI</AvatarFallback>
-                                        </Avatar>
+                    <ProFeatureWrapper isPro={isProUser}>
+                      <Dialog>
+                          <DialogTrigger asChild>
+                            <Button variant="outline">
+                              <Sparkles className="mr-2 h-4 w-4" />
+                              Generate AI Avatar
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="sm:max-w-[425px]">
+                              <DialogHeader>
+                                  <DialogTitle>Generate AI Avatar</DialogTitle>
+                                  <DialogDescription>
+                                      Describe the avatar you want to create. Be creative!
+                                  </DialogDescription>
+                              </DialogHeader>
+                              <div className="grid gap-4 py-4">
+                                <div className="space-y-2">
+                                      <Label htmlFor="avatar-prompt">Prompt</Label>
+                                      <Textarea id="avatar-prompt" placeholder="e.g., 'a software engineer, minimalist line art style'" value={avatarGenPrompt} onChange={(e) => setAvatarGenPrompt(e.target.value)} />
+                                </div>
+                                {isGeneratingAvatar ? (
+                                  <div className="flex items-center justify-center h-48 bg-secondary rounded-md">
+                                      <div className="text-center">
+                                          <Bot className="h-12 w-12 text-primary animate-pulse mx-auto" />
+                                          <p className="mt-2 text-sm text-muted-foreground">Generating your avatar...</p>
+                                      </div>
+                                  </div>
+                                ) : generatedAvatar ? (
+                                      <div className="flex justify-center">
+                                          <Avatar className="h-48 w-48 border-4 border-primary">
+                                              <AvatarImage src={generatedAvatar} />
+                                              <AvatarFallback>AI</AvatarFallback>
+                                          </Avatar>
+                                      </div>
+                                ) : (
+                                    <div className="flex items-center justify-center h-48 bg-secondary rounded-md text-muted-foreground">
+                                        Your generated image will appear here.
                                     </div>
-                               ) : (
-                                   <div className="flex items-center justify-center h-48 bg-secondary rounded-md text-muted-foreground">
-                                       Your generated image will appear here.
-                                   </div>
-                               )}
-                            </div>
-                            <DialogFooter>
-                                {generatedAvatar && (
-                                    <Button variant="secondary" onClick={() => setGeneratedAvatar(null)}>Clear</Button>
                                 )}
-                                <Button onClick={handleGenerateAvatar} disabled={isGeneratingAvatar || !avatarGenPrompt}>
-                                    {isGeneratingAvatar ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Sparkles className="mr-2 h-4 w-4" />}
-                                    {isGeneratingAvatar ? "Generating..." : "Generate"}
-                                </Button>
-                                {generatedAvatar && <Button onClick={handleSaveAvatar} disabled={isSaving === 'avatar'}>{isSaving === 'avatar' ? 'Saving...' : 'Save Avatar'}</Button>}
-                            </DialogFooter>
-                        </DialogContent>
-                    </Dialog>
+                              </div>
+                              <DialogFooter>
+                                  {generatedAvatar && (
+                                      <Button variant="secondary" onClick={() => setGeneratedAvatar(null)}>Clear</Button>
+                                  )}
+                                  <Button onClick={handleGenerateAvatar} disabled={isGeneratingAvatar || !avatarGenPrompt}>
+                                      {isGeneratingAvatar ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Sparkles className="mr-2 h-4 w-4" />}
+                                      {isGeneratingAvatar ? "Generating..." : "Generate"}
+                                  </Button>
+                                  {generatedAvatar && <Button onClick={handleSaveAvatar} disabled={isSaving === 'avatar'}>{isSaving === 'avatar' ? 'Saving...' : 'Save Avatar'}</Button>}
+                              </DialogFooter>
+                          </DialogContent>
+                      </Dialog>
+                    </ProFeatureWrapper>
                 </CardContent>
             </Card>
 
