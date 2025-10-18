@@ -12,6 +12,7 @@ import Image from 'next/image';
 import { blogPosts } from '@/lib/blog-posts';
 import { MockInterview } from '@/components/interview/MockInterview';
 import { TypingAnimation } from '@/components/common/TypingAnimation';
+import { motion } from 'framer-motion';
 
 const featuredBlogs = blogPosts.filter(p => [
     'job-interview-checklist',
@@ -19,36 +20,56 @@ const featuredBlogs = blogPosts.filter(p => [
     'follow-up-email-guide'
 ].includes(p.slug));
 
+const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.2,
+            delayChildren: 0.2,
+        },
+    },
+};
+
+const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
+};
+
 
 export default function InterviewPage() {
   return (
     <div className="bg-secondary">
-        <div className="container mx-auto px-4 md:px-6 py-12 md:py-20">
+        <motion.div 
+            className="container mx-auto px-4 md:px-6 py-12 md:py-20"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+        >
         <Card className="max-w-5xl mx-auto" variant="neuro">
             <CardHeader className="text-center p-8 md:p-12">
-                <div className="flex justify-center mb-4">
+                <motion.div variants={itemVariants} className="flex justify-center mb-4">
                     <BrainCircuit className="h-16 w-16 text-primary" />
-                </div>
-                <CardTitle className="text-4xl font-headline">Ace Your Next Interview</CardTitle>
-                <CardDescription className="text-lg mt-2 min-h-[54px] sm:min-h-[28px]">
+                </motion.div>
+                <motion.h1 variants={itemVariants} className="text-4xl font-headline">Ace Your Next Interview</motion.h1>
+                <motion.p variants={itemVariants} className="text-lg mt-2 min-h-[54px] sm:min-h-[28px] text-muted-foreground">
                     Tools, trends, and insights to help you{' '}
                     <span className="text-primary font-semibold">
                       <TypingAnimation phrases={['prepare.', 'perform.', 'persevere.']} />
                     </span>
-                </CardDescription>
+                </motion.p>
             </CardHeader>
             <CardContent className="p-8 md:p-12 grid gap-12">
 
-                <MockInterview />
+                <motion.div variants={itemVariants}><MockInterview /></motion.div>
 
-                <Separator />
+                <motion.div variants={itemVariants}><Separator /></motion.div>
 
-                <BehavioralQuestionAnalyzer />
+                <motion.div variants={itemVariants}><BehavioralQuestionAnalyzer /></motion.div>
 
-                <Separator />
+                <motion.div variants={itemVariants}><Separator /></motion.div>
                 
-                {/* Featured Blogs Section */}
-                <section>
+                <motion.section variants={itemVariants}>
                     <h2 className="text-2xl font-headline font-bold mb-6 text-center">From Our Blog: Interview Insights</h2>
                     <div className="grid md:grid-cols-3 gap-8">
                         {featuredBlogs.map(post => {
@@ -86,21 +107,20 @@ export default function InterviewPage() {
                             <Link href="/blog">View All Articles</Link>
                         </Button>
                     </div>
-                </section>
+                </motion.section>
                 
-                <Separator />
+                <motion.div variants={itemVariants}><Separator /></motion.div>
 
-                {/* A Note on Grace Section */}
-                <section className="text-center bg-primary/5 dark:bg-primary/10 p-8 rounded-2xl border border-primary/20">
+                <motion.section variants={itemVariants} className="text-center bg-primary/5 dark:bg-primary/10 p-8 rounded-2xl border border-primary/20">
                      <h2 className="text-2xl font-headline font-bold mb-4">A Note on Making Space for Grace</h2>
                      <p className="max-w-3xl mx-auto text-muted-foreground leading-relaxed">
                         The job search is a journey filled with ups and downs. It's easy to be hard on yourself after a tough interview or a rejection. Remember to give yourself grace. Every interview is a learning experience, not a final judgment. Celebrate the small wins, learn from the challenges, and trust in your process and your worth. Your career is a marathon, not a sprint. Be kind to yourself along the way.
                      </p>
-                </section>
+                </motion.section>
 
             </CardContent>
         </Card>
-        </div>
+        </motion.div>
     </div>
   );
 }
