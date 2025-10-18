@@ -72,6 +72,11 @@ export default function InterviewPage() {
                             </Card>
                         )})}
                     </div>
+                     <div className="text-center mt-12">
+                        <Button asChild size="lg" variant="outline">
+                            <Link href="/blog">View All Articles</Link>
+                        </Button>
+                    </div>
                 </section>
                 
                 <Separator />
