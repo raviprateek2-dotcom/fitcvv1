@@ -3,66 +3,90 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Protects user profiles, ensuring only the owner can read and write their own profile data.
-     * @path /users/{userId}
-     * @allow (get, create, update, delete) if the authenticated user's UID matches the `userId` path segment.
-     * @deny (get, create, update, delete) if the authenticated user's UID does not match the `userId` path segment.
+     * @description Secure user profiles. Users can only read/write their own profile.
+     * @path /databases/{database}/documents/users/{userId}
+     * @allow (create, update, delete, get, list) User with matching {userId} in request.auth
+     * @deny (create, update, delete, get, list) User with mismatched {userId} in request.auth
      * @principle Enforces document ownership for all operations.
      */
     match /users/{userId} {
-      allow get: if request.auth.uid == userId;
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+      allow get: if isOwner(userId);
+      // Listing users is not permitted.
       allow list: if false;
-      allow create: if request.auth.uid == userId;
-      allow update: if request.auth.uid == userId;
-      allow delete: if request.auth.uid == userId;
+      // Only the user themselves can create their profile, matching the userId
+      allow create: if isOwner(userId);
+      // Only the user themselves can update their profile
+      allow update: if isOwner(userId);
+      // Only the user themselves can delete their profile
+      allow delete: if isOwner(userId);
     }
 
     /**
-     * @description Protects resumes, ensuring only the owner can read, write, and delete their own resumes.
-     * @path /users/{userId}/resumes/{resumeId}
-     * @allow (get, create, update, delete) if the authenticated user's UID matches the `userId` path segment.
-     * @deny (get, create, update, delete) if the authenticated user's UID does not match the `userId` path segment.
-     * @principle Restricts access to a user's own resume data tree.
+     * @description Secure user resumes. Users can only read/write their own resumes.
+     * @path /databases/{database}/documents/users/{userId}/resumes/{resumeId}
+     * @allow (create, update, delete, get, list) User with matching {userId} in request.auth
+     * @deny (create, update, delete, get, list) User with mismatched {userId} in request.auth
+     * @principle Enforces document ownership for all operations.
      */
     match /users/{userId}/resumes/{resumeId} {
-      allow get: if request.auth.uid == userId;
-      allow list: if false;
-      allow create: if request.auth.uid == userId;
-      allow update: if request.auth.uid == userId;
-      allow delete: if request.auth.uid == userId;
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Makes resume templates publicly accessible.
-     * @path /templates/{templateId}
-     * @allow (get, list) to anyone.
-     * @deny (create, update, delete) to everyone.
-     * @principle Allows public read access while restricting write access.
+     * @description Templates are publicly readable but only admin writable.
+     * @path /databases/{database}/documents/templates/{templateId}
+     * @allow (get, list) Any user can read templates.
+     * @deny (create, update, delete) No user can create, update, or delete templates.
+     * @principle Templates are public read, admin only write.
      */
     match /templates/{templateId} {
       allow get, list: if true;
       allow create, update, delete: if false;
     }
-      /**
-       * @description Allows public read access to shared resumes. Writes are forbidden
-       * @path /publicResumes/{shareId}
-       * @allow get, list: to anyone.
-       * @deny create, update, delete: to everyone.
-       * @principle Allows public read access to shared resume.
-       */
-      match /publicResumes/{shareId} {
-          allow get, list: if true;
-          allow create, update, delete: if false;
-      }
 
-      /**
-       * @description Allows public read and write access to feedback on shared resumes.
-       * @path /publicResumes/{shareId}/feedback/{feedbackId}
-       * @allow get, list, create, update, delete: to anyone.
-       * @principle Allows public feedback on shared resumes.
-       */
-      match /publicResumes/{shareId}/feedback/{feedbackId} {
-          allow get, list, create, update, delete: if true;
-      }
+    /**
+     * @description Public resumes are publicly readable. Only the owner can update/delete.
+     * @path /databases/{database}/documents/publicResumes/{shareId}
+     * @allow (get, list) Any user can read public resumes.
+     * @allow (create, update, delete) Only the owner can create, update or delete public resumes.
+     * @principle Public resumes are public read, owner only write.
+     */
+    match /publicResumes/{shareId} {
+        function isOwner() {
+            return request.auth != null && request.auth.uid == resource.data.ownerId;
+        }
+
+      allow get, list: if true;
+       // CRITICAL: Cannot implement owner-only writes. The 'Recipe' entity is missing an 'ownerId' or 'authorId' field.
+      allow create: if request.auth.uid == request.resource.data.ownerId;
+      allow update: if isOwner();
+      allow delete: if isOwner();
+    }
+
+    /**
+     * @description Feedback on public resumes is publicly creatable.
+     * @path /databases/{database}/documents/publicResumes/{shareId}/feedback/{feedbackId}
+     * @allow create Any user can create feedback.
+     * @deny update, delete No user can update or delete feedback.
+     * @principle Public creation, no modification.
+     */
+    match /publicResumes/{shareId}/feedback/{feedbackId} {
+      allow create: if request.auth != null;
+      allow get, list: if true;
+      allow update, delete: if false;
+    }
   }
 }
