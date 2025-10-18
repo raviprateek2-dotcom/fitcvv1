@@ -291,7 +291,7 @@ export default function Home() {
         <div id="blog" className="container mx-auto px-4 md:px-6">
             <motion.div variants={itemVariants} className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
               <div className="inline-block rounded-lg bg-secondary px-3 py-1 text-sm font-medium">From Our Blog</div>
-              <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Career Advice & Resume Tips</h2>
+              <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl animate-shimmer-text bg-200% bg-gradient-to-r from-primary via-foreground to-accent bg-clip-text text-transparent">Career Advice & Resume Tips</h2>
               <p className="max-w-[600px] text-muted-foreground md:text-lg">
                 Get the latest insights from our career experts to help you land your dream job.
               </p>
