@@ -301,19 +301,18 @@ export default function DashboardPage() {
         
         const newResumeData = {
           title: result.data.resumeData.personalInfo.name ? `${result.data.resumeData.personalInfo.name}'s Resume` : 'Imported Resume',
-          templateId: 'modern',
-          content: result.data.resumeData,
+          templateId: 'modern', // Default to 'modern' template for imported resumes
+          ...result.data.resumeData, // Spread the parsed data
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp(),
+          jobDescription: '',
+          coverLetter: '',
+          companyInfo: { name: '', jobTitle: '' },
         };
         
-        addDocumentNonBlocking(resumesQuery, newResumeData)
-          .then(newDocRef => {
-              toast({ title: 'Success!', description: 'Your resume has been imported.' });
-              if (newDocRef) {
-                router.push(`/editor/${newDocRef.id}`);
-              }
-          });
+        const newDocRef = await addDoc(resumesQuery, newResumeData);
+        toast({ title: 'Success!', description: 'Your resume has been imported.' });
+        router.push(`/editor/${newDocRef.id}`);
       };
       reader.onerror = (error) => {
         throw new Error('Failed to read file.');
@@ -406,5 +405,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    

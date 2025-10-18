@@ -2,11 +2,12 @@
 'use client';
 
 import { useUser, useFirestore, getCollection, addDocumentNonBlocking } from '@/firebase';
-import { collection, serverTimestamp } from 'firebase/firestore';
+import { collection, serverTimestamp, addDoc } from 'firebase/firestore';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
+import { defaultResumeData } from '@/lib/default-resume-data';
 
 
 const premiumTemplates = ['minimalist', 'professional', 'executive'];
@@ -85,53 +86,34 @@ export default function NewResumePage() {
         // All checks passed, create the new resume.
         const resumesCollection = collection(firestore, `users/${user.uid}/resumes`);
         const newResumeData = {
+            ...defaultResumeData,
             title: 'Untitled Resume',
             templateId,
             createdAt: serverTimestamp(),
             updatedAt: serverTimestamp(),
             personalInfo: {
+                ...defaultResumeData.personalInfo,
                 name: user.displayName || 'Your Name',
-                title: 'Your Professional Title',
                 email: user.email || '',
-                phone: '',
-                location: '',
-                website: '',
             },
-            summary: 'A brief professional summary about yourself.',
-            experience: [],
-            education: [],
-            skills: [],
-            projects: [],
-            jobDescription: '',
-            coverLetter: '',
-            companyInfo: {
-                name: '',
-                jobTitle: ''
-            },
-            styling: {
-                bodyFontSize: 14,
-                headingFontSize: 18,
-                titleFontSize: 36,
-                accentColor: 'hsl(262.1 83.3% 57.8%)', // Default accent color
-            }
         };
 
-        addDocumentNonBlocking(resumesCollection, newResumeData)
-            .then(docRef => {
-                if (docRef) {
-                    // Redirect to the new resume's editor page.
-                    router.replace(`/editor/${docRef.id}`);
-                } else {
-                    // This could happen if the addDoc promise is rejected due to a permission error and caught internally.
-                    // The error emitter will handle showing the dev overlay, but we need to guide the user.
-                    toast({
-                        variant: "destructive",
-                        title: "Creation Failed",
-                        description: "Could not create the new resume due to a permission error. Check the console for details.",
-                    });
-                    router.push('/dashboard');
-                }
+        try {
+            const docRef = await addDoc(resumesCollection, newResumeData);
+             if (docRef) {
+                router.replace(`/editor/${docRef.id}`);
+            } else {
+                throw new Error("Could not create the new resume.");
+            }
+        } catch (error) {
+            console.error("Error creating resume: ", error);
+             toast({
+                variant: "destructive",
+                title: "Creation Failed",
+                description: "Could not create the new resume due to a permission error or other issue.",
             });
+            router.push('/dashboard');
+        }
     };
     
     createResumeFlow();
