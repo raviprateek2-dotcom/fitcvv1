@@ -11,6 +11,7 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Image from 'next/image';
 import { blogPosts } from '@/lib/blog-posts';
 import { MockInterview } from '@/components/interview/MockInterview';
+import { TypingAnimation } from '@/components/common/TypingAnimation';
 
 const featuredBlogs = blogPosts.filter(p => [
     'job-interview-checklist',
@@ -29,8 +30,11 @@ export default function InterviewPage() {
                     <BrainCircuit className="h-16 w-16 text-primary" />
                 </div>
                 <CardTitle className="text-4xl font-headline">Ace Your Next Interview</CardTitle>
-                <CardDescription className="text-lg mt-2">
-                    Tools, trends, and insights to help you prepare, perform, and persevere.
+                <CardDescription className="text-lg mt-2 min-h-[54px] sm:min-h-[28px]">
+                    Tools, trends, and insights to help you{' '}
+                    <span className="text-primary font-semibold">
+                      <TypingAnimation phrases={['prepare.', 'perform.', 'persevere.']} />
+                    </span>
                 </CardDescription>
             </CardHeader>
             <CardContent className="p-8 md:p-12 grid gap-12">
