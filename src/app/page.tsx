@@ -109,16 +109,19 @@ export default function Home() {
                 className="flex flex-col items-center text-center space-y-6"
             >
                 <motion.h1 variants={itemVariants} className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl">
-                    <span className="whitespace-nowrap">Don't just write a resume.</span>&nbsp;
-                    <span className="text-primary transition-all duration-300 inline-block min-h-[60px] sm:min-h-[70px] md:min-h-[80px] lg:min-h-[90px]">
-                        <TypingAnimation phrases={[
-                            "Design your future.",
-                            "Build your career.",
-                            "Land your dream job.",
-                            "Showcase your skills."
-                        ]} />
-                    </span>
+                    Don't just write a resume
                 </motion.h1>
+                 <motion.div variants={itemVariants} className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl min-h-[60px] sm:min-h-[70px] md:min-h-[80px] lg:min-h-[90px]">
+                    <TypingAnimation 
+                      phrases={[
+                          "Design your future.",
+                          "Build your career.",
+                          "Land your dream job.",
+                          "Showcase your skills."
+                      ]}
+                      colors={['text-primary', 'text-accent', 'text-destructive', 'text-yellow-500']}
+                    />
+                </motion.div>
                 <motion.p variants={itemVariants} className="max-w-2xl mx-auto text-muted-foreground md:text-xl">
                     Create a professional, ATS-optimized resume in minutes. Let our AI guide you to landing your dream job, faster.
                 </motion.p>

@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 const variants = {
   enter: {
@@ -23,13 +24,15 @@ const variants = {
 
 interface TypingAnimationProps {
   phrases: string[];
+  colors?: string[];
   typingSpeed?: number;
   deletingSpeed?: number;
   pauseDuration?: number;
 }
 
 export function TypingAnimation({ 
-  phrases, 
+  phrases,
+  colors = [],
   typingSpeed = 80, 
   deletingSpeed = 50, 
   pauseDuration = 2000 
@@ -76,6 +79,7 @@ export function TypingAnimation({
   }, [typedText, isDeleting, phraseIndex, phrases, typingSpeed, deletingSpeed, pauseDuration]);
 
   const textToShow = typedText || ' '; // Use non-breaking space to maintain height
+  const currentColorClass = colors.length > 0 ? colors[phraseIndex % colors.length] : '';
 
   return (
     <AnimatePresence mode="wait">
@@ -86,11 +90,11 @@ export function TypingAnimation({
         exit="exit"
         variants={variants}
         transition={{ y: { type: 'spring', stiffness: 300, damping: 30 }, opacity: { duration: 0.5 } }}
-        className="inline-block"
+        className={cn("inline-block", currentColorClass)}
       >
         {textToShow}
         <motion.span
-          className="inline-block w-0.5 h-[1em] bg-primary ml-1"
+          className="inline-block w-0.5 h-[1em] bg-current ml-1"
           initial={{ opacity: 0 }}
           animate={{ opacity: [0, 1, 0] }}
           transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
@@ -100,5 +104,3 @@ export function TypingAnimation({
     </AnimatePresence>
   );
 }
-
-    
