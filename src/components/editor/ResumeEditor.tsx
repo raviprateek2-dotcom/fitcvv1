@@ -46,7 +46,7 @@ const colorSwatches = [
   'hsl(142.1, 76.2%, 36.3%)', // Green
   'hsl(0, 84.2%, 60.2%)', // Red
   'hsl(262.1 83.3% 57.8%)', // Purple
-  'hsl(24.6 95% 53.1%)',   // Orange
+  'hsl(47.9 95.8% 53.1%)',   // Yellow
   'hsl(0 0% 9%)',          // Black
 ];
 
@@ -137,11 +137,11 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                 bodyFontSize: 14, 
                 headingFontSize: 18, 
                 titleFontSize: 36,
-                accentColor: 'hsl(221.2, 83.2%, 53.3%)'
+                accentColor: 'hsl(221.2 83.2% 53.3%)'
             };
         }
         if (typeof updatedData.styling.accentColor !== 'string') {
-            updatedData.styling.accentColor = 'hsl(221.2, 83.2%, 53.3%)';
+            updatedData.styling.accentColor = 'hsl(221.2 83.2% 53.3%)';
         }
         if (updatedData.skills === undefined) updatedData.skills = [];
         if (updatedData.projects === undefined) updatedData.projects = [];
@@ -812,5 +812,3 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     </div>
   );
 }
-
-    

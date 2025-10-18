@@ -109,7 +109,7 @@ export default function Home() {
             >
                 <motion.h1 
                   variants={itemVariants} 
-                  className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl bg-gradient-to-r from-foreground via-muted-foreground to-foreground bg-200% bg-clip-text text-transparent animate-shimmer-text"
+                  className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl bg-gradient-to-r from-primary via-foreground to-primary bg-200% bg-clip-text text-transparent animate-shimmer-text"
                 >
                     Don't just write a resume
                 </motion.h1>
@@ -121,7 +121,7 @@ export default function Home() {
                           "Land your dream job.",
                           "Showcase your skills."
                       ]}
-                      colors={['text-primary', 'text-accent', 'text-destructive', 'text-yellow-500']}
+                      colors={['text-primary', 'text-accent', 'text-destructive', 'text-warning']}
                     />
                 </motion.div>
                 <motion.p variants={itemVariants} className="max-w-2xl mx-auto text-muted-foreground md:text-xl">
