@@ -27,17 +27,20 @@ interface TypingAnimationProps {
   typingSpeed?: number;
   deletingSpeed?: number;
   pauseDuration?: number;
+  colors?: string[];
 }
 
 export function TypingAnimation({ 
   phrases,
   typingSpeed = 80, 
   deletingSpeed = 50, 
-  pauseDuration = 2000 
+  pauseDuration = 2000,
+  colors = ['text-primary']
 }: TypingAnimationProps) {
   const [phraseIndex, setPhraseIndex] = useState(0);
   const [typedText, setTypedText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
+  const [colorIndex, setColorIndex] = useState(0);
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
@@ -52,9 +55,10 @@ export function TypingAnimation({
             setTypedText(currentPhrase.substring(0, typedText.length - 1));
           }, deletingSpeed);
         } else {
-          // Finished deleting, switch to next phrase
+          // Finished deleting, switch to next phrase and color
           setIsDeleting(false);
           setPhraseIndex((prev) => (prev + 1) % phrases.length);
+          setColorIndex((prev) => (prev + 1) % colors.length);
         }
       } else {
         if (typedText.length < currentPhrase.length) {
@@ -74,9 +78,10 @@ export function TypingAnimation({
     handleTyping();
 
     return () => clearTimeout(timeoutId);
-  }, [typedText, isDeleting, phraseIndex, phrases, typingSpeed, deletingSpeed, pauseDuration]);
+  }, [typedText, isDeleting, phraseIndex, phrases, typingSpeed, deletingSpeed, pauseDuration, colors.length]);
 
   const textToShow = typedText || ' '; // Use non-breaking space to maintain height
+  const currentColorClass = colors[colorIndex];
 
   return (
     <AnimatePresence mode="wait">
@@ -87,11 +92,11 @@ export function TypingAnimation({
         exit="exit"
         variants={variants}
         transition={{ y: { type: 'spring', stiffness: 300, damping: 30 }, opacity: { duration: 0.5 } }}
-        className="inline-block text-primary"
+        className={cn("inline-block", currentColorClass, 'transition-colors duration-500 ease-in-out')}
       >
         {textToShow}
         <motion.span
-          className="inline-block w-0.5 h-[1em] bg-current ml-1"
+          className={cn("inline-block w-0.5 h-[1em] ml-1", currentColorClass)}
           initial={{ opacity: 0 }}
           animate={{ opacity: [0, 1, 0] }}
           transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}

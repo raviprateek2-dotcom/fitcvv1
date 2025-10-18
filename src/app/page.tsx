@@ -116,6 +116,7 @@ export default function Home() {
                           "Land your dream job.",
                           "Showcase your skills."
                       ]}
+                      colors={['text-primary', 'text-accent', 'text-foreground', 'text-warning']}
                     />
                 </motion.div>
                 <motion.p variants={itemVariants} className="max-w-2xl mx-auto text-muted-foreground md:text-xl">
