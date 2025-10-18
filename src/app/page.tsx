@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -90,7 +91,6 @@ const testimonials = [
 
 
 export default function Home() {
-  
   return (
     <div className="flex flex-col items-center bg-background text-foreground overflow-x-hidden">
       
