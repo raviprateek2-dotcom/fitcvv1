@@ -128,6 +128,7 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
       }
     );
     return () => unsubscribe(); // Cleanup
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth]);
   
   // Memoize the context value
