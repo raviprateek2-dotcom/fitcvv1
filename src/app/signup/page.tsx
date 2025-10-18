@@ -113,10 +113,19 @@ export default function SignupPage() {
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
             <motion.div
-                animate={{
-                  y: [0, -10, 0],
+                animate={isLoading ? {
+                  rotate: [0, 0, -10, 10, -10, 10, 0],
+                  y: [0, 0, 0, 0, 0, 0, -500],
+                  opacity: [1, 1, 1, 1, 1, 1, 0],
+                } : {
+                  y: [0, -10, 0]
                 }}
-                transition={{
+                transition={isLoading ? {
+                  duration: 2,
+                  ease: "easeInOut",
+                  times: [0, 0.3, 0.4, 0.5, 0.6, 0.7, 1],
+                  onComplete: () => setIsLoading(false) // Reset loading state after animation
+                } : {
                   duration: 2.5,
                   ease: 'easeInOut',
                   repeat: Infinity,

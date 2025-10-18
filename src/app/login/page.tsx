@@ -116,6 +116,7 @@ export default function LoginPage() {
                   duration: 2,
                   ease: "easeInOut",
                   times: [0, 0.3, 0.4, 0.5, 0.6, 0.7, 1],
+                  onComplete: () => setIsLoading(false) // Reset loading state after animation
                 } : {
                   duration: 2.5,
                   ease: 'easeInOut',
