@@ -57,7 +57,7 @@
     {
       "id": "dashboard-resume-2",
       "description": "Thumbnail of a marketing manager resume.",
-      "imageUrl": "https://images.unsplash.com/flagged/photo-1550585109-611b4d36af04?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxkb2N1bWVudCUyMHByZXZpZXd8ZW58MHx8fHwxNzYwNzU1MDU4fDA&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/flagged/photo-1550585109-611b4d36af04?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxkb2N1bWVudCUyMHByZXZpZXd8ZW58MHx8fHwxNzYwNzU1MDU4fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "document preview"
     },
     {
@@ -99,13 +99,13 @@
     {
       "id": "blog-cv-resume",
       "description": "Two documents side-by-side, one short (resume) and one long (CV).",
-      "imageUrl": "https://images.unsplash.com/photo-1759894508843-a0d45fe52ea9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxkb2N1bWVudCUyMGNvbXBhcmlzb258ZW58MHx8fHwxNzYwNzU1MDU4fDA&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1759894508843-a0d45fe52ea9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxkb2N1bWVudCUyMGNvbXBhcmlzb258ZW58MHx8fHwxNzYwNzU1MDU4fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "document comparison"
     },
     {
       "id": "blog-skills",
       "description": "A word cloud or collection of skill-related icons.",
-      "imageUrl": "https://images.unsplash.com/photo-1743004144302-5ddc985c2a9e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxza2lsbHMlMjBjb25jZXB0fGVufDB8fHx8MTc2MDc1NTA1OHww&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1743004144302-5ddc985c2a9e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxza2lsbHMlMjBjb25jZXB0fGVufDB8fHx8MTc2MDc1NTA1OHww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "skills concept"
     },
     {
@@ -123,13 +123,13 @@
     {
       "id": "blog-interview-prep",
       "description": "A person sitting at a desk preparing for an interview, with notes and a laptop.",
-      "imageUrl": "https://images.unsplash.com/photo-1549923746-9507eec27243?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxpbnRlcnZpZXclMjBwcmVwYXJhdGlvbnxlbnwwfHx8fDE3NjA3NTUwNTh8MA&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1549923746-9507eec27243?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxpbnRlcnZpZXclMjBwcmVwYXJhdGlvbnxlbnwwfHx8fDE3NjA3NTUwNTh8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "interview preparation"
     },
     {
       "id": "blog-soft-skills",
       "description": "Icons representing communication, teamwork, and problem-solving.",
-      "imageUrl": "https://images.unsplash.com/photo-1760624591122-e587b406b391?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHx0ZWFtd29yayUyMGNvbW11bmljYXRpb258ZW58MHx8fHwxNzYwNzU1MDU5fDA&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1760624591122-e587b406b391?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHx0ZWFtd29yayUyMGNvbW11bmljYXRpb258ZW58MHx8fHwxNzYwNzU1MDU5fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "teamwork communication"
     },
     {
@@ -153,7 +153,7 @@
     {
       "id": "blog-follow-up",
       "description": "A person sending an email on a laptop.",
-      "imageUrl": "https://images.unsplash.com/photo-1683117927786-f146451082fb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxzZW5kaW5nJTIwZW1haWx8ZW58MHx8fHwxNzYwNzU1MDU4fDA&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1683117927786-f146491082fb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxzZW5kaW5nJTIwZW1haWx8ZW58MHx8fHwxNzYwNzU1MDU4fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "sending email"
     },
     {
@@ -165,7 +165,7 @@
     {
       "id": "blog-burnout",
       "description": "A person looking tired or stressed while sitting at a desk.",
-      "imageUrl": "https://images.unsplash.com/photo-1758272422816-539dcab0eea6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8ZnJ1c3RyYXRlZCUyMHBlcnNvbnxlbnwwfHx8fDE3NjA3MzEwNTl8MA&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1758272422816-539dcab0eea6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8ZnJ1c3RyYXRlZCUyMHBlcnNvbnxlbnwwfHx8fDE3NjA3MzEwNTl8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "frustrated person"
     },
     {
@@ -183,7 +183,7 @@
     {
       "id": "blog-resign",
       "description": "A person shaking hands with their manager while holding an envelope.",
-      "imageUrl": "https://images.unsplash.com/photo-1638262052640-82e94d64664a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBoYW5kc2hha2V8ZW58MHx8fHwxNzYwNzU1MDU4fDA&ixlib-rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1638262052640-82e94d64664a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBoYW5kc2hha2V8ZW58MHx8fHwxNzYwNzU1MDU4fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "professional handshake"
     }
   ]
