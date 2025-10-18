@@ -15,15 +15,25 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { MessageSquare, Send } from 'lucide-react';
 import React, { useState, useMemo } from 'react';
+import type { ResumeData as ResumeDataType, Skill as SkillType, Project as ProjectType } from '@/components/editor/types';
 
 // Reusing types from the editor
 type PersonalInfo = { name: string; title: string; email: string; phone: string; location: string; website: string; };
 type Experience = { id: number; company: string; role: string; date: string; description: string; };
 type Education = { id: number; institution: string; degree: string; date: string; };
-type Skill = { id: number; name: string; level: 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert'; };
-type Project = { id: number; name: string; description: string; link: string; };
+type Skill = SkillType;
+type Project = ProjectType;
 type Styling = { bodyFontSize: number; headingFontSize: number; titleFontSize: number; accentColor: string; };
-type ResumeData = { personalInfo: PersonalInfo; summary: string; experience: Experience[]; education: Education[]; skills: Skill[]; projects: Project[]; templateId?: string; styling?: Styling; };
+type ResumeData = ResumeDataType & {
+    personalInfo: PersonalInfo;
+    summary: string;
+    experience: Experience[];
+    education: Education[];
+    skills?: Skill[];
+    projects?: Project[];
+    templateId?: string;
+    styling?: Styling;
+};
 type Feedback = { id: string; name: string; comment: string; createdAt: { toDate: () => Date } };
 
 const SharePageSkeleton = () => (
