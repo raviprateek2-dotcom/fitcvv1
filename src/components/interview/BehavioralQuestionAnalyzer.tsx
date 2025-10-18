@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { analyzeBehavioralAnswer } from '@/app/actions/ai-behavioral-question-analyzer';
-import type { AnalyzeBehavioralAnswerOutput } from '@/ai/flows/ai-behavioral-question-analyzer';
+import type { AnalyzeBehavioralAnswerOutput } from '@/app/actions/schemas/ai-behavioral-question-analyzer';
 import { Loader2, Sparkles, CheckCircle, XCircle, BrainCircuit } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from '../ui/badge';

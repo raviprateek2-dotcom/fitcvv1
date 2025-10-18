@@ -7,9 +7,8 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { z } from 'genkit';
-import type { AnalyzeBehavioralAnswerInput, AnalyzeBehavioralAnswerOutput } from '@/app/actions/ai-behavioral-question-analyzer';
-import { AnalyzeBehavioralAnswerInputSchema, AnalyzeBehavioralAnswerOutputSchema } from '@/app/actions/ai-behavioral-question-analyzer';
+import type { AnalyzeBehavioralAnswerInput, AnalyzeBehavioralAnswerOutput } from '@/app/actions/schemas/ai-behavioral-question-analyzer';
+import { AnalyzeBehavioralAnswerInputSchema, AnalyzeBehavioralAnswerOutputSchema } from '@/app/actions/schemas/ai-behavioral-question-analyzer';
 
 
 export async function analyzeBehavioralAnswer(input: AnalyzeBehavioralAnswerInput): Promise<AnalyzeBehavioralAnswerOutput> {
