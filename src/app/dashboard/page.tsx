@@ -240,7 +240,7 @@ export default function DashboardPage() {
   }, [isUserLoading, user, router]);
 
   const resumesQuery = useMemoFirebase(
-    () => (user ? collection(firestore, `users/${user.uid}/resumes`) : null),
+    () => (user && firestore ? collection(firestore, `users/${user.uid}/resumes`) : null),
     [firestore, user]
   );
   
