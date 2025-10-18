@@ -11,3 +11,4 @@ import '@/ai/flows/ai-title-suggester.ts';
 import '@/ai/flows/ai-resume-analyzer.ts';
 import '@/ai/flows/ai-resume-review.ts';
 import '@/ai/flows/ai-avatar-generator.ts';
+import '@/ai/flows/ai-behavioral-question-analyzer.ts';
