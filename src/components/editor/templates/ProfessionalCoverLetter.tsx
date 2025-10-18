@@ -30,14 +30,16 @@ export function ProfessionalCoverLetter({ resumeData }: CoverLetterPreviewProps)
             </header>
             <main className="leading-relaxed space-y-4 whitespace-pre-wrap flex-grow">
             <p className="text-sm text-gray-600">{date}</p>
-            <div>
-                <p className="font-semibold">Hiring Manager</p>
-                <p>{companyInfo?.name}</p>
-            </div>
+            {companyInfo?.name && (
+              <div>
+                  <p className="font-semibold">Hiring Manager</p>
+                  <p>{companyInfo.name}</p>
+              </div>
+            )}
             <br/>
             <p>Dear Hiring Manager,</p>
             <div className="space-y-4 text-gray-700">
-              {coverLetter?.split('\n').map((paragraph, index) => (
+              {coverLetter?.split('\n').filter(p => p.trim() !== '').map((paragraph, index) => (
                   <p key={index}>{paragraph}</p>
               ))}
             </div>

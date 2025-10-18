@@ -55,10 +55,20 @@ export function DefaultCoverLetter({ resumeData }: CoverLetterPreviewProps) {
       <Separator className={cn("my-6", templateId === 'minimalist' ? 'bg-gray-200' : '')} />
       <main className="leading-relaxed space-y-4 whitespace-pre-wrap">
           <p>{date}</p>
-          <p>Hiring Manager<br/>{companyInfo?.name}</p>
+          {companyInfo?.name && (
+            <p>
+              Hiring Manager
+              <br/>
+              {companyInfo.name}
+            </p>
+          )}
           <br/>
           <p>Dear Hiring Manager,</p>
-          <p>{coverLetter}</p>
+          <div className="space-y-4">
+            {coverLetter?.split('\n').filter(p => p.trim() !== '').map((paragraph, index) => (
+                <p key={index}>{paragraph}</p>
+            ))}
+          </div>
           <br/>
           <p>Sincerely,</p>
           <p>{personalInfo.name}</p>
