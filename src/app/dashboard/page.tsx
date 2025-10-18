@@ -2,7 +2,7 @@
 'use client';
 
 import { useCollection, useUser } from '@/firebase';
-import { useMemo, useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { addDoc, doc, serverTimestamp, collection } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
 import { Button } from '@/components/ui/button';
@@ -407,5 +407,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    

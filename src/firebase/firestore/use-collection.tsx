@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -31,7 +32,7 @@ export interface UseCollectionResult<T> {
  * 
  *
  * IMPORTANT! YOU MUST MEMOIZE the inputted memoizedTargetRefOrQuery or BAD THINGS WILL HAPPEN
- * use useMemo to memoize it per React guidence.  Also make sure that it's dependencies are stable
+ * use useMemoFirebase to memoize it per React guidence.  Also make sure that it's dependencies are stable
  * references
  *  
  * @template T Optional type for document data. Defaults to any.
@@ -50,6 +51,10 @@ export function useCollection<T = any>(
   const [error, setError] = useState<FirestoreError | Error | null>(null);
 
   useEffect(() => {
+    if (memoizedTargetRefOrQuery && !memoizedTargetRefOrQuery.__memo && process.env.NODE_ENV === 'development') {
+      throw new Error('A firestore query/reference was not properly memoized using useMemoFirebase. This will cause infinite render loops.');
+    }
+
     if (!memoizedTargetRefOrQuery) {
       setData(null);
       setIsLoading(false);
@@ -94,8 +99,6 @@ export function useCollection<T = any>(
 
     return () => unsubscribe();
   }, [memoizedTargetRefOrQuery]); // Re-run if the target query/reference changes.
-  if(memoizedTargetRefOrQuery && !memoizedTargetRefOrQuery.__memo) {
-    throw new Error('A firestore query/reference was not properly memoized using useMemoFirebase. This will cause infinite render loops.');
-  }
+
   return { data, isLoading, error };
 }

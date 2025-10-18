@@ -76,7 +76,7 @@ export default function SharePage({ params }: { params: { id: string } }) {
 
   const feedbackCollectionRef = useMemoFirebase(() => {
      if (!resumeDocRef) return null;
-     return collection(firestore, resumeDocRef.path, 'feedback');
+     return collection(resumeDocRef.path, 'feedback');
   }, [resumeDocRef]);
 
   const { data: feedback, isLoading: isFeedbackLoading } = useCollection<Feedback>(feedbackCollectionRef);
