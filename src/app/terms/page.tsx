@@ -1,9 +1,10 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function TermsOfServicePage() {
   return (
     <div className="container mx-auto px-4 md:px-6 py-12 md:py-20">
-      <Card className="max-w-4xl mx-auto">
+      <Card className="max-w-4xl mx-auto" variant="neuro">
         <CardHeader>
           <CardTitle className="text-3xl font-headline">Terms of Service</CardTitle>
         </CardHeader>
@@ -47,3 +48,5 @@ export default function TermsOfServicePage() {
     </div>
   );
 }
+
+    

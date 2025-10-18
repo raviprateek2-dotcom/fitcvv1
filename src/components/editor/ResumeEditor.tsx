@@ -669,7 +669,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                   </TabsContent>
 
                   <TabsContent value="ai-review" className="p-6">
-                    <Card>
+                    <Card variant="neuro">
                         <CardHeader>
                             <CardTitle className="font-headline">AI Analysis</CardTitle>
                             <CardDescription>Get general feedback or analyze your resume against a specific job description.</CardDescription>
@@ -812,3 +812,5 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     </div>
   );
 }
+
+    
