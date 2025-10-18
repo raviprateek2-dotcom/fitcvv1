@@ -66,5 +66,3 @@ export type ResumeData = {
 export interface CoverLetterPreviewProps {
   resumeData: ResumeData;
 }
-
-    

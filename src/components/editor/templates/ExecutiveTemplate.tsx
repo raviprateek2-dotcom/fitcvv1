@@ -119,5 +119,3 @@ export function ExecutiveTemplate({ resumeData }: ResumePreviewProps) {
         </div>
     )
 }
-
-    

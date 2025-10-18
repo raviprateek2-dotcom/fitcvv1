@@ -131,5 +131,3 @@ export function ProfessionalTemplate({ resumeData }: ResumePreviewProps) {
         </div>
     )
 }
-
-    
