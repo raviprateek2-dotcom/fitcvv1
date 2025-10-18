@@ -80,9 +80,8 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
             url: `${siteUrl}/icon.png`,
         },
     },
-    // Use a static date to avoid hydration mismatch. In a real app, this would come from the post data.
-    datePublished: '2024-01-01T00:00:00Z',
-    dateModified: '2024-01-01T00:00:00Z',
+    datePublished: post.createdAt,
+    dateModified: post.updatedAt,
   };
 
   return <BlogPostClient post={post} image={image} structuredDataJSON={JSON.stringify(structuredData)} />;

@@ -5,6 +5,8 @@ export type BlogPost = {
   description: string;
   imageId: string;
   content: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export const blogPosts: BlogPost[] = [
@@ -13,6 +15,8 @@ export const blogPosts: BlogPost[] = [
     slug: "ultimate-resume-guide-2024",
     description: "Learn the essential strategies to craft a resume that stands out to recruiters and hiring managers in today's competitive job market.",
     imageId: "blog-resume-guide",
+    createdAt: "2024-05-01T10:00:00Z",
+    updatedAt: "2024-05-01T10:00:00Z",
     content: `
 # Craft a Standout Resume for 2024
 
@@ -63,6 +67,8 @@ By following these tips, you'll create a powerful resume that not only sails thr
     slug: "5-common-resume-mistakes",
     description: "Don't let these simple mistakes cost you your dream job. Learn how to identify and fix the most common resume pitfalls.",
     imageId: "blog-resume-mistakes",
+    createdAt: "2024-04-25T11:00:00Z",
+    updatedAt: "2024-04-25T11:00:00Z",
     content: `
 # 5 Common Resume Mistakes (and How to Avoid Them)
 
@@ -106,6 +112,8 @@ Avoiding these common mistakes will significantly improve your chances of landin
     slug: "how-to-beat-ats",
     description: "Learn the secrets to creating an Applicant Tracking System (ATS) friendly resume that ensures your application gets seen by a human.",
     imageId: "blog-ats-bots",
+    createdAt: "2024-04-20T09:00:00Z",
+    updatedAt: "2024-04-20T09:00:00Z",
     content: `
 # How to Beat the Bots: Optimizing Your Resume for ATS
 
@@ -155,6 +163,8 @@ By optimizing your resume for the ATS, you're not just 'beating the bots'—you'
     slug: "resume-action-verbs",
     description: "Tired of 'responsible for'? Supercharge your resume with our list of powerful action verbs that command attention and showcase your impact.",
     imageId: "blog-action-verbs",
+    createdAt: "2024-04-15T14:00:00Z",
+    updatedAt: "2024-04-15T14:00:00Z",
     content: `
 # Action Verbs That Will Make Your Resume Pop
 
@@ -209,6 +219,8 @@ By swapping out weak phrases for powerful action verbs, you can transform your r
     slug: "writing-professional-summary",
     description: "Your professional summary is your resume's headline. Learn how to write a compelling summary that hooks the recruiter in seconds.",
     imageId: "blog-summary",
+    createdAt: "2024-04-10T12:00:00Z",
+    updatedAt: "2024-04-10T12:00:00Z",
     content: `
 # How to Write a Killer Professional Summary
 
@@ -250,6 +262,8 @@ Struggling to find the right words? ResumeAI's AI Writer can generate a professi
     slug: "cv-vs-resume",
     description: "Are you applying for a job or an academic position? Understanding the key differences between a CV and a resume is crucial for your application.",
     imageId: "blog-cv-resume",
+    createdAt: "2024-04-05T16:00:00Z",
+    updatedAt: "2024-04-05T16:00:00Z",
     content: `
 # CV vs. Resume: What's the Difference?
 
@@ -298,6 +312,8 @@ When in doubt, the job description will often specify what kind of document is r
     slug: "how-to-list-skills-on-resume",
     description: "Your skills section is a crucial part of your resume. Learn how to organize and present your skills to impress recruiters.",
     imageId: "blog-skills",
+    createdAt: "2024-03-28T10:00:00Z",
+    updatedAt: "2024-03-28T10:00:00Z",
     content: `
 # How to Effectively List Skills on Your Resume
 
@@ -357,6 +373,8 @@ A well-crafted skills section is a powerful tool in your job search arsenal. Use
     slug: "how-to-write-cover-letter",
     description: "A great cover letter can be the difference between getting an interview and being ignored. Learn the formula for a compelling cover letter.",
     imageId: "blog-cover-letter",
+    createdAt: "2024-03-22T15:00:00Z",
+    updatedAt: "2024-03-22T15:00:00Z",
     content: `
 # How to Write a Cover Letter That Actually Gets Read
 
@@ -410,6 +428,8 @@ Feeling stuck? The AI Cover Letter Writer in ResumeAI can generate a tailored, t
     slug: "networking-for-job-seekers",
     description: "Networking can feel intimidating, but it's one of the most effective ways to find a job. Here are practical tips to get started.",
     imageId: "blog-networking",
+    createdAt: "2024-03-18T11:00:00Z",
+    updatedAt: "2024-03-18T11:00:00Z",
     content: `
 # A Practical Guide to Networking for Job Seekers
 
@@ -460,6 +480,8 @@ Networking is a long-term game. By focusing on building real relationships, you'
     slug: "job-interview-checklist",
     description: "You landed the interview! Now what? Follow our comprehensive checklist to prepare thoroughly and walk into your interview with confidence.",
     imageId: "blog-interview-prep",
+    createdAt: "2024-03-12T09:00:00Z",
+    updatedAt: "2024-03-12T09:00:00Z",
     content: `
 # The Ultimate Job Interview Preparation Checklist
 
@@ -508,6 +530,8 @@ By following this checklist, you'll walk into your interview feeling prepared, c
     slug: "soft-skills-importance",
     description: "Technical abilities are crucial, but soft skills like communication and teamwork are what truly set you apart. Learn why they matter.",
     imageId: "blog-soft-skills",
+    createdAt: "2024-03-08T14:00:00Z",
+    updatedAt: "2024-03-08T14:00:00Z",
     content: `
 # Beyond the Code: Why Soft Skills Matter in a Tech World
 
@@ -558,6 +582,8 @@ This version showcases collaboration, communication, and responsiveness to feedb
     slug: "explaining-resume-gaps",
     description: "Worried about an employment gap on your resume? Learn how to address it confidently and turn it into a potential strength.",
     imageId: "blog-resume-gaps",
+    createdAt: "2024-03-04T16:00:00Z",
+    updatedAt: "2024-03-04T16:00:00Z",
     content: `
 # How to Address Employment Gaps on Your Resume
 
@@ -602,6 +628,8 @@ A resume gap is not a deal-breaker. By addressing it proactively and positively,
     slug: "top-tech-skills-2025",
     description: "Stay ahead of the curve. Discover the top 10 technical skills that employers will be looking for in the coming year.",
     imageId: "blog-tech-skills",
+    createdAt: "2024-02-28T11:00:00Z",
+    updatedAt: "2024-02-28T11:00:00Z",
     content: `
 # The Top 10 In-Demand Tech Skills for 2025
 
@@ -665,6 +693,8 @@ Focusing on one or more of these areas is a strategic way to future-proof your c
     slug: "linkedin-job-search",
     description: "LinkedIn is more than just a social network; it's a powerful job search tool. Learn the strategies to unlock its full potential.",
     imageId: "blog-linkedin",
+    createdAt: "2024-02-21T18:00:00Z",
+    updatedAt: "2024-02-21T18:00:00Z",
     content: `
 # Unlocking Your Next Opportunity: How to Use LinkedIn for Your Job Search
 
@@ -711,6 +741,8 @@ By treating LinkedIn as an active tool rather than a passive profile, you can si
     slug: "follow-up-email-guide",
     description: "The interview is over, but your work isn't done. A great follow-up email can seal the deal. Here’s how to write one.",
     imageId: "blog-follow-up",
+    createdAt: "2024-02-15T12:00:00Z",
+    updatedAt: "2024-02-15T12:00:00Z",
     content: `
 # The Art of the Follow-Up: How to Write an Email That Gets a Response
 
@@ -765,6 +797,8 @@ Never underestimate the power of a simple thank-you. It's a small step that can 
     slug: "answer-tell-me-about-yourself",
     description: "This common interview opener is your chance to set the tone. Learn how to craft a perfect, concise, and compelling answer.",
     imageId: "blog-interview-question",
+    createdAt: "2024-02-10T10:00:00Z",
+    updatedAt: "2024-02-10T10:00:00Z",
     content: `
 # How to Perfectly Answer "Tell Me About Yourself"
 
@@ -818,6 +852,8 @@ By mastering this question, you can start every interview with confidence and im
     slug: "build-portfolio-website",
     description: "A portfolio website is a must-have for many professionals. Learn the key steps to creating a site that showcases your work and skills.",
     imageId: "blog-portfolio",
+    createdAt: "2024-02-05T14:00:00Z",
+    updatedAt: "2024-02-05T14:00:00Z",
     content: `
 # How to Build a Personal Portfolio Website That Wows
 
@@ -875,6 +911,8 @@ Your portfolio is a living document. Keep it updated with your latest and greate
     slug: "how-to-resign-gracefully",
     description: "Leaving a job is a significant career move. Learn how to resign professionally and maintain positive relationships.",
     imageId: "blog-resign",
+    createdAt: "2024-01-30T11:00:00Z",
+    updatedAt: "2024-01-30T11:00:00Z",
     content: `
 # Quitting with Class: How to Resign from Your Job Gracefully
 
