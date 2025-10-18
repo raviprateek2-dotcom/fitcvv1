@@ -5,7 +5,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Download, Share2, Sparkles, Bot, Newspaper, Brush, Loader2, SearchCheck, ArrowLeft, Upload, CheckCircle, XCircle, PlusCircle, FileText } from 'lucide-react';
+import { Download, Share2, Sparkles, Bot, Newspaper, Brush, Loader2, SearchCheck, ArrowLeft, Upload, CheckCircle, XCircle, PlusCircle, FileText, KeySquare } from 'lucide-react';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { ResumePreview, CoverLetterPreview } from './ResumePreview';
 import { useDoc, useUser, useFirestore, useMemoFirebase, setDocumentNonBlocking } from '@/firebase';
@@ -332,6 +332,9 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     }
     setIsAiLoading(true);
     setKeywordSuggestions([]);
+    setAnalysisResult(null);
+    setReviewResult(null);
+
 
     const resumeContent = JSON.stringify({
       summary: resumeData.summary,
@@ -452,6 +455,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     setIsAnalyzing(true);
     setAnalysisResult(null);
     setReviewResult(null); // Clear other result
+    setKeywordSuggestions([]);
 
     const resumeContent = JSON.stringify(resumeData);
 
@@ -474,6 +478,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
       setIsReviewing(true);
       setReviewResult(null);
       setAnalysisResult(null); // Clear other result
+      setKeywordSuggestions([]);
 
       const resumeContent = JSON.stringify(resumeData);
       try {
@@ -746,11 +751,14 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                             ) : null }
 
                         </CardContent>
-                        <CardFooter className="flex flex-col sm:flex-row gap-2 pt-4 border-t">
-                            <Button onClick={handleAnalyzeResume} disabled={!resumeData.jobDescription || isAnalyzing || isReviewing} className="w-full">
+                        <CardFooter className="flex flex-wrap gap-2 pt-4 border-t">
+                            <Button onClick={handleAnalyzeResume} disabled={!resumeData.jobDescription || isAnalyzing || isReviewing || isAiLoading} className="flex-1">
                                 <SearchCheck className="mr-2 h-4 w-4" /> Analyze Match
                             </Button>
-                            <Button onClick={handleReviewResume} disabled={isAnalyzing || isReviewing} className="w-full" variant="secondary">
+                            <Button onClick={handleSuggestKeywords} disabled={!resumeData.jobDescription || isAnalyzing || isReviewing || isAiLoading} className="flex-1" variant="secondary">
+                                <KeySquare className="mr-2 h-4 w-4" /> Suggest Keywords
+                            </Button>
+                             <Button onClick={handleReviewResume} disabled={isAnalyzing || isReviewing || isAiLoading} className="w-full" variant="ghost">
                                 <Sparkles className="mr-2 h-4 w-4" /> Get General Feedback
                             </Button>
                         </CardFooter>
