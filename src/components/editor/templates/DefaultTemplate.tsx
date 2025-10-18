@@ -142,5 +142,3 @@ export function DefaultTemplate({ resumeData }: ResumePreviewProps) {
     </div>
   );
 }
-
-    

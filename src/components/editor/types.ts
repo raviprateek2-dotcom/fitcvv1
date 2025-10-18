@@ -62,5 +62,3 @@ export type ResumeData = {
   styling?: Styling;
   shareId?: string;
 };
-
-    

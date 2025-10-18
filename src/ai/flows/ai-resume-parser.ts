@@ -79,6 +79,7 @@ const prompt = ai.definePrompt({
   
   - For 'experience', capture the company, role, dates, and a description with bullet points.
   - For 'skills', identify each skill and assign a reasonable proficiency level ('Beginner', 'Intermediate', 'Advanced', 'Expert') based on context. Default to 'Advanced' if unsure.
+  - For 'projects', extract the project name, a description, and a URL if available.
   - Generate a unique numeric 'id' for each item in the arrays (experience, education, skills, projects) starting from Date.now() and incrementing.
   - Make sure the output strictly adheres to the provided JSON schema.
 

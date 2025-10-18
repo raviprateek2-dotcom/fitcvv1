@@ -66,6 +66,12 @@
         "shareId": {
             "type": "string",
             "description": "The public ID for the shared version of this resume."
+        },
+        "projects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/entities/Project"
+          }
         }
       },
       "required": ["userId", "title", "templateId", "content", "createdAt", "updatedAt"]
@@ -135,7 +141,7 @@
         },
         "description": {
           "type": "string",
-          "description": "A brief description of the project."
+          "description": "A brief description of the project, often with bullet points."
         },
         "link": {
           "type": "string",

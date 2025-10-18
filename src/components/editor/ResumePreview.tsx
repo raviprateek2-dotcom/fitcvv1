@@ -4,6 +4,8 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/skeleton';
+import type { ResumeData as ResumeDataType, CoverLetterPreviewProps as CoverLetterPreviewPropsType } from './types';
+
 
 // Reusing types from ResumeEditor.tsx
 export type PersonalInfo = {
@@ -50,30 +52,13 @@ export type Styling = {
   accentColor: string;
 };
 
-export type ResumeData = {
-  personalInfo: PersonalInfo;
-  summary: string;
-  experience: Experience[];
-  education: Education[];
-  skills?: Skill[];
-  projects?: Project[];
-  jobDescription?: string;
-  templateId?: string;
-  coverLetter?: string;
-  companyInfo?: {
-    name: string;
-    jobTitle: string;
-  };
-  styling?: Styling;
-};
+export type ResumeData = ResumeDataType;
 
 export interface ResumePreviewProps {
   resumeData: ResumeData;
 }
 
-export interface CoverLetterPreviewProps {
-  resumeData: ResumeData;
-}
+export type CoverLetterPreviewProps = CoverLetterPreviewPropsType;
 
 const TemplateLoader = () => (
     <div className="w-full h-full mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-hidden p-8">
@@ -115,5 +100,3 @@ export function CoverLetterPreview({ resumeData }: CoverLetterPreviewProps) {
       return <DefaultCoverLetter resumeData={resumeData} />;
   }
 }
-
-    

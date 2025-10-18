@@ -96,7 +96,7 @@ export function ProjectsSection({ resumeData, setResumeData }: ProjectsSectionPr
                         {resumeData.projects.map((proj) => (
                             <div key={proj.id} className="p-4 border rounded-lg space-y-4 relative bg-background">
                                 <div className="space-y-2"><Label>Project Name</Label><Input value={proj.name} onChange={e => handleNestedChange('projects', proj.id, 'name', e.target.value)} /></div>
-                                <div className="space-y-2"><Label>Description</Label><Textarea rows={3} value={proj.description} onChange={e => handleNestedChange('projects', proj.id, 'description', e.target.value)} /></div>
+                                <div className="space-y-2"><Label>Description (use bullet points)</Label><Textarea rows={3} value={proj.description} onChange={e => handleNestedChange('projects', proj.id, 'description', e.target.value)} /></div>
                                 <div className="space-y-2"><Label>Link (Optional)</Label><Input value={proj.link} onChange={e => handleNestedChange('projects', proj.id, 'link', e.target.value)} /></div>
                                 <div className="flex justify-end">
                                     <Button variant="ghost" size="icon" onClick={() => removeProject(proj.id)} className="text-destructive hover:text-destructive-foreground hover:bg-destructive">
@@ -114,4 +114,3 @@ export function ProjectsSection({ resumeData, setResumeData }: ProjectsSectionPr
         </AccordionItem>
     );
 }
-    
