@@ -49,7 +49,12 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-10rem)] items-center justify-center p-4">
+    <motion.div 
+      className="flex min-h-[calc(100vh-10rem)] items-center justify-center p-4"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <Card className="w-full max-w-sm" variant="neuro">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
@@ -100,6 +105,6 @@ export default function ForgotPasswordPage() {
           </div>
         </CardFooter>
       </Card>
-    </div>
+    </motion.div>
   );
 }

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -94,7 +95,12 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-10rem)] items-center justify-center p-4">
+    <motion.div 
+      className="flex min-h-[calc(100vh-10rem)] items-center justify-center p-4"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <Card className="w-full max-w-sm" variant="neuro">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
@@ -103,12 +109,19 @@ export default function LoginPage() {
                   rotate: [0, 0, -10, 10, -10, 10, 0],
                   y: [0, 0, 0, 0, 0, 0, -500],
                   opacity: [1, 1, 1, 1, 1, 1, 0],
-                } : {}}
+                } : {
+                  y: [0, -10, 0]
+                }}
                 transition={isLoading ? {
                   duration: 2,
                   ease: "easeInOut",
                   times: [0, 0.3, 0.4, 0.5, 0.6, 0.7, 1],
-                } : {}}
+                } : {
+                  duration: 2.5,
+                  ease: 'easeInOut',
+                  repeat: Infinity,
+                  repeatType: 'loop',
+                }}
               >
                 <Rocket className="h-10 w-10 text-primary" />
               </motion.div>
@@ -172,6 +185,6 @@ export default function LoginPage() {
           </div>
         </CardFooter>
       </Card>
-    </div>
+    </motion.div>
   );
 }
