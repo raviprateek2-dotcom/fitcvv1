@@ -14,7 +14,8 @@ import { TypingAnimation } from '@/components/common/TypingAnimation';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
-const sectionVariants: Variants = {
+export default function Home() {
+  const sectionVariants: Variants = {
     hidden: { opacity: 0, y: 30 },
     visible: {
         opacity: 1,
@@ -25,72 +26,69 @@ const sectionVariants: Variants = {
             staggerChildren: 0.2
         }
     }
-};
+  };
 
-const itemVariants: Variants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } }
-};
+  const itemVariants: Variants = {
+      hidden: { opacity: 0, y: 20 },
+      visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } }
+  };
 
+  const features = [
+    {
+      title: 'AI Content Suggestions',
+      description: 'Get AI-powered suggestions to improve your resume content and make it more effective.',
+      icon: <Sparkles className="w-6 h-6 text-primary"/>
+    },
+    {
+      title: 'Customizable Templates',
+      description: 'Choose from a variety of professionally designed templates to match your style.',
+      icon: <DraftingCompass className="w-6 h-6 text-primary"/>
+    },
+    {
+      title: 'ATS Compatibility Check',
+      description: 'Ensure your resume is optimized for Applicant Tracking Systems to get past the bots.',
+      icon: <Zap className="w-6 h-6 text-primary"/>
+    },
+  ];
 
-const features = [
-  {
-    title: 'AI Content Suggestions',
-    description: 'Get AI-powered suggestions to improve your resume content and make it more effective.',
-    icon: <Sparkles className="w-6 h-6 text-primary"/>
-  },
-  {
-    title: 'Customizable Templates',
-    description: 'Choose from a variety of professionally designed templates to match your style.',
-    icon: <DraftingCompass className="w-6 h-6 text-primary"/>
-  },
-  {
-    title: 'ATS Compatibility Check',
-    description: 'Ensure your resume is optimized for Applicant Tracking Systems to get past the bots.',
-    icon: <Zap className="w-6 h-6 text-primary"/>
-  },
-];
+  const testimonials = [
+    {
+      author: 'Sarah L.',
+      title: 'Software Engineer',
+      quote: 'ResumeAI helped me land my dream job in just two weeks! The AI suggestions were a game-changer.',
+      avatar: 'https://i.pravatar.cc/150?img=1',
+      rating: 5,
+    },
+    {
+      author: 'John D.',
+      title: 'Product Manager',
+      quote: 'I\'ve never felt more confident about my resume. The templates are modern and professional.',
+      avatar: 'https://i.pravatar.cc/150?img=2',
+      rating: 5,
+    },
+    {
+      author: 'Emily C.',
+      title: 'UX Designer',
+      quote: 'As a designer, I appreciate the attention to detail in the templates. A fantastic tool!',
+      avatar: 'https://i.pravatar.cc/150?img=3',
+      rating: 5,
+    },
+    {
+      author: 'Mike R.',
+      title: 'Marketing Director',
+      quote: 'The ATS checker gave me peace of mind. I started getting more callbacks almost immediately after using ResumeAI.',
+      avatar: 'https://i.pravatar.cc/150?img=4',
+      rating: 5,
+    },
+    {
+      author: 'Jessica B.',
+      title: 'Recent Graduate',
+      quote: 'I was struggling to create my first resume. This tool made it so easy and helped me look professional.',
+      avatar: 'https://i.pravatar.cc/150?img=5',
+      rating: 5,
+    }
+  ];
 
-const testimonials = [
-  {
-    author: 'Sarah L.',
-    title: 'Software Engineer',
-    quote: 'ResumeAI helped me land my dream job in just two weeks! The AI suggestions were a game-changer.',
-    avatar: 'https://i.pravatar.cc/150?img=1',
-    rating: 5,
-  },
-  {
-    author: 'John D.',
-    title: 'Product Manager',
-    quote: 'I\'ve never felt more confident about my resume. The templates are modern and professional.',
-    avatar: 'https://i.pravatar.cc/150?img=2',
-    rating: 5,
-  },
-  {
-    author: 'Emily C.',
-    title: 'UX Designer',
-    quote: 'As a designer, I appreciate the attention to detail in the templates. A fantastic tool!',
-    avatar: 'https://i.pravatar.cc/150?img=3',
-    rating: 5,
-  },
-   {
-    author: 'Mike R.',
-    title: 'Marketing Director',
-    quote: 'The ATS checker gave me peace of mind. I started getting more callbacks almost immediately after using ResumeAI.',
-    avatar: 'https://i.pravatar.cc/150?img=4',
-    rating: 5,
-  },
-  {
-    author: 'Jessica B.',
-    title: 'Recent Graduate',
-    quote: 'I was struggling to create my first resume. This tool made it so easy and helped me look professional.',
-    avatar: 'https://i.pravatar.cc/150?img=5',
-    rating: 5,
-  }
-];
-
-
-export default function Home() {
   return (
     <div className="flex flex-col items-center bg-background text-foreground overflow-x-hidden">
       
