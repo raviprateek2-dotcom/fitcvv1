@@ -26,6 +26,7 @@ const navLinks = [
   { href: '/dashboard', label: 'Dashboard' },
   { href: '/templates', label: 'Templates' },
   { href: '/pricing', label: 'Pricing' },
+  { href: '/interview', label: 'Interview' },
 ];
 
 export function Header() {
