@@ -84,12 +84,12 @@ export default function TemplatesPage() {
       <div className="container mx-auto px-4 md:px-6 py-12 md:py-20">
         <motion.div
           className="text-center mb-12"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
         >
-          <h1 className="text-4xl font-headline font-bold tracking-tight sm:text-5xl">Choose Your Template</h1>
-          <p className="mt-4 text-lg text-muted-foreground">Select a professionally designed template to start building your resume.</p>
+          <motion.h1 variants={itemVariants} className="text-4xl font-headline font-bold tracking-tight sm:text-5xl">Choose Your Template</motion.h1>
+          <motion.p variants={itemVariants} className="mt-4 text-lg text-muted-foreground">Select a professionally designed template to start building your resume.</motion.p>
         </motion.div>
 
         <motion.div
@@ -99,7 +99,7 @@ export default function TemplatesPage() {
           animate="visible"
         >
           {templates.filter(t => t.image).map((template) => (
-            <motion.div key={template.id} variants={itemVariants}>
+            <motion.div key={template.id} variants={itemVariants} className="transition-all duration-300 hover:scale-105">
               <Card className="group overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 h-full flex flex-col" variant='neuro'>
                 <CardContent className="p-0 relative">
                   {template.isPremium && (
@@ -162,3 +162,5 @@ export default function TemplatesPage() {
     </div>
   );
 }
+
+    

@@ -71,14 +71,14 @@ export default function PricingPage() {
   return (
     <div className="bg-background">
       <div className="container mx-auto px-4 md:px-6 py-12 md:py-20">
-        <motion.div 
+        <motion.div
           className="text-center mb-12"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
         >
-          <h1 className="text-4xl font-headline font-bold tracking-tight sm:text-5xl">Simple, Transparent Pricing</h1>
-          <p className="mt-4 text-lg text-muted-foreground">Choose the plan that's right for you. No hidden fees.</p>
+          <motion.h1 variants={itemVariants} className="text-4xl font-headline font-bold tracking-tight sm:text-5xl">Simple, Transparent Pricing</motion.h1>
+          <motion.p variants={itemVariants} className="mt-4 text-lg text-muted-foreground">Choose the plan that's right for you. No hidden fees.</motion.p>
         </motion.div>
 
         <motion.div
@@ -88,7 +88,7 @@ export default function PricingPage() {
           animate="visible"
         >
           <motion.div variants={itemVariants} className="w-full">
-            <Card className="shadow-lg h-full flex flex-col" variant="neuro">
+            <Card className="shadow-lg h-full flex flex-col transition-all duration-300 hover:shadow-2xl hover:scale-105" variant="neuro">
               <CardHeader className="text-center p-8">
                 <CardTitle className="font-headline text-3xl">Free</CardTitle>
                 <CardDescription>Perfect for getting started and landing your first interview.</CardDescription>
@@ -117,7 +117,7 @@ export default function PricingPage() {
           </motion.div>
 
           <motion.div variants={itemVariants} className="w-full">
-            <Card className="shadow-2xl border-2 border-primary/50 relative h-full flex flex-col" variant="neuro">
+            <Card className="shadow-2xl border-2 border-primary/50 relative h-full flex flex-col transition-all duration-300 hover:shadow-2xl hover:scale-105" variant="neuro">
                <div className="absolute top-0 -translate-y-1/2 w-full flex justify-center">
                 <div className="bg-primary/20 text-primary px-4 py-1 rounded-full text-sm font-semibold shadow-lg flex items-center gap-2">
                   <Sparkles className="w-4 h-4" />
@@ -175,3 +175,5 @@ export default function PricingPage() {
     </div>
   );
 }
+
+    
