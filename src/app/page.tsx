@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { blogPosts } from '@/lib/blog-posts';
 import { ArrowRight, DraftingCompass, FileText, Sparkles, Zap } from 'lucide-react';
 import Link from 'next/link';
-import { useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import Autoplay from "embla-carousel-autoplay";
@@ -92,13 +91,12 @@ const testimonials = [
 
 
 export default function Home() {
-  const ref = useRef<HTMLDivElement>(null);
   
   return (
     <div className="flex flex-col items-center bg-background text-foreground overflow-x-hidden">
       
       {/* Hero Section */}
-       <section ref={ref} className="w-full py-24 md:py-40 relative">
+       <section className="w-full py-24 md:py-40 relative">
          <div className="absolute inset-0 -z-10 h-full w-full bg-background bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#374151_1px,transparent_1px)] [background-size:16px_16px]"></div>
         <div className="container mx-auto px-4 md:px-6 relative z-10">
             <motion.div
