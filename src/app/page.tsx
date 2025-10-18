@@ -163,9 +163,6 @@ export default function Home() {
                     >
                       <AnimatedResume templateId='professional'/>
                     </motion.div>
-                    <motion.div className="relative z-10">
-                      <AnimatedResume templateId='modern'/>
-                    </motion.div>
                   </div>
               </motion.div>
             </div>
