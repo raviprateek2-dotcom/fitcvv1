@@ -3,7 +3,7 @@
 
 import { Button } from '@/components/ui/button';
 import { blogPosts } from '@/lib/blog-posts';
-import { ArrowRight, CheckCircle2, DraftingCompass, FileText, Sparkles, Zap } from 'lucide-react';
+import { ArrowRight, DraftingCompass, FileText, Sparkles, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -185,7 +185,7 @@ export default function Home() {
                   </motion.div>
               </motion.div>
           </div>
-      </motion.section>
+      </section>
 
       {/* Features Section */}
       <motion.section 
@@ -225,7 +225,7 @@ export default function Home() {
                 </motion.div>
             </div>
         </div>
-      </motion.section>
+      </section>
 
       {/* Why Us Section */}
       <motion.section 
@@ -245,13 +245,13 @@ export default function Home() {
                     variants={sectionVariants}
                     className="space-y-4 text-xl inline-flex flex-col items-start text-left"
                   >
-                    <motion.li variants={itemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>AI-powered content suggestions.</span></motion.li>
-                    <motion.li variants={itemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>Professionally designed templates.</span></motion.li>
-                    <motion.li variants={itemVariants} className="flex items-center gap-3"><CheckCircle2 className="text-accent h-6 w-6"/><span>Intuitive real-time editor.</span></motion.li>
+                    <motion.li variants={itemVariants} className="flex items-center gap-3"><Sparkles className="text-accent h-6 w-6"/><span>AI-powered content suggestions.</span></motion.li>
+                    <motion.li variants={itemVariants} className="flex items-center gap-3"><DraftingCompass className="text-accent h-6 w-6"/><span>Professionally designed templates.</span></motion.li>
+                    <motion.li variants={itemVariants} className="flex items-center gap-3"><FileText className="text-accent h-6 w-6"/><span>Intuitive real-time editor.</span></motion.li>
                   </motion.ul>
               </motion.div>
           </div>
-      </motion.section>
+      </section>
 
       {/* Testimonials Section */}
       <motion.section 
@@ -305,7 +305,7 @@ export default function Home() {
             </Carousel>
           </div>
         </div>
-      </motion.section>
+      </section>
 
       {/* Blog Section */}
       <motion.section 
@@ -369,7 +369,7 @@ export default function Home() {
                   </Button>
               </motion.div>
         </div>
-      </motion.section>
+      </section>
 
       {/* Final CTA */}
       <motion.section 
@@ -393,7 +393,7 @@ export default function Home() {
             </Button>
           </motion.div>
         </div>
-      </motion.section>
+      </section>
     </div>
   );
 }
