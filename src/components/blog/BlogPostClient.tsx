@@ -119,7 +119,7 @@ export function BlogPostClient({ post, image, structuredDataJSON }: BlogPostClie
               initial={{opacity: 0}}
               animate={{opacity: 1}}
               transition={{delay: 0.5, duration: 0.5}}
-              className="prose prose-lg dark:prose-invert max-w-none">
+            >
                 <MarkdownRenderer content={post.content} />
             </motion.div>
         </article>
