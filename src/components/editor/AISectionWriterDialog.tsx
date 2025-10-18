@@ -1,7 +1,6 @@
-
 'use client';
 
-import { writeResumeSection } from '@/app/actions/ai-writer';
+import { writeResumeSection } from '@/app/actions/ai-suggestions';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';

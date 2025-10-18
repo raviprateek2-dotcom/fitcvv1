@@ -1,6 +1,6 @@
 'use client';
 
-import { suggestResumeImprovements } from '@/app/actions/ai';
+import { suggestResumeImprovements } from '@/app/actions/ai-suggestions';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
