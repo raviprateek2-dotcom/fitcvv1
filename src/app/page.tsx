@@ -13,6 +13,7 @@ import { motion, type Variants } from 'framer-motion';
 import { TypingAnimation } from '@/components/common/TypingAnimation';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { AnimatedResume } from '@/components/common/AnimatedResume';
 
 const sectionVariants: Variants = {
     hidden: { opacity: 0, y: 30 },
@@ -218,17 +219,8 @@ export default function Home() {
                         ))}
                     </motion.ul>
                 </motion.div>
-                 <motion.div variants={itemVariants}>
-                    <Card variant="neuro" className="w-full">
-                        <Image 
-                            src={PlaceHolderImages.find(img => img.id === 'why-us-image')?.imageUrl || ''} 
-                            alt="Resume design showcase"
-                            width={600}
-                            height={400}
-                            data-ai-hint="resume design"
-                            className="rounded-lg object-cover"
-                        />
-                    </Card>
+                 <motion.div variants={itemVariants} className="flex items-center justify-center">
+                    <AnimatedResume templateId="professional" className="w-full max-w-md" />
                 </motion.div>
             </div>
         </div>
@@ -378,7 +370,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
-
-    
