@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -9,9 +9,23 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { analyzeBehavioralAnswer } from '@/app/actions/ai-behavioral-question-analyzer';
 import type { AnalyzeBehavioralAnswerOutput } from '@/app/actions/schemas/ai-behavioral-question-analyzer';
-import { Loader2, Sparkles, CheckCircle, XCircle, BrainCircuit } from 'lucide-react';
+import { Loader2, Sparkles, CheckCircle, XCircle, BrainCircuit, RefreshCw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from '../ui/badge';
+
+
+const behavioralQuestions = [
+    "Tell me about a time you had to work with a difficult coworker.",
+    "Describe a situation where you had to meet a tight deadline.",
+    "Give an example of a goal you reached and tell me how you achieved it.",
+    "Tell me about a time you made a mistake. How did you handle it?",
+    "Describe a time when you had to persuade a team to see things your way.",
+    "Tell me about a time you had to handle pressure.",
+    "Give an example of a time you showed initiative.",
+    "Tell me about a time you disagreed with your boss.",
+    "Describe a time when you had to learn a new skill quickly.",
+    "Tell me about a successful project you were a part of."
+];
 
 const ResultCard = ({ title, content, isEmpty }: { title: string; content: string; isEmpty: boolean; }) => (
     <Card className={isEmpty ? 'border-dashed' : ''}>
@@ -29,6 +43,23 @@ export function BehavioralQuestionAnalyzer() {
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<AnalyzeBehavioralAnswerOutput | null>(null);
   const { toast } = useToast();
+  const [currentQuestion, setCurrentQuestion] = useState('');
+
+  useEffect(() => {
+    // Set an initial question on component mount
+    setCurrentQuestion(behavioralQuestions[Math.floor(Math.random() * behavioralQuestions.length)]);
+  }, []);
+
+  const getNewQuestion = () => {
+    let nextQuestion;
+    do {
+      nextQuestion = behavioralQuestions[Math.floor(Math.random() * behavioralQuestions.length)];
+    } while (nextQuestion === currentQuestion); // Ensure new question is different
+    setCurrentQuestion(nextQuestion);
+    setUserAnswer(''); // Clear textarea for the new question
+    setResult(null); // Clear previous results
+  };
+
 
   const handleAnalyze = async () => {
     if (!userAnswer) {
@@ -79,12 +110,20 @@ export function BehavioralQuestionAnalyzer() {
             </CardHeader>
             <CardContent className="space-y-4">
                  <div className="space-y-2">
-                    <Label htmlFor="user-answer">Enter your story for a question like "Tell me about a time when..."</Label>
+                    <div className="flex justify-between items-center">
+                        <Label htmlFor="user-answer" className="font-semibold">Your Question:</Label>
+                        <Button variant="ghost" size="sm" onClick={getNewQuestion}>
+                            <RefreshCw className="mr-2 h-3 w-3"/>
+                            Get New Question
+                        </Button>
+                    </div>
+                    <p className="p-3 bg-secondary rounded-md text-sm font-medium text-center">"{currentQuestion}"</p>
+                    <Label htmlFor="user-answer" className="font-semibold pt-4 block">Your Answer:</Label>
                     <Textarea
                         id="user-answer"
                         value={userAnswer}
                         onChange={(e) => setUserAnswer(e.target.value)}
-                        placeholder="Describe a situation where you faced a challenge and how you handled it..."
+                        placeholder="Describe the situation, your task, the action you took, and the result..."
                         rows={6}
                         disabled={isLoading}
                     />
