@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -183,7 +182,7 @@ export default function Home() {
                   </motion.div>
               </motion.div>
           </div>
-      </section>
+      </motion.section>
 
       {/* Features Section */}
       <motion.section 
@@ -223,7 +222,7 @@ export default function Home() {
                 </motion.div>
             </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Why Us Section */}
       <motion.section 
@@ -249,7 +248,7 @@ export default function Home() {
                   </motion.ul>
               </motion.div>
           </div>
-      </section>
+      </motion.section>
 
       {/* Testimonials Section */}
       <motion.section 
@@ -303,7 +302,7 @@ export default function Home() {
             </Carousel>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Blog Section */}
       <motion.section 
@@ -367,7 +366,7 @@ export default function Home() {
                   </Button>
               </motion.div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Final CTA */}
       <motion.section 
