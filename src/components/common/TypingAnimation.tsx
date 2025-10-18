@@ -24,7 +24,6 @@ const variants = {
 
 interface TypingAnimationProps {
   phrases: string[];
-  colors?: string[];
   typingSpeed?: number;
   deletingSpeed?: number;
   pauseDuration?: number;
@@ -32,7 +31,6 @@ interface TypingAnimationProps {
 
 export function TypingAnimation({ 
   phrases,
-  colors = [],
   typingSpeed = 80, 
   deletingSpeed = 50, 
   pauseDuration = 2000 
@@ -79,7 +77,6 @@ export function TypingAnimation({
   }, [typedText, isDeleting, phraseIndex, phrases, typingSpeed, deletingSpeed, pauseDuration]);
 
   const textToShow = typedText || ' '; // Use non-breaking space to maintain height
-  const currentColorClass = colors.length > 0 ? colors[phraseIndex % colors.length] : '';
 
   return (
     <AnimatePresence mode="wait">
@@ -90,7 +87,7 @@ export function TypingAnimation({
         exit="exit"
         variants={variants}
         transition={{ y: { type: 'spring', stiffness: 300, damping: 30 }, opacity: { duration: 0.5 } }}
-        className={cn("inline-block", currentColorClass)}
+        className="inline-block text-primary"
       >
         {textToShow}
         <motion.span

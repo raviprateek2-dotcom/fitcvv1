@@ -104,7 +104,7 @@ export default function Home() {
             >
                 <motion.h1 
                   variants={itemVariants} 
-                  className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl bg-gradient-to-r from-primary via-foreground to-primary bg-200% bg-clip-text text-transparent animate-shimmer-text"
+                  className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl bg-gradient-to-r from-primary via-foreground to-primary bg-clip-text text-transparent animate-gradient"
                 >
                     Don't just write a resume
                 </motion.h1>
@@ -116,7 +116,6 @@ export default function Home() {
                           "Land your dream job.",
                           "Showcase your skills."
                       ]}
-                      colors={['text-primary', 'text-accent', 'text-destructive', 'text-warning']}
                     />
                 </motion.div>
                 <motion.p variants={itemVariants} className="max-w-2xl mx-auto text-muted-foreground md:text-xl">
@@ -136,7 +135,7 @@ export default function Home() {
 
       {/* How It Works Section */}
       <motion.section 
-        className="relative w-full py-20 md:py-32"
+        className="relative w-full py-20 md:py-32 bg-secondary/30"
         variants={sectionVariants}
         initial="hidden"
         whileInView="visible"
@@ -144,7 +143,7 @@ export default function Home() {
       >
         <div id="how-it-works" className="container mx-auto px-4 md:px-6">
               <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
-                  <motion.div variants={itemVariants} className="inline-block rounded-lg bg-card/50 backdrop-blur-sm px-3 py-1 text-sm font-medium border">How It Works</motion.div>
+                  <motion.div variants={itemVariants} className="inline-block rounded-lg bg-background/50 backdrop-blur-sm px-3 py-1 text-sm font-medium border">How It Works</motion.div>
                   <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Three Simple Steps to Your Dream Job</motion.h2>
               </div>
               <motion.div
@@ -212,45 +211,31 @@ export default function Home() {
                               </div>
                               <div>
                                 <h3 className="font-semibold text-xl">{feature.title}</h3>
-                                <p className="text-muted-foreground text-lg">{feature.description}</p>
+                                <p className="text-muted-foreground">{feature.description}</p>
                               </div>
                           </motion.li>
                         ))}
                     </motion.ul>
                 </motion.div>
+                 <motion.div variants={itemVariants}>
+                    <Card variant="neuro" className="w-full">
+                        <Image 
+                            src={PlaceHolderImages.find(img => img.id === 'why-us-image')?.imageUrl || ''} 
+                            alt="Resume design showcase"
+                            width={600}
+                            height={400}
+                            data-ai-hint="resume design"
+                            className="rounded-lg object-cover"
+                        />
+                    </Card>
+                </motion.div>
             </div>
         </div>
       </motion.section>
 
-      {/* Why Us Section */}
-      <motion.section 
-        className="relative w-full py-20 md:py-32"
-        variants={sectionVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.5 }}
-      >
-          <div className="container mx-auto px-4 md:px-6">
-               <motion.div
-                 variants={sectionVariants}
-                 className="space-y-8 max-w-3xl mx-auto text-center"
-               >
-                  <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Don't just write a resume. Design your future.</motion.h2>
-                  <motion.ul
-                    variants={sectionVariants}
-                    className="space-y-4 text-xl inline-flex flex-col items-start text-left"
-                  >
-                    <motion.li variants={itemVariants} className="flex items-center gap-3"><Sparkles className="text-accent h-6 w-6"/><span>AI-powered content suggestions.</span></motion.li>
-                    <motion.li variants={itemVariants} className="flex items-center gap-3"><DraftingCompass className="text-accent h-6 w-6"/><span>Professionally designed templates.</span></motion.li>
-                    <motion.li variants={itemVariants} className="flex items-center gap-3"><FileText className="text-accent h-6 w-6"/><span>Intuitive real-time editor.</span></motion.li>
-                  </motion.ul>
-              </motion.div>
-          </div>
-      </motion.section>
-
       {/* Testimonials Section */}
       <motion.section 
-        className="relative w-full py-20 md:py-32"
+        className="relative w-full py-20 md:py-32 bg-secondary/30"
         variants={sectionVariants}
         initial="hidden"
         whileInView="visible"
@@ -258,10 +243,10 @@ export default function Home() {
       >
         <div id="testimonials" className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
-            <motion.div variants={itemVariants} className="inline-block rounded-lg bg-card/50 backdrop-blur-sm border px-3 py-1 text-sm font-medium">What Our Users Say</motion.div>
+            <motion.div variants={itemVariants} className="inline-block rounded-lg bg-background/50 backdrop-blur-sm border px-3 py-1 text-sm font-medium">What Our Users Say</motion.div>
             <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Loved by Job Seekers Worldwide</motion.h2>
           </div>
-          <div>
+          <motion.div variants={itemVariants}>
             <Carousel
               opts={{ align: "start", loop: true }}
               plugins={[Autoplay({ delay: 5000 })]}
@@ -270,7 +255,7 @@ export default function Home() {
               <CarouselContent>
                 {testimonials.map((testimonial, index) => (
                   <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
-                    <motion.div variants={itemVariants} className="p-1 h-full">
+                    <div className="p-1 h-full">
                       <Card className="flex flex-col justify-between h-full p-8 transition-all duration-300 hover:scale-105 hover:shadow-2xl" variant="neuro">
                         <CardContent className="p-0 flex flex-col gap-6">
                           <div className="flex">
@@ -285,20 +270,20 @@ export default function Home() {
                               <AvatarFallback>{testimonial.author.charAt(0)}</AvatarFallback>
                             </Avatar>
                             <div>
-                              <p className="font-semibold text-lg">{testimonial.author}</p>
-                              <p className="text-md text-muted-foreground">{testimonial.title}</p>
+                              <p className="font-semibold">{testimonial.author}</p>
+                              <p className="text-sm text-muted-foreground">{testimonial.title}</p>
                             </div>
                           </div>
                         </CardContent>
                       </Card>
-                    </motion.div>
+                    </div>
                   </CarouselItem>
                 ))}
               </CarouselContent>
               <CarouselPrevious className="hidden sm:flex" />
               <CarouselNext className="hidden sm:flex" />
             </Carousel>
-          </div>
+          </motion.div>
         </div>
       </motion.section>
 
@@ -312,7 +297,7 @@ export default function Home() {
       >
         <div id="blog" className="container mx-auto px-4 md:px-6">
             <motion.div variants={itemVariants} className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
-              <div className="inline-block rounded-lg bg-card/50 backdrop-blur-sm border px-3 py-1 text-sm font-medium">From Our Blog</div>
+              <div className="inline-block rounded-lg bg-secondary px-3 py-1 text-sm font-medium">From Our Blog</div>
               <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Career Advice & Resume Tips</h2>
               <p className="max-w-[600px] text-muted-foreground md:text-lg">
                 Get the latest insights from our career experts to help you land your dream job.

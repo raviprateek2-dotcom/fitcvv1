@@ -99,7 +99,7 @@ export default function TemplatesPage() {
           animate="visible"
         >
           {templates.filter(t => t.image).map((template) => (
-            <motion.div key={template.id} variants={itemVariants} className="transition-all duration-300 hover:scale-105">
+            <motion.div key={template.id} variants={itemVariants}>
               <Card className="group overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 h-full flex flex-col" variant='neuro'>
                 <CardContent className="p-0 relative">
                   {template.isPremium && (
@@ -162,5 +162,3 @@ export default function TemplatesPage() {
     </div>
   );
 }
-
-    

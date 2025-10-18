@@ -88,7 +88,7 @@ export default function PricingPage() {
           animate="visible"
         >
           <motion.div variants={itemVariants} className="w-full">
-            <Card className="shadow-lg h-full flex flex-col transition-all duration-300 hover:shadow-2xl hover:scale-105" variant="neuro">
+            <Card className="shadow-lg h-full flex flex-col transition-all duration-300 hover:shadow-2xl" variant="neuro">
               <CardHeader className="text-center p-8">
                 <CardTitle className="font-headline text-3xl">Free</CardTitle>
                 <CardDescription>Perfect for getting started and landing your first interview.</CardDescription>
@@ -117,7 +117,7 @@ export default function PricingPage() {
           </motion.div>
 
           <motion.div variants={itemVariants} className="w-full">
-            <Card className="shadow-2xl border-2 border-primary/50 relative h-full flex flex-col transition-all duration-300 hover:shadow-2xl hover:scale-105" variant="neuro">
+            <Card className="shadow-2xl border-2 border-primary/50 relative h-full flex flex-col transition-all duration-300" variant="neuro">
                <div className="absolute top-0 -translate-y-1/2 w-full flex justify-center">
                 <div className="bg-primary/20 text-primary px-4 py-1 rounded-full text-sm font-semibold shadow-lg flex items-center gap-2">
                   <Sparkles className="w-4 h-4" />
@@ -175,5 +175,3 @@ export default function PricingPage() {
     </div>
   );
 }
-
-    

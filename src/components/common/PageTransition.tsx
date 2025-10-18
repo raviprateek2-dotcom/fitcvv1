@@ -1,3 +1,4 @@
+
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
@@ -15,7 +16,7 @@ const pageVariants = {
   },
   out: {
     opacity: 0,
-    y: 10,
+    y: -10,
   },
 };
 
