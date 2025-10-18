@@ -126,7 +126,7 @@ export function AboutPageClient() {
                 <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold">Meet the Founder</motion.h2>
                 <motion.div variants={itemVariants} className="flex flex-col items-center gap-4 mt-8 max-w-3xl mx-auto">
                     <Avatar className="h-40 w-40 border-4 border-primary">
-                        <AvatarImage src="https://i.pravatar.cc/150?u=ravi" alt="Ravi Prateek" />
+                        <AvatarImage src="/photo.jpg" alt="Ravi Prateek" />
                         <AvatarFallback>RP</AvatarFallback>
                     </Avatar>
                     <h3 className="text-2xl font-bold font-headline mb-0">Ravi Prateek</h3>
