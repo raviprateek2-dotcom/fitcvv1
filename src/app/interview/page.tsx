@@ -10,6 +10,7 @@ import { BehavioralQuestionAnalyzer } from '@/components/interview/BehavioralQue
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Image from 'next/image';
 import { blogPosts } from '@/lib/blog-posts';
+import { MockInterview } from '@/components/interview/MockInterview';
 
 const featuredBlogs = blogPosts.filter(p => [
     'job-interview-checklist',
@@ -33,6 +34,10 @@ export default function InterviewPage() {
                 </CardDescription>
             </CardHeader>
             <CardContent className="p-8 md:p-12 grid gap-12">
+
+                <MockInterview />
+
+                <Separator />
 
                 <BehavioralQuestionAnalyzer />
 
@@ -78,38 +83,6 @@ export default function InterviewPage() {
                         </Button>
                     </div>
                 </section>
-                
-                <Separator />
-
-                {/* Tools & Trends Section */}
-                <div className="grid md:grid-cols-2 gap-8 items-start">
-                    <section>
-                        <h2 className="text-2xl font-headline font-bold mb-6 flex items-center gap-2"><Sparkles className="text-yellow-500"/> AI Prep Tools (Coming Soon)</h2>
-                        <div className="space-y-4">
-                            <div className="p-4 border rounded-lg bg-background/50">
-                                <h3 className="font-semibold flex items-center gap-2"><Bot /> AI Mock Interviewer</h3>
-                                <p className="text-sm text-muted-foreground mt-1">Practice your answers with an AI that gives real-time feedback on your clarity, confidence, and content.</p>
-                            </div>
-                        </div>
-                    </section>
-                    <section>
-                        <h2 className="text-2xl font-headline font-bold mb-6 flex items-center gap-2"><CalendarClock /> Today's Interview Trends</h2>
-                        <ul className="space-y-4 text-muted-foreground">
-                            <li className="flex items-start gap-3">
-                                <ArrowRight className="h-4 w-4 mt-1 text-primary flex-shrink-0"/>
-                                <div><strong className="font-semibold text-foreground">Virtual Interviews:</strong> Be prepared for video calls. Test your tech, check your background, and practice looking at the camera.</div>
-                            </li>
-                             <li className="flex items-start gap-3">
-                                <ArrowRight className="h-4 w-4 mt-1 text-primary flex-shrink-0"/>
-                                <div><strong className="font-semibold text-foreground">Asynchronous Interviews:</strong> You may be asked to record your answers to questions on your own time. Be concise and energetic.</div>
-                            </li>
-                             <li className="flex items-start gap-3">
-                                <ArrowRight className="h-4 w-4 mt-1 text-primary flex-shrink-0"/>
-                                <div><strong className="font-semibold text-foreground">Behavioral Questions:</strong> Expect questions like "Tell me about a time when...". Have your STAR-method stories ready.</div>
-                            </li>
-                        </ul>
-                    </section>
-                </div>
                 
                 <Separator />
 
