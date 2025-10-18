@@ -335,10 +335,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     }
     setIsAiLoading(true);
     setKeywordSuggestions([]);
-    setAnalysisResult(null);
-    setReviewResult(null);
-
-
+    
     const resumeContent = JSON.stringify({
       summary: resumeData.summary,
       experience: resumeData.experience,
@@ -354,6 +351,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
         setKeywordSuggestions(result.data.suggestions);
         toast({ title: 'Keywords Suggested!', description: 'Here are some keywords you might want to add.' });
       } else {
+        setKeywordSuggestions([]);
         toast({ variant: 'destructive', title: 'Error', description: result.error });
       }
     } catch (error: any) {
@@ -458,8 +456,6 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     }
     setIsAnalyzing(true);
     setAnalysisResult(null);
-    setReviewResult(null); // Clear other result
-    setKeywordSuggestions([]);
 
     const resumeContent = JSON.stringify(resumeData);
 
@@ -468,6 +464,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
       if (result.success && result.data) {
         setAnalysisResult(result.data);
       } else {
+        setAnalysisResult(null);
         toast({ variant: 'destructive', title: 'Analysis Failed', description: result.error });
       }
     } catch (error: any) {
@@ -481,8 +478,6 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
       if (!resumeData) return;
       setIsReviewing(true);
       setReviewResult(null);
-      setAnalysisResult(null); // Clear other result
-      setKeywordSuggestions([]);
 
       const resumeContent = JSON.stringify(resumeData);
       try {
@@ -490,6 +485,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
           if (result.success && result.data) {
               setReviewResult(result.data);
           } else {
+              setReviewResult(null);
               toast({ variant: 'destructive', title: 'Review Failed', description: result.error });
           }
       } catch (error: any) {
@@ -671,8 +667,8 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                     </Accordion>
                   </TabsContent>
 
-                  <TabsContent value="ai-review" className="p-6">
-                    <Card variant="neuro">
+                   <TabsContent value="ai-review" className="p-6">
+                     <Card variant="neuro">
                         <CardHeader>
                             <CardTitle className="font-headline">AI Analysis</CardTitle>
                             <CardDescription>Get general feedback or analyze your resume against a specific job description.</CardDescription>
@@ -688,88 +684,108 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                                 placeholder="Paste a job description here to enable analysis features..."
                                 />
                             </div>
-
-                            {(isAnalyzing || isReviewing || isAiLoading) ? (
-                                <div className="flex items-center justify-center py-8"><Loader2 className="mr-2 h-5 w-5 animate-spin" />Analyzing...</div>
-                            ) : analysisResult ? (
-                                <div className="space-y-4 pt-4 border-t">
-                                    <h3 className="font-semibold">Match Analysis Result</h3>
-                                    <div>
-                                        <Label>Match Score</Label>
-                                        <div className="flex items-center gap-4">
-                                            <Progress value={analysisResult.matchScore} className="w-full" />
-                                            <span className="font-bold text-lg">{analysisResult.matchScore}%</span>
-                                        </div>
-                                        <p className="text-xs text-muted-foreground mt-1">{analysisResult.summary}</p>
-                                    </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <h4 className="font-semibold text-green-600">Strengths</h4>
-                                            <ul className="list-none space-y-2 text-sm">
-                                                {analysisResult.positivePoints.map((point, i) => (
-                                                    <li key={i} className="flex items-start gap-2"><CheckCircle className="h-4 w-4 mt-0.5 text-green-500 shrink-0" />{point}</li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                        <div className="space-y-2">
-                                            <h4 className="font-semibold text-amber-600">Improvements</h4>
-                                            <ul className="list-none space-y-2 text-sm">
-                                                {analysisResult.areasForImprovement.map((point, i) => (
-                                                    <li key={i} className="flex items-start gap-2"><XCircle className="h-4 w-4 mt-0.5 text-amber-500 shrink-0" />{point}</li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            ) : reviewResult ? (
-                                <div className="space-y-4 pt-4 border-t">
-                                <h3 className="font-semibold">General Feedback</h3>
-                                <div>
-                                    <h4 className="font-semibold">Overall Feedback</h4>
-                                    <p className="text-sm text-muted-foreground">{reviewResult.overallFeedback}</p>
-                                </div>
-                                <div>
-                                    <h4 className="font-semibold text-green-600">Positive Points</h4>
-                                    <ul className="list-none space-y-2 text-sm mt-2">
-                                        {reviewResult.positivePoints.map((point, i) => <li key={i} className="flex items-start gap-2"><CheckCircle className="h-4 w-4 mt-0.5 text-green-500 shrink-0" />{point}</li>)}
-                                    </ul>
-                                </div>
-                                <div>
-                                    <h4 className="font-semibold text-amber-600">Areas for Improvement</h4>
-                                    <ul className="list-none space-y-2 text-sm mt-2">
-                                        {reviewResult.areasForImprovement.map((point, i) => <li key={i} className="flex items-start gap-2"><XCircle className="h-4 w-4 mt-0.5 text-amber-500 shrink-0" />{point}</li>)}
-                                    </ul>
-                                </div>
-                                </div>
-                            ) : keywordSuggestions.length > 0 ? (
-                                <div className="space-y-2 pt-4 border-t">
-                                    <Label>Keywords found in the job description that are missing from your resume. Click a keyword to add it to your skills:</Label>
-                                    <div className="flex flex-wrap gap-2">
-                                    {keywordSuggestions.map((keyword, i) => (
-                                        <Button key={i} variant="secondary" size="sm" className="h-auto" onClick={() => handleAddKeywordAsSkill(keyword)}>
-                                            <PlusCircle className="mr-2 h-3 w-3" />{keyword}
-                                        </Button>
-                                    ))}
-                                    </div>
-                                </div>
-                            ) : null }
-
+                            <ProFeatureWrapper isPro={isProUser}>
+                                <Accordion type="multiple" className="w-full space-y-4">
+                                     {analysisResult && (
+                                        <AccordionItem value="match-analysis">
+                                            <AccordionTrigger className="font-semibold">Match Analysis</AccordionTrigger>
+                                            <AccordionContent className="pt-4">
+                                                <div className="space-y-4 p-4 border rounded-lg bg-secondary/30">
+                                                    <div>
+                                                        <Label>Match Score</Label>
+                                                        <div className="flex items-center gap-4">
+                                                            <Progress value={analysisResult.matchScore} className="w-full" />
+                                                            <span className="font-bold text-lg">{analysisResult.matchScore}%</span>
+                                                        </div>
+                                                        <p className="text-xs text-muted-foreground mt-1">{analysisResult.summary}</p>
+                                                    </div>
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                        <div className="space-y-2">
+                                                            <h4 className="font-semibold text-green-600">Strengths</h4>
+                                                            <ul className="list-none space-y-2 text-sm">
+                                                                {analysisResult.positivePoints.map((point, i) => (
+                                                                    <li key={i} className="flex items-start gap-2"><CheckCircle className="h-4 w-4 mt-0.5 text-green-500 shrink-0" />{point}</li>
+                                                                ))}
+                                                            </ul>
+                                                        </div>
+                                                        <div className="space-y-2">
+                                                            <h4 className="font-semibold text-amber-600">Improvements</h4>
+                                                            <ul className="list-none space-y-2 text-sm">
+                                                                {analysisResult.areasForImprovement.map((point, i) => (
+                                                                    <li key={i} className="flex items-start gap-2"><XCircle className="h-4 w-4 mt-0.5 text-amber-500 shrink-0" />{point}</li>
+                                                                ))}
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </AccordionContent>
+                                        </AccordionItem>
+                                    )}
+                                     {keywordSuggestions.length > 0 && (
+                                        <AccordionItem value="keyword-suggestions">
+                                            <AccordionTrigger className="font-semibold">Keyword Suggestions</AccordionTrigger>
+                                            <AccordionContent className="pt-4">
+                                                <div className="space-y-2 p-4 border rounded-lg bg-secondary/30">
+                                                    <Label>Keywords from the job description that are missing from your resume. Click a keyword to add it to your skills:</Label>
+                                                    <div className="flex flex-wrap gap-2">
+                                                    {keywordSuggestions.map((keyword, i) => (
+                                                        <Button key={i} variant="secondary" size="sm" className="h-auto" onClick={()={() => handleAddKeywordAsSkill(keyword)}>
+                                                            <PlusCircle className="mr-2 h-3 w-3" />{keyword}
+                                                        </Button>
+                                                    ))}
+                                                    </div>
+                                                </div>
+                                            </AccordionContent>
+                                        </AccordionItem>
+                                    )}
+                                     {reviewResult && (
+                                        <AccordionItem value="general-review">
+                                            <AccordionTrigger className="font-semibold">General Feedback</AccordionTrigger>
+                                            <AccordionContent className="pt-4">
+                                                <div className="space-y-4 p-4 border rounded-lg bg-secondary/30">
+                                                    <div>
+                                                        <h4 className="font-semibold">Overall Feedback</h4>
+                                                        <p className="text-sm text-muted-foreground">{reviewResult.overallFeedback}</p>
+                                                    </div>
+                                                    <div>
+                                                        <h4 className="font-semibold text-green-600">Positive Points</h4>
+                                                        <ul className="list-none space-y-2 text-sm mt-2">
+                                                            {reviewResult.positivePoints.map((point, i) => <li key={i} className="flex items-start gap-2"><CheckCircle className="h-4 w-4 mt-0.5 text-green-500 shrink-0" />{point}</li>)}
+                                                        </ul>
+                                                    </div>
+                                                    <div>
+                                                        <h4 className="font-semibold text-amber-600">Areas for Improvement</h4>
+                                                        <ul className="list-none space-y-2 text-sm mt-2">
+                                                            {reviewResult.areasForImprovement.map((point, i) => <li key={i} className="flex items-start gap-2"><XCircle className="h-4 w-4 mt-0.5 text-amber-500 shrink-0" />{point}</li>)}
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </AccordionContent>
+                                        </AccordionItem>
+                                     )}
+                                     {(isAnalyzing || isReviewing || isAiLoading) && <div className="text-center p-4"><Loader2 className="h-6 w-6 animate-spin"/></div>}
+                                </Accordion>
+                            </ProFeatureWrapper>
                         </CardContent>
-                        <ProFeatureWrapper isPro={isProUser}>
-                            <CardFooter className="flex flex-wrap gap-2 pt-4 border-t">
-                                <Button onClick={handleAnalyzeResume} disabled={!resumeData.jobDescription || isAnalyzing || isReviewing || isAiLoading} className="flex-1">
-                                    <SearchCheck className="mr-2 h-4 w-4" /> Analyze Match
-                                </Button>
-                                <Button onClick={handleSuggestKeywords} disabled={!resumeData.jobDescription || isAnalyzing || isReviewing || isAiLoading} className="flex-1" variant="secondary">
-                                    <KeySquare className="mr-2 h-4 w-4" /> Suggest Keywords
-                                </Button>
-                                <Button onClick={handleReviewResume} disabled={isAnalyzing || isReviewing || isAiLoading} className="w-full" variant="ghost">
-                                    <Sparkles className="mr-2 h-4 w-4" /> Get General Feedback
-                                </Button>
-                            </CardFooter>
-                        </ProFeatureWrapper>
-                    </Card>
-                  </TabsContent>
+                        <CardFooter>
+                            <ProFeatureWrapper isPro={isProUser}>
+                                <div className="w-full space-y-2">
+                                    <div className="flex flex-wrap gap-2">
+                                        <Button onClick={handleAnalyzeResume} disabled={!resumeData.jobDescription || isAnalyzing || isReviewing || isAiLoading} className="flex-1">
+                                            <SearchCheck className="mr-2 h-4 w-4" /> Analyze Match
+                                        </Button>
+                                        <Button onClick={handleSuggestKeywords} disabled={!resumeData.jobDescription || isAnalyzing || isReviewing || isAiLoading} className="flex-1" variant="secondary">
+                                            <KeySquare className="mr-2 h-4 w-4" /> Suggest Keywords
+                                        </Button>
+                                    </div>
+                                    <Button onClick={handleReviewResume} disabled={isAnalyzing || isReviewing || isAiLoading} className="w-full" variant="ghost">
+                                        <Sparkles className="mr-2 h-4 w-4" /> Get General Feedback
+                                    </Button>
+                                </div>
+                            </ProFeatureWrapper>
+                        </CardFooter>
+                     </Card>
+                   </TabsContent>
                   
                   <TabsContent value="cover-letter" className="p-6">
                   <div className="space-y-6">
@@ -817,3 +833,5 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     </div>
   );
 }
+
+    
