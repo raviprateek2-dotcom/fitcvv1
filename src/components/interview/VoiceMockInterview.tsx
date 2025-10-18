@@ -19,7 +19,7 @@ const interviewQuestions = [
   "Why should we hire you?",
 ];
 
-type InterviewState = 'idle' | 'listening' | 'processing' | 'speaking';
+type InterviewState = 'idle' | 'listening' | 'processing' | 'speaking' | 'generatingQuestionAudio';
 
 export function VoiceMockInterview() {
   const [currentQuestion, setCurrentQuestion] = useState('');
@@ -27,6 +27,7 @@ export function VoiceMockInterview() {
   const [interviewState, setInterviewState] = useState<InterviewState>('idle');
   const [transcript, setTranscript] = useState('');
   const [feedbackAudio, setFeedbackAudio] = useState<string | null>(null);
+  const [questionAudio, setQuestionAudio] = useState<string | null>(null);
 
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -77,17 +78,36 @@ export function VoiceMockInterview() {
     setCurrentQuestion(nextQuestion);
     setTranscript('');
     setFeedbackAudio(null);
+    setQuestionAudio(null);
     setInterviewState('idle');
   };
 
-  const readQuestionAloud = () => {
-    if ('speechSynthesis' in window && currentQuestion) {
-      const utterance = new SpeechSynthesisUtterance(currentQuestion);
-      utterance.rate = 0.9;
-      utterance.pitch = 1.1;
-      window.speechSynthesis.speak(utterance);
+  const readQuestionAloud = async () => {
+    if (interviewState !== 'idle') return;
+
+    if (questionAudio && audioRef.current) {
+        audioRef.current.src = questionAudio;
+        audioRef.current.play();
+        return;
+    }
+
+    setInterviewState('generatingQuestionAudio');
+    try {
+        const audioResponse = await aiNarrate(currentQuestion);
+        if (audioResponse.success && audioResponse.data && audioRef.current) {
+            setQuestionAudio(audioResponse.data.audioDataUri);
+            audioRef.current.src = audioResponse.data.audioDataUri;
+            audioRef.current.play();
+        } else {
+            throw new Error(audioResponse.error || 'Failed to generate question audio.');
+        }
+    } catch (error: any) {
+        toast({ variant: 'destructive', title: 'Error Reading Question', description: error.message });
+    } finally {
+        setInterviewState('idle');
     }
   };
+
 
   const handleToggleListening = () => {
     if (interviewState === 'listening') {
@@ -146,6 +166,7 @@ export function VoiceMockInterview() {
 
         return () => {
             if (audioRef.current) {
+                // eslint-disable-next-line react-hooks/exhaustive-deps
                 audioRef.current.removeEventListener('ended', handleAudioEnd);
             }
         }
@@ -173,7 +194,8 @@ export function VoiceMockInterview() {
                 </div>
                  <div className="flex items-center gap-4">
                     <Button variant="outline" size="sm" onClick={readQuestionAloud} disabled={interviewState !== 'idle'}>
-                        <Ear className="mr-2 h-4 w-4"/> Read Question
+                        {interviewState === 'generatingQuestionAudio' ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Ear className="mr-2 h-4 w-4"/>}
+                        Read Question
                     </Button>
                     <Button variant="ghost" size="sm" onClick={getNewQuestion} disabled={interviewState !== 'idle'}>
                         <RefreshCw className="mr-2 h-3 w-3"/> New Question
@@ -185,13 +207,14 @@ export function VoiceMockInterview() {
                         size="lg" 
                         className="rounded-full w-24 h-24 text-lg"
                         onClick={handleToggleListening}
-                        disabled={interviewState === 'processing' || interviewState === 'speaking'}
+                        disabled={interviewState === 'processing' || interviewState === 'speaking' || interviewState === 'generatingQuestionAudio'}
                         variant={interviewState === 'listening' ? 'destructive' : 'default'}
                     >
                          {interviewState === 'listening' && <MicOff />}
                          {interviewState === 'idle' && <Mic />}
                          {interviewState === 'processing' && <Loader2 className="animate-spin" />}
                          {interviewState === 'speaking' && <Volume2 />}
+                          {interviewState === 'generatingQuestionAudio' && <Loader2 className="animate-spin" />}
                      </Button>
                  </motion.div>
                 
@@ -200,6 +223,7 @@ export function VoiceMockInterview() {
                     {interviewState === 'listening' && "Listening... Click to stop."}
                     {interviewState === 'processing' && "Analyzing your answer..."}
                     {interviewState === 'speaking' && "Providing feedback..."}
+                    {interviewState === 'generatingQuestionAudio' && "Generating question audio..."}
                  </p>
                 
                 {transcript && (
