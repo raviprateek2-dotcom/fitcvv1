@@ -146,7 +146,7 @@ export default function Home() {
         <div id="how-it-works" className="container mx-auto px-4 md:px-6">
               <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
                   <motion.div variants={itemVariants} className="inline-block rounded-lg bg-background/50 backdrop-blur-sm px-3 py-1 text-sm font-medium border">How It Works</motion.div>
-                  <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Three Simple Steps to Your Dream Job</motion.h2>
+                  <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl animate-shimmer-text bg-200% bg-gradient-to-r from-primary via-foreground to-accent bg-clip-text text-transparent">Three Simple Steps to Your Dream Job</motion.h2>
               </div>
               <motion.div
                  variants={sectionVariants}
