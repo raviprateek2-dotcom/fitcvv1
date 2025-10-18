@@ -32,31 +32,6 @@ interface AnimatedResumeProps {
     className?: string;
 }
 
-const ModernTemplate = () => (
-    <>
-      <motion.div variants={itemVariants} className="text-center space-y-1">
-        <div className="h-4 w-1/2 rounded bg-primary/80 mx-auto" />
-        <div className="h-2 w-1/3 rounded bg-muted-foreground/50 mx-auto" />
-      </motion.div>
-      <motion.div variants={itemVariants} className="h-px w-full bg-border" />
-      <motion.div variants={itemVariants} className="space-y-1">
-        <div className="h-2 w-full rounded bg-muted-foreground/30" />
-        <div className="h-2 w-5/6 rounded bg-muted-foreground/30" />
-      </motion.div>
-      <motion.div variants={itemVariants} className="h-3 w-1/4 rounded bg-primary/60" />
-      <motion.div variants={itemVariants} className="space-y-2">
-        <div className="h-2 w-full rounded bg-muted-foreground/30" />
-        <div className="h-2 w-full rounded bg-muted-foreground/30" />
-      </motion.div>
-       <motion.div variants={itemVariants} className="h-3 w-1/5 rounded bg-primary/60" />
-       <motion.div variants={itemVariants} className="flex flex-wrap gap-1">
-        <div className="h-3 w-10 rounded-full bg-primary/20" />
-        <div className="h-3 w-12 rounded-full bg-primary/20" />
-        <div className="h-3 w-8 rounded-full bg-primary/20" />
-      </motion.div>
-    </>
-)
-
 const ProfessionalTemplate = () => (
     <motion.div variants={containerVariants} className="flex w-full h-full">
         <div className="w-1/3 bg-secondary/50 p-2 space-y-4">
@@ -135,7 +110,7 @@ export function AnimatedResume({ templateId = 'modern', className }: AnimatedRes
         case 'creative':
         case 'minimalist':
         default:
-            return <ModernTemplate />;
+            return <ProfessionalTemplate />;
     }
   }
 
