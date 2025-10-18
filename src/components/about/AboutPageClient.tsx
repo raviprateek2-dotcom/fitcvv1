@@ -95,7 +95,7 @@ export function AboutPageClient() {
             className="py-20 md:py-28 bg-secondary"
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
+            viewport={{ once: true, amount: 0.2 }}
             variants={containerVariants}
         >
             <div className="container mx-auto px-4 md:px-6 text-center">
