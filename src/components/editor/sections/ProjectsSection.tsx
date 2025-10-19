@@ -54,10 +54,19 @@ export function ProjectsSection({ resumeData, setResumeData }: ProjectsSectionPr
     };
 
     const removeProject = (id: number) => {
-        setResumeData(prev => (prev ? {
-            ...prev,
-            projects: (prev.projects || []).filter(p => p.id !== id)
-        } : null));
+        setResumeData(prev => {
+            if (!prev || !prev.projects) return prev;
+    
+            const updatedProjects = prev.projects.filter(p => p.id !== id);
+    
+            if (updatedProjects.length === 0) {
+                // If the last project is removed, remove the whole section
+                const { projects, ...rest } = prev;
+                return rest as ResumeData;
+            }
+    
+            return { ...prev, projects: updatedProjects };
+        });
     };
     
     const hasProjectsSection = resumeData.projects !== undefined;
@@ -72,7 +81,7 @@ export function ProjectsSection({ resumeData, setResumeData }: ProjectsSectionPr
                     </Button>
                 ) : (
                     <>
-                        {resumeData.projects && resumeData.projects.map((proj) => (
+                        {(resumeData.projects || []).map((proj) => (
                             <div key={proj.id} className="p-4 border rounded-lg space-y-4 relative bg-background">
                                 <div className="space-y-2"><Label>Project Name</Label><Input value={proj.name} onChange={e => handleNestedChange('projects', proj.id, 'name', e.target.value)} /></div>
                                 <div className="space-y-2"><Label>Description (use bullet points)</Label><Textarea rows={3} value={proj.description} onChange={e => handleNestedChange('projects', proj.id, 'description', e.target.value)} /></div>

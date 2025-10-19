@@ -54,10 +54,19 @@ export function SkillsSection({ resumeData, setResumeData }: SkillsSectionProps)
     };
 
     const removeSkill = (id: number) => {
-        setResumeData(prev => (prev ? {
-            ...prev,
-            skills: (prev.skills || []).filter(skill => skill.id !== id)
-        } : null));
+        setResumeData(prev => {
+            if (!prev || !prev.skills) return prev;
+            
+            const updatedSkills = prev.skills.filter(skill => skill.id !== id);
+
+            if (updatedSkills.length === 0) {
+                // If the last skill is removed, remove the whole section
+                const { skills, ...rest } = prev;
+                return rest as ResumeData;
+            }
+
+            return { ...prev, skills: updatedSkills };
+        });
     };
 
     const hasSkillsSection = resumeData.skills !== undefined;
@@ -72,7 +81,7 @@ export function SkillsSection({ resumeData, setResumeData }: SkillsSectionProps)
                     </Button>
                 ) : (
                     <>
-                        {resumeData.skills && resumeData.skills.map((skill) => (
+                        {(resumeData.skills || []).map((skill) => (
                             <div key={skill.id} className="p-4 border rounded-lg space-y-4 bg-background">
                                 <div className="flex items-center gap-4">
                                     <div className="flex-grow space-y-2">
