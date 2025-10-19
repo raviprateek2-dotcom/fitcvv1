@@ -52,7 +52,8 @@ export function DefaultTemplate({ resumeData }: ResumePreviewProps) {
     '--title-font-size': `${styling?.titleFontSize || 36}px`,
     '--heading-font-size': `${styling?.headingFontSize || 18}px`,
     '--body-font-size': `${styling?.bodyFontSize || 14}px`,
-    '--accent-color': accentColor
+    '--accent-color': accentColor,
+    '--primary-color': 'hsl(var(--primary))'
   } as React.CSSProperties;
 
   const fontClass = styling?.fontFamily ? `font-${styling.fontFamily.split('-')[1]}` : 'font-body';
@@ -158,21 +159,21 @@ export function DefaultTemplate({ resumeData }: ResumePreviewProps) {
   if (templateId === 'executive') {
     return (
         <div style={dynamicStyles} className={cn("bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-hidden print:shadow-none print:rounded-none print:max-h-full flex text-[var(--body-font-size)]", fontClass)}>
-            <aside className="w-1/3 text-white p-8 space-y-8 flex flex-col" style={{ backgroundColor: accentColor }}>
-                <div className="space-y-4">
-                    <h3 style={{ fontSize: 'var(--heading-font-size)'}} className="font-bold uppercase tracking-wider font-headline border-b-2 border-white/50 pb-2">Contact</h3>
-                     <div className="flex items-start gap-3"><AtSign size={14} className="mt-1 flex-shrink-0" /><span>{personalInfo.email}</span></div>
+            <aside className="w-1/3 bg-primary text-primary-foreground p-8 space-y-8 flex flex-col">
+                <div className="space-y-4 text-sm">
+                    <h3 style={{ fontSize: 'var(--heading-font-size)'}} className="font-bold uppercase tracking-wider font-headline border-b-2 border-primary-foreground/50 pb-2">Contact</h3>
+                     <div className="flex items-start gap-3"><AtSign size={14} className="mt-1 flex-shrink-0" /><span className="break-all">{personalInfo.email}</span></div>
                     <div className="flex items-start gap-3"><Phone size={14} className="mt-1 flex-shrink-0" /><span>{personalInfo.phone}</span></div>
                     <div className="flex items-start gap-3"><MapPin size={14} className="mt-1 flex-shrink-0" /><span>{personalInfo.location}</span></div>
-                    {personalInfo.website && <div className="flex items-start gap-3"><Globe size={14} className="mt-1 flex-shrink-0" /><span>{personalInfo.website}</span></div>}
+                    {personalInfo.website && <div className="flex items-start gap-3"><Globe size={14} className="mt-1 flex-shrink-0" /><span className="break-all">{personalInfo.website}</span></div>}
                 </div>
                 {skills && skills.length > 0 && (
                     <div className="space-y-4">
-                         <h3 style={{ fontSize: 'var(--heading-font-size)'}} className="font-bold uppercase tracking-wider font-headline border-b-2 border-white/50 pb-2">Skills</h3>
-                         <ul className="space-y-1">
+                         <h3 style={{ fontSize: 'var(--heading-font-size)'}} className="font-bold uppercase tracking-wider font-headline border-b-2 border-primary-foreground/50 pb-2">Skills</h3>
+                         <ul className="space-y-1 text-sm">
                             {(skills || []).map(skill => (
                                 <li key={skill.id} className="flex items-center gap-2">
-                                  <span className="h-1.5 w-1.5 rounded-full bg-white/80"></span>
+                                  <span className="h-1.5 w-1.5 rounded-full bg-primary-foreground/80"></span>
                                   <span>{skill.name}</span>
                                 </li>
                             ))}
@@ -180,13 +181,13 @@ export function DefaultTemplate({ resumeData }: ResumePreviewProps) {
                     </div>
                 )}
                 <div className="space-y-4">
-                     <h3 style={{ fontSize: 'var(--heading-font-size)'}} className="font-bold uppercase tracking-wider font-headline border-b-2 border-white/50 pb-2">Education</h3>
-                     <div className="space-y-4">
+                     <h3 style={{ fontSize: 'var(--heading-font-size)'}} className="font-bold uppercase tracking-wider font-headline border-b-2 border-primary-foreground/50 pb-2">Education</h3>
+                     <div className="space-y-4 text-sm">
                         {education.map(edu => (
                             <div key={edu.id}>
                                 <h4 className="font-bold font-headline">{edu.degree}</h4>
-                                <p className="text-white/90">{edu.institution}</p>
-                                <p className="text-xs text-white/80">{edu.date}</p>
+                                <p className="text-primary-foreground/90">{edu.institution}</p>
+                                <p className="text-xs text-primary-foreground/80">{edu.date}</p>
                             </div>
                         ))}
                      </div>

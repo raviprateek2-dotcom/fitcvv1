@@ -40,12 +40,13 @@ export function DefaultCoverLetter({ resumeData }: CoverLetterPreviewProps) {
     '--heading-font-size': `${styling?.headingFontSize || 18}px`,
     '--body-font-size': `${styling?.bodyFontSize || 14}px`,
     '--accent-color': accentColor,
+    '--primary-color': 'hsl(var(--primary))'
   } as React.CSSProperties;
 
   if (templateId === 'executive') {
     return (
         <div style={dynamicStyles} className={cn("bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-hidden print:shadow-none print:rounded-none print:max-h-full flex text-[var(--body-font-size)]", fontClass)}>
-            <aside className="w-1/3 text-white p-8" style={{ backgroundColor: accentColor }}>
+            <aside className="w-1/3 text-primary-foreground p-8 bg-primary">
                 {/* Sidebar can be decorative or hold contact details */}
             </aside>
             <main className="w-2/3 p-10 leading-relaxed space-y-4 whitespace-pre-wrap">
