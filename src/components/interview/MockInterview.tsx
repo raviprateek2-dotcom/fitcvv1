@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -8,8 +9,9 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { mockInterview } from '@/app/actions/ai-mock-interviewer';
 import type { MockInterviewOutput } from '@/app/actions/schemas/ai-mock-interviewer';
-import { Loader2, Sparkles, RefreshCw, Bot, Lightbulb } from 'lucide-react';
+import { Loader2, Sparkles, RefreshCw, Bot, Lightbulb, Volume2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { aiNarrate } from '@/app/actions/ai-narrator';
 
 const interviewQuestions = [
     "Tell me about yourself.",
@@ -30,6 +32,8 @@ export function MockInterview() {
   const [result, setResult] = useState<MockInterviewOutput | null>(null);
   const { toast } = useToast();
   const [currentQuestion, setCurrentQuestion] = useState('');
+  const [isNarrating, setIsNarrating] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     // Set an initial question on component mount
@@ -81,8 +85,28 @@ export function MockInterview() {
     }
   };
 
+  const handleNarrateFeedback = async () => {
+    if (!result) return;
+    setIsNarrating(true);
+    try {
+      const fullFeedbackText = `Here is the feedback: ${result.feedback}. Here is a suggested improvement: ${result.suggestedImprovement}`;
+      const response = await aiNarrate(fullFeedbackText);
+      if (response.success && response.data && audioRef.current) {
+        audioRef.current.src = response.data.audioDataUri;
+        audioRef.current.play();
+      } else {
+        throw new Error(response.error || 'Failed to generate audio.');
+      }
+    } catch (error: any) {
+      toast({ variant: 'destructive', title: 'Narration Failed', description: error.message });
+    } finally {
+      setIsNarrating(false);
+    }
+  };
+
   return (
     <section>
+        <audio ref={audioRef} className="hidden" />
         <Card variant='neuro' className="bg-gradient-to-br from-background to-secondary/30">
             <CardHeader>
                 <CardTitle className="text-2xl font-headline font-bold flex items-center gap-2">
@@ -129,8 +153,14 @@ export function MockInterview() {
                             exit={{ opacity: 0, y: -20 }}
                             transition={{ duration: 0.5, ease: 'easeOut' }}
                         >
-                             <div className="space-y-2">
+                            <div className="flex justify-between items-center">
                                 <h3 className="font-semibold flex items-center gap-2"><Lightbulb className="text-yellow-500" /> General Feedback</h3>
+                                <Button size="icon" variant="ghost" onClick={handleNarrateFeedback} disabled={isNarrating}>
+                                    {isNarrating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Volume2 className="h-4 w-4" />}
+                                    <span className="sr-only">Read feedback aloud</span>
+                                </Button>
+                            </div>
+                             <div className="space-y-2">
                                 <p className="text-sm text-muted-foreground p-4 bg-secondary rounded-md">{result.feedback}</p>
                             </div>
                              <div className="space-y-2">

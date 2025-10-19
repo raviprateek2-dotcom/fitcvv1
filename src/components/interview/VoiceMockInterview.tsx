@@ -75,15 +75,22 @@ export function VoiceMockInterview() {
                 // Automatically move to processing if we were listening
                 if (interviewState === 'listening') {
                     setInterviewState('processing');
-                    processTranscript();
                 }
             };
         } else {
             setInterviewState('unsupported');
         }
     }
-  }, [toast, interviewState]); // Re-run if state changes, to handle onend logic properly
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [toast]);
   
+  useEffect(() => {
+    if (interviewState === 'processing') {
+      processTranscript();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [interviewState]);
+
   const getNewQuestion = () => {
     let nextQuestion;
     do {
@@ -129,7 +136,7 @@ export function VoiceMockInterview() {
   const handleToggleListening = () => {
     if (interviewState === 'listening') {
       recognitionRef.current?.stop();
-      // onend will trigger processing
+      // onend will trigger processing state change
     } else {
       if (!recognitionRef.current || interviewState === 'unsupported') {
         toast({ variant: 'destructive', title: 'Browser Not Supported', description: 'Speech recognition is not supported in this browser.' });
