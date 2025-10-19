@@ -68,35 +68,15 @@ const TemplateLoader = () => (
 
 // Dynamic imports for templates
 const DefaultTemplate = dynamic(() => import('./templates/DefaultTemplate').then(mod => mod.DefaultTemplate), { loading: () => <TemplateLoader /> });
-const ProfessionalTemplate = dynamic(() => import('./templates/ProfessionalTemplate').then(mod => mod.ProfessionalTemplate), { loading: () => <TemplateLoader /> });
-const ExecutiveTemplate = dynamic(() => import('./templates/ExecutiveTemplate').then(mod => mod.ExecutiveTemplate), { loading: () => <TemplateLoader /> });
 const DefaultCoverLetter = dynamic(() => import('./templates/DefaultCoverLetter').then(mod => mod.DefaultCoverLetter), { loading: () => <TemplateLoader /> });
-const ProfessionalCoverLetter = dynamic(() => import('./templates/ProfessionalCoverLetter').then(mod => mod.ProfessionalCoverLetter), { loading: () => <TemplateLoader /> });
-const ExecutiveCoverLetter = dynamic(() => import('./templates/ExecutiveCoverLetter').then(mod => mod.ExecutiveCoverLetter), { loading: () => <TemplateLoader /> });
 
 
 export function ResumePreview({ resumeData }: ResumePreviewProps) {
-  const { templateId = 'modern' } = resumeData;
-
-  switch (templateId) {
-    case 'professional':
-      return <ProfessionalTemplate resumeData={resumeData} />;
-    case 'executive':
-      return <ExecutiveTemplate resumeData={resumeData} />;
-    default:
-      return <DefaultTemplate resumeData={resumeData} />;
-  }
+  // All templates are now handled by DefaultTemplate
+  return <DefaultTemplate resumeData={resumeData} />;
 }
 
 export function CoverLetterPreview({ resumeData }: CoverLetterPreviewProps) {
-  const { templateId = 'modern' } = resumeData;
-  
-  switch (templateId) {
-    case 'professional':
-        return <ProfessionalCoverLetter resumeData={resumeData} />;
-    case 'executive':
-        return <ExecutiveCoverLetter resumeData={resumeData} />;
-    default:
-      return <DefaultCoverLetter resumeData={resumeData} />;
-  }
+  // All cover letter templates are now handled by DefaultCoverLetter
+  return <DefaultCoverLetter resumeData={resumeData} />;
 }
