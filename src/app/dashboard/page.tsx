@@ -3,7 +3,7 @@
 
 import { useCollection, useUser } from '@/firebase';
 import { useEffect, useState, useRef, useMemo } from 'react';
-import { addDoc, doc, serverTimestamp, collection } from 'firebase/firestore';
+import { serverTimestamp, collection, doc } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -284,51 +284,87 @@ export default function DashboardPage() {
   const handlePdfUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file || !user || !resumesQuery) return;
-
+  
     setIsParsing(true);
     toast({ title: 'Parsing PDF...', description: 'Our AI is reading your resume. This may take a moment.' });
-
+  
     try {
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = async () => {
-        const base64String = reader.result as string;
-
-        const result = await parseResumeFromPdf(base64String);
-        
-        if (!result.success || !result.data) {
-          throw new Error(result.error || 'Failed to parse resume.');
+        try {
+          const base64String = reader.result as string;
+  
+          const result = await parseResumeFromPdf(base64String);
+          
+          if (!result.success || !result.data) {
+            throw new Error(result.error || 'Failed to parse resume.');
+          }
+          
+          const newResumeData = {
+            title: result.data.resumeData.personalInfo.name ? `${result.data.resumeData.personalInfo.name}'s Resume` : 'Imported Resume',
+            templateId: 'modern', // Default to 'modern' template for imported resumes
+            ...result.data.resumeData, // Spread the parsed data
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+            jobDescription: '',
+            coverLetter: '',
+            companyInfo: { name: '', jobTitle: '' },
+          };
+          
+          // Use non-blocking write and optimistic navigation
+          addDocumentNonBlocking(resumesQuery, newResumeData)
+            .then(newDocRef => {
+              if (newDocRef) {
+                toast({ title: 'Success!', description: 'Your resume has been imported.' });
+                router.push(`/editor/${newDocRef.id}`);
+              } else {
+                throw new Error("Could not get document reference after creation.");
+              }
+            })
+            .catch(error => {
+              // This catch block will handle permissions errors from addDocumentNonBlocking
+              console.error("Error creating resume from PDF:", error);
+              toast({
+                  variant: "destructive",
+                  title: "Import Failed",
+                  description: "Could not save the imported resume due to a permission error or other issue.",
+              });
+            });
+  
+        } catch (innerError: any) {
+            // This catches errors from parseResumeFromPdf or file reading
+            console.error('Error parsing or saving PDF resume:', innerError);
+            toast({
+              variant: 'destructive',
+              title: 'Import Failed',
+              description: innerError.message || 'Could not import your resume from the PDF.',
+            });
+        } finally {
+            setIsParsing(false);
+            if(fileInputRef.current) fileInputRef.current.value = '';
         }
-        
-        const newResumeData = {
-          title: result.data.resumeData.personalInfo.name ? `${result.data.resumeData.personalInfo.name}'s Resume` : 'Imported Resume',
-          templateId: 'modern', // Default to 'modern' template for imported resumes
-          ...result.data.resumeData, // Spread the parsed data
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp(),
-          jobDescription: '',
-          coverLetter: '',
-          companyInfo: { name: '', jobTitle: '' },
-        };
-        
-        const newDocRef = await addDoc(resumesQuery, newResumeData);
-        toast({ title: 'Success!', description: 'Your resume has been imported.' });
-        router.push(`/editor/${newDocRef.id}`);
       };
       reader.onerror = (error) => {
-        throw new Error('Failed to read file.');
+        // Handle file reading error
+        setIsParsing(false);
+        if(fileInputRef.current) fileInputRef.current.value = '';
+        toast({
+          variant: 'destructive',
+          title: 'File Read Error',
+          description: 'Could not read the selected file.',
+        });
       };
-
+  
     } catch (error: any) {
-      console.error('Error parsing or saving PDF resume:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Import Failed',
-        description: error.message || 'Could not import your resume from the PDF.',
-      });
-    } finally {
-      setIsParsing(false);
-      if(fileInputRef.current) fileInputRef.current.value = '';
+        // This catches errors if the initial file selection fails (less likely)
+        setIsParsing(false);
+        if(fileInputRef.current) fileInputRef.current.value = '';
+        toast({
+            variant: 'destructive',
+            title: 'Import Failed',
+            description: error.message || 'An unexpected error occurred.',
+        });
     }
   };
 
@@ -406,6 +442,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    
-    
