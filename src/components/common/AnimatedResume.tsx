@@ -1,8 +1,9 @@
 
 'use client';
 
-import { motion, Variants } from 'framer-motion';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { useState, useEffect } from 'react';
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -28,7 +29,6 @@ const itemVariants: Variants = {
 };
 
 interface AnimatedResumeProps {
-    templateId?: string;
     className?: string;
 }
 
@@ -97,7 +97,22 @@ const ExecutiveTemplate = () => (
 )
 
 
-export function AnimatedResume({ templateId = 'modern', className }: AnimatedResumeProps) {
+const templates = ['professional', 'executive', 'modern', 'classic'];
+
+export function AnimatedResume({ className }: AnimatedResumeProps) {
+  const [templateId, setTemplateId] = useState('professional');
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTemplateId(prev => {
+        const currentIndex = templates.indexOf(prev);
+        const nextIndex = (currentIndex + 1) % templates.length;
+        return templates[nextIndex];
+      });
+    }, 3000); // Change template every 3 seconds
+
+    return () => clearInterval(interval);
+  }, []);
   
   const ResumeTemplate = () => {
     switch (templateId) {
@@ -115,17 +130,24 @@ export function AnimatedResume({ templateId = 'modern', className }: AnimatedRes
   }
 
   return (
-    <motion.div
-      key={templateId}
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
+    <div
       className={cn(
-        "w-full max-w-sm aspect-[3/4] p-3 rounded-lg bg-card border shadow-sm flex flex-col gap-3",
+        "w-full max-w-sm aspect-[3/4] p-3 rounded-lg bg-card border shadow-sm flex flex-col gap-3 overflow-hidden",
         className
       )}
     >
-      <ResumeTemplate />
-    </motion.div>
+      <AnimatePresence mode="wait">
+        <motion.div
+            key={templateId}
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -50 }}
+            transition={{ duration: 0.5 }}
+            className="w-full h-full"
+        >
+            <ResumeTemplate />
+        </motion.div>
+      </AnimatePresence>
+    </div>
   );
 }

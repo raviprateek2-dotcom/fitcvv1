@@ -98,7 +98,7 @@ export function FeaturesSection() {
                         className="flex items-center justify-center"
                         style={{ opacity, scale }}
                     >
-                        <AnimatedResume templateId="professional" className="w-full max-w-md" />
+                        <AnimatedResume className="w-full max-w-md" />
                     </motion.div>
                 </div>
             </div>
