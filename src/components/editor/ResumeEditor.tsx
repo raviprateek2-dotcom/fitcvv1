@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Accordion } from '@/components/ui/accordion';
@@ -573,10 +574,10 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
               
               <div className="flex-grow overflow-y-auto">
                   <TabsContent value="design" className="p-6">
-                      <Accordion type="single" defaultValue="template" collapsible className="w-full">
+                      <Accordion type="multiple" defaultValue={['template', 'styling']} className="w-full space-y-4">
                           <AccordionItem value="template">
-                          <AccordionTrigger className="font-semibold">Template</AccordionTrigger>
-                          <AccordionContent className="space-y-4 pt-4">
+                            <AccordionTrigger className="font-semibold text-lg">Template</AccordionTrigger>
+                            <AccordionContent className="space-y-4 pt-4 border bg-secondary/30 rounded-b-lg p-4">
                                   <Select value={resumeData.templateId} onValueChange={handleTemplateChange}>
                                       <SelectTrigger>
                                           <SelectValue placeholder="Select a template" />
@@ -595,8 +596,8 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                               </AccordionContent>
                           </AccordionItem>
                           <AccordionItem value="styling">
-                          <AccordionTrigger className="font-semibold">Styling</AccordionTrigger>
-                          <AccordionContent className="space-y-4 pt-4">
+                            <AccordionTrigger className="font-semibold text-lg">Styling</AccordionTrigger>
+                            <AccordionContent className="space-y-4 pt-4 border bg-secondary/30 rounded-b-lg p-4">
                               <div className="space-y-2">
                                   <Label>Font Family</Label>
                                   <Select value={resumeData.styling?.fontFamily} onValueChange={(value) => handleStylingChange('fontFamily', value)}>
@@ -613,49 +614,49 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                                   </Select>
                               </div>
                               <div className="space-y-2">
-                              <Label>Accent Color</Label>
-                              <div className="flex flex-wrap gap-2">
-                                  {colorSwatches.map(color => (
-                                  <button
-                                      key={color}
-                                      type="button"
-                                      onClick={() => handleStylingChange('accentColor', color)}
-                                      className={cn(
-                                      "w-8 h-8 rounded-full border-2 transition-all",
-                                      resumeData.styling?.accentColor === color ? 'border-primary ring-2 ring-primary' : 'border-transparent'
-                                      )}
-                                      style={{ backgroundColor: color }}
-                                  >
-                                      <span className="sr-only">Set color to {color}</span>
-                                  </button>
-                                  ))}
-                              </div>
-                              </div>
-                              <div className="space-y-2">
-                              <Label>Title Font Size: {resumeData.styling?.titleFontSize}px</Label>
-                              <Slider
-                                  value={[resumeData.styling?.titleFontSize || 36]}
-                                  onValueChange={([val]) => handleStylingChange('titleFontSize', val)}
-                                  min={24} max={60} step={1}
-                              />
+                                <Label>Accent Color</Label>
+                                <div className="flex flex-wrap gap-2">
+                                    {colorSwatches.map(color => (
+                                    <button
+                                        key={color}
+                                        type="button"
+                                        onClick={() => handleStylingChange('accentColor', color)}
+                                        className={cn(
+                                        "w-8 h-8 rounded-full border-2 transition-all",
+                                        resumeData.styling?.accentColor === color ? 'border-primary ring-2 ring-primary' : 'border-transparent'
+                                        )}
+                                        style={{ backgroundColor: color }}
+                                    >
+                                        <span className="sr-only">Set color to {color}</span>
+                                    </button>
+                                    ))}
+                                </div>
                               </div>
                               <div className="space-y-2">
-                              <Label>Heading Font Size: {resumeData.styling?.headingFontSize}px</Label>
-                              <Slider
-                                  value={[resumeData.styling?.headingFontSize || 18]}
-                                  onValueChange={([val]) => handleStylingChange('headingFontSize', val)}
-                                  min={14} max={32} step={1}
-                              />
+                                <Label>Title Font Size: {resumeData.styling?.titleFontSize}px</Label>
+                                <Slider
+                                    value={[resumeData.styling?.titleFontSize || 36]}
+                                    onValueChange={([val]) => handleStylingChange('titleFontSize', val)}
+                                    min={24} max={60} step={1}
+                                />
                               </div>
                               <div className="space-y-2">
-                              <Label>Body Font Size: {resumeData.styling?.bodyFontSize}px</Label>
-                              <Slider
-                                  value={[resumeData.styling?.bodyFontSize || 14]}
-                                  onValueChange={([val]) => handleStylingChange('bodyFontSize', val)}
-                                  min={10} max={18} step={0.5}
-                              />
+                                <Label>Heading Font Size: {resumeData.styling?.headingFontSize}px</Label>
+                                <Slider
+                                    value={[resumeData.styling?.headingFontSize || 18]}
+                                    onValueChange={([val]) => handleStylingChange('headingFontSize', val)}
+                                    min={14} max={32} step={1}
+                                />
                               </div>
-                          </AccordionContent>
+                              <div className="space-y-2">
+                                <Label>Body Font Size: {resumeData.styling?.bodyFontSize}px</Label>
+                                <Slider
+                                    value={[resumeData.styling?.bodyFontSize || 14]}
+                                    onValueChange={([val]) => handleStylingChange('bodyFontSize', val)}
+                                    min={10} max={18} step={0.5}
+                                />
+                              </div>
+                            </AccordionContent>
                           </AccordionItem>
                       </Accordion>
                   </TabsContent>
