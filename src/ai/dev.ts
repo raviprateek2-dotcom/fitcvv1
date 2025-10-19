@@ -12,3 +12,4 @@ import '@/ai/flows/ai-resume-analyzer.ts';
 import '@/ai/flows/ai-resume-review.ts';
 import '@/ai/flows/ai-avatar-generator.ts';
 import '@/ai/tools/title-normalizer.ts';
+import '@/ai/flows/ai-narrator.ts';
