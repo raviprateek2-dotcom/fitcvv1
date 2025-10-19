@@ -106,17 +106,14 @@ export default function LoginPage() {
           <div className="flex justify-center mb-4">
               <motion.div
                 animate={isLoading ? {
-                  rotate: [0, 0, -10, 10, -10, 10, 0],
-                  y: [0, 0, 0, 0, 0, 0, -500],
-                  opacity: [1, 1, 1, 1, 1, 1, 0],
+                  y: [0, -10, 0, -500],
+                  rotate: [0, 0, 0, 15, -15, 0],
+                  opacity: [1, 1, 1, 0],
+                  transition: { duration: 2, ease: "easeInOut", times: [0, 0.4, 0.5, 1], rotate: { duration: 0.5, repeat: 2, ease: "linear", delay: 0.5 }}
                 } : {
                   y: [0, -10, 0]
                 }}
-                transition={isLoading ? {
-                  duration: 2,
-                  ease: "easeInOut",
-                  times: [0, 0.3, 0.4, 0.5, 0.6, 0.7, 1],
-                } : {
+                transition={{
                   duration: 2.5,
                   ease: 'easeInOut',
                   repeat: Infinity,
@@ -188,6 +185,8 @@ export default function LoginPage() {
     </motion.div>
   );
 }
+
+    
 
     
 
