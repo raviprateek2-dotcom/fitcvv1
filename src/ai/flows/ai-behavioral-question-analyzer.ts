@@ -31,7 +31,7 @@ const prompt = ai.definePrompt({
     
     User's Answer:
     ---
-    {{userAnswer}}
+    {{{userAnswer}}}
     ---
     `,
 });
