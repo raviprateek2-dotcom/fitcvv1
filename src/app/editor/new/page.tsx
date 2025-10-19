@@ -2,7 +2,7 @@
 'use client';
 
 import { useUser, useFirestore, getCollection, addDocumentNonBlocking } from '@/firebase';
-import { collection, serverTimestamp, addDoc } from 'firebase/firestore';
+import { collection, serverTimestamp } from 'firebase/firestore';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -97,23 +97,25 @@ export default function NewResumePage() {
                 email: user.email || '',
             },
         };
-
-        try {
-            const docRef = await addDoc(resumesCollection, newResumeData);
-             if (docRef) {
+        
+        // Use non-blocking write and optimistic navigation
+        addDocumentNonBlocking(resumesCollection, newResumeData)
+          .then(docRef => {
+            if (docRef) {
                 router.replace(`/editor/${docRef.id}`);
             } else {
-                throw new Error("Could not create the new resume.");
+                 throw new Error("Could not get document reference after creation.");
             }
-        } catch (error) {
+          })
+          .catch(error => {
             console.error("Error creating resume: ", error);
-             toast({
+            toast({
                 variant: "destructive",
                 title: "Creation Failed",
                 description: "Could not create the new resume due to a permission error or other issue.",
             });
             router.push('/dashboard');
-        }
+        });
     };
     
     createResumeFlow();
