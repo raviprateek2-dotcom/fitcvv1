@@ -1,4 +1,3 @@
-
 'use client';
 
 import { AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -109,5 +108,3 @@ export function PersonalInfoSection({ resumeData, setResumeData, isProUser }: Pe
         </AccordionItem>
     );
 }
-
-    

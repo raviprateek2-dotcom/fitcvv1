@@ -1,7 +1,6 @@
-
 'use client';
 
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Bot, Sparkles } from "lucide-react";
@@ -54,7 +53,3 @@ export function SummarySection({ resumeData, setResumeData, isProUser }: Summary
         </AccordionItem>
     );
 }
-
-    
-
-    

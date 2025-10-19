@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Accordion } from '@/components/ui/accordion';
@@ -729,7 +728,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                                                     <Label>Keywords from the job description that are missing from your resume. Click a keyword to add it to your skills:</Label>
                                                     <div className="flex flex-wrap gap-2">
                                                     {keywordSuggestions.map((keyword, i) => (
-                                                        <Button key={i} variant="secondary" size="sm" className="h-auto" onClick={()={() => handleAddKeywordAsSkill(keyword)}>
+                                                        <Button key={i} variant="secondary" size="sm" className="h-auto" onClick={() => handleAddKeywordAsSkill(keyword)}>
                                                             <PlusCircle className="mr-2 h-3 w-3" />{keyword}
                                                         </Button>
                                                     ))}
