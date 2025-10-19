@@ -200,11 +200,11 @@ export function VoiceMockInterview() {
 
   return (
     <section>
-        <Card variant='neuro' className="bg-gradient-to-br from-background to-secondary/30">
+        <Card variant='neuro' className="bg-background">
             <CardHeader className="text-center">
                 <CardTitle className="text-2xl font-headline font-bold flex items-center justify-center gap-2">
                     <Volume2 className="text-primary"/>
-                    Voice Mock Interview (Pro)
+                    Voice Mock Interview
                 </CardTitle>
                 <CardDescription>
                     Practice speaking your answers and get audio feedback from our AI coach.
