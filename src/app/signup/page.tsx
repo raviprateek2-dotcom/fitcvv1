@@ -10,7 +10,7 @@ import { initiateEmailSignUp, initiateGoogleSignIn } from '@/firebase/non-blocki
 import { useToast } from '@/hooks/use-toast';
 import { Rocket } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
@@ -45,13 +45,19 @@ export default function SignupPage() {
   const auth = useAuth();
   const { toast } = useToast();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user } = useUser();
 
   useEffect(() => {
     if (user) {
-      router.push('/dashboard');
+      const plan = searchParams.get('plan');
+      if (plan) {
+        router.push('/settings');
+      } else {
+        router.push('/dashboard');
+      }
     }
-  }, [user, router]);
+  }, [user, router, searchParams]);
 
   const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
@@ -176,7 +182,3 @@ export default function SignupPage() {
     </motion.div>
   );
 }
-
-    
-
-    
