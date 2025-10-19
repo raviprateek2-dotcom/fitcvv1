@@ -30,8 +30,12 @@ const config = {
         'gradient-glass': 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%)',
       },
       fontFamily: {
-        body: ['var(--font-body)', 'sans-serif'],
-        headline: ['var(--font-headline)', 'sans-serif'],
+        body: ['var(--font-inter)', 'sans-serif'],
+        headline: ['var(--font-montserrat)', 'sans-serif'],
+        'space-grotesk': ['var(--font-space-grotesk)', 'sans-serif'],
+        inter: ['var(--font-inter)', 'sans-serif'],
+        lora: ['var(--font-lora)', 'serif'],
+        montserrat: ['var(--font-montserrat)', 'sans-serif'],
       },
       colors: {
         border: 'hsl(var(--border))',

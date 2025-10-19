@@ -1,6 +1,6 @@
 
 import type { Metadata } from 'next';
-import { Inter, Space_Grotesk, Montserrat } from 'next/font/google';
+import { Inter, Space_Grotesk, Montserrat, Lora } from 'next/font/google';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
@@ -12,13 +12,24 @@ import { ThemeProvider } from '@/components/common/ThemeProvider';
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
-  variable: '--font-body',
+  variable: '--font-space-grotesk',
 });
 
 const montserrat = Montserrat({
   subsets: ['latin'],
-  variable: '--font-headline',
+  variable: '--font-montserrat',
 });
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+});
+
+const lora = Lora({
+  subsets: ['latin'],
+  variable: '--font-lora',
+});
+
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:9002';
 
@@ -88,7 +99,9 @@ export default function RootLayout({
         className={cn(
           'relative h-full font-body antialiased',
           spaceGrotesk.variable,
-          montserrat.variable
+          montserrat.variable,
+          inter.variable,
+          lora.variable
         )}
       >
         <ThemeProvider

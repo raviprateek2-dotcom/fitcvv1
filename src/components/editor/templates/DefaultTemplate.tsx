@@ -55,9 +55,11 @@ export function DefaultTemplate({ resumeData }: ResumePreviewProps) {
     '--accent-color': accentColor
   } as React.CSSProperties;
 
+  const fontClass = styling?.fontFamily ? `font-${styling.fontFamily.split('-')[1]}` : 'font-body';
+
   if (templateId === 'professional') {
     return (
-        <div style={dynamicStyles} className="bg-white text-slate-800 shadow-2xl rounded-lg w-full h-full mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-hidden print:shadow-none print:rounded-none print:max-h-full font-body flex text-[var(--body-font-size)]">
+        <div style={dynamicStyles} className={cn("bg-white text-slate-800 shadow-2xl rounded-lg w-full h-full mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-hidden print:shadow-none print:rounded-none print:max-h-full flex text-[var(--body-font-size)]", fontClass)}>
             <aside className="w-1/3 bg-slate-50 text-slate-700 p-8 space-y-8 flex flex-col border-r-4" style={{borderColor: 'var(--accent-color)'}}>
                 <div className="space-y-4 text-sm">
                     <h3 style={{ fontSize: 'var(--heading-font-size)'}} className="font-bold text-slate-900 uppercase tracking-wider font-headline border-b-2 border-slate-300 pb-2">Contact</h3>
@@ -155,7 +157,7 @@ export function DefaultTemplate({ resumeData }: ResumePreviewProps) {
 
   if (templateId === 'executive') {
     return (
-        <div style={dynamicStyles} className="bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-hidden print:shadow-none print:rounded-none print:max-h-full font-body flex text-[var(--body-font-size)]">
+        <div style={dynamicStyles} className={cn("bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-hidden print:shadow-none print:rounded-none print:max-h-full flex text-[var(--body-font-size)]", fontClass)}>
             <aside className="w-1/3 text-white p-8 space-y-8 flex flex-col" style={{ backgroundColor: accentColor }}>
                 <div className="space-y-4">
                     <h3 style={{ fontSize: 'var(--heading-font-size)'}} className="font-bold uppercase tracking-wider font-headline border-b-2 border-white/50 pb-2">Contact</h3>
@@ -253,7 +255,7 @@ export function DefaultTemplate({ resumeData }: ResumePreviewProps) {
 
   // Fallback to default single-column templates
   return (
-    <div style={dynamicStyles} className="bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full p-8 mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-auto print:shadow-none print:rounded-none print:max-h-full font-body text-[var(--body-font-size)]">
+    <div style={dynamicStyles} className={cn("bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full p-8 mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-auto print:shadow-none print:rounded-none print:max-h-full text-[var(--body-font-size)]", fontClass)}>
       <header className={templateStyles.header} style={templateId === 'creative' ? { backgroundColor: accentColor } : {}}>
         <h1 style={{ fontSize: 'var(--title-font-size)'}} className={cn("font-bold font-headline leading-tight", templateId === 'creative' ? 'text-white' : 'text-gray-900')}>{personalInfo.name}</h1>
         <h2 style={{ fontSize: 'var(--heading-font-size)'}} className={cn("font-semibold font-headline", templateId === 'creative' ? 'text-white/90' : 'text-[var(--accent-color)]')}>{personalInfo.title}</h2>

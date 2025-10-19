@@ -33,6 +33,7 @@ export function DefaultCoverLetter({ resumeData }: CoverLetterPreviewProps) {
   const templateStyles = templates[templateId] || templates.modern;
   const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   const accentColor = styling?.accentColor || 'hsl(221.2 83.2% 53.3%)';
+  const fontClass = styling?.fontFamily ? `font-${styling.fontFamily.split('-')[1]}` : 'font-body';
 
   const dynamicStyles = {
     '--title-font-size': `${styling?.titleFontSize || 36}px`,
@@ -43,7 +44,7 @@ export function DefaultCoverLetter({ resumeData }: CoverLetterPreviewProps) {
 
   if (templateId === 'executive') {
     return (
-        <div style={dynamicStyles} className="bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-hidden print:shadow-none print:rounded-none print:max-h-full font-body flex text-[var(--body-font-size)]">
+        <div style={dynamicStyles} className={cn("bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-hidden print:shadow-none print:rounded-none print:max-h-full flex text-[var(--body-font-size)]", fontClass)}>
             <aside className="w-1/3 text-white p-8" style={{ backgroundColor: accentColor }}>
                 {/* Sidebar can be decorative or hold contact details */}
             </aside>
@@ -76,7 +77,7 @@ export function DefaultCoverLetter({ resumeData }: CoverLetterPreviewProps) {
   
   if (templateId === 'professional') {
     return (
-        <div style={dynamicStyles} className="bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-hidden print:shadow-none print:rounded-none print:max-h-full font-body flex flex-col p-10 text-[var(--body-font-size)]">
+        <div style={dynamicStyles} className={cn("bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-hidden print:shadow-none print:rounded-none print:max-h-full flex flex-col p-10 text-[var(--body-font-size)]", fontClass)}>
             <header className="text-center mb-8">
                 <h1 style={{ fontSize: 'var(--title-font-size)', color: 'var(--accent-color)'}} className="font-bold font-headline leading-tight">{personalInfo.name}</h1>
                 <h2 style={{ fontSize: 'var(--heading-font-size)'}} className="font-semibold text-gray-600">{personalInfo.title}</h2>
@@ -110,7 +111,7 @@ export function DefaultCoverLetter({ resumeData }: CoverLetterPreviewProps) {
   }
 
   return (
-     <div style={dynamicStyles} className="bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full p-8 mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-auto print:shadow-none print:rounded-none print:max-h-full font-body text-[var(--body-font-size)]">
+     <div style={dynamicStyles} className={cn("bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full p-8 mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-auto print:shadow-none print:rounded-none print:max-h-full text-[var(--body-font-size)]", fontClass)}>
       <header className={templateStyles.header} style={templateId === 'creative' ? { backgroundColor: accentColor } : {}}>
         <h1 style={{ fontSize: 'var(--title-font-size)'}} className={cn("font-bold font-headline leading-tight", templateId === 'creative' ? 'text-white' : 'text-gray-900')}>{personalInfo.name}</h1>
         <h2 style={{ fontSize: 'var(--heading-font-size)'}} className={cn("font-semibold font-headline", templateId === 'creative' ? 'text-white/90' : 'text-[var(--accent-color)]')}>{personalInfo.title}</h2>

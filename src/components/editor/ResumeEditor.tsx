@@ -60,6 +60,13 @@ const availableTemplates = [
   { id: 'executive', name: 'Executive', isPremium: true },
 ];
 
+const availableFonts = [
+    { id: 'font-inter', name: 'Inter (Sans Serif)' },
+    { id: 'font-lora', name: 'Lora (Serif)' },
+    { id: 'font-space-grotesk', name: 'Space Grotesk (Modern)' },
+    { id: 'font-montserrat', name: 'Montserrat (Headline)' },
+]
+
 const EditorLoadingSkeleton = () => {
     return (
         <div className="flex h-full">
@@ -138,11 +145,15 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                 bodyFontSize: 14, 
                 headingFontSize: 18, 
                 titleFontSize: 36,
-                accentColor: 'hsl(221.2 83.2% 53.3%)'
+                accentColor: 'hsl(221.2 83.2% 53.3%)',
+                fontFamily: 'font-inter',
             };
         }
         if (typeof updatedData.styling.accentColor !== 'string') {
             updatedData.styling.accentColor = 'hsl(221.2 83.2% 53.3%)';
+        }
+        if (typeof updatedData.styling.fontFamily !== 'string') {
+            updatedData.styling.fontFamily = 'font-inter';
         }
         if (updatedData.skills === undefined) updatedData.skills = [];
         if (updatedData.projects === undefined) updatedData.projects = [];
@@ -586,6 +597,21 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                           <AccordionItem value="styling">
                           <AccordionTrigger className="font-semibold">Styling</AccordionTrigger>
                           <AccordionContent className="space-y-4 pt-4">
+                              <div className="space-y-2">
+                                  <Label>Font Family</Label>
+                                  <Select value={resumeData.styling?.fontFamily} onValueChange={(value) => handleStylingChange('fontFamily', value)}>
+                                      <SelectTrigger>
+                                          <SelectValue placeholder="Select a font" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                          {availableFonts.map(font => (
+                                              <SelectItem key={font.id} value={font.id}>
+                                                  {font.name}
+                                              </SelectItem>
+                                          ))}
+                                      </SelectContent>
+                                  </Select>
+                              </div>
                               <div className="space-y-2">
                               <Label>Accent Color</Label>
                               <div className="flex flex-wrap gap-2">

@@ -41,6 +41,7 @@ export type Styling = {
   headingFontSize: number;
   titleFontSize: number;
   accentColor: string;
+  fontFamily: string;
 };
 
 export type ResumeData = {
