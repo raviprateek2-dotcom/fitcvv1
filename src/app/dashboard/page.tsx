@@ -70,7 +70,7 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
 
   return (
     <motion.div variants={itemVariants}>
-      <Card className="overflow-hidden group flex flex-col h-full transition-all duration-300" variant="neuro">
+      <Card className="overflow-hidden group flex flex-col h-full transition-all duration-300 hover:scale-105 hover:shadow-2xl" variant="neuro">
         <Link href={`/editor/${resume.id}`} className="block overflow-hidden">
           <motion.div
             className="h-60 bg-secondary rounded-t-lg flex items-center justify-center relative"
@@ -405,3 +405,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
