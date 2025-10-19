@@ -467,6 +467,9 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     }
     setIsAnalyzing(true);
     setAnalysisResult(null);
+    setReviewResult(null); // Clear other results
+    setKeywordSuggestions([]);
+
 
     const resumeContent = JSON.stringify(resumeData);
 
@@ -489,6 +492,8 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
       if (!resumeData) return;
       setIsReviewing(true);
       setReviewResult(null);
+      setAnalysisResult(null); // Clear other results
+      setKeywordSuggestions([]);
 
       const resumeContent = JSON.stringify(resumeData);
       try {
@@ -693,7 +698,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                     </Accordion>
                   </TabsContent>
 
-                   <TabsContent value="ai-review" className="p-6">
+                   <TabsContent value="ai-review" className="p-6 space-y-4">
                      <Card variant="neuro">
                         <CardHeader>
                             <CardTitle className="font-headline">AI Analysis</CardTitle>
@@ -701,7 +706,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="job-description-analysis">Job Description</Label>
+                                <Label htmlFor="job-description-analysis">Target Job Description</Label>
                                 <Textarea
                                 id="job-description-analysis"
                                 value={resumeData.jobDescription}
@@ -710,88 +715,6 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                                 placeholder="Paste a job description here to enable analysis features..."
                                 />
                             </div>
-                            <ProFeatureWrapper isPro={isProUser}>
-                                <Accordion type="multiple" className="w-full space-y-4">
-                                     {analysisResult && (
-                                        <AccordionItem value="match-analysis">
-                                            <AccordionTrigger className="font-semibold">Match Analysis</AccordionTrigger>
-                                            <AccordionContent className="pt-4">
-                                                <div className="space-y-4 p-4 border rounded-lg bg-secondary/30">
-                                                    <div>
-                                                        <Label>Match Score</Label>
-                                                        <div className="flex items-center gap-4">
-                                                            <Progress value={analysisResult.matchScore} className="w-full" />
-                                                            <span className="font-bold text-lg">{analysisResult.matchScore}%</span>
-                                                        </div>
-                                                        <p className="text-xs text-muted-foreground mt-1">{analysisResult.summary}</p>
-                                                    </div>
-                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                        <div className="space-y-2">
-                                                            <h4 className="font-semibold text-green-600">Strengths</h4>
-                                                            <ul className="list-none space-y-2 text-sm">
-                                                                {analysisResult.positivePoints.map((point, i) => (
-                                                                    <li key={i} className="flex items-start gap-2"><CheckCircle className="h-4 w-4 mt-0.5 text-green-500 shrink-0" />{point}</li>
-                                                                ))}
-                                                            </ul>
-                                                        </div>
-                                                        <div className="space-y-2">
-                                                            <h4 className="font-semibold text-amber-600">Improvements</h4>
-                                                            <ul className="list-none space-y-2 text-sm">
-                                                                {analysisResult.areasForImprovement.map((point, i) => (
-                                                                    <li key={i} className="flex items-start gap-2"><XCircle className="h-4 w-4 mt-0.5 text-amber-500 shrink-0" />{point}</li>
-                                                                ))}
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </AccordionContent>
-                                        </AccordionItem>
-                                    )}
-                                     {keywordSuggestions.length > 0 && (
-                                        <AccordionItem value="keyword-suggestions">
-                                            <AccordionTrigger className="font-semibold">Keyword Suggestions</AccordionTrigger>
-                                            <AccordionContent className="pt-4">
-                                                <div className="space-y-2 p-4 border rounded-lg bg-secondary/30">
-                                                    <Label>Keywords from the job description that are missing from your resume. Click a keyword to add it to your skills:</Label>
-                                                    <div className="flex flex-wrap gap-2">
-                                                    {keywordSuggestions.map((keyword, i) => (
-                                                        <Button key={i} variant="secondary" size="sm" className="h-auto" onClick={() => handleAddKeywordAsSkill(keyword)}>
-                                                            <PlusCircle className="mr-2 h-3 w-3" />{keyword}
-                                                        </Button>
-                                                    ))}
-                                                    </div>
-                                                </div>
-                                            </AccordionContent>
-                                        </AccordionItem>
-                                    )}
-                                     {reviewResult && (
-                                        <AccordionItem value="general-review">
-                                            <AccordionTrigger className="font-semibold">General Feedback</AccordionTrigger>
-                                            <AccordionContent className="pt-4">
-                                                <div className="space-y-4 p-4 border rounded-lg bg-secondary/30">
-                                                    <div>
-                                                        <h4 className="font-semibold">Overall Feedback</h4>
-                                                        <p className="text-sm text-muted-foreground">{reviewResult.overallFeedback}</p>
-                                                    </div>
-                                                    <div>
-                                                        <h4 className="font-semibold text-green-600">Positive Points</h4>
-                                                        <ul className="list-none space-y-2 text-sm mt-2">
-                                                            {reviewResult.positivePoints.map((point, i) => <li key={i} className="flex items-start gap-2"><CheckCircle className="h-4 w-4 mt-0.5 text-green-500 shrink-0" />{point}</li>)}
-                                                        </ul>
-                                                    </div>
-                                                    <div>
-                                                        <h4 className="font-semibold text-amber-600">Areas for Improvement</h4>
-                                                        <ul className="list-none space-y-2 text-sm mt-2">
-                                                            {reviewResult.areasForImprovement.map((point, i) => <li key={i} className="flex items-start gap-2"><XCircle className="h-4 w-4 mt-0.5 text-amber-500 shrink-0" />{point}</li>)}
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </AccordionContent>
-                                        </AccordionItem>
-                                     )}
-                                     {(isAnalyzing || isReviewing || isAiLoading) && <div className="text-center p-4"><Loader2 className="h-6 w-6 animate-spin"/></div>}
-                                </Accordion>
-                            </ProFeatureWrapper>
                         </CardContent>
                         <CardFooter>
                             <ProFeatureWrapper isPro={isProUser}>
@@ -811,6 +734,85 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                             </ProFeatureWrapper>
                         </CardFooter>
                      </Card>
+
+                    {(isAnalyzing || isReviewing || isAiLoading) && <div className="text-center p-4"><Loader2 className="h-6 w-6 animate-spin mx-auto"/></div>}
+                    
+                    <ProFeatureWrapper isPro={isProUser}>
+                        {analysisResult && (
+                             <Card variant="neuro">
+                                <CardHeader>
+                                    <CardTitle>Match Analysis</CardTitle>
+                                    <CardDescription>{analysisResult.summary}</CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                     <div>
+                                        <Label>Match Score</Label>
+                                        <div className="flex items-center gap-4">
+                                            <Progress value={analysisResult.matchScore} className="w-full" />
+                                            <span className="font-bold text-lg">{analysisResult.matchScore}%</span>
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <h4 className="font-semibold text-green-600">Strengths</h4>
+                                            <ul className="list-none space-y-2 text-sm">
+                                                {analysisResult.positivePoints.map((point, i) => (
+                                                    <li key={i} className="flex items-start gap-2"><CheckCircle className="h-4 w-4 mt-0.5 text-green-500 shrink-0" />{point}</li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <h4 className="font-semibold text-amber-600">Improvements</h4>
+                                            <ul className="list-none space-y-2 text-sm">
+                                                {analysisResult.areasForImprovement.map((point, i) => (
+                                                    <li key={i} className="flex items-start gap-2"><XCircle className="h-4 w-4 mt-0.5 text-amber-500 shrink-0" />{point}</li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </CardContent>
+                             </Card>
+                        )}
+                        {reviewResult && (
+                             <Card variant="neuro">
+                                <CardHeader>
+                                    <CardTitle>General Resume Review</CardTitle>
+                                     <CardDescription>{reviewResult.overallFeedback}</CardDescription>
+                                </CardHeader>
+                                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <h4 className="font-semibold text-green-600">Positive Points</h4>
+                                        <ul className="list-none space-y-2 text-sm mt-2">
+                                            {reviewResult.positivePoints.map((point, i) => <li key={i} className="flex items-start gap-2"><CheckCircle className="h-4 w-4 mt-0.5 text-green-500 shrink-0" />{point}</li>)}
+                                        </ul>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <h4 className="font-semibold text-amber-600">Areas for Improvement</h4>
+                                        <ul className="list-none space-y-2 text-sm mt-2">
+                                            {reviewResult.areasForImprovement.map((point, i) => <li key={i} className="flex items-start gap-2"><XCircle className="h-4 w-4 mt-0.5 text-amber-500 shrink-0" />{point}</li>)}
+                                        </ul>
+                                    </div>
+                                </CardContent>
+                             </Card>
+                        )}
+                        {keywordSuggestions.length > 0 && (
+                            <Card variant="neuro">
+                                <CardHeader>
+                                    <CardTitle>Keyword Suggestions</CardTitle>
+                                    <CardDescription>Keywords from the job description that are missing from your resume. Click to add to your skills section.</CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="flex flex-wrap gap-2">
+                                        {keywordSuggestions.map((keyword, i) => (
+                                            <Button key={i} variant="secondary" size="sm" className="h-auto" onClick={() => handleAddKeywordAsSkill(keyword)}>
+                                                <PlusCircle className="mr-2 h-3 w-3" />{keyword}
+                                            </Button>
+                                        ))}
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        )}
+                    </ProFeatureWrapper>
                    </TabsContent>
                   
                   <TabsContent value="cover-letter" className="p-6">
