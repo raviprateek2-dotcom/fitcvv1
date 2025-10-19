@@ -17,6 +17,7 @@ import { VoiceMockInterview } from '@/components/interview/VoiceMockInterview';
 import { useUser } from '@/firebase';
 import { ProFeatureWrapper } from '@/components/editor/ProFeatureWrapper';
 import { useState, useEffect } from 'react';
+import { VideoPitchGenerator } from '@/components/interview/VideoPitchGenerator';
 
 
 const featuredBlogs = blogPosts.filter(p => [
@@ -112,6 +113,14 @@ export default function InterviewPage() {
                 <motion.div variants={itemVariants}><Separator /></motion.div>
 
                 <motion.div variants={itemVariants}><MockInterview /></motion.div>
+
+                <motion.div variants={itemVariants}><Separator /></motion.div>
+                
+                <motion.div variants={itemVariants}>
+                    <ProFeatureWrapper isPro={!!isProUser}>
+                        <VideoPitchGenerator />
+                    </ProFeatureWrapper>
+                </motion.div>
 
                 <motion.div variants={itemVariants}><Separator /></motion.div>
 
