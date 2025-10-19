@@ -96,6 +96,43 @@ const ExecutiveTemplate = () => (
     </motion.div>
 )
 
+const ModernTemplate = () => (
+    <motion.div variants={containerVariants} className="p-2 space-y-3 w-full h-full">
+         <motion.div variants={itemVariants} className="text-center space-y-1">
+            <div className="h-4 w-1/2 mx-auto rounded bg-primary/80" />
+            <div className="h-2 w-1/3 mx-auto rounded bg-muted-foreground/50" />
+        </motion.div>
+        <motion.div variants={itemVariants} className="h-0.5 w-full bg-border" />
+        <motion.div variants={itemVariants} className="space-y-1">
+            <div className="h-2 w-full rounded bg-muted-foreground/30" />
+            <div className="h-2 w-5/6 rounded bg-muted-foreground/30" />
+        </motion.div>
+        <motion.div variants={itemVariants} className="h-3 w-1/4 rounded bg-primary/60" />
+        <motion.div variants={itemVariants} className="space-y-2">
+            <div className="h-2 w-full rounded bg-muted-foreground/30" />
+            <div className="h-2 w-full rounded bg-muted-foreground/30" />
+        </motion.div>
+    </motion.div>
+)
+
+const ClassicTemplate = () => (
+    <motion.div variants={containerVariants} className="p-2 space-y-3 w-full h-full">
+         <motion.div variants={itemVariants} className="text-center space-y-1">
+            <div className="h-4 w-3/5 mx-auto rounded bg-foreground" />
+            <div className="h-2 w-2/5 mx-auto rounded bg-muted-foreground" />
+        </motion.div>
+        <motion.div variants={itemVariants} className="h-1 w-full bg-foreground" />
+        <motion.div variants={itemVariants} className="space-y-1">
+            <div className="h-2 w-full rounded bg-muted-foreground/30" />
+        </motion.div>
+        <motion.div variants={itemVariants} className="h-3 w-1/3 rounded bg-foreground/80" />
+        <motion.div variants={itemVariants} className="space-y-2">
+            <div className="h-2 w-full rounded bg-muted-foreground/30" />
+            <div className="h-2 w-full rounded bg-muted-foreground/30" />
+        </motion.div>
+    </motion.div>
+)
+
 
 const templates = ['professional', 'executive', 'modern', 'classic'];
 
@@ -121,7 +158,9 @@ export function AnimatedResume({ className }: AnimatedResumeProps) {
         case 'executive':
             return <ExecutiveTemplate />;
         case 'modern':
+            return <ModernTemplate />;
         case 'classic':
+            return <ClassicTemplate />;
         case 'creative':
         case 'minimalist':
         default:
