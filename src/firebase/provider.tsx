@@ -12,8 +12,8 @@ import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 interface FirebaseProviderProps {
   children: ReactNode;
   firebaseApp: FirebaseApp;
-  firestore: Firestore;
   auth: Auth;
+  getFirestore: () => Promise<Firestore>;
 }
 
 // User profile type
@@ -48,7 +48,7 @@ export interface FirebaseContextState {
 // Return type for useFirebase()
 export interface FirebaseServicesAndUser {
   firebaseApp: FirebaseApp;
-  firestore: Firestore;
+  firestore: Firestore | null;
   auth: Auth;
   user: User | null;
   isUserLoading: boolean;
@@ -76,17 +76,23 @@ export const FirebaseContext = createContext<FirebaseContextState | undefined>(u
 export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
   children,
   firebaseApp,
-  firestore,
   auth,
+  getFirestore,
 }) => {
+  const [firestore, setFirestore] = useState<Firestore | null>(null);
   const [userAuthState, setUserAuthState] = useState<UserAuthState>({
     user: null,
     isUserLoading: true, // Start loading until first auth event
     userError: null,
   });
 
+  // Effect to load Firestore asynchronously
+  useEffect(() => {
+    getFirestore().then(setFirestore);
+  }, [getFirestore]);
+
   const userProfileDocRef = useMemoFirebase(
-    () => (userAuthState.user ? doc(firestore, `users/${userAuthState.user.uid}`) : null),
+    () => (userAuthState.user && firestore ? doc(firestore, `users/${userAuthState.user.uid}`) : null),
     [firestore, userAuthState.user]
   );
   
@@ -104,7 +110,7 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
     const unsubscribe = onAuthStateChanged(
       auth,
       (firebaseUser) => { // Auth state determined
-        if (firebaseUser) {
+        if (firebaseUser && firestore) {
           // Check if user profile exists before setting auth state
           const userDocRef = doc(firestore, `users/${firebaseUser.uid}`);
           getDoc(userDocRef).then(docSnap => {
@@ -129,15 +135,15 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
     );
     return () => unsubscribe(); // Cleanup
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [auth]);
+  }, [auth, firestore]);
   
   // Memoize the context value
   const contextValue = useMemo((): FirebaseContextState => {
-    const servicesAvailable = !!(firebaseApp && firestore && auth);
+    const servicesAvailable = !!(firebaseApp && auth);
     return {
       areServicesAvailable: servicesAvailable,
       firebaseApp: servicesAvailable ? firebaseApp : null,
-      firestore: servicesAvailable ? firestore : null,
+      firestore: firestore, // Can be null while loading
       auth: servicesAvailable ? auth : null,
       user: userAuthState.user,
       isUserLoading: userAuthState.isUserLoading,
@@ -159,14 +165,14 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
  * Hook to access core Firebase services and user authentication state.
  * Throws error if core services are not available or used outside provider.
  */
-export const useFirebase = (): FirebaseServicesAndUser & { firestore: Firestore } => {
+export const useFirebase = (): FirebaseServicesAndUser => {
   const context = useContext(FirebaseContext);
 
   if (context === undefined) {
     throw new Error('useFirebase must be used within a FirebaseProvider.');
   }
 
-  if (!context.areServicesAvailable || !context.firebaseApp || !context.firestore || !context.auth) {
+  if (!context.areServicesAvailable || !context.firebaseApp || !context.auth) {
     throw new Error('Firebase core services not available. Check FirebaseProvider props.');
   }
 
@@ -189,7 +195,7 @@ export const useAuth = (): Auth => {
 };
 
 /** Hook to access Firestore instance. */
-export const useFirestore = (): Firestore => {
+export const useFirestore = (): Firestore | null => {
   const { firestore } = useFirebase();
   return firestore;
 };

@@ -2,8 +2,11 @@
 
 import { firebaseConfig } from '@/firebase/config';
 import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore'
+import { getAuth, Auth } from 'firebase/auth';
+import type { Firestore } from 'firebase/firestore';
+
+// Store the dynamic import promise to ensure Firestore is only imported once.
+let firestorePromise: Promise<typeof import('firebase/firestore')> | null = null;
 
 // IMPORTANT: DO NOT MODIFY THIS FUNCTION
 export function initializeFirebase() {
@@ -33,10 +36,19 @@ export function initializeFirebase() {
 }
 
 export function getSdks(firebaseApp: FirebaseApp) {
+  // Lazily load Firestore
+  const getFirestoreInstance = async (): Promise<Firestore> => {
+    if (!firestorePromise) {
+      firestorePromise = import('firebase/firestore');
+    }
+    const { getFirestore } = await firestorePromise;
+    return getFirestore(firebaseApp);
+  };
+
   return {
     firebaseApp,
     auth: getAuth(firebaseApp),
-    firestore: getFirestore(firebaseApp)
+    getFirestore: getFirestoreInstance, // Return a function to get Firestore
   };
 }
 
