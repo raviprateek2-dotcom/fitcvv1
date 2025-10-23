@@ -145,7 +145,7 @@ export function AboutPageClient() {
                     <h3 className="text-2xl font-bold font-headline mb-0">Ravi Prateek</h3>
                     <p className="text-muted-foreground -mt-3">Founder & CEO</p>
                     <p className="text-lg">
-                        I am an Engineer MBA. As a seasoned professional in the tech industry, I experienced firsthand how a well-crafted resume can open doors. I founded ResumeAI with the vision of making expert career tools accessible to everyone. I am passionate about technology, design, and helping people succeed.
+                        With over 15 years of experience at the intersection of technology and business strategy, I've led product teams at both Fortune 500 companies and agile startups. My journey from a software engineer to an MBA-educated product leader has given me a unique perspective on what it takes to build a successful career. I founded ResumeAI to democratize career-building tools, leveraging AI to help professionals everywhere translate their experience into powerful opportunities. I'm passionate about building products that have a real impact on people's lives.
                     </p>
                 </motion.div>
             </div>
