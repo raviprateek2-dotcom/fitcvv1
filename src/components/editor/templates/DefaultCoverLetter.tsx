@@ -33,7 +33,7 @@ export function DefaultCoverLetter({ resumeData }: CoverLetterPreviewProps) {
   const templateStyles = templates[templateId] || templates.modern;
   const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   const accentColor = styling?.accentColor || 'hsl(221.2 83.2% 53.3%)';
-  const fontClass = styling?.fontFamily ? `font-${styling.fontFamily.split('-')[1]}` : 'font-body';
+  const fontClass = styling?.fontFamily ? styling.fontFamily.replace('font-', 'font-') : 'font-body';
 
   const dynamicStyles = {
     '--title-font-size': `${styling?.titleFontSize || 36}px`,
