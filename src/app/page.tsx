@@ -8,37 +8,21 @@ import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/skeleton';
+import { HowItWorksSection } from '@/components/home/HowItWorksSection';
 
-const FeaturesSection = dynamic(
-  () => import('@/components/home/FeaturesSection').then(mod => mod.FeaturesSection),
+const HomePageClient = dynamic(
+  () => import('@/components/home/HeroSection').then(mod => mod.HomePageClient),
   { 
-    loading: () => <Skeleton className="w-full h-[500px]" />,
+    loading: () => (
+      <div className="py-24 md:py-40">
+        <Skeleton className="w-3/4 h-12 mx-auto" />
+        <Skeleton className="w-1/2 h-10 mx-auto mt-6" />
+        <Skeleton className="w-3/4 h-8 mx-auto mt-6" />
+        <Skeleton className="w-48 h-12 mx-auto mt-8" />
+      </div>
+    ),
     ssr: false 
   }
-);
-
-const HeroSection = dynamic(
-  () => import('@/components/home/HeroSection').then(mod => mod.HeroSection),
-  { 
-    loading: () => <Skeleton className="w-full h-[400px]" />,
-    ssr: false 
-  }
-);
-
-const HowItWorksSection = dynamic(
-  () => import('@/components/home/HowItWorksSection').then(mod => mod.HowItWorksSection),
-  { 
-    loading: () => <Skeleton className="w-full h-[400px]" />,
-    ssr: false 
-  }
-);
-
-const TestimonialsSection = dynamic(
-    () => import('@/components/home/TestimonialsSection').then(mod => mod.TestimonialsSection),
-    {
-      loading: () => <Skeleton className="w-full h-[400px]" />,
-      ssr: false
-    }
 );
 
 
@@ -46,13 +30,9 @@ export default function Home() {
   return (
     <div className="flex flex-col items-center bg-background text-foreground overflow-x-hidden">
       
-      <HeroSection />
+      <HomePageClient />
 
       <HowItWorksSection />
-
-      <FeaturesSection />
-
-      <TestimonialsSection />
 
       {/* Blog Section */}
       <section 
