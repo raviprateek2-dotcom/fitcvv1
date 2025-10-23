@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -34,15 +34,58 @@ export function VoiceMockInterview() {
 
   const { toast } = useToast();
 
+  const getNewQuestion = useCallback(() => {
+    let nextQuestion;
+    do {
+      nextQuestion = interviewQuestions[Math.floor(Math.random() * interviewQuestions.length)];
+    } while (nextQuestion === currentQuestion);
+    setCurrentQuestion(nextQuestion);
+    setTranscript('');
+    setFeedbackAudio(null);
+    setQuestionAudio(null);
+    if (interviewState !== 'unsupported') {
+      setInterviewState('idle');
+    }
+  }, [currentQuestion, interviewState]);
+
   // Initialize component and select first question
   useEffect(() => {
     setIsMounted(true);
     getNewQuestion();
-  }, []);
+  }, [getNewQuestion]);
 
-  // Initialize Speech Recognition API and check for browser support
+  const processTranscript = useCallback(async () => {
+    if (!transcript.trim()) {
+      toast({ title: 'No answer detected', description: 'Please provide an answer before stopping.' });
+      setInterviewState('idle');
+      return;
+    }
+    
+    try {
+      const feedbackResponse = await mockInterview({ userAnswer: transcript, question: currentQuestion });
+      if (!feedbackResponse.success || !feedbackResponse.data) {
+        throw new Error(feedbackResponse.error || 'Failed to get interview feedback.');
+      }
+      const fullFeedbackText = `Here is some feedback on your answer: ${feedbackResponse.data.feedback}. As a suggestion for improvement, you could say: ${feedbackResponse.data.suggestedImprovement}`;
+
+      const audioResponse = await aiNarrate(fullFeedbackText);
+      if (!audioResponse.success || !audioResponse.data) {
+        throw new Error(audioResponse.error || 'Failed to generate audio feedback.');
+      }
+      
+      setFeedbackAudio(audioResponse.data.audioDataUri);
+      setInterviewState('speaking');
+
+    } catch (error: any) {
+      toast({ variant: 'destructive', title: 'Error processing feedback', description: error.message });
+      setInterviewState('idle');
+    }
+  }, [transcript, currentQuestion, toast]);
+
+
+  // Main effect for Speech Recognition and state processing
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== 'undefined' && !recognitionRef.current) {
         const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (SpeechRecognitionAPI) {
             recognitionRef.current = new SpeechRecognitionAPI();
@@ -72,7 +115,6 @@ export function VoiceMockInterview() {
             };
             
             recognition.onend = () => {
-                // Automatically move to processing if we were listening
                 if (interviewState === 'listening') {
                     setInterviewState('processing');
                 }
@@ -81,30 +123,12 @@ export function VoiceMockInterview() {
             setInterviewState('unsupported');
         }
     }
-  }, [toast, interviewState]);
-  
-  useEffect(() => {
+    
     if (interviewState === 'processing') {
       processTranscript();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [interviewState]);
-
-  const getNewQuestion = () => {
-    let nextQuestion;
-    do {
-      nextQuestion = interviewQuestions[Math.floor(Math.random() * interviewQuestions.length)];
-    } while (nextQuestion === currentQuestion);
-    setCurrentQuestion(nextQuestion);
-    setTranscript('');
-    setFeedbackAudio(null);
-    setQuestionAudio(null);
-    // Only reset to idle if not in an unsupported state
-    if (interviewState !== 'unsupported') {
-      setInterviewState('idle');
-    }
-  };
-
+  }, [toast, interviewState, processTranscript]);
+  
   const readQuestionAloud = async () => {
     if (interviewState !== 'idle' || interviewState === 'unsupported') return;
 
@@ -135,7 +159,6 @@ export function VoiceMockInterview() {
   const handleToggleListening = () => {
     if (interviewState === 'listening') {
       recognitionRef.current?.stop();
-      // onend will trigger processing state change
     } else {
       if (!recognitionRef.current || interviewState === 'unsupported') {
         toast({ variant: 'destructive', title: 'Browser Not Supported', description: 'Speech recognition is not supported in this browser.' });
@@ -145,36 +168,6 @@ export function VoiceMockInterview() {
       setFeedbackAudio(null);
       recognitionRef.current.start();
       setInterviewState('listening');
-    }
-  };
-
-  const processTranscript = async () => {
-    if (!transcript.trim()) {
-      toast({ title: 'No answer detected', description: 'Please provide an answer before stopping.' });
-      setInterviewState('idle');
-      return;
-    }
-    
-    try {
-      // 1. Get text feedback from the mock interviewer AI
-      const feedbackResponse = await mockInterview({ userAnswer: transcript, question: currentQuestion });
-      if (!feedbackResponse.success || !feedbackResponse.data) {
-        throw new Error(feedbackResponse.error || 'Failed to get interview feedback.');
-      }
-      const fullFeedbackText = `Here is some feedback on your answer: ${feedbackResponse.data.feedback}. As a suggestion for improvement, you could say: ${feedbackResponse.data.suggestedImprovement}`;
-
-      // 2. Convert the feedback text to audio using the narrator AI
-      const audioResponse = await aiNarrate(fullFeedbackText);
-      if (!audioResponse.success || !audioResponse.data) {
-        throw new Error(audioResponse.error || 'Failed to generate audio feedback.');
-      }
-      
-      setFeedbackAudio(audioResponse.data.audioDataUri);
-      setInterviewState('speaking');
-
-    } catch (error: any) {
-      toast({ variant: 'destructive', title: 'Error processing feedback', description: error.message });
-      setInterviewState('idle');
     }
   };
 
@@ -195,7 +188,7 @@ export function VoiceMockInterview() {
     }
   }, [interviewState, feedbackAudio])
 
-  if (!isMounted) return null; // Prevents SSR issues with window object
+  if (!isMounted) return null;
 
   return (
     <section>
@@ -261,7 +254,6 @@ export function VoiceMockInterview() {
                     </div>
                 )}
                 
-                {/* Hidden audio element for playback */}
                 <audio ref={audioRef} className="hidden" />
 
             </CardContent>
