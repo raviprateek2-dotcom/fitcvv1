@@ -94,10 +94,6 @@ const config = {
           '0%': { transform: 'translateX(-100%)' },
           '100%': { transform: 'translateX(100%)' },
         },
-        'shimmer-text': {
-          '0%, 100%': { backgroundPosition: '200% center' },
-          '50%': { backgroundPosition: '-200% center' },
-        },
         'float': {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-5px)' },
@@ -107,7 +103,6 @@ const config = {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         shimmer: 'shimmer 2s infinite linear',
-        'shimmer-text': 'shimmer-text 5s linear infinite',
         'float': 'float 3s ease-in-out infinite',
       },
     },

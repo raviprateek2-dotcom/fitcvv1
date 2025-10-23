@@ -97,7 +97,7 @@ export default function Home() {
             >
                 <motion.h1 
                   variants={itemVariants} 
-                  className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl animate-shimmer-text bg-200% bg-gradient-to-r from-primary via-foreground to-primary bg-clip-text text-transparent"
+                  className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl bg-gradient-to-r from-primary via-foreground to-primary bg-clip-text text-transparent"
                 >
                     Don't just write a resume
                 </motion.h1>
@@ -138,7 +138,7 @@ export default function Home() {
         <div id="how-it-works" className="container mx-auto px-4 md:px-6">
               <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
                   <motion.div variants={itemVariants} className="inline-block rounded-lg bg-background/50 backdrop-blur-sm px-3 py-1 text-sm font-medium border">How It Works</motion.div>
-                  <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl animate-shimmer-text bg-200% bg-gradient-to-r from-primary via-foreground to-accent bg-clip-text text-transparent">Three Simple Steps to Your Dream Job</motion.h2>
+                  <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl bg-gradient-to-r from-primary via-foreground to-accent bg-clip-text text-transparent">Three Simple Steps to Your Dream Job</motion.h2>
               </div>
               <motion.div
                  variants={sectionVariants}
@@ -188,7 +188,7 @@ export default function Home() {
         <div id="testimonials" className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
             <motion.div variants={itemVariants} className="inline-block rounded-lg bg-background/50 backdrop-blur-sm border px-3 py-1 text-sm font-medium">What Our Users Say</motion.div>
-            <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl animate-shimmer-text bg-200% bg-gradient-to-r from-primary via-foreground to-accent bg-clip-text text-transparent">Loved by Job Seekers Worldwide</motion.h2>
+            <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl bg-gradient-to-r from-primary via-foreground to-accent bg-clip-text text-transparent">Loved by Job Seekers Worldwide</motion.h2>
           </div>
           <motion.div variants={itemVariants}>
             <Carousel
@@ -242,7 +242,7 @@ export default function Home() {
         <div id="blog" className="container mx-auto px-4 md:px-6">
             <motion.div variants={itemVariants} className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
               <div className="inline-block rounded-lg bg-secondary px-3 py-1 text-sm font-medium">From Our Blog</div>
-              <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl animate-shimmer-text bg-200% bg-gradient-to-r from-primary via-foreground to-accent bg-clip-text text-transparent">Career Advice & Resume Tips</h2>
+              <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl bg-gradient-to-r from-primary via-foreground to-accent bg-clip-text text-transparent">Career Advice & Resume Tips</h2>
               <p className="max-w-[600px] text-muted-foreground md:text-lg">
                 Get the latest insights from our career experts to help you land your dream job.
               </p>
@@ -304,7 +304,7 @@ export default function Home() {
         viewport={{ once: true, amount: 0.2 }}
       >
         <div className="container mx-auto px-4 md:px-6 text-center">
-          <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl animate-shimmer-text bg-200% bg-gradient-to-r from-primary via-foreground to-accent bg-clip-text text-transparent">Ready to Build Your Future?</motion.h2>
+          <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl bg-gradient-to-r from-primary via-foreground to-accent bg-clip-text text-transparent">Ready to Build Your Future?</motion.h2>
           <motion.p variants={itemVariants} className="mx-auto max-w-[600px] text-muted-foreground md:text-xl mt-4">
             Start for free and see how ResumeAI can transform your job search. No credit card required.
           </motion.p>
