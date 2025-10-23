@@ -5,41 +5,42 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Autoplay from "embla-carousel-autoplay";
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 const testimonials = [
     {
       author: 'Sarah L.',
       title: 'Software Engineer',
       quote: 'ResumeAI helped me land my dream job in just two weeks! The AI suggestions were a game-changer.',
-      avatar: 'https://i.pravatar.cc/150?img=1',
+      imageId: 'testimonial-avatar-1',
       rating: 5,
     },
     {
       author: 'John D.',
       title: 'Product Manager',
       quote: 'I\'ve never felt more confident about my resume. The templates are modern and professional.',
-      avatar: 'https://i.pravatar.cc/150?img=2',
+      imageId: 'testimonial-avatar-2',
       rating: 5,
     },
     {
       author: 'Emily C.',
       title: 'UX Designer',
       quote: 'As a designer, I appreciate the attention to detail in the templates. A fantastic tool!',
-      avatar: 'https://i.pravatar.cc/150?img=3',
+      imageId: 'testimonial-avatar-3',
       rating: 5,
     },
     {
       author: 'Mike R.',
       title: 'Marketing Director',
       quote: 'The ATS checker gave me peace of mind. I started getting more callbacks almost immediately after using ResumeAI.',
-      avatar: 'https://i.pravatar.cc/150?img=4',
+      imageId: 'testimonial-avatar-4',
       rating: 5,
     },
     {
       author: 'Jessica B.',
       title: 'Recent Graduate',
       quote: 'I was struggling to create my first resume. This tool made it so easy and helped me look professional.',
-      avatar: 'https://i.pravatar.cc/150?img=5',
+      imageId: 'testimonial-avatar-5',
       rating: 5,
     }
 ];
@@ -61,7 +62,9 @@ export function TestimonialsSection() {
                   className="w-full max-w-6xl mx-auto"
                 >
                   <CarouselContent>
-                    {testimonials.map((testimonial, index) => (
+                    {testimonials.map((testimonial, index) => {
+                      const image = PlaceHolderImages.find(img => img.id === testimonial.imageId);
+                      return (
                       <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
                         <div className="p-1 h-full">
                           <Card className="flex flex-col justify-between h-full p-8 transition-all duration-300 hover:scale-105 hover:shadow-2xl" variant="neuro">
@@ -74,7 +77,7 @@ export function TestimonialsSection() {
                               <p className="text-lg text-muted-foreground flex-grow">"{testimonial.quote}"</p>
                               <div className="flex items-center gap-4 pt-6 border-t">
                                 <Avatar>
-                                  <AvatarImage src={testimonial.avatar} alt={testimonial.author} />
+                                  {image && <AvatarImage src={image.imageUrl} alt={testimonial.author} />}
                                   <AvatarFallback>{testimonial.author.charAt(0)}</AvatarFallback>
                                 </Avatar>
                                 <div>
@@ -86,7 +89,7 @@ export function TestimonialsSection() {
                           </Card>
                         </div>
                       </CarouselItem>
-                    ))}
+                    )})}
                   </CarouselContent>
                   <CarouselPrevious className="hidden sm:flex" />
                   <CarouselNext className="hidden sm:flex" />

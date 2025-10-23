@@ -8,7 +8,6 @@ import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/skeleton';
-import { TestimonialsSection } from '@/components/home/TestimonialsSection';
 
 const FeaturesSection = dynamic(
   () => import('@/components/home/FeaturesSection').then(mod => mod.FeaturesSection),
@@ -33,6 +32,15 @@ const HowItWorksSection = dynamic(
     ssr: false 
   }
 );
+
+const TestimonialsSection = dynamic(
+    () => import('@/components/home/TestimonialsSection').then(mod => mod.TestimonialsSection),
+    {
+      loading: () => <Skeleton className="w-full h-[400px]" />,
+      ssr: false
+    }
+);
+
 
 export default function Home() {
   return (

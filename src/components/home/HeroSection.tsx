@@ -38,7 +38,7 @@ export function HeroSection() {
             >
                 <motion.h1 
                   variants={itemVariants} 
-                  className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl bg-gradient-to-r from-primary via-foreground to-primary bg-clip-text text-transparent"
+                  className="text-4xl font-headline font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl"
                 >
                     Don't just write a resume
                 </motion.h1>

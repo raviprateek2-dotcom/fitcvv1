@@ -153,7 +153,7 @@
     {
       "id": "blog-follow-up",
       "description": "A person sending an email on a laptop.",
-      "imageUrl": "https://images.unsplash.com/photo-1683117927786-f146491082fb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxzZW5kaW5nJTIwZW1haWx8ZW58MHx8fHwxNzYwNzU1MDU4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1683117927786-f146491fb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxzZW5kaW5nJTIwZW1haWx8ZW58MHx8fHwxNzYwNzU1MDU4fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "sending email"
     },
     {
@@ -191,6 +191,36 @@
       "description": "A portrait of the founder, Ravi Prateek.",
       "imageUrl": "https://images.unsplash.com/photo-1560250097-0b93528c311a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxwcm9mZXNzaW9uYWwlMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjA3MzEwODd8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "founder portrait"
+    },
+    {
+      "id": "testimonial-avatar-1",
+      "description": "Avatar for Sarah L.",
+      "imageUrl": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      "imageHint": "woman portrait"
+    },
+    {
+      "id": "testimonial-avatar-2",
+      "description": "Avatar for John D.",
+      "imageUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      "imageHint": "man portrait"
+    },
+    {
+      "id": "testimonial-avatar-3",
+      "description": "Avatar for Emily C.",
+      "imageUrl": "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      "imageHint": "woman smiling"
+    },
+    {
+      "id": "testimonial-avatar-4",
+      "description": "Avatar for Mike R.",
+      "imageUrl": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      "imageHint": "man smiling"
+    },
+    {
+      "id": "testimonial-avatar-5",
+      "description": "Avatar for Jessica B.",
+      "imageUrl": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      "imageHint": "woman professional"
     }
   ]
 }
