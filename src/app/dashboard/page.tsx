@@ -171,8 +171,8 @@ const LoadingState = () => (
 
 const EmptyState = ({ onPdfUploadClick }: { onPdfUploadClick: () => void; }) => (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 20, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
     >
       <Card variant="neuro" className="text-center py-16 md:py-24 bg-gradient-to-br from-background to-secondary/50">
@@ -187,26 +187,26 @@ const EmptyState = ({ onPdfUploadClick }: { onPdfUploadClick: () => void; }) => 
           </motion.div>
           <motion.h2 
             className="text-3xl font-headline font-bold mb-4"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ delay: 0.3, ease: 'easeOut' }}
           >
             Create Your First Resume
           </motion.h2>
           <motion.p 
             className="text-muted-foreground mb-8 text-lg max-w-2xl mx-auto"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ delay: 0.4, ease: 'easeOut' }}
           >
             Welcome! Start by choosing a professional template or importing an existing resume.
           </motion.p>
           
           <motion.div 
             className="flex flex-col sm:flex-row gap-4"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ delay: 0.5, ease: 'easeOut' }}
           >
              <Button size="lg" className="group" variant="outline" onClick={onPdfUploadClick}>
               <Upload className="mr-2 h-5 w-5" />
