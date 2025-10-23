@@ -9,9 +9,12 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/skeleton';
 import { HowItWorksSection } from '@/components/home/HowItWorksSection';
+import { FeaturesSection } from '@/components/home/FeaturesSection';
+import { TestimonialsSection } from '@/components/home/TestimonialsSection';
 
-const HomePageClient = dynamic(
-  () => import('@/components/home/HeroSection').then(mod => mod.HomePageClient),
+
+const HeroSection = dynamic(
+  () => import('@/components/home/HeroSection').then(mod => mod.HeroSection),
   { 
     loading: () => (
       <div className="py-24 md:py-40">
@@ -30,9 +33,13 @@ export default function Home() {
   return (
     <div className="flex flex-col items-center bg-background text-foreground overflow-x-hidden">
       
-      <HomePageClient />
+      <HeroSection />
 
       <HowItWorksSection />
+      
+      <FeaturesSection />
+
+      <TestimonialsSection />
 
       {/* Blog Section */}
       <section 
