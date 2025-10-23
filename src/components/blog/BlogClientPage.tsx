@@ -1,7 +1,7 @@
 
 'use client';
 
-import { blogPosts } from '@/lib/blog-posts';
+import { blogPostsMetadata } from '@/lib/blog-posts-metadata';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -47,7 +47,7 @@ export function BlogClientPage() {
           initial="hidden"
           animate="visible"
         >
-          {blogPosts.map((post) => {
+          {blogPostsMetadata.map((post) => {
             const image = PlaceHolderImages.find(img => img.id === post.imageId);
             return (
               <motion.div key={post.slug} variants={itemVariants}>

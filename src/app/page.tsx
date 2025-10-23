@@ -1,6 +1,6 @@
 
 import { Button } from '@/components/ui/button';
-import { blogPosts } from '@/lib/blog-posts';
+import { blogPostsMetadata } from '@/lib/blog-posts-metadata';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
@@ -69,7 +69,7 @@ export default function Home() {
             <div
               className="grid gap-8 md:grid-cols-3"
             >
-              {blogPosts.slice(0, 3).map((post) => {
+              {blogPostsMetadata.slice(0, 3).map((post) => {
                   const image = PlaceHolderImages.find(img => img.id === post.imageId);
                   return (
                       <div key={post.slug}>

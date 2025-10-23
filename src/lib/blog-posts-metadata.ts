@@ -1,0 +1,156 @@
+
+export type BlogPostMetadata = {
+  title: string;
+  slug: string;
+  description: string;
+  imageId: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export const blogPostsMetadata: BlogPostMetadata[] = [
+  {
+    title: "The Ultimate Guide to Writing a Resume That Gets Noticed in 2024",
+    slug: "ultimate-resume-guide-2024",
+    description: "Learn the essential strategies to craft a resume that stands out to recruiters and hiring managers in today's competitive job market.",
+    imageId: "blog-resume-guide",
+    createdAt: "2024-05-01T10:00:00Z",
+    updatedAt: "2024-05-01T10:00:00Z",
+  },
+  {
+    title: "5 Common Resume Mistakes (and How to Avoid Them)",
+    slug: "5-common-resume-mistakes",
+    description: "Don't let these simple mistakes cost you your dream job. Learn how to identify and fix the most common resume pitfalls.",
+    imageId: "blog-resume-mistakes",
+    createdAt: "2024-04-25T11:00:00Z",
+    updatedAt: "2024-04-25T11:00:00Z",
+  },
+  {
+    title: "How to Beat the Bots: Optimizing Your Resume for ATS",
+    slug: "how-to-beat-ats",
+    description: "Learn the secrets to creating an Applicant Tracking System (ATS) friendly resume that ensures your application gets seen by a human.",
+    imageId: "blog-ats-bots",
+    createdAt: "2024-04-20T09:00:00Z",
+    updatedAt: "2024-04-20T09:00:00Z",
+  },
+  {
+    title: "Action Verbs That Will Make Your Resume Stand Out",
+    slug: "resume-action-verbs",
+    description: "Tired of 'responsible for'? Supercharge your resume with our list of powerful action verbs that command attention and showcase your impact.",
+    imageId: "blog-action-verbs",
+    createdAt: "2024-04-15T14:00:00Z",
+    updatedAt: "2024-04-15T14:00:00Z",
+  },
+  {
+    title: "How to Write a Killer Professional Summary (With Examples)",
+    slug: "writing-professional-summary",
+    description: "Your professional summary is your resume's headline. Learn how to write a compelling summary that hooks the recruiter in seconds.",
+    imageId: "blog-summary",
+    createdAt: "2024-04-10T12:00:00Z",
+    updatedAt: "2024-04-10T12:00:00Z",
+  },
+  {
+    title: "CV vs. Resume: What's the Difference?",
+    slug: "cv-vs-resume",
+    description: "Are you applying for a job or an academic position? Understanding the key differences between a CV and a resume is crucial for your application.",
+    imageId: "blog-cv-resume",
+    createdAt: "2024-04-05T16:00:00Z",
+    updatedAt: "2024-04-05T16:00:00Z",
+  },
+  {
+    title: "How to List Skills on Your Resume (With Examples)",
+    slug: "how-to-list-skills-on-resume",
+    description: "Your skills section is a crucial part of your resume. Learn how to organize and present your skills to impress recruiters.",
+    imageId: "blog-skills",
+    createdAt: "2024-03-28T10:00:00Z",
+    updatedAt: "2024-03-28T10:00:00Z",
+  },
+  {
+    title: "How to Write a Cover Letter That Actually Gets Read",
+    slug: "how-to-write-cover-letter",
+    description: "A great cover letter can be the difference between getting an interview and being ignored. Learn the formula for a compelling cover letter.",
+    imageId: "blog-cover-letter",
+    createdAt: "2024-03-22T15:00:00Z",
+    updatedAt: "2024-03-22T15:00:00Z",
+  },
+  {
+    title: "Networking for Job Seekers: A Practical Guide",
+    slug: "networking-for-job-seekers",
+    description: "Networking can feel intimidating, but it's one of the most effective ways to find a job. Here are practical tips to get started.",
+    imageId: "blog-networking",
+    createdAt: "2024-03-18T11:00:00Z",
+    updatedAt: "2024-03-18T11:00:00Z",
+  },
+  {
+    title: "Preparing for a Job Interview: The Ultimate Checklist",
+    slug: "job-interview-checklist",
+    description: "You landed the interview! Now what? Follow our comprehensive checklist to prepare thoroughly and walk into your interview with confidence.",
+    imageId: "blog-interview-prep",
+    createdAt: "2024-03-12T09:00:00Z",
+    updatedAt: "2024-03-12T09:00:00Z",
+  },
+  {
+    title: "The Importance of Soft Skills in a Tech-Driven World",
+    slug: "soft-skills-importance",
+    description: "Technical abilities are crucial, but soft skills like communication and teamwork are what truly set you apart. Learn why they matter.",
+    imageId: "blog-soft-skills",
+    createdAt: "2024-03-08T14:00:00Z",
+    updatedAt: "2024-03-08T14:00:00Z",
+  },
+  {
+    title: "How to Explain Gaps in Your Resume",
+    slug: "explaining-resume-gaps",
+    description: "Worried about an employment gap on your resume? Learn how to address it confidently and turn it into a potential strength.",
+    imageId: "blog-resume-gaps",
+    createdAt: "2024-03-04T16:00:00Z",
+    updatedAt: "2024-03-04T16:00:00Z",
+  },
+  {
+    title: "The Top 10 In-Demand Tech Skills for 2025",
+    slug: "top-tech-skills-2025",
+    description: "Stay ahead of the curve. Discover the top 10 technical skills that employers will be looking for in the coming year.",
+    imageId: "blog-tech-skills",
+    createdAt: "2024-02-28T11:00:00Z",
+    updatedAt: "2024-02-28T11:00:00Z",
+  },
+  {
+    title: "How to Use LinkedIn to Find a Job",
+    slug: "linkedin-job-search",
+    description: "LinkedIn is more than just a social network; it's a powerful job search tool. Learn the strategies to unlock its full potential.",
+    imageId: "blog-linkedin",
+    createdAt: "2024-02-21T18:00:00Z",
+    updatedAt: "2024-02-21T18:00:00Z",
+  },
+  {
+    title: "The Follow-Up Email: How to Write One That Gets a Response",
+    slug: "follow-up-email-guide",
+    description: "The interview is over, but your work isn't done. A great follow-up email can seal the deal. Here’s how to write one.",
+    imageId: "blog-follow-up",
+    createdAt: "2024-02-15T12:00:00Z",
+    updatedAt: "2024-02-15T12:00:00Z",
+  },
+  {
+    title: "How to Answer 'Tell Me About Yourself'",
+    slug: "answer-tell-me-about-yourself",
+    description: "This common interview opener is your chance to set the tone. Learn how to craft a perfect, concise, and compelling answer.",
+    imageId: "blog-interview-question",
+    createdAt: "2024-02-10T10:00:00Z",
+    updatedAt: "2024-02-10T10:00:00Z",
+  },
+  {
+    title: "How to Build a Personal Portfolio Website",
+    slug: "build-portfolio-website",
+    description: "A portfolio website is a must-have for many professionals. Learn the key steps to creating a site that showcases your work and skills.",
+    imageId: "blog-portfolio",
+    createdAt: "2024-02-05T14:00:00Z",
+    updatedAt: "2024-02-05T14:00:00Z",
+  },
+  {
+    title: "How to Resign from a Job Gracefully",
+    slug: "how-to-resign-gracefully",
+    description: "Leaving a job is a significant career move. Learn how to resign professionally and maintain positive relationships.",
+    imageId: "blog-resign",
+    createdAt: "2024-01-30T11:00:00Z",
+    updatedAt: "2024-01-30T11:00:00Z",
+  },
+];
