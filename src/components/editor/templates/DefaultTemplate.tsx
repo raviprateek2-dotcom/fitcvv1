@@ -56,7 +56,7 @@ export function DefaultTemplate({ resumeData }: ResumePreviewProps) {
     '--primary-color': 'hsl(var(--primary))'
   } as React.CSSProperties;
 
-  const fontClass = styling?.fontFamily ? `font-${styling.fontFamily.split('-')[1]}` : 'font-body';
+  const fontClass = styling?.fontFamily ? styling.fontFamily.replace('font-', 'font-') : 'font-body';
 
   if (templateId === 'professional') {
     return (

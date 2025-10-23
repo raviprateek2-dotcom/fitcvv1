@@ -13,8 +13,9 @@ export const defaultResumeData = {
   summary: 'A brief professional summary about yourself.',
   experience: [],
   education: [],
-  skills: [],
-  projects: [],
+  // Projects section is not included by default, user can add it.
+  // skills: [],
+  // projects: [],
   jobDescription: '',
   coverLetter: '',
   companyInfo: {

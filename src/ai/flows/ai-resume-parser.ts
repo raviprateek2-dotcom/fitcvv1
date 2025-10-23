@@ -55,8 +55,8 @@ const ResumeDataSchema = z.object({
   summary: z.string().describe("A 2-4 sentence professional summary."),
   experience: z.array(ExperienceSchema).describe("A list of work experiences."),
   education: z.array(EducationSchema).describe("A list of educational qualifications."),
-  skills: z.array(SkillSchema).describe("A list of skills."),
-  projects: z.array(ProjectSchema).describe("A list of personal or professional projects."),
+  skills: z.array(SkillSchema).describe("A list of skills.").optional(),
+  projects: z.array(ProjectSchema).describe("A list of personal or professional projects.").optional(),
 });
 
 const ParseResumeOutputSchema = z.object({
@@ -78,8 +78,8 @@ const prompt = ai.definePrompt({
   Pay close attention to section headings like "Experience", "Education", "Skills", and "Projects" to correctly categorize the information.
   
   - For 'experience', capture the company, role, dates, and a description with bullet points.
-  - For 'skills', identify each skill and assign a reasonable proficiency level ('Beginner', 'Intermediate', 'Advanced', 'Expert') based on context. Default to 'Advanced' if unsure.
-  - For 'projects', extract the project name, a description, and a URL if available.
+  - For 'skills', identify each skill and assign a reasonable proficiency level ('Beginner', 'Intermediate', 'Advanced', 'Expert') based on context. Default to 'Advanced' if unsure. If no skills section is found, the 'skills' array can be omitted.
+  - For 'projects', extract the project name, a description, and a URL if available. If no projects section is found, the 'projects' array can be omitted.
   - Generate a unique numeric 'id' for each item in the arrays (experience, education, skills, projects). For the ID, just use a placeholder like 0 or 1, as it will be replaced later.
   - Make sure the output strictly adheres to the provided JSON schema.
 

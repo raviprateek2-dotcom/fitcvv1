@@ -16,8 +16,8 @@ export async function parseResumeFromPdf(base64String: string) {
     const now = Date.now();
     result.resumeData.experience.forEach((item, index) => item.id = now + Math.random() + index);
     result.resumeData.education.forEach((item, index) => item.id = now + Math.random() + 100 + index);
-    result.resumeData.skills.forEach((item, index) => item.id = now + Math.random() + 200 + index);
-    result.resumeData.projects.forEach((item, index) => item.id = now + Math.random() + 300 + index);
+    result.resumeData.skills?.forEach((item, index) => item.id = now + Math.random() + 200 + index);
+    result.resumeData.projects?.forEach((item, index) => item.id = now + Math.random() + 300 + index);
 
     return { success: true, data: result };
   } catch (error: any) {

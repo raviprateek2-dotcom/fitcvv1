@@ -33,7 +33,7 @@ export type Project = {
   id: number;
   name: string;
   description: string;
-  link: string;
+  link?: string;
 };
 
 export type Styling = {
