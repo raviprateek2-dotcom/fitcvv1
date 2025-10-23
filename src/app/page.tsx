@@ -13,7 +13,16 @@ import { motion, type Variants } from 'framer-motion';
 import { TypingAnimation } from '@/components/common/TypingAnimation';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { FeaturesSection } from '@/components/home/FeaturesSection';
+import dynamic from 'next/dynamic';
+import { Skeleton } from '@/components/ui/skeleton';
+
+const FeaturesSection = dynamic(
+  () => import('@/components/home/FeaturesSection').then(mod => mod.FeaturesSection),
+  { 
+    loading: () => <Skeleton className="w-full h-[500px]" />,
+    ssr: false 
+  }
+);
 
 
 const sectionVariants: Variants = {
