@@ -4,7 +4,7 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { ArrowRight, Bot, BrainCircuit, CalendarClock, Sparkles } from 'lucide-react';
+import { ArrowRight, Bot, BrainCircuit, CalendarClock, Sparkles, Volume2, Loader2, Ear } from 'lucide-react';
 import Link from 'next/link';
 import { BehavioralQuestionAnalyzer } from '@/components/interview/BehavioralQuestionAnalyzer';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
@@ -16,8 +16,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { VoiceMockInterview } from '@/components/interview/VoiceMockInterview';
 import { useUser } from '@/firebase';
 import { ProFeatureWrapper } from '@/components/editor/ProFeatureWrapper';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { VideoPitchGenerator } from '@/components/interview/VideoPitchGenerator';
+import { aiNarrate } from '@/app/actions/ai-narrator';
+import { useToast } from '@/hooks/use-toast';
 
 
 const featuredBlogs = blogPosts.filter(p => [
@@ -72,6 +74,9 @@ export default function InterviewPage() {
     const { userProfile } = useUser();
     const isProUser = userProfile?.subscription === 'premium';
     const [noteIndex, setNoteIndex] = useState(0);
+    const [isNarratingNote, setIsNarratingNote] = useState(false);
+    const noteAudioRef = useRef<HTMLAudioElement | null>(null);
+    const { toast } = useToast();
 
     useEffect(() => {
         const intervalId = setInterval(() => {
@@ -81,8 +86,30 @@ export default function InterviewPage() {
         return () => clearInterval(intervalId);
     }, []);
 
+    const handleNarrateNote = async () => {
+        const note = encouragingNotes[noteIndex];
+        if (!note) return;
+
+        setIsNarratingNote(true);
+        try {
+            const response = await aiNarrate(note.text);
+            if (response.success && response.data && noteAudioRef.current) {
+                noteAudioRef.current.src = response.data.audioDataUri;
+                noteAudioRef.current.play();
+            } else {
+                throw new Error(response.error || 'Failed to generate audio for note.');
+            }
+        } catch (error: any) {
+            toast({ variant: 'destructive', title: 'Narration Failed', description: error.message });
+        } finally {
+            setIsNarratingNote(false);
+        }
+    };
+
+
   return (
     <div className="bg-secondary">
+        <audio ref={noteAudioRef} className="hidden" />
         <motion.div 
             className="container mx-auto px-4 md:px-6 py-12 md:py-20"
             variants={containerVariants}
@@ -179,8 +206,15 @@ export default function InterviewPage() {
                             animate="animate"
                             exit="exit"
                             transition={{ duration: 0.5, ease: 'easeInOut' }}
+                            className="flex flex-col items-center"
                          >
-                            <h2 className="text-2xl font-headline font-bold mb-4">{encouragingNotes[noteIndex].title}</h2>
+                            <div className="flex items-center gap-4 mb-4">
+                                <h2 className="text-2xl font-headline font-bold">{encouragingNotes[noteIndex].title}</h2>
+                                <Button size="icon" variant="ghost" onClick={handleNarrateNote} disabled={isNarratingNote}>
+                                    {isNarratingNote ? <Loader2 className="h-5 w-5 animate-spin" /> : <Ear className="h-5 w-5" />}
+                                    <span className="sr-only">Listen to note</span>
+                                </Button>
+                            </div>
                             <p className="max-w-3xl mx-auto text-muted-foreground leading-relaxed">
                                 {encouragingNotes[noteIndex].text}
                             </p>
