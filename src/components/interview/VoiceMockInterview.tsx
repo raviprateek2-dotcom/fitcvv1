@@ -81,8 +81,7 @@ export function VoiceMockInterview() {
             setInterviewState('unsupported');
         }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [toast]);
+  }, [toast, interviewState]);
   
   useEffect(() => {
     if (interviewState === 'processing') {
