@@ -20,7 +20,6 @@ import React from 'react';
 import { useUser, useAuth } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import { ThemeToggleButton } from './ThemeToggleButton';
-import { motion } from 'framer-motion';
 
 const navLinks = [
   { href: '/dashboard', label: 'Dashboard' },
@@ -39,21 +38,9 @@ export function Header() {
       <div className="container flex h-16 items-center">
         <div className="mr-auto flex items-center">
           <Link href="/" className="flex items-center gap-2 font-bold font-headline text-lg">
-             <motion.div
-              animate={{
-                y: [0, -15, 0],
-                rotate: [0, 90, 0],
-              }}
-              transition={{
-                duration: 2,
-                ease: "easeInOut",
-                times: [0, 0.5, 1],
-                repeat: Infinity,
-                repeatDelay: 2
-              }}
-            >
+             <div className="animate-float">
               <Rocket className="h-6 w-6 text-primary" />
-            </motion.div>
+            </div>
             <span>ResumeAI</span>
           </Link>
         </div>
