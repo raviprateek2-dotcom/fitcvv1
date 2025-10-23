@@ -52,7 +52,8 @@ export function VoiceMockInterview() {
   useEffect(() => {
     setIsMounted(true);
     getNewQuestion();
-  }, [getNewQuestion]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const processTranscript = useCallback(async () => {
     if (!transcript.trim()) {
