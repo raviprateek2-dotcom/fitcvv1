@@ -1,3 +1,4 @@
+
 'use client';
 import {
   Auth,
@@ -7,7 +8,33 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   signOut as firebaseSignOut,
+  updateProfile,
 } from 'firebase/auth';
+import { doc, getFirestore, setDoc } from 'firebase/firestore';
+import type { UserProfile } from './provider';
+import { setDocumentNonBlocking } from './non-blocking-updates';
+
+
+/**
+ * Creates a new user profile document in Firestore.
+ * This is called after a user is created via email/password or Google sign-in.
+ */
+async function createUserProfile(user: import('firebase/auth').User) {
+    // We need to get a Firestore instance here
+    const db = getFirestore(user.app);
+    const userDocRef = doc(db, `users/${user.uid}`);
+    
+    const isDummyUser = user.email === 'test@test.com';
+    const newUserProfile: UserProfile = {
+      email: user.email || '',
+      subscription: isDummyUser ? 'premium' : 'free',
+      profilePhotoUrl: user.photoURL || '',
+    };
+    
+    // Set the document. We use the blocking setDoc here because it's part of the critical auth flow.
+    await setDoc(userDocRef, newUserProfile, { merge: false });
+}
+
 
 /** Initiate anonymous sign-in (non-blocking). */
 export function initiateAnonymousSignIn(authInstance: Auth): void {
@@ -25,7 +52,11 @@ export function initiateEmailSignUp(authInstance: Auth, email: string, password:
   // and update its UI state (e.g., stop a loading spinner).
   return new Promise((resolve, reject) => {
     createUserWithEmailAndPassword(authInstance, email, password)
-      .then(() => resolve()) // Resolve on success, auth state change will handle the rest.
+      .then(async (userCredential) => {
+        // After user creation, create their profile document
+        await createUserProfile(userCredential.user);
+        resolve(); // Resolve after profile is created.
+      })
       .catch(reject); // Reject with the error for the component to handle.
   });
 }
@@ -45,7 +76,20 @@ export function initiateGoogleSignIn(authInstance: Auth): Promise<void> {
     return new Promise((resolve, reject) => {
         const provider = new GoogleAuthProvider();
         signInWithPopup(authInstance, provider)
-        .then(() => resolve())
+        .then(async (result) => {
+             // After user signs in, potentially for the first time, ensure their profile exists.
+            const db = getFirestore(result.user.app);
+            const userDocRef = doc(db, `users/${result.user.uid}`);
+            
+            // Check if profile exists, if not, create it.
+            const { getDoc } = await import('firebase/firestore');
+            const docSnap = await getDoc(userDocRef);
+            if (!docSnap.exists()) {
+                await createUserProfile(result.user);
+            }
+
+            resolve()
+        })
         .catch(reject)
     });
 }

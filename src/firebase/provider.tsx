@@ -7,7 +7,6 @@ import { Firestore, doc, getDoc } from 'firebase/firestore';
 import { Auth, User, onAuthStateChanged } from 'firebase/auth';
 import { FirebaseErrorListener } from '@/components/FirebaseErrorListener'
 import { useDoc } from './firestore/use-doc';
-import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 
 interface FirebaseProviderProps {
   children: ReactNode;
@@ -110,22 +109,6 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
     const unsubscribe = onAuthStateChanged(
       auth,
       (firebaseUser) => { // Auth state determined
-        if (firebaseUser && firestore) {
-          // Check if user profile exists before setting auth state
-          const userDocRef = doc(firestore, `users/${firebaseUser.uid}`);
-          getDoc(userDocRef).then(docSnap => {
-            if (!docSnap.exists()) {
-              const isDummyUser = firebaseUser.email === 'test@test.com';
-              const newUserProfile: UserProfile = {
-                email: firebaseUser.email || '',
-                subscription: isDummyUser ? 'premium' : 'free',
-                profilePhotoUrl: firebaseUser.photoURL || '',
-              };
-              // Set the doc non-blockingly, don't wait for it to complete.
-              setDocumentNonBlocking(userDocRef, newUserProfile, { merge: false });
-            }
-          });
-        }
         setUserAuthState({ user: firebaseUser, isUserLoading: false, userError: null });
       },
       (error) => { // Auth listener error
