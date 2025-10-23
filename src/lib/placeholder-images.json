@@ -51,7 +51,7 @@
     {
       "id": "dashboard-resume-1",
       "description": "Thumbnail of a software engineer resume.",
-      "imageUrl": "https://picsum.photos/seed/dash-resume1/300/200",
+      "imageUrl": "https://images.unsplash.com/photo-1628489824362-738b49d387ce?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxyZXN1bWUlMjB0aHVtYm5haWx8ZW58MHx8fHwxNzYxMTg5MDY1fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "resume thumbnail"
     },
     {
@@ -185,6 +185,12 @@
       "description": "A person shaking hands with their manager while holding an envelope.",
       "imageUrl": "https://images.unsplash.com/photo-1638262052640-82e94d64664a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBoYW5kc2hha2V8ZW58MHx8fHwxNzYwNzU1MDU4fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "professional handshake"
+    },
+    {
+      "id": "founder-portrait",
+      "description": "A portrait of the founder, Ravi Prateek.",
+      "imageUrl": "https://images.unsplash.com/photo-1560250097-0b93528c311a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxwcm9mZXNzaW9uYWwlMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjA3MzEwODd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "founder portrait"
     }
   ]
 }

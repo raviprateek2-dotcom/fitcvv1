@@ -7,6 +7,8 @@ import { Rocket, Sparkles, Zap, Handshake, Target, ArrowRight } from 'lucide-rea
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
+import Image from 'next/image';
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -42,6 +44,8 @@ const values = [
 ]
 
 export function AboutPageClient() {
+    const founderImage = PlaceHolderImages.find(img => img.id === 'founder-portrait');
+
   return (
     <div className="bg-background text-foreground">
         {/* Hero Section */}
@@ -126,8 +130,17 @@ export function AboutPageClient() {
                 <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold">Meet the Founder</motion.h2>
                 <motion.div variants={itemVariants} className="flex flex-col items-center gap-4 mt-8 max-w-3xl mx-auto">
                     <Avatar className="h-40 w-40 border-4 border-primary">
-                        <AvatarImage src="" alt="Ravi Prateek" />
-                        <AvatarFallback>RP</AvatarFallback>
+                        {founderImage ? (
+                            <Image
+                                src={founderImage.imageUrl}
+                                alt="Ravi Prateek, Founder"
+                                width={160}
+                                height={160}
+                                className="object-cover"
+                            />
+                        ) : (
+                            <AvatarFallback>RP</AvatarFallback>
+                        )}
                     </Avatar>
                     <h3 className="text-2xl font-bold font-headline mb-0">Ravi Prateek</h3>
                     <p className="text-muted-foreground -mt-3">Founder & CEO</p>
