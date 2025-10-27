@@ -5,3 +5,8 @@ runConfig:
   # Increase this value if you'd like to automatically spin up
   # more instances in response to increased traffic.
   maxInstances: 1
+env:
+  - variable: API_KEY
+    value: your_secret_api_key_here
+  - variable: ANOTHER_VAR
+    value: another_value
