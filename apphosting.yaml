@@ -7,6 +7,6 @@ runConfig:
   maxInstances: 1
 env:
   - variable: API_KEY
-    value: your_secret_api_key_here
+    value: 'your_secret_api_key_here'
   - variable: ANOTHER_VAR
-    value: another_value
+    value: 'another_value'
