@@ -33,19 +33,26 @@ const personas = [
     { id: 'technical', name: 'Lead Architect', icon: <Binary className="w-4 h-4" />, description: 'Focuses on depth and logic.' },
 ] as const;
 
-export function MockInterview() {
+interface MockInterviewProps {
+    initialQuestion?: string;
+}
+
+export function MockInterview({ initialQuestion }: MockInterviewProps) {
   const [userAnswer, setUserAnswer] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<MockInterviewOutput | null>(null);
   const { toast } = useToast();
-  const [currentQuestion, setCurrentQuestion] = useState('');
+  const [currentQuestion, setCurrentQuestion] = useState(initialQuestion || '');
   const [persona, setPersona] = useState<typeof personas[number]['id']>('friendly');
   const [isNarrating, setIsNarrating] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    getNewQuestion();
-  }, []);
+    if (!initialQuestion) {
+        getNewQuestion();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialQuestion]);
 
   const getNewQuestion = () => {
     let nextQuestion;
@@ -97,7 +104,7 @@ export function MockInterview() {
   };
 
   return (
-    <section>
+    <section id="mock-interviewer">
         <audio ref={audioRef} className="hidden" />
         <Card variant='neuro' className="bg-background">
             <CardHeader>

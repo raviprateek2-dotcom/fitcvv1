@@ -1,17 +1,15 @@
 
 'use client';
 
-import { useCollection, useUser } from '@/firebase';
+import { useCollection, useUser, useMemoFirebase, useFirestore } from '@/firebase';
 import { useEffect, useState, useRef, useMemo } from 'react';
 import { serverTimestamp, collection, doc } from 'firebase/firestore';
-import { useFirestore } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, PlusCircle, ArrowRight, Upload, FileText, Loader2, CheckCircle2, Circle, Sparkles, TrendingUp, Zap, Lightbulb, Ear } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, ArrowRight, Upload, FileText, Loader2, CheckCircle2, Circle, Sparkles, TrendingUp, Zap, Lightbulb, Ear, BarChart3 } from 'lucide-react';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useMemoFirebase } from '@/firebase/provider';
 import { useRouter } from 'next/navigation';
 import { deleteDocumentNonBlocking, addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import {
@@ -35,6 +33,8 @@ import { cn } from '@/lib/utils';
 import { GoalSetter } from '@/components/dashboard/GoalSetter';
 import { aiNarrate } from '@/app/actions/ai-narrator';
 import { ApplicationTracker } from '@/components/dashboard/ApplicationTracker';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { Pie, PieChart, Cell, ResponsiveContainer, Bar, BarChart, XAxis, YAxis } from 'recharts';
 
 
 type Resume = {
@@ -52,6 +52,12 @@ type Resume = {
   projects?: any[];
   jobDescription?: string;
   coverLetter?: string;
+};
+
+type Application = {
+    id: string;
+    status: string;
+    dateApplied: any;
 };
 
 const itemVariants = {
@@ -275,6 +281,100 @@ const SuccessPath = ({ resumes }: { resumes: Resume[] }) => {
     );
 };
 
+const HiringInsights = ({ applications }: { applications: Application[] }) => {
+    const chartData = useMemo(() => {
+        const counts: Record<string, number> = {
+            applied: 0,
+            'phone-screen': 0,
+            technical: 0,
+            final: 0,
+            offer: 0,
+            rejected: 0,
+            ghosted: 0,
+        };
+        applications.forEach(app => {
+            if (counts[app.status] !== undefined) counts[app.status]++;
+        });
+        
+        return [
+            { name: 'Active', value: counts.applied + counts['phone-screen'] + counts.technical + counts.final, color: 'hsl(var(--primary))' },
+            { name: 'Offers', value: counts.offer, color: 'hsl(var(--accent))' },
+            { name: 'Closed', value: counts.rejected + counts.ghosted, color: 'hsl(var(--muted-foreground))' },
+        ].filter(d => d.value > 0);
+    }, [applications]);
+
+    const COLORS = ['hsl(var(--primary))', 'hsl(var(--accent))', 'hsl(var(--muted-foreground))'];
+
+    if (applications.length === 0) return null;
+
+    return (
+        <div className="grid md:grid-cols-3 gap-8 mb-12">
+            <Card variant="neuro" className="md:col-span-1">
+                <CardHeader className="pb-2">
+                    <CardTitle className="text-lg flex items-center gap-2">
+                        <BarChart3 className="w-5 h-5 text-primary" />
+                        Status Summary
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="h-48">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                            <Pie
+                                data={chartData}
+                                cx="50%"
+                                cy="50%"
+                                innerRadius={40}
+                                outerRadius={60}
+                                paddingAngle={5}
+                                dataKey="value"
+                            >
+                                {chartData.map((entry, index) => (
+                                    <Cell key={`cell-${index}`} fill={entry.color} />
+                                ))}
+                            </Pie>
+                            <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+                        </PieChart>
+                    </ResponsiveContainer>
+                </CardContent>
+                <CardFooter className="flex flex-wrap gap-4 pt-0">
+                    {chartData.map((entry, i) => (
+                        <div key={i} className="flex items-center gap-1.5 text-xs">
+                            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
+                            <span>{entry.name} ({entry.value})</span>
+                        </div>
+                    ))}
+                </CardFooter>
+            </Card>
+
+            <Card variant="neuro" className="md:col-span-2 relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+                    <TrendingUp className="w-48 h-48 text-primary" />
+                </div>
+                <CardHeader>
+                    <CardTitle className="text-lg">Velocity Insight</CardTitle>
+                    <CardDescription>Your application momentum over the last 30 days.</CardDescription>
+                </CardHeader>
+                <CardContent className="flex items-center justify-between">
+                    <div className="space-y-1">
+                        <p className="text-4xl font-bold text-primary">{applications.length}</p>
+                        <p className="text-sm text-muted-foreground uppercase tracking-wider">Total Opportunities</p>
+                    </div>
+                    <div className="text-right">
+                        <Badge variant="outline" className="bg-accent/10 text-accent border-accent/20 mb-2">Target Active: 5+</Badge>
+                        <p className="text-xs text-muted-foreground">Keep applying to increase your<br/>chances of multiple offers.</p>
+                    </div>
+                </CardContent>
+                <CardFooter className="border-t bg-secondary/20 pt-4">
+                    <p className="text-xs italic text-muted-foreground flex items-center gap-2">
+                        <Sparkles className="w-3 h-3 text-primary" />
+                        Tip: Reach out to 3 networking contacts this week to boost velocity.
+                    </p>
+                </CardFooter>
+            </Card>
+        </div>
+    );
+};
+
 const ResumeSkeleton = () => {
     return (
         <Card className="overflow-hidden" variant="neuro">
@@ -377,7 +477,13 @@ export default function DashboardPage() {
     [firestore, user]
   );
   
-  const { data: resumes, isLoading } = useCollection<Resume>(resumesQuery);
+  const applicationsQuery = useMemoFirebase(
+    () => (user && firestore ? collection(firestore, `users/${user.uid}/applications`) : null),
+    [firestore, user]
+  );
+
+  const { data: resumes, isLoading: isResumesLoading } = useCollection<Resume>(resumesQuery);
+  const { data: applications, isLoading: isAppsLoading } = useCollection<Application>(applicationsQuery);
 
   const handleDuplicate = (resumeToDuplicate: Resume) => {
     if (!user || !resumesQuery) return;
@@ -488,6 +594,8 @@ export default function DashboardPage() {
     );
   }
 
+  const isLoading = isResumesLoading || isAppsLoading;
+
   return (
     <div className="container mx-auto px-4 md:px-6 py-12">
        <input
@@ -521,6 +629,7 @@ export default function DashboardPage() {
       {!isLoading && resumes && resumes.length > 0 && (
         <>
             <SuccessPath resumes={resumes} />
+            <HiringInsights applications={applications || []} />
             <GoalSetter />
             <ApplicationTracker resumes={resumes} />
         </>

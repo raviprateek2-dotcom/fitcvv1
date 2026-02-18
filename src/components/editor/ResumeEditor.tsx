@@ -1,10 +1,11 @@
+
 'use client';
 
 import { Accordion } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Download, Share2, Sparkles, Bot, Newspaper, Brush, Loader2, SearchCheck, ArrowLeft, Upload, CheckCircle, XCircle, PlusCircle, FileText, KeySquare, Eye, Edit3, MessageSquareText, Linkedin } from 'lucide-react';
+import { Download, Share2, Sparkles, Bot, Newspaper, Brush, Loader2, SearchCheck, ArrowLeft, Upload, CheckCircle, XCircle, PlusCircle, FileText, KeySquare, Eye, Edit3, MessageSquareText, Linkedin, Target } from 'lucide-react';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { ResumePreview, CoverLetterPreview } from './ResumePreview';
 import { useDoc, useUser, useFirestore, useMemoFirebase, setDocumentNonBlocking } from '@/firebase';
@@ -18,6 +19,8 @@ import { writeCoverLetter as writeCoverLetterAction } from '@/app/actions/ai-cov
 import { suggestKeywords as suggestKeywordsAction } from '@/app/actions/ai-keyword-suggester';
 import { analyzeResume as analyzeResumeAction, type AnalyzeResumeOutput } from '@/app/actions/ai-resume-analyzer';
 import { reviewResume as reviewResumeAction, type ReviewResumeOutput } from '@/app/actions/ai-resume-review';
+import { predictInterviewQuestions as predictQuestionsAction } from '@/app/actions/ai-question-predictor';
+import type { PredictQuestionsOutput } from '@/ai/flows/ai-question-predictor';
 import { Slider } from '../ui/slider';
 import { cn } from '@/lib/utils';
 import { nanoid } from 'nanoid';
@@ -138,6 +141,9 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   const [isReviewing, setIsReviewing] = useState(false);
   const [reviewResult, setReviewResult] = useState<ReviewResumeOutput | null>(null);
   const [clTone, setClTone] = useState<'professional' | 'bold' | 'friendly'>('professional');
+
+  const [isPredictingQuestions, setIsPredictingQuestions] = useState(false);
+  const [predictedQuestions, setPredictedQuestions] = useState<PredictQuestionsOutput | null>(null);
 
   useEffect(() => {
     if (initialResumeData && !initialDataRef.current) {
@@ -401,6 +407,23 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
       }
   };
 
+  const handlePredictQuestions = async () => {
+    if (!resumeData?.jobDescription) {
+        toast({ variant: 'destructive', title: 'Job Description Required' });
+        return;
+    }
+    setIsPredictingQuestions(true);
+    setPredictedQuestions(null);
+    try {
+        const result = await predictQuestionsAction({ jobDescription: resumeData.jobDescription });
+        if (result.success && result.data) {
+            setPredictedQuestions(result.data);
+        }
+    } finally {
+        setIsPredictingQuestions(false);
+    }
+  };
+
 
   if (isResumeLoading || !resumeData) {
     return <EditorLoadingSkeleton />;
@@ -547,9 +570,15 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                         <PersonalInfoSection resumeData={resumeData} setResumeData={setResumeData} isProUser={true} />
                         <SummarySection resumeData={resumeData} setResumeData={setResumeData} isProUser={true} />
                         <ExperienceSection resumeData={resumeData} setResumeData={setResumeData} isProUser={true} />
-                        <EducationSection resumeData={resumeData} setResumeData={setResumeData} />
-                        <ProjectsSection resumeData={resumeData} setResumeData={setResumeData} />
-                        <SkillsSection resumeData={resumeData} setResumeData={setResumeData} />
+                        <AccordionItem value="education">
+                            <EducationSection resumeData={resumeData} setResumeData={setResumeData} />
+                        </AccordionItem>
+                        <AccordionItem value="projects">
+                            <ProjectsSection resumeData={resumeData} setResumeData={setResumeData} />
+                        </AccordionItem>
+                        <AccordionItem value="skills">
+                            <SkillsSection resumeData={resumeData} setResumeData={setResumeData} />
+                        </AccordionItem>
                     </Accordion>
                   </TabsContent>
 
@@ -579,15 +608,41 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                                 <Button onClick={handleSuggestKeywords} disabled={!resumeData.jobDescription || isAiLoading} variant="secondary">
                                     <KeySquare className="mr-2 h-4 w-4" /> Keywords
                                 </Button>
-                                <Button onClick={handleReviewResume} disabled={isReviewing || isAiLoading} variant="ghost">
-                                    <Sparkles className="mr-2 h-4 w-4" /> Audit Tone
+                                <Button onClick={handlePredictQuestions} disabled={!resumeData.jobDescription || isPredictingQuestions} variant="ghost">
+                                    <Target className="mr-2 h-4 w-4" /> Predict Prep
                                 </Button>
                             </div>
                         </CardFooter>
                      </Card>
 
-                    {(isAnalyzing || isReviewing || isAiLoading) && <div className="text-center p-4"><Loader2 className="h-6 w-6 animate-spin mx-auto"/></div>}
+                    {(isAnalyzing || isReviewing || isAiLoading || isPredictingQuestions) && <div className="text-center p-4"><Loader2 className="h-6 w-6 animate-spin mx-auto"/></div>}
                     
+                    {predictedQuestions && (
+                        <Card variant="neuro" className="border-primary/20 bg-primary/5">
+                            <CardHeader>
+                                <CardTitle className="text-lg flex items-center gap-2">
+                                    <Target className="w-5 h-5 text-primary" />
+                                    Predicted Interview Questions
+                                </CardTitle>
+                                <CardDescription>Strategic preparation based on the requirements.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                {predictedQuestions.questions.map((q, i) => (
+                                    <div key={i} className="p-3 bg-background rounded-lg border space-y-2 group transition-all hover:border-primary/40">
+                                        <div className="flex items-center justify-between">
+                                            <Badge variant="secondary" className="capitalize text-[10px]">{q.type}</Badge>
+                                            <Button variant="link" size="sm" className="h-auto p-0 text-[10px] opacity-0 group-hover:opacity-100" asChild>
+                                                <Link href={`/interview?q=${encodeURIComponent(q.question)}`}>Practice Now <ArrowRight className="ml-1 w-2 h-2" /></Link>
+                                            </Button>
+                                        </div>
+                                        <p className="text-sm font-bold leading-tight">"{q.question}"</p>
+                                        <p className="text-[11px] text-muted-foreground leading-relaxed italic">{q.reasoning}</p>
+                                    </div>
+                                ))}
+                            </CardContent>
+                        </Card>
+                    )}
+
                     {analysisResult && (
                             <Card variant="neuro">
                             <CardHeader>
@@ -679,16 +734,11 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                           </div>
                           <div className="space-y-2">
                               <Label>Letter Tone</Label>
-                              <Select value={clTone} onValueChange={(v: any) => setClTone(v)}>
-                                  <SelectTrigger>
-                                      <SelectValue />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                      <SelectItem value="professional">Professional (Balanced)</SelectItem>
-                                      <SelectItem value="bold">Bold (Achievement-focused)</SelectItem>
-                                      <SelectItem value="friendly">Friendly (Culture-focused)</SelectItem>
-                                  </SelectContent>
-                              </Select>
+                              <select value={clTone} onChange={(e: any) => setClTone(e.target.value)} className="w-full p-2 rounded border bg-background">
+                                  <option value="professional">Professional (Balanced)</option>
+                                  <option value="bold">Bold (Achievement-focused)</option>
+                                  <option value="friendly">Friendly (Culture-focused)</option>
+                              </select>
                           </div>
                       </div>
                       <div className="p-4 border rounded-lg space-y-4">
@@ -716,7 +766,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
               </div>
             </Tabs>
         </ScrollArea>
-        <ScrollArea className={cn("w-full md:w-2/3 bg-secondary/50", mobileMode === 'edit' ? 'hidden md:block' : 'block')}>
+        <ScrollArea className={cn("w-full md:w-2/3 bg-secondary/50", mobileMode === 'preview' ? 'block' : 'hidden md:block')}>
              <div className="p-4 md:p-10 mx-auto max-w-full overflow-x-hidden">
                 {activeTab === 'cover-letter' ? (
                   <CoverLetterPreview resumeData={resumeData} />

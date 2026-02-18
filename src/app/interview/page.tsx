@@ -16,10 +16,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { VoiceMockInterview } from '@/components/interview/VoiceMockInterview';
 import { useUser } from '@/firebase';
 import { ProFeatureWrapper } from '@/components/editor/ProFeatureWrapper';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { VideoPitchGenerator } from '@/components/interview/VideoPitchGenerator';
 import { aiNarrate } from '@/app/actions/ai-narrator';
 import { useToast } from '@/hooks/use-toast';
+import { useSearchParams } from 'next/navigation';
 
 
 const featuredBlogs = blogPosts.filter(p => [
@@ -70,13 +71,15 @@ const noteVariants = {
 };
 
 
-export default function InterviewPage() {
+function InterviewContent() {
     const { userProfile } = useUser();
     const isProUser = userProfile?.subscription === 'premium';
     const [noteIndex, setNoteIndex] = useState(0);
     const [isNarratingNote, setIsNarratingNote] = useState(false);
     const noteAudioRef = useRef<HTMLAudioElement | null>(null);
     const { toast } = useToast();
+    const searchParams = useSearchParams();
+    const initialQuestion = searchParams.get('q') || undefined;
 
     useEffect(() => {
         const intervalId = setInterval(() => {
@@ -139,7 +142,9 @@ export default function InterviewPage() {
 
                 <motion.div variants={itemVariants}><Separator /></motion.div>
 
-                <motion.div variants={itemVariants}><MockInterview /></motion.div>
+                <motion.div variants={itemVariants}>
+                    <MockInterview initialQuestion={initialQuestion} />
+                </motion.div>
 
                 <motion.div variants={itemVariants}><Separator /></motion.div>
                 
@@ -227,4 +232,12 @@ export default function InterviewPage() {
         </motion.div>
     </div>
   );
+}
+
+export default function InterviewPage() {
+    return (
+        <Suspense fallback={<div className="flex justify-center py-20"><Loader2 className="animate-spin" /></div>}>
+            <InterviewContent />
+        </Suspense>
+    );
 }
