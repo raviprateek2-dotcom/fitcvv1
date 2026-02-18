@@ -5,7 +5,7 @@ import { Accordion } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Download, Share2, Sparkles, Bot, Newspaper, Brush, Loader2, SearchCheck, ArrowLeft, Upload, CheckCircle, XCircle, PlusCircle, FileText, KeySquare, Eye, Edit3, MessageSquareText, Linkedin, Target, ArrowRight, BookOpen, AlertTriangle } from 'lucide-react';
+import { Download, Share2, Sparkles, Bot, Newspaper, Brush, Loader2, SearchCheck, ArrowLeft, Upload, CheckCircle, XCircle, PlusCircle, FileText, KeySquare, Eye, Edit3, MessageSquareText, Linkedin, Target, ArrowRight, BookOpen, AlertTriangle, Check, Copy } from 'lucide-react';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { ResumePreview, CoverLetterPreview } from './ResumePreview';
 import { useDoc, useUser, useFirestore, useMemoFirebase, setDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
@@ -41,7 +41,6 @@ import { ProFeatureWrapper } from './ProFeatureWrapper';
 import { AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
 import { LinkedInOptimizerTab } from './LinkedInOptimizerTab';
 import { Badge } from '../ui/badge';
-
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 type EditorTab = 'content' | 'ai-review' | 'cover-letter' | 'linkedin' | 'design';
@@ -113,7 +112,7 @@ function SaveStatusIndicator({ status }: { status: SaveStatus }) {
 }
 
 export function ResumeEditor({ resumeId }: { resumeId: string }) {
-  const { user, userProfile } = useUser();
+  const { user } = useUser();
   const firestore = useFirestore();
   const searchParams = useSearchParams();
   const isPrintMode = searchParams.get('print') === 'true';
@@ -134,14 +133,13 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   const [keywordSuggestions, setKeywordSuggestions] = useState<string[]>([]);
   const { toast } = useToast();
   
-  // Mobile UI state
   const [mobileMode, setMobileMode] = useState<'edit' | 'preview'>('edit');
-
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<AnalyzeResumeOutput | null>(null);
   const [isReviewing, setIsReviewing] = useState(false);
   const [reviewResult, setReviewResult] = useState<ReviewResumeOutput | null>(null);
   const [clTone, setClTone] = useState<'professional' | 'bold' | 'friendly'>('professional');
+  const [isCopied, setIsCopied] = useState(false);
 
   const [isPredictingQuestions, setIsPredictingQuestions] = useState(false);
   const [predictedQuestions, setPredictedQuestions] = useState<PredictQuestionsOutput | null>(null);
@@ -171,12 +169,10 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
         if (updatedData.projects === undefined) updatedData.projects = [];
         if (updatedData.jobDescription === undefined) updatedData.jobDescription = '';
 
-
         setResumeData(updatedData);
         initialDataRef.current = updatedData;
     }
   }, [initialResumeData]);
-
 
   useEffect(() => {
     if (isPrintMode && resumeData) {
@@ -216,7 +212,6 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     setTimeout(() => setSaveStatus('idle'), 2000);
   }, [resumeDocRef, firestore, user]);
 
-
   useEffect(() => {
     if (!resumeData || !initialDataRef.current || isPrintMode) return;
     
@@ -234,7 +229,6 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     };
   }, [resumeData, handleSave, isPrintMode]);
 
-
   const handleFieldChange = <T extends keyof ResumeData>(field: T, value: ResumeData[T]) => {
      setResumeData(prev => prev ? {...prev, [field]: value} : null);
   };
@@ -251,7 +245,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   };
 
   const handlePrint = () => {
-    window.print();
+    window.open(`/editor/${resumeId}?print=true`, '_blank');
   };
 
   const handleWriteCoverLetter = async () => {
@@ -277,7 +271,6 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
 
       if (result.success && result.data) {
         handleFieldChange('coverLetter', result.data.coverLetterText);
-        toast({ title: 'Cover Letter Generated!' });
       } else {
         toast({ variant: 'destructive', title: 'Error', description: result.error });
       }
@@ -304,10 +297,8 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
 
     const shareUrl = `${window.location.origin}/share/${shareId || resumeData.shareId}`;
     navigator.clipboard.writeText(shareUrl);
-    toast({
-        title: "Share Link Copied!",
-        description: "Public feedback link is now on your clipboard."
-    });
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000);
   };
 
   const handleSuggestKeywords = async () => {
@@ -331,7 +322,6 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
       });
       if (result.success && result.data) {
         setKeywordSuggestions(result.data.suggestions);
-        toast({ title: 'Keywords Suggested!' });
       }
     } finally {
       setIsAiLoading(false);
@@ -343,13 +333,11 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   
     const currentSkills = resumeData.skills || [];
     if (currentSkills.some(skill => skill.name.toLowerCase() === keyword.toLowerCase())) {
-      toast({ title: 'Skill Already Exists' });
       return;
     }
   
     const newSkill: Skill = { id: Date.now(), name: keyword, level: 'Advanced' };
     handleFieldChange('skills', [...currentSkills, newSkill]);
-    toast({ title: 'Skill Added', description: `"${keyword}" added.` });
   };
   
   const handlePdfUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -357,8 +345,6 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     if (!file) return;
   
     setIsParsing(true);
-    toast({ title: 'Parsing PDF...', description: 'Our AI is reading your resume.' });
-  
     try {
       const reader = new FileReader();
       reader.readAsDataURL(file);
@@ -372,7 +358,8 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
             ...result.data!.resumeData,
             title: result.data!.resumeData.personalInfo.name ? `${result.data!.resumeData.personalInfo.name}'s Resume` : 'Imported Resume',
             }));
-            toast({ title: 'Success!', description: 'Your resume has been imported.' });
+        } else {
+            toast({ variant: 'destructive', title: 'Parse Failed', description: result.error });
         }
       };
     } finally {
@@ -392,7 +379,6 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
       const result = await analyzeResumeAction({ resumeContent: JSON.stringify(resumeData), jobDescription: resumeData.jobDescription });
       if (result.success && result.data) {
           setAnalysisResult(result.data);
-          // Persist metrics to resume document
           if (resumeDocRef) {
               updateDocumentNonBlocking(resumeDocRef, { 
                   matchScore: result.data.matchScore,
@@ -401,6 +387,8 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                   learningPath: result.data.learningPath
               });
           }
+      } else {
+          toast({ variant: 'destructive', title: 'Analysis Error', description: result.error });
       }
     } finally {
       setIsAnalyzing(false);
@@ -430,12 +418,13 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
         const result = await predictQuestionsAction({ jobDescription: resumeData.jobDescription });
         if (result.success && result.data) {
             setPredictedQuestions(result.data);
+        } else {
+            toast({ variant: 'destructive', title: 'Prediction Error', description: result.error });
         }
     } finally {
         setIsPredictingQuestions(false);
     }
   };
-
 
   if (isResumeLoading || !resumeData) {
     return <EditorLoadingSkeleton />;
@@ -483,7 +472,8 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                 Import
                 </Button>
                 <Button variant="outline" size="sm" onClick={handleShare}>
-                <Share2 className="mr-2 h-4 w-4"/>Share
+                {isCopied ? <Check className="mr-2 h-4 w-4 text-green-500" /> : <Share2 className="mr-2 h-4 w-4"/>}
+                {isCopied ? 'Copied' : 'Share'}
                 </Button>
                 <Button variant="outline" size="sm" onClick={handlePrint}>
                 <Download className="mr-2 h-4 w-4" />
@@ -588,15 +578,9 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                         <PersonalInfoSection resumeData={resumeData} setResumeData={setResumeData} isProUser={true} />
                         <SummarySection resumeData={resumeData} setResumeData={setResumeData} isProUser={true} />
                         <ExperienceSection resumeData={resumeData} setResumeData={setResumeData} isProUser={true} />
-                        <AccordionItem value="education">
-                            <EducationSection resumeData={resumeData} setResumeData={setResumeData} />
-                        </AccordionItem>
-                        <AccordionItem value="projects">
-                            <ProjectsSection resumeData={resumeData} setResumeData={setResumeData} />
-                        </AccordionItem>
-                        <AccordionItem value="skills">
-                            <SkillsSection resumeData={resumeData} setResumeData={setResumeData} />
-                        </AccordionItem>
+                        <EducationSection resumeData={resumeData} setResumeData={setResumeData} />
+                        <ProjectsSection resumeData={resumeData} setResumeData={setResumeData} />
+                        <SkillsSection resumeData={resumeData} setResumeData={setResumeData} />
                     </Accordion>
                   </TabsContent>
 
@@ -786,11 +770,16 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                           </div>
                           <div className="space-y-2">
                               <Label>Letter Tone</Label>
-                              <select value={clTone} onChange={(e: any) => setClTone(e.target.value)} className="w-full p-2 rounded border bg-background">
-                                  <option value="professional">Professional (Balanced)</option>
-                                  <option value="bold">Bold (Achievement-focused)</option>
-                                  <option value="friendly">Friendly (Culture-focused)</option>
-                              </select>
+                              <Select value={clTone} onValueChange={(v: any) => setClTone(v)}>
+                                <SelectTrigger>
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="professional">Professional (Balanced)</SelectItem>
+                                    <SelectItem value="bold">Bold (Achievement-focused)</SelectItem>
+                                    <SelectItem value="friendly">Friendly (Culture-focused)</SelectItem>
+                                </SelectContent>
+                              </Select>
                           </div>
                       </div>
                       <div className="p-4 border rounded-lg space-y-4">

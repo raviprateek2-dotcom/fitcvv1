@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Loader2, Sparkles, XCircle } from "lucide-react";
+import { Loader2, Sparkles, XCircle, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { suggestTitle as suggestTitleAction } from '@/app/actions/ai-title-suggester';
@@ -39,12 +39,6 @@ export function PersonalInfoSection({ resumeData, setResumeData, isProUser }: Pe
             if (result.success && result.data) {
                 if (result.data.suggestedTitle.toLowerCase() !== resumeData.personalInfo.title.toLowerCase()) {
                     setTitleSuggestion(result.data.suggestedTitle);
-                    toast({
-                        title: 'AI Title Suggestion Ready',
-                        description: 'We have a suggestion for your job title.',
-                    });
-                } else {
-                    toast({ title: 'Title Looks Good!', description: 'Your job title is already professional and clear.' });
                 }
             } else {
                 toast({ variant: 'destructive', title: 'Error', description: result.error });
@@ -71,29 +65,31 @@ export function PersonalInfoSection({ resumeData, setResumeData, isProUser }: Pe
                     <div className="space-y-2"><Label>Full Name</Label><Input name="name" value={resumeData.personalInfo.name} onChange={handlePersonalInfoChange} /></div>
                     <div className="space-y-2">
                         <Label>Job Title</Label>
-                        <div className="flex items-center gap-2">
-                            <Input name="title" value={resumeData.personalInfo.title} onChange={handlePersonalInfoChange} className="flex-grow" />
-                            <ProFeatureWrapper isPro={isProUser}>
-                                <TooltipProvider>
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <Button variant="outline" size="icon" onClick={handleSuggestTitle} disabled={isTitleSuggesting}>
-                                                {isTitleSuggesting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-                                            </Button>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>AI Suggest Professional Title</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                </TooltipProvider>
-                            </ProFeatureWrapper>
+                        <div className="flex items-center gap-2 relative">
+                            <Input name="title" value={resumeData.personalInfo.title} onChange={handlePersonalInfoChange} className="flex-grow pr-10" />
+                            <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                                <ProFeatureWrapper isPro={isProUser}>
+                                    <TooltipProvider>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={handleSuggestTitle} disabled={isTitleSuggesting}>
+                                                    {isTitleSuggesting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4 text-primary" />}
+                                                </Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>AI Suggest Professional Title</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
+                                </ProFeatureWrapper>
+                            </div>
                         </div>
                         {titleSuggestion && (
-                            <div className="bg-secondary p-2 rounded-md flex items-center justify-between">
-                                <p className="text-sm">Suggestion: <span className="font-semibold">{titleSuggestion}</span></p>
+                            <div className="bg-secondary p-2 rounded-md flex items-center justify-between border border-primary/20 mt-2 animate-in fade-in slide-in-from-top-1">
+                                <p className="text-xs">AI Suggestion: <span className="font-bold text-primary">{titleSuggestion}</span></p>
                                 <div className="flex gap-1">
-                                    <Button size="sm" variant="ghost" onClick={applyTitleSuggestion} className="h-7">Apply</Button>
-                                    <Button size="icon" variant="ghost" onClick={() => setTitleSuggestion(null)} className="h-7 w-7"><XCircle className="h-4 w-4" /></Button>
+                                    <Button size="sm" variant="link" onClick={applyTitleSuggestion} className="h-7 p-0 px-2 text-primary font-bold">Apply</Button>
+                                    <Button size="icon" variant="ghost" onClick={() => setTitleSuggestion(null)} className="h-7 w-7"><XCircle className="h-4 w-4 text-muted-foreground" /></Button>
                                 </div>
                             </div>
                         )}

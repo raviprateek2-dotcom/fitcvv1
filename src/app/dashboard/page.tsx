@@ -7,7 +7,7 @@ import { serverTimestamp, collection, doc } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, PlusCircle, ArrowRight, Upload, FileText, Loader2, CheckCircle2, Circle, Sparkles, TrendingUp, Zap, Lightbulb, Ear, BarChart3, Target, Share2, Copy } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, ArrowRight, Upload, FileText, Loader2, CheckCircle2, Circle, Sparkles, TrendingUp, Zap, Lightbulb, Ear, BarChart3, Target, Share2, Copy, Check } from 'lucide-react';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useRouter } from 'next/navigation';
@@ -36,7 +36,6 @@ import { aiNarrate } from '@/app/actions/ai-narrator';
 import { ApplicationTracker } from '@/components/dashboard/ApplicationTracker';
 import { ChartTooltip, ChartTooltipContent, ChartContainer } from '@/components/ui/chart';
 import { Pie, PieChart, Cell } from 'recharts';
-
 
 type Resume = {
   id: string;
@@ -84,12 +83,15 @@ const calculateResumeStrength = (resume: Resume) => {
 
 const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDuplicate: (resume: Resume) => void; onDelete: (resumeId: string) => void; }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [updatedAtText, setUpdatedAtText] = useState('just now');
+  const [updatedAtText, setUpdatedAtText] = useState('...');
+  const [isCopied, setIsCopied] = useState(false);
   const strength = useMemo(() => calculateResumeStrength(resume), [resume]);
-  const { toast } = useToast();
   
   useEffect(() => {
-    if (!resume.updatedAt) return;
+    if (!resume.updatedAt) {
+        setUpdatedAtText('just now');
+        return;
+    }
     const date = resume.updatedAt.toDate ? resume.updatedAt.toDate() : new Date(resume.updatedAt);
     const diff = new Date().getTime() - date.getTime();
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -108,10 +110,8 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
     if (!resume.shareId) return;
     const shareUrl = `${window.location.origin}/share/${resume.shareId}`;
     navigator.clipboard.writeText(shareUrl);
-    toast({
-        title: "Link Copied",
-        description: "Public feedback link copied to clipboard."
-    });
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000);
   }
   
   const templateImage = PlaceHolderImages.find(img => img.id === `template-${resume.templateId}`);
@@ -186,8 +186,8 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
                 <DropdownMenuItem onClick={handleDownloadPdf}>Download PDF</DropdownMenuItem>
                 {resume.shareId && (
                     <DropdownMenuItem onClick={handleCopyShareLink}>
-                        <Copy className="w-4 h-4 mr-2" />
-                        Copy Share Link
+                        {isCopied ? <Check className="w-4 h-4 mr-2 text-green-500" /> : <Copy className="w-4 h-4 mr-2" />}
+                        {isCopied ? 'Copied Link' : 'Copy Share Link'}
                     </DropdownMenuItem>
                 )}
                 <AlertDialog>
@@ -220,8 +220,8 @@ const SuccessPath = ({ resumes }: { resumes: Resume[] }) => {
     const { toast } = useToast();
     const steps = [
         { label: 'Create your first resume', done: resumes.length > 0 },
-        { label: 'Optimize for a job description', done: resumes.some(r => (r.matchScore || 0) > 0) },
-        { label: 'Generate an AI cover letter', done: resumes.some(r => (r.coverLetter?.length || 0) > 200) },
+        { label: 'Optimize for a job description', done: resumes.some(r => r.matchScore !== undefined) },
+        { label: 'Generate an AI cover letter', done: resumes.some(r => (r.coverLetter?.trim().length || 0) > 200) },
         { label: 'Identify and bridge skill gaps', done: resumes.some(r => (r.skillGaps?.length || 0) > 0) },
     ];
 
@@ -357,11 +357,17 @@ const HiringInsights = ({ applications }: { applications: Application[] }) => {
         });
         
         return [
-            { name: 'Active', value: counts.applied + counts['phone-screen'] + counts.technical + counts.final, fill: 'hsl(var(--primary))' },
-            { name: 'Offers', value: counts.offer, fill: 'hsl(var(--accent))' },
-            { name: 'Closed', value: counts.rejected + counts.ghosted, fill: 'hsl(var(--muted-foreground))' },
+            { name: 'Active', value: counts.applied + counts['phone-screen'] + counts.technical + counts.final, fill: 'var(--color-Active)' },
+            { name: 'Offers', value: counts.offer, fill: 'var(--color-Offers)' },
+            { name: 'Closed', value: counts.rejected + counts.ghosted, fill: 'var(--color-Closed)' },
         ].filter(d => d.value > 0);
     }, [applications]);
+
+    const chartConfig = {
+        Active: { label: 'Active', color: 'hsl(var(--primary))' },
+        Offers: { label: 'Offers', color: 'hsl(var(--accent))' },
+        Closed: { label: 'Closed', color: 'hsl(var(--muted-foreground))' },
+    };
 
     if (!applications || applications.length === 0 || !isMounted) return null;
 
@@ -375,7 +381,7 @@ const HiringInsights = ({ applications }: { applications: Application[] }) => {
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="h-48">
-                    <ChartContainer config={{}}>
+                    <ChartContainer config={chartConfig}>
                         <PieChart>
                             <Pie
                                 data={chartData}
@@ -397,7 +403,7 @@ const HiringInsights = ({ applications }: { applications: Application[] }) => {
                 <CardFooter className="flex flex-wrap gap-4 pt-0">
                     {chartData.map((entry, i) => (
                         <div key={i} className="flex items-center gap-1.5 text-xs">
-                            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.fill }} />
+                            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: chartConfig[entry.name as keyof typeof chartConfig].color }} />
                             <span>{entry.name} ({entry.value})</span>
                         </div>
                     ))}
@@ -463,7 +469,6 @@ const EmptyState = ({ onPdfUploadClick }: { onPdfUploadClick: () => void; }) => 
     </motion.div>
 );
 
-
 export default function DashboardPage() {
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
@@ -472,11 +477,15 @@ export default function DashboardPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isParsing, setIsParsing] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
+  const [greeting, setGreeting] = useState('Strategic Talent');
 
   useEffect(() => {
     setIsHydrated(true);
     if (!isUserLoading && !user) {
       router.push('/login');
+    }
+    if (user?.displayName) {
+        setGreeting(user.displayName.trim() ? user.displayName.split(' ')[0] : 'Strategic Talent');
     }
   }, [isUserLoading, user, router]);
 
@@ -565,7 +574,7 @@ export default function DashboardPage() {
       
       <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
         <div>
-            <h1 className="text-3xl font-headline font-bold">Welcome back, {user.displayName?.split(' ')[0] || 'Strategic Talent'}!</h1>
+            <h1 className="text-3xl font-headline font-bold">Welcome back, {greeting}!</h1>
             <p className="text-muted-foreground">Your high-performance career command center.</p>
         </div>
         <div className="flex items-center gap-2">

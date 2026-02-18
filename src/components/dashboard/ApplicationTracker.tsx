@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Briefcase, Building2, ExternalLink, Loader2, Mail, Plus, Trash2, Copy, CheckCircle2, Sparkles, Search, Info } from 'lucide-react';
+import { Briefcase, Building2, ExternalLink, Loader2, Mail, Plus, Trash2, Copy, CheckCircle2, Sparkles, Search, Info, Check } from 'lucide-react';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useMemoFirebase } from '@/firebase/provider';
@@ -332,7 +332,6 @@ export function ApplicationTracker({ resumes }: { resumes: Resume[] }) {
                 )}
             </CardContent>
 
-            {/* AI Follow-up Dialog */}
             <Dialog open={isFollowUpOpen} onOpenChange={setIsFollowUpOpen}>
                 <DialogContent className="sm:max-w-[600px]">
                     <DialogHeader>
@@ -356,7 +355,7 @@ export function ApplicationTracker({ resumes }: { resumes: Resume[] }) {
                                 <div className="flex justify-between items-center text-xs text-muted-foreground italic">
                                     <p>* Remember to personalize with specific details from your conversation.</p>
                                     <Button size="sm" onClick={copyToClipboard} className="shrink-0">
-                                        {copied ? <CheckCircle2 className="w-4 h-4 mr-2" /> : <Copy className="w-4 h-4 mr-2" />}
+                                        {copied ? <Check className="w-4 h-4 mr-2 text-green-500" /> : <Copy className="w-4 h-4 mr-2" />}
                                         {copied ? 'Copied' : 'Copy Email'}
                                     </Button>
                                 </div>
@@ -366,7 +365,6 @@ export function ApplicationTracker({ resumes }: { resumes: Resume[] }) {
                 </DialogContent>
             </Dialog>
 
-            {/* AI Company Research Dialog */}
             <Dialog open={isResearchOpen} onOpenChange={setIsResearchOpen}>
                 <DialogContent className="sm:max-w-[500px]">
                     <DialogHeader>
