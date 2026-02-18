@@ -56,9 +56,11 @@ const availableTemplates = [
   { id: 'modern', name: 'Modern', isPremium: false },
   { id: 'classic', name: 'Classic', isPremium: false },
   { id: 'creative', name: 'Creative', isPremium: false },
-  { id: 'minimalist', name: 'Minimalist', isPremium: true },
-  { id: 'professional', name: 'Professional', isPremium: true },
-  { id: 'executive', name: 'Executive', isPremium: true },
+  { id: 'minimalist', name: 'Minimalist', isPremium: false },
+  { id: 'professional', name: 'Professional', isPremium: false },
+  { id: 'executive', name: 'Executive', isPremium: false },
+  { id: 'elegant', name: 'Elegant', isPremium: false },
+  { id: 'technical', name: 'Technical', isPremium: false },
 ];
 
 const availableFonts = [

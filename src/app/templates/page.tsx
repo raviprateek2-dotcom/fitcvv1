@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -32,19 +33,31 @@ const templates = [
     id: 'minimalist',
     name: 'Minimalist',
     image: PlaceHolderImages.find((img) => img.id === 'template-minimalist'),
-    isPremium: true,
+    isPremium: false,
   },
   {
     id: 'professional',
     name: 'Professional',
     image: PlaceHolderImages.find((img) => img.id === 'template-professional'),
-    isPremium: true,
+    isPremium: false,
   },
   {
     id: 'executive',
     name: 'Executive',
     image: PlaceHolderImages.find((img) => img.id === 'template-executive'),
-    isPremium: true,
+    isPremium: false,
+  },
+  {
+    id: 'elegant',
+    name: 'Elegant',
+    image: PlaceHolderImages.find((img) => img.id === 'template-elegant'),
+    isPremium: false,
+  },
+  {
+    id: 'technical',
+    name: 'Technical',
+    image: PlaceHolderImages.find((img) => img.id === 'template-technical'),
+    isPremium: false,
   },
 ];
 

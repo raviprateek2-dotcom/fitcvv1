@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -32,6 +33,12 @@ const templates: Record<string, { header: string }> = {
     },
     executive: {
         header: 'text-left mb-8'
+    },
+    elegant: {
+        header: 'text-center mb-10 pb-6 border-b'
+    },
+    technical: {
+        header: 'mb-6 border-b-2 pb-4 border-slate-900'
     }
 };
 
