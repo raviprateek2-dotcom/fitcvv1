@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Accordion } from '@/components/ui/accordion';
@@ -718,7 +719,6 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                                         ))}
                                     </div>
                                 </CardContent>
-                            </Card>
 
                             <Card variant="neuro" className="border-accent/20 bg-accent/5">
                                 <CardHeader>
