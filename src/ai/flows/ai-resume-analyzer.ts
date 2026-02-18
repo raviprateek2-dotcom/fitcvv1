@@ -2,9 +2,9 @@
 'use server';
 
 /**
- * @fileOverview Provides AI-powered analysis of a resume against a job description.
+ * @fileOverview Provides deep AI-powered analysis of a resume against a job description, identifying skill gaps and growth paths.
  *
- * - analyzeResume - A function that scores a resume and provides feedback.
+ * - analyzeResume - A function that scores a resume, identifies skill gaps, and suggests a learning path.
  * - AnalyzeResumeInput - The input type for the analyzeResume function.
  * - AnalyzeResumeOutput - The return type for the analyzeResume function.
  */
@@ -23,6 +23,8 @@ const AnalyzeResumeOutputSchema = z.object({
   summary: z.string().describe('A brief, high-level summary of the resume\'s strengths and weaknesses for this role.'),
   positivePoints: z.array(z.string()).describe('A list of 2-3 specific things the resume does well.'),
   areasForImprovement: z.array(z.string()).describe('A list of 2-3 specific, actionable suggestions for improvement.'),
+  skillGaps: z.array(z.string()).describe('Specific skills, technologies, or certifications mentioned in the job description but clearly missing from the resume.'),
+  learningPath: z.string().describe('A concise, actionable 3-step learning path or action plan to bridge the identified skill gaps.'),
 });
 export type AnalyzeResumeOutput = z.infer<typeof AnalyzeResumeOutputSchema>;
 
@@ -34,23 +36,25 @@ const prompt = ai.definePrompt({
   name: 'analyzeResumePrompt',
   input: {schema: AnalyzeResumeInputSchema},
   output: {schema: AnalyzeResumeOutputSchema},
-  prompt: `You are an expert AI resume reviewer and ATS (Applicant Tracking System) analyst. Your task is to analyze the provided resume against the target job description and provide a comprehensive review.
+  prompt: `You are an elite AI career strategist and ATS analyst. Your task is to perform a high-stakes analysis of the provided resume against the target job description.
 
-  1.  **Calculate a Match Score:** Based on keyword alignment, experience relevance, and overall fit, provide a score from 0 to 100. A score of 85+ is excellent.
-  2.  **Write a Summary:** Give a brief, insightful overview of how well the candidate's profile fits the role.
-  3.  **Identify Positive Points:** List 2-3 specific strengths of the resume. What makes this candidate a good fit?
-  4.  **Suggest Areas for Improvement:** Provide 2-3 concrete, actionable pieces of advice. How can the user make their resume stronger for *this specific job*?
+  1.  **Calculate a Match Score:** Based on keyword alignment, experience relevance, and overall fit, provide a score from 0 to 100.
+  2.  **Summarize Fit:** Give an insightful overview of the candidate's profile fit.
+  3.  **Identify Strengths:** List 2-3 specific reasons why this candidate is a strong contender.
+  4.  **Identify Improvements:** Suggest 2-3 ways to improve the *existing* content.
+  5.  **Identify Skill Gaps:** List critical skills or technologies from the job description that are COMPLETELY MISSING from the resume. Be precise.
+  6.  **Create a Learning Path:** Provide a brief, 3-step action plan (e.g., "Complete certification X", "Build project Y focusing on Z") to bridge those gaps.
 
   Analyze the following:
 
   **Job Description:**
   ---
-  {{jobDescription}}
+  {{{jobDescription}}}
   ---
 
   **Resume Content (JSON format):**
   ---
-  {{resumeContent}}
+  {{{resumeContent}}}
   ---
   `,
 });
@@ -66,6 +70,7 @@ const analyzeResumeFlow = ai.defineFlow(
       throw new Error('A job description is required to analyze the resume.');
     }
     const { output } = await prompt(input);
-    return output!;
+    if (!output) throw new Error('AI failed to analyze the resume.');
+    return output;
   }
 );

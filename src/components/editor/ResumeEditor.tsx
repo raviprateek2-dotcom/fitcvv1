@@ -5,7 +5,7 @@ import { Accordion } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Download, Share2, Sparkles, Bot, Newspaper, Brush, Loader2, SearchCheck, ArrowLeft, Upload, CheckCircle, XCircle, PlusCircle, FileText, KeySquare, Eye, Edit3, MessageSquareText, Linkedin, Target, ArrowRight } from 'lucide-react';
+import { Download, Share2, Sparkles, Bot, Newspaper, Brush, Loader2, SearchCheck, ArrowLeft, Upload, CheckCircle, XCircle, PlusCircle, FileText, KeySquare, Eye, Edit3, MessageSquareText, Linkedin, Target, ArrowRight, BookOpen, AlertTriangle } from 'lucide-react';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { ResumePreview, CoverLetterPreview } from './ResumePreview';
 import { useDoc, useUser, useFirestore, useMemoFirebase, setDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
@@ -392,11 +392,13 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
       const result = await analyzeResumeAction({ resumeContent: JSON.stringify(resumeData), jobDescription: resumeData.jobDescription });
       if (result.success && result.data) {
           setAnalysisResult(result.data);
-          // Persist match score to resume document
+          // Persist metrics to resume document
           if (resumeDocRef) {
               updateDocumentNonBlocking(resumeDocRef, { 
                   matchScore: result.data.matchScore,
-                  auditSummary: result.data.summary
+                  auditSummary: result.data.summary,
+                  skillGaps: result.data.skillGaps,
+                  learningPath: result.data.learningPath
               });
           }
       }
@@ -595,8 +597,8 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                    <TabsContent value="ai-review" className="p-4 md:p-6 space-y-4">
                      <Card variant="neuro">
                         <CardHeader>
-                            <CardTitle className="font-headline">AI Match Audit</CardTitle>
-                            <CardDescription>How well do you fit the role?</CardDescription>
+                            <CardTitle className="font-headline">AI Strategic Audit</CardTitle>
+                            <CardDescription>Get a high-stakes analysis of your fit for the role.</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="space-y-2">
@@ -612,7 +614,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                         </CardContent>
                         <CardFooter className="flex flex-col gap-2">
                             <Button onClick={handleAnalyzeResume} disabled={!resumeData.jobDescription || isAnalyzing || isAiLoading} className="w-full">
-                                <SearchCheck className="mr-2 h-4 w-4" /> Analyze Match
+                                <SearchCheck className="mr-2 h-4 w-4" /> Run Deep Analysis
                             </Button>
                             <div className="grid grid-cols-2 gap-2 w-full">
                                 <Button onClick={handleSuggestKeywords} disabled={!resumeData.jobDescription || isAiLoading} variant="secondary">
@@ -654,39 +656,73 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                     )}
 
                     {analysisResult && (
+                        <div className="space-y-4">
                             <Card variant="neuro">
-                            <CardHeader>
-                                <CardTitle className="text-lg">Match Analysis</CardTitle>
-                                <CardDescription className="text-xs">{analysisResult.summary}</CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                    <div>
-                                    <Label className="text-xs">Match Score</Label>
-                                    <div className="flex items-center gap-4">
-                                        <Progress value={analysisResult.matchScore} className="w-full" />
-                                        <span className="font-bold text-lg">{analysisResult.matchScore}%</span>
+                                <CardHeader>
+                                    <CardTitle className="text-lg">Match Analysis</CardTitle>
+                                    <CardDescription className="text-xs">{analysisResult.summary}</CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                        <div>
+                                        <Label className="text-xs">Match Score</Label>
+                                        <div className="flex items-center gap-4">
+                                            <Progress value={analysisResult.matchScore} className="w-full" />
+                                            <span className="font-bold text-lg">{analysisResult.matchScore}%</span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="space-y-4">
-                                    <div className="space-y-2">
-                                        <h4 className="font-semibold text-xs text-green-600 uppercase">Strengths</h4>
-                                        <ul className="list-none space-y-1.5 text-sm">
-                                            {analysisResult.positivePoints.map((point, i) => (
-                                                <li key={i} className="flex items-start gap-2"><CheckCircle className="h-4 w-4 mt-0.5 text-green-500 shrink-0" />{point}</li>
-                                            ))}
-                                        </ul>
+                                    <div className="space-y-4">
+                                        <div className="space-y-2">
+                                            <h4 className="font-semibold text-xs text-green-600 uppercase">Strengths</h4>
+                                            <ul className="list-none space-y-1.5 text-sm">
+                                                {analysisResult.positivePoints.map((point, i) => (
+                                                    <li key={i} className="flex items-start gap-2"><CheckCircle className="h-4 w-4 mt-0.5 text-green-500 shrink-0" />{point}</li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <h4 className="font-semibold text-xs text-amber-600 uppercase">Suggestions</h4>
+                                            <ul className="list-none space-y-1.5 text-sm">
+                                                {analysisResult.areasForImprovement.map((point, i) => (
+                                                    <li key={i} className="flex items-start gap-2"><XCircle className="h-4 w-4 mt-0.5 text-amber-500 shrink-0" />{point}</li>
+                                                ))}
+                                            </ul>
+                                        </div>
                                     </div>
-                                    <div className="space-y-2">
-                                        <h4 className="font-semibold text-xs text-amber-600 uppercase">Suggestions</h4>
-                                        <ul className="list-none space-y-1.5 text-sm">
-                                            {analysisResult.areasForImprovement.map((point, i) => (
-                                                <li key={i} className="flex items-start gap-2"><XCircle className="h-4 w-4 mt-0.5 text-amber-500 shrink-0" />{point}</li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                </div>
-                            </CardContent>
+                                </CardContent>
                             </Card>
+
+                            <Card variant="neuro" className="border-red-500/20 bg-red-500/5">
+                                <CardHeader>
+                                    <CardTitle className="text-lg flex items-center gap-2">
+                                        <AlertTriangle className="w-5 h-5 text-red-500" />
+                                        Critical Skill Gaps
+                                    </CardTitle>
+                                    <CardDescription>Missing technical requirements detected.</CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="flex flex-wrap gap-2">
+                                        {analysisResult.skillGaps.map((gap, i) => (
+                                            <Badge key={i} variant="destructive" className="bg-red-500/10 text-red-600 border-red-500/20">{gap}</Badge>
+                                        ))}
+                                    </div>
+                                </CardContent>
+                            </Card>
+
+                            <Card variant="neuro" className="border-accent/20 bg-accent/5">
+                                <CardHeader>
+                                    <CardTitle className="text-lg flex items-center gap-2">
+                                        <BookOpen className="w-5 h-5 text-accent" />
+                                        Strategic Growth Path
+                                    </CardTitle>
+                                    <CardDescription>AI-suggested plan to bridge the gaps.</CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="p-4 bg-background rounded-lg border text-sm leading-relaxed whitespace-pre-wrap">
+                                        {analysisResult.learningPath}
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </div>
                     )}
 
                     {reviewResult && (

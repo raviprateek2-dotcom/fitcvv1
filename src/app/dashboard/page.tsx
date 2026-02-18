@@ -7,7 +7,7 @@ import { serverTimestamp, collection, doc } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, PlusCircle, ArrowRight, Upload, FileText, Loader2, CheckCircle2, Circle, Sparkles, TrendingUp, Zap, Lightbulb, Ear, BarChart3, Target } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, ArrowRight, Upload, FileText, Loader2, CheckCircle2, Circle, Sparkles, TrendingUp, Zap, Lightbulb, Ear, BarChart3, Target, Share2, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useRouter } from 'next/navigation';
@@ -41,6 +41,7 @@ type Resume = {
   id: string;
   title: string;
   templateId: string;
+  shareId?: string;
   updatedAt: {
     toDate: () => Date;
   };
@@ -71,11 +72,12 @@ const calculateResumeStrength = (resume: Resume) => {
     let score = 0;
     if (resume.personalInfo?.name && resume.personalInfo?.name !== 'Your Name') score += 10;
     if (resume.summary && resume.summary.length > 50) score += 15;
-    if (resume.experience && resume.experience.length > 0) score += 25;
-    if (resume.education && resume.education.length > 0) score += 15;
-    if (resume.skills && resume.skills.length > 0) score += 15;
+    if (resume.experience && resume.experience.length > 0) score += 20;
+    if (resume.education && resume.education.length > 0) score += 10;
+    if (resume.skills && resume.skills.length > 0) score += 10;
     if (resume.projects && resume.projects.length > 0) score += 10;
     if (resume.jobDescription && resume.jobDescription.length > 100) score += 10;
+    if (resume.matchScore !== undefined) score += 15; // Reward for auditing
     return Math.min(score, 100);
 }
 
@@ -116,6 +118,12 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
                     {resume.matchScore}% Match
                 </Badge>
             )}
+            {resume.shareId && (
+                <Badge variant="outline" className="bg-blue-500/10 backdrop-blur-sm shadow-sm border-blue-500/20 text-blue-600 font-bold">
+                    <Share2 className="w-3 h-3 mr-1" />
+                    Shared
+                </Badge>
+            )}
         </div>
         
         <Link href={`/editor/${resume.id}`} className="block overflow-hidden">
@@ -153,35 +161,37 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
           <Button variant="ghost" size="sm" asChild>
             <Link href={`/editor/${resume.id}`}>Edit Resume</Link>
           </Button>
-          <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <MoreHorizontal className="h-4 w-4" />
-                <span className="sr-only">More options</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => onDuplicate(resume)}>Duplicate</DropdownMenuItem>
-              <DropdownMenuItem onClick={handleDownloadPdf}>Download PDF</DropdownMenuItem>
-              <AlertDialog>
+          <div className="flex items-center gap-1">
+            <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
                 <DropdownMenuTrigger asChild>
-                  <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:bg-destructive/90 focus:text-destructive-foreground">Delete</DropdownMenuItem>
+                <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <MoreHorizontal className="h-4 w-4" />
+                    <span className="sr-only">More options</span>
+                </Button>
                 </DropdownMenuTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This action cannot be undone. This will permanently delete your resume.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel onClick={() => setIsMenuOpen(false)}>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => { onDelete(resume.id); setIsMenuOpen(false); }} className="bg-destructive hover:bg-destructive/90">Delete</AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => onDuplicate(resume)}>Duplicate</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleDownloadPdf}>Download PDF</DropdownMenuItem>
+                <AlertDialog>
+                    <DropdownMenuTrigger asChild>
+                    <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:bg-destructive/90 focus:text-destructive-foreground">Delete</DropdownMenuItem>
+                    </DropdownMenuTrigger>
+                    <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                        This action cannot be undone. This will permanently delete your resume.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel onClick={() => setIsMenuOpen(false)}>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => { onDelete(resume.id); setIsMenuOpen(false); }} className="bg-destructive hover:bg-destructive/90">Delete</AlertDialogAction>
+                    </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+                </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </CardFooter>
       </Card>
     </motion.div>
@@ -193,7 +203,7 @@ const SuccessPath = ({ resumes }: { resumes: Resume[] }) => {
         { label: 'Create your first resume', done: resumes.length > 0, link: '/templates' },
         { label: 'Optimize for a job description', done: resumes.some(r => (r.matchScore || 0) > 0), link: '#' },
         { label: 'Generate an AI cover letter', done: resumes.some(r => (r.coverLetter?.length || 0) > 200), link: '#' },
-        { label: 'Practice with the AI Interviewer', done: false, link: '/interview' },
+        { label: 'Identify and bridge skill gaps', done: resumes.some(r => (r as any).skillGaps?.length > 0), link: '#' },
     ];
 
     const completedSteps = steps.filter(s => s.done).length;
@@ -201,7 +211,7 @@ const SuccessPath = ({ resumes }: { resumes: Resume[] }) => {
     
     const [isNarratingTip, setIsNarratingTip] = useState(false);
     const audioRef = useRef<HTMLAudioElement | null>(null);
-    const tipText = "Recruiters spend an average of 7 seconds scanning a resume. Use bold keywords and quantifiable results like 'increased sales by 20%' to make every second count.";
+    const tipText = "Hiring managers look for growth. Use our Skill Gap analyzer to identify exactly what you need to learn to land that high-stakes senior role.";
 
     const handleNarrateTip = async () => {
         setIsNarratingTip(true);
@@ -229,13 +239,13 @@ const SuccessPath = ({ resumes }: { resumes: Resume[] }) => {
                         <div>
                             <CardTitle className="text-xl flex items-center gap-2">
                                 <Sparkles className="w-5 h-5 text-primary" />
-                                Your Success Path
+                                Your Career Success Hub
                             </CardTitle>
-                            <CardDescription>Complete these steps to maximize your hiring potential.</CardDescription>
+                            <CardDescription>Follow the data-driven path to your next offer.</CardDescription>
                         </div>
                         <div className="text-right hidden sm:block">
                             <p className="text-2xl font-bold text-primary">{Math.round(progress)}%</p>
-                            <p className="text-xs text-muted-foreground uppercase tracking-widest">Progress</p>
+                            <p className="text-xs text-muted-foreground uppercase tracking-widest">Momentum</p>
                         </div>
                     </div>
                     <Progress value={progress} className="h-2 mt-4 bg-secondary" />
@@ -266,7 +276,7 @@ const SuccessPath = ({ resumes }: { resumes: Resume[] }) => {
                     <CardTitle className="text-lg flex items-center justify-between">
                         <div className="flex items-center gap-2">
                             <Lightbulb className="w-5 h-5 text-primary" />
-                            Tip of the Day
+                            Strategist Tip
                         </div>
                         <Button size="icon" variant="ghost" className="h-8 w-8" onClick={handleNarrateTip} disabled={isNarratingTip}>
                             {isNarratingTip ? <Loader2 className="h-4 w-4 animate-spin"/> : <Ear className="h-4 w-4" />}
@@ -281,7 +291,7 @@ const SuccessPath = ({ resumes }: { resumes: Resume[] }) => {
                 </CardContent>
                 <CardFooter>
                     <Button variant="link" className="p-0 text-primary" asChild>
-                        <Link href="/blog">Read more tips <ArrowRight className="ml-1 w-4 h-4" /></Link>
+                        <Link href="/blog">Expert Articles <ArrowRight className="ml-1 w-4 h-4" /></Link>
                     </Button>
                 </CardFooter>
             </Card>
@@ -319,7 +329,7 @@ const HiringInsights = ({ applications }: { applications: Application[] }) => {
                 <CardHeader className="pb-2">
                     <CardTitle className="text-lg flex items-center gap-2">
                         <BarChart3 className="w-5 h-5 text-primary" />
-                        Status Summary
+                        Pipeline Summary
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="h-48">
@@ -357,23 +367,23 @@ const HiringInsights = ({ applications }: { applications: Application[] }) => {
                     <TrendingUp className="w-48 h-48 text-primary" />
                 </div>
                 <CardHeader>
-                    <CardTitle className="text-lg">Velocity Insight</CardTitle>
-                    <CardDescription>Your application momentum over the last 30 days.</CardDescription>
+                    <CardTitle className="text-lg">Velocity Dashboard</CardTitle>
+                    <CardDescription>Your strategic application volume over time.</CardDescription>
                 </CardHeader>
                 <CardContent className="flex items-center justify-between">
                     <div className="space-y-1">
                         <p className="text-4xl font-bold text-primary">{applications.length}</p>
-                        <p className="text-sm text-muted-foreground uppercase tracking-wider">Total Opportunities</p>
+                        <p className="text-sm text-muted-foreground uppercase tracking-wider">Strategic Attempts</p>
                     </div>
                     <div className="text-right">
-                        <Badge variant="outline" className="bg-accent/10 text-accent border-accent/20 mb-2">Target Active: 5+</Badge>
-                        <p className="text-xs text-muted-foreground">Keep applying to increase your<br/>chances of multiple offers.</p>
+                        <Badge variant="outline" className="bg-accent/10 text-accent border-accent/20 mb-2">Momentum: High</Badge>
+                        <p className="text-xs text-muted-foreground">Multiple offers often require<br/>consistent, data-driven activity.</p>
                     </div>
                 </CardContent>
                 <CardFooter className="border-t bg-secondary/20 pt-4">
                     <p className="text-xs italic text-muted-foreground flex items-center gap-2">
                         <Sparkles className="w-3 h-3 text-primary" />
-                        Tip: Reach out to 3 networking contacts this week to boost velocity.
+                        Tip: Quality audits are 10x more effective than quantity applications.
                     </p>
                 </CardFooter>
             </Card>
@@ -615,8 +625,8 @@ export default function DashboardPage() {
       
       <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
         <div>
-            <h1 className="text-3xl font-headline font-bold">Welcome back, {user.displayName?.split(' ')[0] || 'User'}!</h1>
-            <p className="text-muted-foreground">The smartest way to build your career is right here.</p>
+            <h1 className="text-3xl font-headline font-bold">Welcome back, {user.displayName?.split(' ')[0] || 'Strategic Talent'}!</h1>
+            <p className="text-muted-foreground">Your high-performance career command center.</p>
         </div>
         <div className="flex items-center gap-2">
            <Button variant="outline" onClick={() => fileInputRef.current?.click()} disabled={isParsing}>

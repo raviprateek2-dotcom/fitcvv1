@@ -87,6 +87,15 @@
           "type": "string",
           "description": "Brief summary of the latest AI audit."
         },
+        "skillGaps": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Skills found in the job description but missing from the resume."
+        },
+        "learningPath": {
+          "type": "string",
+          "description": "AI-suggested steps to bridge identified skill gaps."
+        },
         "projects": {
           "type": "array",
           "items": {
