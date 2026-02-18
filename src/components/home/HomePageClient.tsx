@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -9,7 +8,7 @@ import { TypingAnimation } from '@/components/common/TypingAnimation';
 import { useRef } from 'react';
 import { AnimatedResume } from '../common/AnimatedResume';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Autoplay from "embla-carousel-autoplay";
 import { PlaceHolderImages } from '@/lib/placeholder-images';
