@@ -5,7 +5,7 @@ import { Accordion } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Download, Share2, Sparkles, Bot, Newspaper, Brush, Loader2, SearchCheck, ArrowLeft, Upload, CheckCircle, XCircle, PlusCircle, FileText, KeySquare, Eye, Edit3 } from 'lucide-react';
+import { Download, Share2, Sparkles, Bot, Newspaper, Brush, Loader2, SearchCheck, ArrowLeft, Upload, CheckCircle, XCircle, PlusCircle, FileText, KeySquare, Eye, Edit3, MessageSquareText } from 'lucide-react';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { ResumePreview, CoverLetterPreview } from './ResumePreview';
 import { useDoc, useUser, useFirestore, useMemoFirebase, setDocumentNonBlocking } from '@/firebase';
@@ -137,6 +137,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   const [analysisResult, setAnalysisResult] = useState<AnalyzeResumeOutput | null>(null);
   const [isReviewing, setIsReviewing] = useState(false);
   const [reviewResult, setReviewResult] = useState<ReviewResumeOutput | null>(null);
+  const [clTone, setClTone] = useState<'professional' | 'bold' | 'friendly'>('professional');
 
   useEffect(() => {
     if (initialResumeData && !initialDataRef.current) {
@@ -251,7 +252,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
       toast({
         variant: 'destructive',
         title: 'Missing Information',
-        description: 'Please provide both a Job Title and Company Name.',
+        description: 'Provide a Job Title and Company Name.',
       });
       return;
     }
@@ -264,6 +265,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
         jobTitle: resumeData.companyInfo.jobTitle,
         companyName: resumeData.companyInfo.name,
         resumeContent: resumeText,
+        tone: clTone,
       });
 
       if (result.success && result.data) {
@@ -297,17 +299,13 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     navigator.clipboard.writeText(shareUrl);
     toast({
         title: "Share Link Copied!",
-        description: "Anyone with the link can now view and leave feedback on your resume."
+        description: "Public feedback link is now on your clipboard."
     });
   };
 
   const handleSuggestKeywords = async () => {
     if (!resumeData || !resumeData.jobDescription) {
-      toast({
-        variant: 'destructive',
-        title: 'Job Description Required',
-        description: 'Please paste a job description to get keyword suggestions.',
-      });
+      toast({ variant: 'destructive', title: 'Job Description Required' });
       return;
     }
     setIsAiLoading(true);
@@ -344,7 +342,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   
     const newSkill: Skill = { id: Date.now(), name: keyword, level: 'Advanced' };
     handleFieldChange('skills', [...currentSkills, newSkill]);
-    toast({ title: 'Skill Added', description: `"${keyword}" has been added.` });
+    toast({ title: 'Skill Added', description: `"${keyword}" added.` });
   };
   
   const handlePdfUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -352,7 +350,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     if (!file) return;
   
     setIsParsing(true);
-    toast({ title: 'Parsing PDF...', description: 'Our AI is reading your resume to fill in the editor.' });
+    toast({ title: 'Parsing PDF...', description: 'Our AI is reading your resume.' });
   
     try {
       const reader = new FileReader();
@@ -458,22 +456,9 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
         </div>
       </header>
 
-       {/* Mobile Mode Switcher */}
        <div className="flex md:hidden bg-background border-b p-2 gap-2 no-print">
-            <Button 
-                variant={mobileMode === 'edit' ? 'default' : 'ghost'} 
-                className="flex-1 gap-2" 
-                onClick={() => setMobileMode('edit')}
-            >
-                <Edit3 className="w-4 h-4" /> Edit
-            </Button>
-            <Button 
-                variant={mobileMode === 'preview' ? 'default' : 'ghost'} 
-                className="flex-1 gap-2" 
-                onClick={() => setMobileMode('preview')}
-            >
-                <Eye className="w-4 h-4" /> Preview
-            </Button>
+            <Button variant={mobileMode === 'edit' ? 'default' : 'ghost'} className="flex-1 gap-2" onClick={() => setMobileMode('edit')}><Edit3 className="w-4 h-4" /> Edit</Button>
+            <Button variant={mobileMode === 'preview' ? 'default' : 'ghost'} className="flex-1 gap-2" onClick={() => setMobileMode('preview')}><Eye className="w-4 h-4" /> Preview</Button>
        </div>
 
        <div className="flex-grow flex overflow-hidden no-print">
@@ -482,7 +467,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
               <div className="p-4 border-b">
                 <TabsList className="grid w-full grid-cols-4">
                   <TabsTrigger value="content" className="px-0"><FileText className="md:mr-2 h-4 w-4"/><span className="hidden md:inline">Content</span></TabsTrigger>
-                  <TabsTrigger value="ai-review" className="px-0"><SearchCheck className="md:mr-2 h-4 w-4"/><span className="hidden md:inline">AI Review</span></TabsTrigger>
+                  <TabsTrigger value="ai-review" className="px-0"><SearchCheck className="md:mr-2 h-4 w-4"/><span className="hidden md:inline">Audit</span></TabsTrigger>
                   <TabsTrigger value="cover-letter" className="px-0"><Newspaper className="md:mr-2 h-4 w-4"/><span className="hidden md:inline">Letter</span></TabsTrigger>
                   <TabsTrigger value="design" className="px-0"><Brush className="md:mr-2 h-4 w-4"/><span className="hidden md:inline">Design</span></TabsTrigger>
                 </TabsList>
@@ -570,8 +555,8 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                    <TabsContent value="ai-review" className="p-4 md:p-6 space-y-4">
                      <Card variant="neuro">
                         <CardHeader>
-                            <CardTitle className="font-headline">AI Analysis</CardTitle>
-                            <CardDescription>Analyze your resume against a specific job description for maximum fit.</CardDescription>
+                            <CardTitle className="font-headline">AI Match Audit</CardTitle>
+                            <CardDescription>How well do you fit the role?</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="space-y-2">
@@ -585,18 +570,16 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                                 />
                             </div>
                         </CardContent>
-                        <CardFooter>
-                            <div className="w-full space-y-2">
-                                <div className="flex flex-wrap gap-2">
-                                    <Button onClick={handleAnalyzeResume} disabled={!resumeData.jobDescription || isAnalyzing || isAiLoading} className="flex-1">
-                                        <SearchCheck className="mr-2 h-4 w-4" /> Analyze Match
-                                    </Button>
-                                    <Button onClick={handleSuggestKeywords} disabled={!resumeData.jobDescription || isAiLoading} className="flex-1" variant="secondary">
-                                        <KeySquare className="mr-2 h-4 w-4" /> Keywords
-                                    </Button>
-                                </div>
-                                <Button onClick={handleReviewResume} disabled={isReviewing || isAiLoading} className="w-full" variant="ghost">
-                                    <Sparkles className="mr-2 h-4 w-4" /> General Feedback
+                        <CardFooter className="flex flex-col gap-2">
+                            <Button onClick={handleAnalyzeResume} disabled={!resumeData.jobDescription || isAnalyzing || isAiLoading} className="w-full">
+                                <SearchCheck className="mr-2 h-4 w-4" /> Analyze Match
+                            </Button>
+                            <div className="grid grid-cols-2 gap-2 w-full">
+                                <Button onClick={handleSuggestKeywords} disabled={!resumeData.jobDescription || isAiLoading} variant="secondary">
+                                    <KeySquare className="mr-2 h-4 w-4" /> Keywords
+                                </Button>
+                                <Button onClick={handleReviewResume} disabled={isReviewing || isAiLoading} variant="ghost">
+                                    <Sparkles className="mr-2 h-4 w-4" /> Audit Tone
                                 </Button>
                             </div>
                         </CardFooter>
@@ -607,29 +590,29 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                     {analysisResult && (
                             <Card variant="neuro">
                             <CardHeader>
-                                <CardTitle>Match Analysis</CardTitle>
-                                <CardDescription>{analysisResult.summary}</CardDescription>
+                                <CardTitle className="text-lg">Match Analysis</CardTitle>
+                                <CardDescription className="text-xs">{analysisResult.summary}</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                     <div>
-                                    <Label>Match Score</Label>
+                                    <Label className="text-xs">Match Score</Label>
                                     <div className="flex items-center gap-4">
                                         <Progress value={analysisResult.matchScore} className="w-full" />
                                         <span className="font-bold text-lg">{analysisResult.matchScore}%</span>
                                     </div>
                                 </div>
-                                <div className="grid grid-cols-1 gap-4">
+                                <div className="space-y-4">
                                     <div className="space-y-2">
-                                        <h4 className="font-semibold text-green-600">Strengths</h4>
-                                        <ul className="list-none space-y-2 text-sm">
+                                        <h4 className="font-semibold text-xs text-green-600 uppercase">Strengths</h4>
+                                        <ul className="list-none space-y-1.5 text-sm">
                                             {analysisResult.positivePoints.map((point, i) => (
                                                 <li key={i} className="flex items-start gap-2"><CheckCircle className="h-4 w-4 mt-0.5 text-green-500 shrink-0" />{point}</li>
                                             ))}
                                         </ul>
                                     </div>
                                     <div className="space-y-2">
-                                        <h4 className="font-semibold text-amber-600">Improvements</h4>
-                                        <ul className="list-none space-y-2 text-sm">
+                                        <h4 className="font-semibold text-xs text-amber-600 uppercase">Suggestions</h4>
+                                        <ul className="list-none space-y-1.5 text-sm">
                                             {analysisResult.areasForImprovement.map((point, i) => (
                                                 <li key={i} className="flex items-start gap-2"><XCircle className="h-4 w-4 mt-0.5 text-amber-500 shrink-0" />{point}</li>
                                             ))}
@@ -639,11 +622,32 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                             </CardContent>
                             </Card>
                     )}
+
+                    {reviewResult && (
+                        <Card variant="neuro">
+                            <CardHeader>
+                                <CardTitle className="text-lg">General Audit</CardTitle>
+                                <CardDescription className="text-xs">Holistic view of your career narrative.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <p className="text-sm p-3 bg-secondary rounded-lg leading-relaxed">{reviewResult.overallFeedback}</p>
+                                <div className="space-y-2">
+                                    <h4 className="font-semibold text-xs uppercase">Key Improvements</h4>
+                                    <ul className="space-y-1.5">
+                                        {reviewResult.areasForImprovement.map((tip, i) => (
+                                            <li key={i} className="text-sm flex gap-2"><Sparkles className="w-4 h-4 text-primary shrink-0" /> {tip}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    )}
+
                     {keywordSuggestions.length > 0 && (
                         <Card variant="neuro">
                             <CardHeader>
-                                <CardTitle>Keyword Suggestions</CardTitle>
-                                <CardDescription>Missing keywords from the job description. Click to add.</CardDescription>
+                                <CardTitle className="text-lg">Keywords to Add</CardTitle>
+                                <CardDescription className="text-xs">Missing from your profile based on the job description.</CardDescription>
                             </CardHeader>
                             <CardContent>
                                 <div className="flex flex-wrap gap-2">
@@ -672,9 +676,25 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                                   <Input name="jobTitle" value={resumeData.companyInfo?.jobTitle || ''} onChange={handleCompanyInfoChange} />
                               </div>
                           </div>
+                          <div className="space-y-2">
+                              <Label>Letter Tone</Label>
+                              <Select value={clTone} onValueChange={(v: any) => setClTone(v)}>
+                                  <SelectTrigger>
+                                      <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                      <SelectItem value="professional">Professional (Balanced)</SelectItem>
+                                      <SelectItem value="bold">Bold (Achievement-focused)</SelectItem>
+                                      <SelectItem value="friendly">Friendly (Culture-focused)</SelectItem>
+                                  </SelectContent>
+                              </Select>
+                          </div>
                       </div>
                       <div className="p-4 border rounded-lg space-y-4">
-                          <h3 className="font-semibold text-lg">Cover Letter Content</h3>
+                          <h3 className="font-semibold text-lg flex items-center justify-between">
+                            Content
+                            {isAiLoading && <Loader2 className="w-4 h-4 animate-spin text-primary" />}
+                          </h3>
                           <Textarea 
                               value={resumeData.coverLetter || ''}
                               onChange={e => handleFieldChange('coverLetter', e.target.value)}
@@ -682,8 +702,8 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                               placeholder="Your generated cover letter will appear here..."
                           />
                           <Button onClick={handleWriteCoverLetter} disabled={isAiLoading} className="w-full">
-                          <Bot className="mr-2 h-4 w-4" />
-                          {isAiLoading ? 'Generating...' : 'AI Generate'}
+                          <MessageSquareText className="mr-2 h-4 w-4" />
+                          {isAiLoading ? 'Drafting...' : 'AI Generate Letter'}
                           </Button>
                       </div>
                   </div>

@@ -2,7 +2,7 @@
 'use server';
 
 /**
- * @fileOverview Provides AI-powered mock interview feedback.
+ * @fileOverview Provides AI-powered mock interview feedback with persona support.
  * 
  * - mockInterview - A function that provides feedback on a user's interview answer.
  */
@@ -18,13 +18,18 @@ const prompt = ai.definePrompt({
     name: 'mockInterviewPrompt',
     input: { schema: MockInterviewInputSchema },
     output: { schema: MockInterviewOutputSchema },
-    prompt: `You are an expert interview coach for a company called FitCV.
+    prompt: `You are an expert interview coach at FitCV, acting as a {{persona}} interviewer.
 
-    Your task is to provide feedback on a user's answer to a common interview question.
+    Your task is to provide feedback on a user's answer to an interview question. 
     
-    1.  **Analyze the Answer**: Evaluate the user's answer for clarity, confidence, and relevance to the question.
-    2.  **Provide Constructive Feedback**: Give concise, actionable feedback. Focus on what they did well and one key area for improvement.
-    3.  **Suggest an Improvement**: Provide a specific, rephrased example of how they could have made one part of their answer more impactful. Keep it brief.
+    Adopt the following persona for your feedback style:
+    - **friendly**: Encouraging, supportive, and focuses on building confidence.
+    - **strict**: Direct, no-nonsense, and focuses on high standards and precision.
+    - **technical**: Analytical, focuses on depth of knowledge, evidence of skill, and logical structure.
+
+    1. **Analyze the Answer**: Evaluate clarity, confidence, and relevance.
+    2. **Provide Constructive Feedback**: Give concise, actionable feedback based on your persona.
+    3. **Suggest an Improvement**: Provide a specific, rephrased example of an impactful answer.
     
     Interview Question:
     ---
