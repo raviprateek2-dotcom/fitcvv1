@@ -7,17 +7,54 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { mockInterview } from '@/app/actions/ai-mock-interviewer';
 import { aiNarrate } from '@/app/actions/ai-narrator';
-import { Loader2, Mic, MicOff, RefreshCw, Volume2, Ear, AlertCircle } from 'lucide-react';
+import { Loader2, Mic, MicOff, RefreshCw, Volume2, Ear, AlertCircle, Terminal, Database, Layers, Rocket, ChartLine, Briefcase } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-const interviewQuestions = [
-  "Tell me about yourself.",
-  "What are your biggest strengths?",
-  "What are your biggest weaknesses?",
-  "Where do you see yourself in 5 years?",
-  "Why do you want to work for this company?",
-  "Why should we hire you?",
-];
+const interviewQuestions: Record<string, string[]> = {
+  general: [
+    "Tell me about yourself.",
+    "What are your biggest strengths?",
+    "What are your biggest weaknesses?",
+    "Where do you see yourself in 5 years?",
+    "Why do you want to work for this company?",
+    "Why should we hire you?",
+  ],
+  frontend: [
+    "How do you handle responsive design across complex layouts?",
+    "What is your approach to testing frontend components?",
+    "Explain how you would improve the perceived performance of a web app.",
+  ],
+  backend: [
+    "How do you manage database migrations in a production environment?",
+    "Describe your experience with containerization and orchestration.",
+    "What is your strategy for handling API rate limiting?",
+  ],
+  fullstack: [
+    "How do you decide between a relational and a non-relational database?",
+    "Explain the security considerations when building a full-stack app.",
+    "Walk me through your debugging process for an issue that spans the stack.",
+  ],
+  pm: [
+    "How do you translate customer feedback into product requirements?",
+    "Describe your experience with agile product development.",
+    "How do you measure the success of a newly launched feature?",
+  ],
+  'data-science': [
+    "What criteria do you use to evaluate a machine learning model's performance?",
+    "Explain a complex statistical concept to a business stakeholder.",
+    "How do you approach a dataset with significant class imbalance?",
+  ]
+};
+
+const tracks = [
+    { id: 'general', name: 'General', icon: <Briefcase className="w-4 h-4" /> },
+    { id: 'frontend', name: 'Frontend', icon: <Terminal className="w-4 h-4" /> },
+    { id: 'backend', name: 'Backend', icon: <Database className="w-4 h-4" /> },
+    { id: 'fullstack', name: 'Fullstack', icon: <Layers className="w-4 h-4" /> },
+    { id: 'pm', name: 'Product', icon: <Rocket className="w-4 h-4" /> },
+    { id: 'data-science', name: 'Data Sci', icon: <ChartLine className="w-4 h-4" /> },
+] as const;
 
 type InterviewState = 'idle' | 'listening' | 'processing' | 'speaking' | 'generatingQuestionAudio' | 'unsupported';
 
@@ -28,17 +65,19 @@ export function VoiceMockInterview() {
   const [transcript, setTranscript] = useState('');
   const [feedbackAudio, setFeedbackAudio] = useState<string | null>(null);
   const [questionAudio, setQuestionAudio] = useState<string | null>(null);
+  const [track, setTrack] = useState<typeof tracks[number]['id']>('general');
 
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const { toast } = useToast();
 
-  const getNewQuestion = useCallback(() => {
+  const getNewQuestion = useCallback((selectedTrack: typeof tracks[number]['id'] = track) => {
+    const questions = interviewQuestions[selectedTrack] || interviewQuestions.general;
     let nextQuestion;
     do {
-      nextQuestion = interviewQuestions[Math.floor(Math.random() * interviewQuestions.length)];
-    } while (nextQuestion === currentQuestion);
+      nextQuestion = questions[Math.floor(Math.random() * questions.length)];
+    } while (nextQuestion === currentQuestion && questions.length > 1);
     setCurrentQuestion(nextQuestion);
     setTranscript('');
     setFeedbackAudio(null);
@@ -46,28 +85,33 @@ export function VoiceMockInterview() {
     if (interviewState !== 'unsupported') {
       setInterviewState('idle');
     }
-  }, [currentQuestion, interviewState]);
+  }, [currentQuestion, interviewState, track]);
+
+  const handleTrackChange = (newTrack: typeof tracks[number]['id']) => {
+      setTrack(newTrack);
+      getNewQuestion(newTrack);
+  }
 
   // Initialize component and select first question
   useEffect(() => {
     setIsMounted(true);
-    getNewQuestion();
+    getNewQuestion('general');
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const processTranscript = useCallback(async () => {
     if (!transcript.trim()) {
-      toast({ title: 'No answer detected', description: 'Please provide an answer before stopping.' });
+      toast({ variant: 'destructive', title: 'No answer detected', description: 'Please provide a spoken answer before stopping.' });
       setInterviewState('idle');
       return;
     }
     
     try {
-      const feedbackResponse = await mockInterview({ userAnswer: transcript, question: currentQuestion });
+      const feedbackResponse = await mockInterview({ userAnswer: transcript, question: currentQuestion, track });
       if (!feedbackResponse.success || !feedbackResponse.data) {
         throw new Error(feedbackResponse.error || 'Failed to get interview feedback.');
       }
-      const fullFeedbackText = `Here is some feedback on your answer: ${feedbackResponse.data.feedback}. As a suggestion for improvement, you could say: ${feedbackResponse.data.suggestedImprovement}`;
+      const fullFeedbackText = `Coach here. ${feedbackResponse.data.feedback}. For a stronger answer, you could try: ${feedbackResponse.data.suggestedImprovement}`;
 
       const audioResponse = await aiNarrate(fullFeedbackText);
       if (!audioResponse.success || !audioResponse.data) {
@@ -78,10 +122,10 @@ export function VoiceMockInterview() {
       setInterviewState('speaking');
 
     } catch (error: any) {
-      toast({ variant: 'destructive', title: 'Error processing feedback', description: error.message });
+      toast({ variant: 'destructive', title: 'Processing Failed', description: error.message });
       setInterviewState('idle');
     }
-  }, [transcript, currentQuestion, toast]);
+  }, [transcript, currentQuestion, toast, track]);
 
 
   // Main effect for Speech Recognition and state processing
@@ -110,7 +154,7 @@ export function VoiceMockInterview() {
 
             recognition.onerror = (event) => {
                 if (event.error !== 'no-speech') {
-                    toast({ variant: 'destructive', title: 'Speech Recognition Error', description: event.error });
+                    toast({ variant: 'destructive', title: 'Recognition Error', description: `Voice system error: ${event.error}` });
                 }
                 setInterviewState('idle');
             };
@@ -150,7 +194,7 @@ export function VoiceMockInterview() {
             throw new Error(audioResponse.error || 'Failed to generate question audio.');
         }
     } catch (error: any) {
-        toast({ variant: 'destructive', title: 'Error Reading Question', description: error.message });
+        toast({ variant: 'destructive', title: 'Narration Failed', description: "Could not read the question aloud." });
     } finally {
         setInterviewState('idle');
     }
@@ -162,7 +206,7 @@ export function VoiceMockInterview() {
       recognitionRef.current?.stop();
     } else {
       if (!recognitionRef.current || interviewState === 'unsupported') {
-        toast({ variant: 'destructive', title: 'Browser Not Supported', description: 'Speech recognition is not supported in this browser.' });
+        toast({ variant: 'destructive', title: 'Not Supported', description: 'Voice features are not available in your current browser.' });
         return;
       }
       setTranscript('');
@@ -204,16 +248,35 @@ export function VoiceMockInterview() {
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6 flex flex-col items-center">
+                <div className="w-full max-w-xs space-y-2">
+                    <Label className="text-xs font-bold uppercase text-muted-foreground block text-center">Practice Track</Label>
+                    <Select value={track} onValueChange={(v: any) => handleTrackChange(v)}>
+                        <SelectTrigger>
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {tracks.map(t => (
+                                <SelectItem key={t.id} value={t.id}>
+                                    <div className="flex items-center gap-2">
+                                        {t.icon}
+                                        <span>{t.name}</span>
+                                    </div>
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+
                 <div className="text-center space-y-2">
-                    <p className="font-semibold">Your Question:</p>
-                    <p className="p-3 bg-secondary rounded-md text-sm font-medium">"{currentQuestion}"</p>
+                    <p className="font-semibold text-xs text-muted-foreground uppercase">Current Prompt:</p>
+                    <p className="p-4 bg-secondary rounded-xl text-sm font-medium border border-primary/5">"{currentQuestion}"</p>
                 </div>
                  <div className="flex items-center gap-4">
                     <Button variant="outline" size="sm" onClick={readQuestionAloud} disabled={interviewState !== 'idle'}>
                         {interviewState === 'generatingQuestionAudio' ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Ear className="mr-2 h-4 w-4"/>}
                         Read Question
                     </Button>
-                    <Button variant="ghost" size="sm" onClick={getNewQuestion} disabled={interviewState !== 'idle'}>
+                    <Button variant="ghost" size="sm" onClick={() => getNewQuestion()} disabled={interviewState !== 'idle'}>
                         <RefreshCw className="mr-2 h-3 w-3"/> New Question
                     </Button>
                 </div>
@@ -221,26 +284,26 @@ export function VoiceMockInterview() {
                  <motion.div animate={{ scale: interviewState === 'listening' ? 1.1 : 1 }} transition={{ type: 'spring' }}>
                      <Button 
                         size="lg" 
-                        className="rounded-full w-24 h-24 text-lg"
+                        className="rounded-full w-28 h-28 text-lg shadow-xl"
                         onClick={handleToggleListening}
                         disabled={interviewState === 'processing' || interviewState === 'speaking' || interviewState === 'generatingQuestionAudio' || interviewState === 'unsupported'}
                         variant={interviewState === 'listening' ? 'destructive' : 'default'}
                     >
-                         {interviewState === 'listening' && <MicOff />}
-                         {interviewState === 'idle' && <Mic />}
-                         {interviewState === 'unsupported' && <MicOff />}
-                         {interviewState === 'processing' && <Loader2 className="animate-spin" />}
-                         {interviewState === 'speaking' && <Volume2 />}
-                          {interviewState === 'generatingQuestionAudio' && <Loader2 className="animate-spin" />}
+                         {interviewState === 'listening' && <MicOff className="w-8 h-8" />}
+                         {interviewState === 'idle' && <Mic className="w-8 h-8" />}
+                         {interviewState === 'unsupported' && <MicOff className="w-8 h-8" />}
+                         {interviewState === 'processing' && <Loader2 className="w-8 h-8 animate-spin" />}
+                         {interviewState === 'speaking' && <Volume2 className="w-8 h-8" />}
+                          {interviewState === 'generatingQuestionAudio' && <Loader2 className="w-8 h-8 animate-spin" />}
                      </Button>
                  </motion.div>
                 
-                 <div className="text-sm text-muted-foreground min-h-[40px] text-center">
+                 <div className="text-sm text-muted-foreground min-h-[40px] text-center px-8">
                     {interviewState === 'idle' && "Click the mic to start recording your answer."}
-                    {interviewState === 'listening' && "Listening... Click to stop and get feedback."}
-                    {interviewState === 'processing' && "Analyzing your answer..."}
-                    {interviewState === 'speaking' && "Providing feedback..."}
-                    {interviewState === 'generatingQuestionAudio' && "Generating question audio..."}
+                    {interviewState === 'listening' && "Listening... Click to stop and get technical feedback."}
+                    {interviewState === 'processing' && "Analyzing your technical answer..."}
+                    {interviewState === 'speaking' && "Providing strategic feedback..."}
+                    {interviewState === 'generatingQuestionAudio' && "Generating audio prompt..."}
                     {interviewState === 'unsupported' && (
                         <div className="flex items-center gap-2 p-2 rounded-md border border-amber-500/50 bg-amber-500/10 text-amber-700 dark:text-amber-400">
                             <AlertCircle className="h-4 w-4" />
@@ -250,7 +313,7 @@ export function VoiceMockInterview() {
                  </div>
                 
                 {transcript && (
-                    <div className="w-full p-4 bg-secondary rounded-md max-h-40 overflow-y-auto">
+                    <div className="w-full p-4 bg-secondary rounded-xl max-h-40 overflow-y-auto border border-dashed">
                         <p className="text-sm text-muted-foreground italic">"{transcript}"</p>
                     </div>
                 )}

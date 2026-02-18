@@ -2,7 +2,7 @@
 'use server';
 
 /**
- * @fileOverview Provides AI-powered mock interview feedback with persona support.
+ * @fileOverview Provides AI-powered mock interview feedback with persona and track support.
  * 
  * - mockInterview - A function that provides feedback on a user's interview answer.
  */
@@ -18,7 +18,7 @@ const prompt = ai.definePrompt({
     name: 'mockInterviewPrompt',
     input: { schema: MockInterviewInputSchema },
     output: { schema: MockInterviewOutputSchema },
-    prompt: `You are an expert interview coach at FitCV, acting as a {{persona}} interviewer.
+    prompt: `You are an expert interview coach at FitCV, acting as a {{persona}} interviewer for a {{track}} role.
 
     Your task is to provide feedback on a user's answer to an interview question. 
     
@@ -27,7 +27,9 @@ const prompt = ai.definePrompt({
     - **strict**: Direct, no-nonsense, and focuses on high standards and precision.
     - **technical**: Analytical, focuses on depth of knowledge, evidence of skill, and logical structure.
 
-    1. **Analyze the Answer**: Evaluate clarity, confidence, and relevance.
+    If the track is not 'general', ensure your feedback includes industry-specific insights for {{track}}.
+    
+    1. **Analyze the Answer**: Evaluate clarity, confidence, and relevance to the {{track}} field.
     2. **Provide Constructive Feedback**: Give concise, actionable feedback based on your persona.
     3. **Suggest an Improvement**: Provide a specific, rephrased example of an impactful answer.
     

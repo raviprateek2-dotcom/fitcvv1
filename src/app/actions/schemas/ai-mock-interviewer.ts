@@ -5,6 +5,7 @@ export const MockInterviewInputSchema = z.object({
   question: z.string().describe('The interview question being asked.'),
   userAnswer: z.string().describe("The user's verbal answer to the question."),
   persona: z.enum(['friendly', 'strict', 'technical']).default('friendly').describe('The personality of the interviewer.'),
+  track: z.enum(['general', 'frontend', 'backend', 'fullstack', 'pm', 'data-science']).default('general').describe('The professional track for the interview.'),
 });
 export type MockInterviewInput = z.infer<typeof MockInterviewInputSchema>;
 

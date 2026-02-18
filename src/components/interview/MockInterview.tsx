@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -9,28 +9,74 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { mockInterview } from '@/app/actions/ai-mock-interviewer';
 import type { MockInterviewOutput } from '@/app/actions/schemas/ai-mock-interviewer';
-import { Loader2, Sparkles, RefreshCw, Bot, Lightbulb, Volume2, UserCheck, ShieldAlert, Binary } from 'lucide-react';
+import { Loader2, Sparkles, RefreshCw, Bot, Lightbulb, Volume2, UserCheck, ShieldAlert, Binary, Terminal, Database, Layers, Rocket, ChartLine, Briefcase } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { aiNarrate } from '@/app/actions/ai-narrator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-const interviewQuestions = [
-    "Tell me about yourself.",
-    "What are your biggest strengths?",
-    "What are your biggest weaknesses?",
-    "Where do you see yourself in 5 years?",
-    "Why do you want to work for this company?",
-    "Why should we hire you?",
-    "What is your greatest professional achievement?",
-    "How do you handle stress and pressure?",
-    "Describe a difficult work situation and how you overcame it.",
-    "What are your salary expectations?"
-];
+const interviewQuestions: Record<string, string[]> = {
+    general: [
+        "Tell me about yourself.",
+        "What are your biggest strengths?",
+        "What are your biggest weaknesses?",
+        "Where do you see yourself in 5 years?",
+        "Why do you want to work for this company?",
+        "Why should we hire you?",
+        "What is your greatest professional achievement?",
+        "How do you handle stress and pressure?",
+        "Describe a difficult work situation and how you overcame it.",
+        "What are your salary expectations?"
+    ],
+    frontend: [
+        "Explain the virtual DOM in React.",
+        "How do you optimize web performance?",
+        "What is the difference between relative, absolute, and fixed positioning?",
+        "How do you handle state management in a large-scale application?",
+        "What are your thoughts on CSS-in-JS vs utility-first CSS?"
+    ],
+    backend: [
+        "Describe the differences between SQL and NoSQL databases.",
+        "How do you design a system for high availability?",
+        "What is REST vs GraphQL, and when would you use each?",
+        "Explain how a microservices architecture handles communication.",
+        "How do you ensure data integrity across distributed systems?"
+    ],
+    fullstack: [
+        "Walk me through how you would architect a real-time chat application.",
+        "How do you balance server-side vs client-side rendering?",
+        "Describe your ideal deployment pipeline from code commit to production.",
+        "How do you handle authentication and authorization across the stack?",
+        "What criteria do you use to choose a tech stack for a new project?"
+    ],
+    pm: [
+        "How do you prioritize features when resources are limited?",
+        "Tell me about a time you had to pivot a product strategy based on data.",
+        "How do you handle a conflict between design and engineering teams?",
+        "What metrics would you track for a new social media app's launch?",
+        "Explain a technical concept to a non-technical stakeholder."
+    ],
+    'data-science': [
+        "What is the difference between supervised and unsupervised learning?",
+        "Explain the bias-variance tradeoff.",
+        "How do you handle missing or noisy data in your analysis?",
+        "Describe a project where you used data to drive a business decision.",
+        "What are the assumptions of a linear regression model?"
+    ]
+};
 
 const personas = [
     { id: 'friendly', name: 'Friendly Peer', icon: <UserCheck className="w-4 h-4" />, description: 'Supportive and encouraging feedback.' },
     { id: 'strict', name: 'Strict Recruiter', icon: <ShieldAlert className="w-4 h-4" />, description: 'Direct and rigorous evaluation.' },
     { id: 'technical', name: 'Lead Architect', icon: <Binary className="w-4 h-4" />, description: 'Focuses on depth and logic.' },
+] as const;
+
+const tracks = [
+    { id: 'general', name: 'General Career', icon: <Briefcase className="w-4 h-4" /> },
+    { id: 'frontend', name: 'Frontend Eng', icon: <Terminal className="w-4 h-4" /> },
+    { id: 'backend', name: 'Backend Eng', icon: <Database className="w-4 h-4" /> },
+    { id: 'fullstack', name: 'Fullstack Eng', icon: <Layers className="w-4 h-4" /> },
+    { id: 'pm', name: 'Product Management', icon: <Rocket className="w-4 h-4" /> },
+    { id: 'data-science', name: 'Data Science', icon: <ChartLine className="w-4 h-4" /> },
 ] as const;
 
 interface MockInterviewProps {
@@ -44,29 +90,36 @@ export function MockInterview({ initialQuestion }: MockInterviewProps) {
   const { toast } = useToast();
   const [currentQuestion, setCurrentQuestion] = useState(initialQuestion || '');
   const [persona, setPersona] = useState<typeof personas[number]['id']>('friendly');
+  const [track, setTrack] = useState<typeof tracks[number]['id']>('general');
   const [isNarrating, setIsNarrating] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     if (!initialQuestion) {
-        getNewQuestion();
+        getNewQuestion(track);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialQuestion]);
 
-  const getNewQuestion = () => {
+  const getNewQuestion = (selectedTrack: typeof tracks[number]['id']) => {
+    const questions = interviewQuestions[selectedTrack] || interviewQuestions.general;
     let nextQuestion;
     do {
-      nextQuestion = interviewQuestions[Math.floor(Math.random() * interviewQuestions.length)];
-    } while (nextQuestion === currentQuestion);
+      nextQuestion = questions[Math.floor(Math.random() * questions.length)];
+    } while (nextQuestion === currentQuestion && questions.length > 1);
     setCurrentQuestion(nextQuestion);
     setUserAnswer('');
     setResult(null);
   };
 
+  const handleTrackChange = (newTrack: typeof tracks[number]['id']) => {
+      setTrack(newTrack);
+      getNewQuestion(newTrack);
+  }
+
   const handleAnalyze = async () => {
     if (!userAnswer) {
-      toast({ variant: 'destructive', title: 'Answer Required' });
+      toast({ variant: 'destructive', title: 'Answer Required', description: "Please provide your answer before requesting feedback." });
       return;
     }
 
@@ -74,7 +127,7 @@ export function MockInterview({ initialQuestion }: MockInterviewProps) {
     setResult(null);
 
     try {
-      const response = await mockInterview({ userAnswer, question: currentQuestion, persona });
+      const response = await mockInterview({ userAnswer, question: currentQuestion, persona, track });
       if (response.success && response.data) {
         setResult(response.data);
       } else {
@@ -97,7 +150,7 @@ export function MockInterview({ initialQuestion }: MockInterviewProps) {
         audioRef.current.play();
       }
     } catch (error: any) {
-      toast({ variant: 'destructive', title: 'Narration Failed' });
+      toast({ variant: 'destructive', title: 'Narration Failed', description: "Could not generate audio for this feedback." });
     } finally {
       setIsNarrating(false);
     }
@@ -113,32 +166,54 @@ export function MockInterview({ initialQuestion }: MockInterviewProps) {
                     AI Mock Interviewer
                 </CardTitle>
                 <CardDescription>
-                    Choose a persona and practice your answers.
+                    Choose a persona and a specialized track to practice your answers.
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                        <Label className="font-semibold">Question Context:</Label>
-                        <p className="p-3 bg-secondary rounded-md text-sm font-medium h-20 flex items-center justify-center text-center">"{currentQuestion}"</p>
-                        <Button variant="ghost" size="sm" onClick={getNewQuestion} className="w-full">
-                            <RefreshCw className="mr-2 h-3 w-3"/> New Question
-                        </Button>
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <Label className="text-xs font-bold uppercase text-muted-foreground">1. Select Interview Track</Label>
+                            <Select value={track} onValueChange={(v: any) => handleTrackChange(v)}>
+                                <SelectTrigger>
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {tracks.map(t => (
+                                        <SelectItem key={t.id} value={t.id}>
+                                            <div className="flex items-center gap-2">
+                                                {t.icon}
+                                                <span>{t.name}</span>
+                                            </div>
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="space-y-2">
+                            <Label className="text-xs font-bold uppercase text-muted-foreground">2. Question Context</Label>
+                            <p className="p-3 bg-secondary rounded-md text-sm font-medium h-24 flex items-center justify-center text-center leading-relaxed">"{currentQuestion}"</p>
+                            <Button variant="ghost" size="sm" onClick={() => getNewQuestion(track)} className="w-full">
+                                <RefreshCw className="mr-2 h-3 w-3"/> New Question
+                            </Button>
+                        </div>
                     </div>
                     <div className="space-y-2">
-                        <Label className="font-semibold">Interviewer Persona:</Label>
+                        <Label className="text-xs font-bold uppercase text-muted-foreground">3. Interviewer Persona</Label>
                         <Select value={persona} onValueChange={(v: any) => setPersona(v)}>
-                            <SelectTrigger className="h-20">
+                            <SelectTrigger className="h-[188px]">
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
                                 {personas.map(p => (
                                     <SelectItem key={p.id} value={p.id}>
-                                        <div className="flex items-center gap-2">
-                                            {p.icon}
+                                        <div className="flex items-center gap-3 py-2">
+                                            <div className="p-2 rounded-full bg-primary/10 text-primary">
+                                                {p.icon}
+                                            </div>
                                             <div className="text-left">
-                                                <p className="font-bold">{p.name}</p>
-                                                <p className="text-[10px] text-muted-foreground">{p.description}</p>
+                                                <p className="font-bold text-sm">{p.name}</p>
+                                                <p className="text-[10px] text-muted-foreground max-w-[180px] whitespace-normal">{p.description}</p>
                                             </div>
                                         </div>
                                     </SelectItem>
@@ -154,22 +229,22 @@ export function MockInterview({ initialQuestion }: MockInterviewProps) {
                         id="user-answer"
                         value={userAnswer}
                         onChange={(e) => setUserAnswer(e.target.value)}
-                        placeholder="Type your answer here..."
+                        placeholder="Type your answer here or use the voice mode above for real-time practice..."
                         rows={6}
                         disabled={isLoading}
                     />
                  </div>
-                 <Button onClick={handleAnalyze} disabled={isLoading} className="w-full">
-                    {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
+                 <Button onClick={handleAnalyze} disabled={isLoading} className="w-full h-12 text-lg">
+                    {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Sparkles className="mr-2 h-5 w-5" />}
                     {isLoading ? 'Consulting Coach...' : 'Get Personalized Feedback'}
                  </Button>
             </CardContent>
 
-            <AnimatePresence>
+            <AnimatePresence mode="wait">
                 {result && (
                      <CardFooter>
                         <motion.div
-                            className="w-full space-y-6"
+                            className="w-full space-y-6 pt-6 border-t"
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                         >
@@ -179,10 +254,10 @@ export function MockInterview({ initialQuestion }: MockInterviewProps) {
                                     {isNarrating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Volume2 className="h-4 w-4" />}
                                 </Button>
                             </div>
-                             <div className="p-4 bg-secondary rounded-md text-sm leading-relaxed">{result.feedback}</div>
+                             <div className="p-4 bg-secondary/50 rounded-xl text-sm leading-relaxed border border-primary/10">{result.feedback}</div>
                              <div className="space-y-2">
-                                <h3 className="font-semibold flex items-center gap-2 text-primary"><Sparkles className="w-4 h-4" /> Better Way to Phrase It</h3>
-                                <p className="text-sm p-4 border rounded-md italic bg-primary/5">"{result.suggestedImprovement}"</p>
+                                <h3 className="font-semibold flex items-center gap-2 text-primary"><Sparkles className="w-4 h-4" /> Strategic Phrasing</h3>
+                                <p className="text-sm p-4 border rounded-xl italic bg-primary/5 border-primary/20">"{result.suggestedImprovement}"</p>
                             </div>
                         </motion.div>
                      </CardFooter>
