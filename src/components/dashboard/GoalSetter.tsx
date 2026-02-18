@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -61,7 +60,7 @@ export function GoalSetter() {
                     updateDocumentNonBlocking(userRef, { careerGoals: newGoals });
                 }
             } else {
-                throw new Error(response.error);
+                throw new Error(response.error || 'Failed to generate strategic goals.');
             }
         } catch (error: any) {
             toast({ variant: 'destructive', title: 'Error', description: error.message });

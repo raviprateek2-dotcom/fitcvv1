@@ -300,6 +300,8 @@ const SuccessPath = ({ resumes }: { resumes: Resume[] }) => {
 
 const HiringInsights = ({ applications }: { applications: Application[] }) => {
     const chartData = useMemo(() => {
+        if (!applications) return [];
+        
         const counts: Record<string, number> = {
             applied: 0,
             'phone-screen': 0,
@@ -320,7 +322,7 @@ const HiringInsights = ({ applications }: { applications: Application[] }) => {
         ].filter(d => d.value > 0);
     }, [applications]);
 
-    if (applications.length === 0) return null;
+    if (!applications || applications.length === 0) return null;
 
     return (
         <div className="grid md:grid-cols-3 gap-8 mb-12">
