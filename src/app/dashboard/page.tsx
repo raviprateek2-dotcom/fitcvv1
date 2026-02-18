@@ -23,7 +23,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
@@ -35,6 +34,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { GoalSetter } from '@/components/dashboard/GoalSetter';
 import { aiNarrate } from '@/app/actions/ai-narrator';
+import { ApplicationTracker } from '@/components/dashboard/ApplicationTracker';
 
 
 type Resume = {
@@ -150,9 +150,9 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
               <DropdownMenuItem onClick={() => onDuplicate(resume)}>Duplicate</DropdownMenuItem>
               <DropdownMenuItem onClick={handleDownloadPdf}>Download PDF</DropdownMenuItem>
               <AlertDialog>
-                <AlertDialogTrigger asChild>
+                <DropdownMenuTrigger asChild>
                   <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:bg-destructive/90 focus:text-destructive-foreground">Delete</DropdownMenuItem>
-                </AlertDialogTrigger>
+                </DropdownMenuTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle>Are you sure?</AlertDialogTitle>
@@ -522,6 +522,7 @@ export default function DashboardPage() {
         <>
             <SuccessPath resumes={resumes} />
             <GoalSetter />
+            <ApplicationTracker resumes={resumes} />
         </>
       )}
 

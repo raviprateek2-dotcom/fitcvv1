@@ -88,6 +88,24 @@
       },
       "required": ["userId", "title", "templateId", "content", "createdAt", "updatedAt"]
     },
+    "JobApplication": {
+      "title": "Job Application",
+      "type": "object",
+      "description": "Represents a job application tracked by the user.",
+      "properties": {
+        "companyName": { "type": "string" },
+        "jobTitle": { "type": "string" },
+        "status": {
+          "type": "string",
+          "enum": ["applied", "phone-screen", "technical", "final", "offer", "rejected", "ghosted"]
+        },
+        "dateApplied": { "type": "string", "format": "date-time" },
+        "resumeId": { "type": "string", "description": "Reference to the resume used for this application." },
+        "jobLink": { "type": "string", "format": "uri" },
+        "notes": { "type": "string" }
+      },
+      "required": ["companyName", "jobTitle", "status", "dateApplied"]
+    },
     "Template": {
       "title": "Template",
       "type": "object",
@@ -175,6 +193,10 @@
     "/users/{userId}/resumes/{resumeId}": {
       "schema": { "$ref": "#/entities/Resume" },
       "description": "Stores resume data for a specific user. Path-based ownership is enforced via the /users/{userId} path."
+    },
+    "/users/{userId}/applications/{applicationId}": {
+      "schema": { "$ref": "#/entities/JobApplication" },
+      "description": "Stores job applications tracked by the user."
     },
     "/templates/{templateId}": {
       "schema": { "$ref": "#/entities/Template" },
