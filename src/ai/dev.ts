@@ -18,3 +18,4 @@ import '@/ai/flows/ai-mock-interviewer.ts';
 import '@/ai/flows/ai-behavioral-question-analyzer.ts';
 import '@/ai/flows/ai-video-generator.ts';
 import '@/ai/flows/ai-goal-setter.ts';
+import '@/ai/flows/ai-linkedin-optimizer.ts';

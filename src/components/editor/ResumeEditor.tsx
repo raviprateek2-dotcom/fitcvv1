@@ -1,11 +1,10 @@
-
 'use client';
 
 import { Accordion } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Download, Share2, Sparkles, Bot, Newspaper, Brush, Loader2, SearchCheck, ArrowLeft, Upload, CheckCircle, XCircle, PlusCircle, FileText, KeySquare, Eye, Edit3, MessageSquareText } from 'lucide-react';
+import { Download, Share2, Sparkles, Bot, Newspaper, Brush, Loader2, SearchCheck, ArrowLeft, Upload, CheckCircle, XCircle, PlusCircle, FileText, KeySquare, Eye, Edit3, MessageSquareText, Linkedin } from 'lucide-react';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { ResumePreview, CoverLetterPreview } from './ResumePreview';
 import { useDoc, useUser, useFirestore, useMemoFirebase, setDocumentNonBlocking } from '@/firebase';
@@ -37,10 +36,11 @@ import { Textarea } from '../ui/textarea';
 import { ScrollArea } from '../ui/scroll-area';
 import { ProFeatureWrapper } from './ProFeatureWrapper';
 import { AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
+import { LinkedInOptimizerTab } from './LinkedInOptimizerTab';
 
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
-type EditorTab = 'content' | 'ai-review' | 'cover-letter' | 'design';
+type EditorTab = 'content' | 'ai-review' | 'cover-letter' | 'linkedin' | 'design';
 
 const colorSwatches = [
   'hsl(221.2, 83.2%, 53.3%)', // Blue
@@ -465,10 +465,11 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
         <ScrollArea className={cn("w-full md:w-1/3 border-r bg-background", mobileMode === 'preview' ? 'hidden md:block' : 'block')}>
             <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as EditorTab)} className="h-full flex flex-col">
               <div className="p-4 border-b">
-                <TabsList className="grid w-full grid-cols-4">
+                <TabsList className="grid w-full grid-cols-5">
                   <TabsTrigger value="content" className="px-0"><FileText className="md:mr-2 h-4 w-4"/><span className="hidden md:inline">Content</span></TabsTrigger>
                   <TabsTrigger value="ai-review" className="px-0"><SearchCheck className="md:mr-2 h-4 w-4"/><span className="hidden md:inline">Audit</span></TabsTrigger>
                   <TabsTrigger value="cover-letter" className="px-0"><Newspaper className="md:mr-2 h-4 w-4"/><span className="hidden md:inline">Letter</span></TabsTrigger>
+                  <TabsTrigger value="linkedin" className="px-0"><Linkedin className="md:mr-2 h-4 w-4"/><span className="hidden md:inline">LinkedIn</span></TabsTrigger>
                   <TabsTrigger value="design" className="px-0"><Brush className="md:mr-2 h-4 w-4"/><span className="hidden md:inline">Design</span></TabsTrigger>
                 </TabsList>
               </div>
@@ -707,6 +708,10 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                           </Button>
                       </div>
                   </div>
+                  </TabsContent>
+
+                  <TabsContent value="linkedin" className="p-4 md:p-6">
+                      <LinkedInOptimizerTab resumeData={resumeData} />
                   </TabsContent>
               </div>
             </Tabs>
