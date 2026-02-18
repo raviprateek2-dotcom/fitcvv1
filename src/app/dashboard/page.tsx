@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useCollection, useUser, useMemoFirebase, useFirestore } from '@/firebase';
@@ -294,7 +293,7 @@ const SuccessPath = ({ resumes }: { resumes: Resume[] }) => {
                         <Link href="/blog">Expert Articles <ArrowRight className="ml-1 w-4 h-4" /></Link>
                     </Button>
                 </CardFooter>
-            </Card>
+            </div>
         </div>
     );
 };
