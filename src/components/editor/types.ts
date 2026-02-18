@@ -62,6 +62,10 @@ export type ResumeData = {
   };
   styling?: Styling;
   shareId?: string;
+  matchScore?: number;
+  auditSummary?: string;
+  skillGaps?: string[];
+  learningPath?: string;
 };
 
 export interface CoverLetterPreviewProps {

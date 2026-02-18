@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useCollection, useUser, useMemoFirebase, useFirestore } from '@/firebase';
@@ -20,6 +21,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
@@ -191,9 +193,9 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
                     </DropdownMenuItem>
                 )}
                 <AlertDialog>
-                    <DropdownMenuTrigger asChild>
-                    <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:bg-destructive/90 focus:text-destructive-foreground">Delete</DropdownMenuItem>
-                    </DropdownMenuTrigger>
+                    <AlertDialogTrigger asChild>
+                        <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:bg-destructive/90 focus:text-destructive-foreground">Delete</DropdownMenuItem>
+                    </AlertDialogTrigger>
                     <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>Are you sure?</AlertDialogTitle>
@@ -202,7 +204,7 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel onClick={() => setIsMenuOpen(false)}>Cancel</AlertDialogCancel>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
                         <AlertDialogAction onClick={() => { onDelete(resume.id); setIsMenuOpen(false); }} className="bg-destructive hover:bg-destructive/90">Delete</AlertDialogAction>
                     </AlertDialogFooter>
                     </AlertDialogContent>
@@ -338,6 +340,9 @@ const SuccessPath = ({ resumes }: { resumes: Resume[] }) => {
 };
 
 const HiringInsights = ({ applications }: { applications: Application[] }) => {
+    const [isMounted, setIsMounted] = useState(false);
+    useEffect(() => setIsMounted(true), []);
+
     const chartData = useMemo(() => {
         if (!applications) return [];
         
@@ -361,7 +366,7 @@ const HiringInsights = ({ applications }: { applications: Application[] }) => {
         ].filter(d => d.value > 0);
     }, [applications]);
 
-    if (!applications || applications.length === 0) return null;
+    if (!applications || applications.length === 0 || !isMounted) return null;
 
     return (
         <div className="grid md:grid-cols-3 gap-8 mb-12">
