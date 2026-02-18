@@ -35,7 +35,7 @@ import { GoalSetter } from '@/components/dashboard/GoalSetter';
 import { aiNarrate } from '@/app/actions/ai-narrator';
 import { ApplicationTracker } from '@/components/dashboard/ApplicationTracker';
 import { ChartTooltip, ChartTooltipContent, ChartContainer } from '@/components/ui/chart';
-import { Pie, PieChart, Cell, ResponsiveContainer } from 'recharts';
+import { Pie, PieChart, Cell } from 'recharts';
 
 
 type Resume = {
@@ -43,9 +43,7 @@ type Resume = {
   title: string;
   templateId: string;
   shareId?: string;
-  updatedAt: {
-    toDate: () => Date;
-  };
+  updatedAt: any;
   matchScore?: number;
   auditSummary?: string;
   skillGaps?: string[];
@@ -92,7 +90,7 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
   
   useEffect(() => {
     if (!resume.updatedAt) return;
-    const date = resume.updatedAt.toDate();
+    const date = resume.updatedAt.toDate ? resume.updatedAt.toDate() : new Date(resume.updatedAt);
     const diff = new Date().getTime() - date.getTime();
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     if (days < 1) setUpdatedAtText('today');
@@ -221,10 +219,10 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
 const SuccessPath = ({ resumes }: { resumes: Resume[] }) => {
     const { toast } = useToast();
     const steps = [
-        { label: 'Create your first resume', done: resumes.length > 0, link: '/templates' },
-        { label: 'Optimize for a job description', done: resumes.some(r => (r.matchScore || 0) > 0), link: '#' },
-        { label: 'Generate an AI cover letter', done: resumes.some(r => (r.coverLetter?.length || 0) > 200), link: '#' },
-        { label: 'Identify and bridge skill gaps', done: resumes.some(r => (r.skillGaps?.length || 0) > 0), link: '#' },
+        { label: 'Create your first resume', done: resumes.length > 0 },
+        { label: 'Optimize for a job description', done: resumes.some(r => (r.matchScore || 0) > 0) },
+        { label: 'Generate an AI cover letter', done: resumes.some(r => (r.coverLetter?.length || 0) > 200) },
+        { label: 'Identify and bridge skill gaps', done: resumes.some(r => (r.skillGaps?.length || 0) > 0) },
     ];
 
     const completedSteps = steps.filter(s => s.done).length;
@@ -435,83 +433,31 @@ const HiringInsights = ({ applications }: { applications: Application[] }) => {
     );
 };
 
-const ResumeSkeleton = () => {
-    return (
-        <Card className="overflow-hidden" variant="neuro">
-            <div className="p-4">
-              <Skeleton className="h-60 w-full mb-4" />
-            </div>
-            <CardHeader className="pt-0">
-                 <Skeleton className="h-6 w-3/4 mb-2" />
-                 <Skeleton className="h-4 w-1/2" />
-            </CardHeader>
-            <CardFooter className="p-4 pt-0 flex justify-between items-center">
-                <Skeleton className="h-9 w-20" />
-                <Skeleton className="h-8 w-8 rounded-full" />
-            </CardFooter>
-        </Card>
-    )
-}
+const ResumeSkeleton = () => (
+    <Card className="overflow-hidden" variant="neuro">
+        <div className="p-4"><Skeleton className="h-60 w-full mb-4" /></div>
+        <CardHeader className="pt-0"><Skeleton className="h-6 w-3/4 mb-2" /><Skeleton className="h-4 w-1/2" /></CardHeader>
+        <CardFooter className="p-4 pt-0 flex justify-between items-center"><Skeleton className="h-9 w-20" /><Skeleton className="h-8 w-8 rounded-full" /></CardFooter>
+    </Card>
+);
 
 const LoadingState = () => (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-      <ResumeSkeleton />
-      <ResumeSkeleton />
-      <ResumeSkeleton />
-      <ResumeSkeleton />
+      <ResumeSkeleton /><ResumeSkeleton /><ResumeSkeleton /><ResumeSkeleton />
     </div>
 );
 
 const EmptyState = ({ onPdfUploadClick }: { onPdfUploadClick: () => void; }) => (
-    <motion.div
-      initial={{ opacity: 0, y: 20, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.5, ease: 'easeOut' }}
-    >
+    <motion.div initial={{ opacity: 0, y: 20, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }}>
       <Card variant="neuro" className="text-center py-16 md:py-24 bg-gradient-to-br from-background to-secondary/50">
         <CardContent className="flex flex-col items-center">
-          <motion.div 
-            className="p-4 bg-primary/10 rounded-full mb-6"
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-          >
-            <FileText className="w-12 h-12 text-primary" />
-          </motion.div>
-          <motion.h2 
-            className="text-3xl font-headline font-bold mb-4"
-            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ delay: 0.3, ease: 'easeOut' }}
-          >
-            Design Your Future with FitCV
-          </motion.h2>
-          <motion.p 
-            className="text-muted-foreground mb-8 text-lg max-w-2xl mx-auto"
-            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ delay: 0.4, ease: 'easeOut' }}
-          >
-            Welcome to FitCV! Start by choosing a professional template or importing an existing resume to see the power of AI guidance.
-          </motion.p>
-          
-          <motion.div 
-            className="flex flex-col sm:flex-row gap-4"
-            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ delay: 0.5, ease: 'easeOut' }}
-          >
-             <Button size="lg" className="group" variant="outline" onClick={onPdfUploadClick}>
-              <Upload className="mr-2 h-5 w-5" />
-              Import from PDF
-            </Button>
-            <Button asChild size="lg" className="group" variant="neuro">
-              <Link href="/templates">
-                Explore Templates
-                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </Button>
-          </motion.div>
+          <div className="p-4 bg-primary/10 rounded-full mb-6"><FileText className="w-12 h-12 text-primary" /></div>
+          <h2 className="text-3xl font-headline font-bold mb-4">Design Your Future with FitCV</h2>
+          <p className="text-muted-foreground mb-8 text-lg max-w-2xl mx-auto">Welcome to FitCV! Start by choosing a professional template or importing an existing resume to see the power of AI guidance.</p>
+          <div className="flex flex-col sm:flex-row gap-4">
+             <Button size="lg" variant="outline" onClick={onPdfUploadClick}><Upload className="mr-2 h-5 w-5" /> Import from PDF</Button>
+            <Button asChild size="lg" variant="neuro"><Link href="/templates">Explore Templates <ArrowRight className="ml-2 h-5 w-5" /></Link></Button>
+          </div>
         </CardContent>
       </Card>
     </motion.div>
@@ -525,8 +471,10 @@ export default function DashboardPage() {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isParsing, setIsParsing] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
+    setIsHydrated(true);
     if (!isUserLoading && !user) {
       router.push('/login');
     }
@@ -547,22 +495,16 @@ export default function DashboardPage() {
 
   const handleDuplicate = (resumeToDuplicate: Resume) => {
     if (!user || !resumesQuery) return;
-    
     const { id, ...resumeContent } = resumeToDuplicate;
-    
     const newResumeData = {
       ...resumeContent,
       title: `${resumeToDuplicate.title || 'Untitled Resume'} (Copy)`,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     };
-
-    addDocumentNonBlocking(resumesQuery, newResumeData)
-      .then(newDocRef => {
-        if (newDocRef) {
-          router.push(`/editor/${newDocRef.id}`);
-        }
-      });
+    addDocumentNonBlocking(resumesQuery, newResumeData).then(newDocRef => {
+        if (newDocRef) router.push(`/editor/${newDocRef.id}`);
+    });
   };
 
   const handleDelete = (resumeId: string) => {
@@ -574,22 +516,13 @@ export default function DashboardPage() {
   const handlePdfUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file || !user || !resumesQuery) return;
-  
     setIsParsing(true);
-  
-    try {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = async () => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = async () => {
         try {
-          const base64String = reader.result as string;
-  
-          const result = await parseResumeFromPdf(base64String);
-          
-          if (!result.success || !result.data) {
-            throw new Error(result.error || 'Failed to parse resume.');
-          }
-          
+          const result = await parseResumeFromPdf(reader.result as string);
+          if (!result.success || !result.data) throw new Error(result.error || 'Failed to parse resume.');
           const newResumeData = {
             title: result.data.resumeData.personalInfo.name ? `${result.data.resumeData.personalInfo.name}'s Resume` : 'Imported Resume',
             templateId: 'modern',
@@ -600,54 +533,24 @@ export default function DashboardPage() {
             coverLetter: '',
             companyInfo: { name: '', jobTitle: '' },
           };
-          
-          addDocumentNonBlocking(resumesQuery, newResumeData)
-            .then(newDocRef => {
-              if (newDocRef) {
-                router.push(`/editor/${newDocRef.id}`);
-              }
-            });
-  
+          addDocumentNonBlocking(resumesQuery, newResumeData).then(newDocRef => {
+              if (newDocRef) router.push(`/editor/${newDocRef.id}`);
+          });
         } catch (innerError: any) {
-            toast({
-              variant: 'destructive',
-              title: 'Import Failed',
-              description: innerError.message || 'Could not import your resume from the PDF.',
-            });
+            toast({ variant: 'destructive', title: 'Import Failed', description: innerError.message });
         } finally {
             setIsParsing(false);
             if(fileInputRef.current) fileInputRef.current.value = '';
         }
-      };
-    } catch (error: any) {
-        setIsParsing(false);
-        toast({
-            variant: 'destructive',
-            title: 'Import Failed',
-            description: error.message || 'An unexpected error occurred.',
-        });
-    }
+    };
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  if (isUserLoading || !user) {
+  if (!isHydrated || isUserLoading || !user) {
     return (
         <div className="container mx-auto px-4 md:px-6 py-12">
             <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
                 <Skeleton className="h-9 w-48" />
-                <div className="flex items-center gap-2">
-                    <Skeleton className="h-10 w-36" />
-                    <Skeleton className="h-10 w-40" />
-                </div>
+                <div className="flex items-center gap-2"><Skeleton className="h-10 w-36" /><Skeleton className="h-10 w-40" /></div>
             </div>
             <LoadingState />
         </div>
@@ -658,14 +561,7 @@ export default function DashboardPage() {
 
   return (
     <div className="container mx-auto px-4 md:px-6 py-12">
-       <input
-          type="file"
-          ref={fileInputRef}
-          onChange={handlePdfUpload}
-          accept="application/pdf"
-          className="hidden"
-          disabled={isParsing}
-        />
+       <input type="file" ref={fileInputRef} onChange={handlePdfUpload} accept="application/pdf" className="hidden" disabled={isParsing} />
       
       <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
         <div>
@@ -677,12 +573,7 @@ export default function DashboardPage() {
               {isParsing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
               {isParsing ? 'Importing...' : 'Import PDF'}
             </Button>
-          <Button asChild variant="neuro">
-            <Link href="/templates">
-              <PlusCircle className="mr-2 h-4 w-4" />
-              New Resume
-            </Link>
-          </Button>
+          <Button asChild variant="neuro"><Link href="/templates"><PlusCircle className="mr-2 h-4 w-4" /> New Resume</Link></Button>
         </div>
       </div>
 
@@ -700,15 +591,10 @@ export default function DashboardPage() {
       {!isLoading && resumes && resumes.length > 0 ? (
         <div className="mt-12">
             <h2 className="text-2xl font-headline font-bold mb-6">Your Resumes</h2>
-            <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            >
-            {resumes.map((resume) => (
-                <ResumeCard key={resume.id} resume={resume} onDuplicate={handleDuplicate} onDelete={handleDelete} />
-            ))}
+            <motion.div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8" initial="hidden" animate="visible" variants={{ visible: { transition: { staggerChildren: 0.1 } } }}>
+                {resumes.map((resume) => (
+                    <ResumeCard key={resume.id} resume={resume} onDuplicate={handleDuplicate} onDelete={handleDelete} />
+                ))}
             </motion.div>
         </div>
       ) : !isLoading && (

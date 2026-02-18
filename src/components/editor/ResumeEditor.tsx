@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Accordion } from '@/components/ui/accordion';
@@ -459,10 +460,10 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                   placeholder="Untitled Resume"
                   className="text-base md:text-lg font-headline font-semibold h-10 border-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 p-1 flex-grow bg-transparent truncate"
               />
-              {(resumeData as any).matchScore !== undefined && (
+              {resumeData.matchScore !== undefined && (
                   <Badge variant="outline" className="bg-accent/10 border-accent/20 text-accent hidden sm:flex">
                       <Target className="w-3 h-3 mr-1" />
-                      {(resumeData as any).matchScore}% Match
+                      {resumeData.matchScore}% Match
                   </Badge>
               )}
           </div>

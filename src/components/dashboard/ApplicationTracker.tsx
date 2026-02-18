@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Briefcase, Building2, ExternalLink, Loader2, Mail, MoreHorizontal, Plus, Trash2, Copy, CheckCircle2, Sparkles, Search, Info } from 'lucide-react';
+import { Briefcase, Building2, ExternalLink, Loader2, Mail, Plus, Trash2, Copy, CheckCircle2, Sparkles, Search, Info } from 'lucide-react';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useMemoFirebase } from '@/firebase/provider';
@@ -294,7 +294,7 @@ export function ApplicationTracker({ resumes }: { resumes: Resume[] }) {
                                             </DropdownMenu>
                                         </TableCell>
                                         <TableCell className="text-xs text-muted-foreground">
-                                            {app.dateApplied ? format(app.dateApplied.toDate(), 'MMM dd, yyyy') : '...'}
+                                            {app.dateApplied ? format(app.dateApplied.toDate ? app.dateApplied.toDate() : new Date(app.dateApplied), 'MMM dd, yyyy') : '...'}
                                         </TableCell>
                                         <TableCell>
                                             {app.resumeId ? (
