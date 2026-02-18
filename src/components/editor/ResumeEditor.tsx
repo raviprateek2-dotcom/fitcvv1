@@ -5,8 +5,8 @@ import { Accordion } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Download, Share2, Sparkles, Bot, Newspaper, Brush, Loader2, SearchCheck, ArrowLeft, Upload, CheckCircle, XCircle, PlusCircle, FileText, KeySquare, Eye, Edit3, MessageSquareText, Linkedin, Target, ArrowRight, BookOpen, AlertTriangle, Check, Copy } from 'lucide-react';
-import React, { useCallback, useEffect, useState, useRef } from 'react';
+import { Download, Share2, Sparkles, Bot, Newspaper, Brush, Loader2, SearchCheck, ArrowLeft, Upload, CheckCircle, XCircle, PlusCircle, FileText, KeySquare, Eye, Edit3, MessageSquareText, Linkedin, Target, ArrowRight, BookOpen, AlertTriangle, Check, Copy, Zap, TrendingUp } from 'lucide-react';
+import React, { useCallback, useEffect, useState, useRef, useMemo } from 'react';
 import { ResumePreview, CoverLetterPreview } from './ResumePreview';
 import { useDoc, useUser, useFirestore, useMemoFirebase, setDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
 import { doc, serverTimestamp } from 'firebase/firestore';
@@ -143,6 +143,21 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
 
   const [isPredictingQuestions, setIsPredictingQuestions] = useState(false);
   const [predictedQuestions, setPredictedQuestions] = useState<PredictQuestionsOutput | null>(null);
+
+  // Hiring Readiness Calculation
+  const hiringReadiness = useMemo(() => {
+    if (!resumeData) return 0;
+    let score = 0;
+    if (resumeData.personalInfo.name !== 'Your Name') score += 10;
+    if (resumeData.personalInfo.email && resumeData.personalInfo.location) score += 10;
+    if (resumeData.personalInfo.website) score += 5;
+    if (resumeData.summary.length > 100) score += 15;
+    if (resumeData.experience.length > 0) score += 20;
+    if (resumeData.education.length > 0) score += 10;
+    if ((resumeData.skills?.length || 0) >= 5) score += 10;
+    if (resumeData.matchScore !== undefined) score += 20;
+    return Math.min(score, 100);
+  }, [resumeData]);
 
   useEffect(() => {
     if (initialResumeData && !initialDataRef.current) {
@@ -442,15 +457,23 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     <div className="flex flex-col h-full bg-secondary">
       <header className="bg-background border-b z-20 no-print">
         <div className="container mx-auto px-4 md:px-6 h-16 flex items-center justify-between gap-2 md:gap-4">
-          <div className="flex items-center gap-2 flex-grow min-w-0">
-              <Input 
-                  value={resumeData.title || ''}
-                  onChange={(e) => handleFieldChange('title', e.target.value)}
-                  placeholder="Untitled Resume"
-                  className="text-base md:text-lg font-headline font-semibold h-10 border-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 p-1 flex-grow bg-transparent truncate"
-              />
+          <div className="flex items-center gap-4 flex-grow min-w-0">
+              <div className="flex flex-col flex-grow">
+                <Input 
+                    value={resumeData.title || ''}
+                    onChange={(e) => handleFieldChange('title', e.target.value)}
+                    placeholder="Untitled Resume"
+                    className="text-base font-headline font-semibold h-7 border-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 p-0 flex-grow bg-transparent truncate"
+                />
+                <div className="flex items-center gap-2 mt-0.5">
+                    <Progress value={hiringReadiness} className="h-1 w-24 bg-secondary" />
+                    <span className="text-[10px] uppercase font-bold text-muted-foreground whitespace-nowrap">
+                        Ready: {hiringReadiness}%
+                    </span>
+                </div>
+              </div>
               {resumeData.matchScore !== undefined && (
-                  <Badge variant="outline" className="bg-accent/10 border-accent/20 text-accent hidden sm:flex">
+                  <Badge variant="outline" className="bg-accent/10 border-accent/20 text-accent hidden sm:flex shrink-0">
                       <Target className="w-3 h-3 mr-1" />
                       {resumeData.matchScore}% Match
                   </Badge>

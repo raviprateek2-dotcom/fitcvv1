@@ -1,3 +1,4 @@
+
 'use client';
 
 import { AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -5,18 +6,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Bot, PlusCircle, Sparkles, Trash2, Briefcase, Lightbulb, Target, TrendingUp } from "lucide-react";
+import { Bot, PlusCircle, Sparkles, Trash2, Briefcase, Lightbulb, Target, TrendingUp, Zap } from "lucide-react";
 import type { ResumeData } from "../types";
 import AIContentDialog from "../AIContentDialog";
 import AISectionWriterDialog from "../AISectionWriterDialog";
 import { ProFeatureWrapper } from "../ProFeatureWrapper";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 interface ExperienceSectionProps {
     resumeData: ResumeData;
     setResumeData: React.Dispatch<React.SetStateAction<ResumeData | null>>;
     isProUser: boolean;
 }
+
+const strongVerbs = ['Spearheaded', 'Orchestrated', 'Quantified', 'Engineered', 'Pioneered', 'Accelerated', 'Executed', 'Optimized'];
 
 export function ExperienceSection({ resumeData, setResumeData, isProUser }: ExperienceSectionProps) {
 
@@ -52,12 +56,11 @@ export function ExperienceSection({ resumeData, setResumeData, isProUser }: Expe
 
     const checkImpact = (text: string) => {
         const numbers = (text.match(/\d+/g) || []).length;
-        const actionVerbs = ['led', 'spearheaded', 'developed', 'grew', 'increased', 'managed', 'achieved', 'delivered'];
-        const hasActionVerb = actionVerbs.some(v => text.toLowerCase().includes(v));
+        const hasActionVerb = strongVerbs.some(v => text.toLowerCase().includes(v.toLowerCase()));
         
-        if (numbers >= 2) return { label: 'High Impact', color: 'text-green-600 bg-green-50 border-green-100', icon: <TrendingUp className="w-3 h-3" /> };
-        if (numbers >= 1 || hasActionVerb) return { label: 'Good Start', color: 'text-amber-600 bg-amber-50 border-amber-100', icon: <Target className="w-3 h-3" /> };
-        return { label: 'Add Metrics', color: 'text-muted-foreground bg-secondary/50 border-transparent', icon: <Lightbulb className="w-3 h-3" /> };
+        if (numbers >= 2 && hasActionVerb) return { score: 100, label: 'High Impact', color: 'text-green-600 bg-green-50 border-green-100', icon: <TrendingUp className="w-3 h-3" /> };
+        if (numbers >= 1 || hasActionVerb) return { score: 60, label: 'Good Start', color: 'text-amber-600 bg-amber-50 border-amber-100', icon: <Target className="w-3 h-3" /> };
+        return { score: 30, label: 'Low Impact', color: 'text-muted-foreground bg-secondary/50 border-transparent', icon: <Lightbulb className="w-3 h-3" /> };
     };
 
     return (
@@ -103,15 +106,30 @@ export function ExperienceSection({ resumeData, setResumeData, isProUser }: Expe
                                     <Label className="text-[10px] font-bold uppercase text-muted-foreground">Employment Period</Label>
                                     <Input value={exp.date} onChange={e => handleNestedChange('experience', exp.id, 'date', e.target.value)} className="h-9" placeholder="e.g. Jan 2020 - Present" />
                                 </div>
-                                <div className="space-y-2">
+                                <div className="space-y-3">
                                     <div className="flex justify-between items-center">
                                         <Label className="text-[10px] font-bold uppercase text-muted-foreground">Description & Key Achievements</Label>
-                                        <Badge variant="outline" className={cn("text-[9px] px-1.5 py-0 h-5 flex items-center gap-1 font-medium transition-colors", impact.color)}>
-                                            {impact.icon}
-                                            {impact.label}
-                                        </Badge>
+                                        <div className="flex items-center gap-2">
+                                            <Badge variant="outline" className={cn("text-[9px] px-1.5 py-0 h-5 flex items-center gap-1 font-medium transition-colors", impact.color)}>
+                                                {impact.icon}
+                                                {impact.label}
+                                            </Badge>
+                                        </div>
                                     </div>
                                     <Textarea rows={5} value={exp.description} onChange={e => handleNestedChange('experience', exp.id, 'description', e.target.value)} className="bg-secondary/10 text-sm resize-none" placeholder="• Led a cross-functional team...&#10;• Increased revenue by 15% through..." />
+                                    
+                                    {impact.score < 60 && (
+                                        <div className="p-3 bg-primary/5 rounded-lg border border-dashed border-primary/20">
+                                            <p className="text-[10px] font-bold text-primary uppercase mb-2 flex items-center gap-1"><Zap className="w-3 h-3" /> Impact Boosters:</p>
+                                            <div className="flex flex-wrap gap-1.5">
+                                                {strongVerbs.slice(0, 5).map(verb => (
+                                                    <Badge key={verb} variant="secondary" className="text-[9px] cursor-help bg-background hover:bg-primary hover:text-white transition-colors" onClick={() => handleNestedChange('experience', exp.id, 'description', exp.description + `\n• ${verb} `)}>
+                                                        {verb}
+                                                    </Badge>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="flex justify-between items-center pt-2">
                                     <div className="flex gap-2">

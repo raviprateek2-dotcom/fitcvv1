@@ -1,9 +1,10 @@
+
 'use client';
 
 import { AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Bot, Sparkles, Lightbulb, CheckCircle2, AlertCircle } from "lucide-react";
+import { Bot, Sparkles, Lightbulb, CheckCircle2, AlertCircle, FileText } from "lucide-react";
 import AIContentDialog from "../AIContentDialog";
 import AISectionWriterDialog from "../AISectionWriterDialog";
 import { ProFeatureWrapper } from "../ProFeatureWrapper";
@@ -19,9 +20,9 @@ interface SummarySectionProps {
 
 export function SummarySection({ resumeData, setResumeData, isProUser }: SummarySectionProps) {
     const summaryLength = resumeData.summary?.length || 0;
-    const isTooShort = summaryLength > 0 && summaryLength < 100;
-    const isOptimal = summaryLength >= 100 && summaryLength <= 400;
-    const isTooLong = summaryLength > 400;
+    const isTooShort = summaryLength > 0 && summaryLength < 150;
+    const isOptimal = summaryLength >= 150 && summaryLength <= 350;
+    const isTooLong = summaryLength > 350;
 
     const handleFieldChange = <T extends keyof ResumeData>(field: T, value: ResumeData[T]) => {
         setResumeData(prev => prev ? { ...prev, [field]: value } : null);
@@ -44,33 +45,42 @@ export function SummarySection({ resumeData, setResumeData, isProUser }: Summary
                         <div className="space-y-1">
                             <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Coach's Tip</p>
                             <p className="text-sm text-muted-foreground leading-relaxed">
-                                Think of this as your 30-second elevator pitch. Mention your years of experience, top 3 skills, and a major career goal. Keep it under 4 sentences.
+                                Think of this as your 30-second elevator pitch. Mention your years of experience, top 3 skills, and a major career goal. Aim for <strong className="text-foreground">150–350 characters</strong>.
                             </p>
                         </div>
                     </div>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-3">
                     <Textarea 
                         value={resumeData.summary} 
                         onChange={e => handleFieldChange('summary', e.target.value)} 
                         rows={5}
                         placeholder="e.g. Results-driven Software Engineer with 5+ years of experience in..."
-                        className="bg-background resize-none focus-visible:ring-primary/20"
+                        className="bg-background resize-none focus-visible:ring-primary/20 text-sm"
                     />
-                    <div className="flex justify-between items-center px-1">
-                        <div className="flex items-center gap-2">
-                            {isTooShort && <p className="text-[10px] text-amber-600 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> A bit short - add more impact.</p>}
-                            {isOptimal && <p className="text-[10px] text-green-600 flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> Length is optimal.</p>}
-                            {isTooLong && <p className="text-[10px] text-amber-600 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> A bit long - keep it concise.</p>}
+                    
+                    <div className="space-y-1.5">
+                        <div className="flex justify-between items-center text-[10px] uppercase font-bold text-muted-foreground">
+                            <span>Length Gauge</span>
+                            <span className={cn(isTooLong && "text-destructive")}>{summaryLength} / 350 recommended</span>
                         </div>
-                        <p className={cn("text-[10px]", isTooLong ? "text-destructive font-bold" : "text-muted-foreground")}>
-                            {summaryLength} / 400 chars recommended
-                        </p>
+                        <Progress 
+                            value={Math.min((summaryLength / 350) * 100, 100)} 
+                            className="h-1.5 bg-secondary"
+                            indicatorClassName={cn(
+                                isOptimal ? "bg-green-500" : isTooShort ? "bg-amber-400" : "bg-destructive"
+                            )}
+                        />
+                        <div className="flex items-center gap-2 pt-1">
+                            {isTooShort && <p className="text-[10px] text-amber-600 flex items-center gap-1 font-medium"><AlertCircle className="w-3 h-3" /> A bit short - add more specific impact.</p>}
+                            {isOptimal && <p className="text-[10px] text-green-600 flex items-center gap-1 font-medium"><CheckCircle2 className="w-3 h-3" /> Impact is optimal for high-stakes roles.</p>}
+                            {isTooLong && <p className="text-[10px] text-destructive flex items-center gap-1 font-medium"><AlertCircle className="w-3 h-3" /> Too dense - keep it concise for recruiters.</p>}
+                        </div>
                     </div>
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex gap-2 pt-2">
                     <ProFeatureWrapper isPro={isProUser}>
                         <AISectionWriterDialog
                             sectionName="Professional Summary"
@@ -97,5 +107,3 @@ export function SummarySection({ resumeData, setResumeData, isProUser }: Summary
         </AccordionItem>
     );
 }
-
-import { FileText } from "lucide-react";

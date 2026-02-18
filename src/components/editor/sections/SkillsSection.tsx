@@ -1,3 +1,4 @@
+
 'use client';
 
 import { AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -5,8 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MinusCircle, PlusCircle, Trash2, Code, Lightbulb, Info } from "lucide-react";
+import { MinusCircle, PlusCircle, Trash2, Code, Lightbulb, Info, CheckCircle2, AlertCircle } from "lucide-react";
 import type { ResumeData } from "../types";
+import { Progress } from "@/components/ui/progress";
+import { cn } from "@/lib/utils";
 
 interface SkillsSectionProps {
     resumeData: ResumeData;
@@ -62,6 +65,10 @@ export function SkillsSection({ resumeData, setResumeData }: SkillsSectionProps)
     };
 
     const hasSkillsSection = resumeData.skills !== undefined;
+    const skillsCount = resumeData.skills?.length || 0;
+    const isUnderloaded = skillsCount > 0 && skillsCount < 8;
+    const isOptimal = skillsCount >= 8 && skillsCount <= 15;
+    const isOverloaded = skillsCount > 15;
 
     return (
         <AccordionItem value="skills" className="border-none mb-4">
@@ -81,11 +88,26 @@ export function SkillsSection({ resumeData, setResumeData }: SkillsSectionProps)
                         <div className="space-y-1">
                             <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Expert Advice</p>
                             <p className="text-sm text-muted-foreground leading-relaxed">
-                                Prioritize "Hard Skills" like specific software or languages. If you're low on space, you can group them (e.g. "Cloud: AWS, Azure, GCP").
+                                Aim for <strong className="text-foreground">8–15 relevant skills</strong>. Group them by category (e.g. "Cloud: AWS, GCP") to maximize space and ATS visibility.
                             </p>
                         </div>
                     </div>
                 </div>
+
+                {hasSkillsSection && (
+                    <div className="px-1 space-y-2">
+                        <div className="flex justify-between items-center text-[10px] uppercase font-bold text-muted-foreground">
+                            <span>Skills Density</span>
+                            <span>{skillsCount} / 15 Target</span>
+                        </div>
+                        <Progress value={Math.min((skillsCount / 15) * 100, 100)} className="h-1 bg-secondary" />
+                        <div className="flex items-center gap-2">
+                            {isUnderloaded && <p className="text-[9px] text-amber-600 flex items-center gap-1 font-bold"><AlertCircle className="w-3 h-3" /> Add more skills to increase ATS matching.</p>}
+                            {isOptimal && <p className="text-[9px] text-green-600 flex items-center gap-1 font-bold"><CheckCircle2 className="w-3 h-3" /> Optimal skill density achieved.</p>}
+                            {isOverloaded && <p className="text-[9px] text-amber-600 flex items-center gap-1 font-bold"><AlertCircle className="w-3 h-3" /> Too many? Group them to maintain readability.</p>}
+                        </div>
+                    </div>
+                )}
 
                 {!hasSkillsSection ? (
                      <Button variant="outline" onClick={addSkillSection} className="w-full border-dashed border-2 py-6 rounded-xl hover:bg-primary/5">

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -5,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Loader2, Sparkles, XCircle, CheckCircle2, User, Globe, Mail, MapPin, Phone, Info } from "lucide-react";
+import { Loader2, Sparkles, XCircle, CheckCircle2, User, Globe, Mail, MapPin, Phone, Info, AlertTriangle } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { suggestTitle as suggestTitleAction } from '@/app/actions/ai-title-suggester';
@@ -55,6 +56,8 @@ export function PersonalInfoSection({ resumeData, setResumeData, isProUser }: Pe
             setTitleSuggestion(null);
         }
     }
+
+    const hasMissingLinks = !resumeData.personalInfo.website;
 
     return (
         <AccordionItem value="personal-info" className="border-none mb-4">
@@ -136,13 +139,18 @@ export function PersonalInfoSection({ resumeData, setResumeData, isProUser }: Pe
                             <Globe className="w-3 h-3" /> Website / Portfolio
                         </Label>
                         <Input name="website" value={resumeData.personalInfo.website} onChange={handlePersonalInfoChange} placeholder="linkedin.com/in/you" className="bg-background" />
+                        {hasMissingLinks && (
+                            <p className="text-[10px] text-amber-600 flex items-center gap-1 font-bold mt-1">
+                                <AlertTriangle className="w-3 h-3" /> Missing social proof? Add your LinkedIn or Portfolio.
+                            </p>
+                        )}
                     </div>
                 </div>
 
                 <div className="p-3 bg-primary/5 rounded-lg border border-primary/10 flex items-start gap-3">
                     <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                     <p className="text-xs text-muted-foreground leading-relaxed">
-                        <strong className="text-foreground">Pro Tip:</strong> Ensure your LinkedIn profile is up to date and your location matches the target market if you're applying for remote or local-only roles.
+                        <strong className="text-foreground">Pro Tip:</strong> Recruiters spend <strong className="text-foreground">7 seconds</strong> on average per resume. Ensure your contact info is clear and your links are clickable.
                     </p>
                 </div>
             </AccordionContent>
