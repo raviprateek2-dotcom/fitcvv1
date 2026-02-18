@@ -23,9 +23,9 @@ export function SummarySection({ resumeData, setResumeData, isProUser }: Summary
     const isOptimal = summaryLength >= 150 && summaryLength <= 350;
     const isTooLong = summaryLength > 350;
 
-    const handleFieldChange = <T extends keyof ResumeData>(field: T, value: ResumeData[T]) => {
+    function handleFieldChange<T extends keyof ResumeData>(field: T, value: ResumeData[T]) {
         setResumeData(prev => prev ? { ...prev, [field]: value } : null);
-    };
+    }
 
     return (
         <AccordionItem value="summary" className="border-none mb-4">

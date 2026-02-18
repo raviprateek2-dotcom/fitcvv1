@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Accordion } from '@/components/ui/accordion';
@@ -244,9 +243,9 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     };
   }, [resumeData, handleSave, isPrintMode]);
 
-  const handleFieldChange = <T extends keyof ResumeData>(field: T, value: ResumeData[T]) => {
+  function handleFieldChange<T extends keyof ResumeData>(field: T, value: ResumeData[T]) {
      setResumeData(prev => prev ? {...prev, [field]: value} : null);
-  };
+  }
   
   const handleCompanyInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!resumeData || !resumeData.companyInfo) return;
@@ -523,7 +522,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                   <TabsTrigger value="content" className="px-0"><FileText className="md:mr-2 h-4 w-4"/><span className="hidden md:inline">Content</span></TabsTrigger>
                   <TabsTrigger value="ai-review" className="px-0"><SearchCheck className="md:mr-2 h-4 w-4"/><span className="hidden md:inline">Audit</span></TabsTrigger>
                   <TabsTrigger value="cover-letter" className="px-0"><Newspaper className="md:mr-2 h-4 w-4"/><span className="hidden md:inline">Letter</span></TabsTrigger>
-                  <TabsTrigger value="linkedin" className="px-0"><Linkedin className="md:mr-2 h-4 w-4"/><span className="hidden md:inline">LinkedIn</span></TabsTrigger>
+                  <TabsTrigger value="linkedin" className="px-0"><LinkedIn className="md:mr-2 h-4 w-4"/><span className="hidden md:inline">LinkedIn</span></TabsTrigger>
                   <TabsTrigger value="design" className="px-0"><Brush className="md:mr-2 h-4 w-4"/><span className="hidden md:inline">Design</span></TabsTrigger>
                 </TabsList>
               </div>
@@ -719,6 +718,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                                         ))}
                                     </div>
                                 </CardContent>
+                            </Card>
 
                             <Card variant="neuro" className="border-accent/20 bg-accent/5">
                                 <CardHeader>
