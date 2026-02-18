@@ -10,9 +10,9 @@ export function Footer() {
           <div className="flex flex-col gap-4">
             <Link href="/" className="flex items-center gap-2 font-bold font-headline text-lg w-fit">
               <Rocket className="h-6 w-6 text-primary" />
-              <span>ResumeAI</span>
+              <span>FitCV</span>
             </Link>
-            <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} ResumeAI. All rights reserved.</p>
+            <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} FitCV. All rights reserved.</p>
           </div>
           
           <div className="flex flex-col gap-2">

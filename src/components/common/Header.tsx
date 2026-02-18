@@ -41,7 +41,7 @@ export function Header() {
              <div className="animate-float">
               <Rocket className="h-6 w-6 text-primary" />
             </div>
-            <span>ResumeAI</span>
+            <span>FitCV</span>
           </Link>
         </div>
 
@@ -90,7 +90,7 @@ export function Header() {
               <div className="flex flex-col gap-6 mt-8">
                 <Link href="/" className="flex items-center gap-2 font-bold font-headline text-lg">
                   <Rocket className="h-6 w-6 text-primary" />
-                  <span>ResumeAI</span>
+                  <span>FitCV</span>
                 </Link>
                 <div className="flex flex-col gap-4">
                   {navLinks.map((link) => (

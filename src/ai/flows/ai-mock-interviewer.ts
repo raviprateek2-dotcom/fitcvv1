@@ -18,7 +18,7 @@ const prompt = ai.definePrompt({
     name: 'mockInterviewPrompt',
     input: { schema: MockInterviewInputSchema },
     output: { schema: MockInterviewOutputSchema },
-    prompt: `You are an expert interview coach for a company called ResumeAI.
+    prompt: `You are an expert interview coach for a company called FitCV.
 
     Your task is to provide feedback on a user's answer to a common interview question.
     

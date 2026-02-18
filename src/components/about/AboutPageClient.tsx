@@ -59,7 +59,7 @@ export function AboutPageClient() {
                 <motion.div variants={itemVariants} className="flex justify-center mb-4">
                     <Rocket className="h-16 w-16 text-primary" />
                 </motion.div>
-                <motion.h1 variants={itemVariants} className="text-4xl md:text-6xl font-headline font-bold">About ResumeAI</motion.h1>
+                <motion.h1 variants={itemVariants} className="text-4xl md:text-6xl font-headline font-bold">About FitCV</motion.h1>
                 <motion.p variants={itemVariants} className="text-lg md:text-xl mt-4 text-muted-foreground max-w-3xl mx-auto">
                     We're on a mission to level the playing field in the job market, empowering professionals to build their dream careers with the power of AI.
                 </motion.p>
@@ -79,7 +79,7 @@ export function AboutPageClient() {
                     <motion.div variants={itemVariants}>
                         <h2 className="text-3xl font-headline font-bold text-primary">Our Mission</h2>
                         <p className="mt-4 text-lg text-muted-foreground leading-relaxed">
-                            At ResumeAI, our mission is to provide smart, intuitive tools that help job seekers create professional, ATS-optimized resumes and cover letters that truly reflect their potential. We believe that a great resume opens doors, and everyone deserves a fair chance to walk through them.
+                            At FitCV, our mission is to provide smart, intuitive tools that help job seekers create professional, ATS-optimized resumes and cover letters that truly reflect their potential. We believe that a great resume opens doors, and everyone deserves a fair chance to walk through them.
                         </p>
                     </motion.div>
                     <motion.div variants={itemVariants}>
@@ -145,7 +145,7 @@ export function AboutPageClient() {
                     <h3 className="text-2xl font-bold font-headline mb-0">Ravi Prateek</h3>
                     <p className="text-muted-foreground -mt-3">Founder & CEO</p>
                     <p className="text-lg">
-                        With over 15 years of experience at the intersection of technology and business strategy, I've led product teams at both Fortune 500 companies and agile startups. My journey from a software engineer to an MBA-educated product leader has given me a unique perspective on what it takes to build a successful career. I founded ResumeAI to democratize career-building tools, leveraging AI to help professionals everywhere translate their experience into powerful opportunities. I'm passionate about building products that have a real impact on people's lives.
+                        With over 15 years of experience at the intersection of technology and business strategy, I've led product teams at both Fortune 500 companies and agile startups. My journey from a software engineer to an MBA-educated product leader has given me a unique perspective on what it takes to build a successful career. I founded FitCV to democratize career-building tools, leveraging AI to help professionals everywhere translate their experience into powerful opportunities. I'm passionate about building products that have a real impact on people's lives.
                     </p>
                 </motion.div>
             </div>
@@ -168,7 +168,7 @@ export function AboutPageClient() {
                        Ready to Supercharge Your Job Search?
                     </motion.h2>
                     <motion.p variants={itemVariants} className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-                        While our core tools are free, our **Premium** subscription unlocks the full power of ResumeAI. This includes unlimited resumes, advanced AI features like our cover letter writer and in-depth analysis, and access to our full suite of executive templates—all designed to give you the ultimate competitive edge.
+                        While our core tools are free, our **Premium** subscription unlocks the full power of FitCV. This includes unlimited resumes, advanced AI features like our cover letter writer and in-depth analysis, and access to our full suite of executive templates—all designed to give you the ultimate competitive edge.
                     </motion.p>
                     <motion.div variants={itemVariants} className="mt-8">
                         <Button asChild className="group" size="lg" variant="neuro">

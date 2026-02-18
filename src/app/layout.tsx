@@ -36,37 +36,37 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:9002';
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'ResumeAI - Build Your Perfect Resume with AI',
-    template: '%s | ResumeAI',
+    default: 'FitCV - Build Your Perfect Resume with AI',
+    template: '%s | FitCV',
   },
   description:
-    'Create a professional, ATS-optimized resume in minutes with our AI-powered builder, customizable templates, and expert guidance. Land your dream job faster with ResumeAI.',
+    'Create a professional, ATS-optimized resume in minutes with our AI-powered builder, customizable templates, and expert guidance. Land your dream job faster with FitCV.',
   keywords: ['resume builder', 'AI resume', 'professional resume', 'resume templates', 'cv builder', 'job application', 'career tools'],
-  authors: [{ name: 'ResumeAI Team', url: siteUrl }],
-  creator: 'ResumeAI Team',
+  authors: [{ name: 'FitCV Team', url: siteUrl }],
+  creator: 'FitCV Team',
   manifest: '/manifest.json',
   openGraph: {
     type: 'website',
     locale: 'en_US',
     url: siteUrl,
-    title: 'ResumeAI - The Smartest Way to Build Your Resume',
+    title: 'FitCV - The Smartest Way to Build Your Resume',
     description: 'Create a job-winning resume in minutes with AI-powered suggestions and beautiful, professional templates.',
-    siteName: 'ResumeAI',
+    siteName: 'FitCV',
     images: [
       {
         url: `${siteUrl}/og-image.png`,
         width: 1200,
         height: 630,
-        alt: 'A hero image showing a resume being created on ResumeAI',
+        alt: 'A hero image showing a resume being created on FitCV',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'ResumeAI - The Smartest Way to Build Your Resume',
+    title: 'FitCV - The Smartest Way to Build Your Resume',
     description: 'Create a job-winning resume in minutes with AI-powered suggestions and professional templates.',
     images: [`${siteUrl}/og-image.png`],
-    creator: '@ResumeAI',
+    creator: '@FitCV',
   },
   robots: {
     index: true,

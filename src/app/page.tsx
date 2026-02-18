@@ -96,7 +96,7 @@ export default function Home() {
         <div className="container mx-auto px-4 md:px-6 text-center">
           <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl bg-gradient-to-r from-primary via-foreground to-accent bg-clip-text text-transparent">Ready to Build Your Future?</h2>
           <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl mt-4">
-            Start for free and see how ResumeAI can transform your job search. No credit card required.
+            Start for free and see how FitCV can transform your job search. No credit card required.
           </p>
           <div className="mt-8">
             <Button asChild size="lg" className="group" variant='neuro'>

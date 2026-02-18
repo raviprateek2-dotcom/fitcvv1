@@ -1,3 +1,4 @@
+
 import { blogPosts } from '@/lib/blog-posts';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:9002';
@@ -6,9 +7,9 @@ function generateRssFeed() {
   let rss = `<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
-  <title>ResumeAI Blog</title>
+  <title>FitCV Blog</title>
   <link>${siteUrl}/blog</link>
-  <description>Career Advice & Resume Tips from the ResumeAI team.</description>
+  <description>Career Advice & Resume Tips from the FitCV team.</description>
   <language>en-us</language>
   <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
   <atom:link href="${siteUrl}/rss.xml" rel="self" type="application/rss+xml" />
