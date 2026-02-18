@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -7,6 +6,12 @@ import { AtSign, Globe, MapPin, Phone } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import type { CoverLetterPreviewProps } from '../ResumePreview';
 import { motion } from 'framer-motion';
+
+const MotionDiv = motion.div;
+const MotionHeader = motion.header;
+const MotionH1 = motion.h1;
+const MotionH2 = motion.h2;
+const MotionP = motion.p;
 
 const templates: Record<string, { header: string }> = {
     modern: {
@@ -63,111 +68,111 @@ export function DefaultCoverLetter({ resumeData }: CoverLetterPreviewProps) {
 
   if (templateId === 'executive') {
     return (
-        <motion.div {...containerProps} style={dynamicStyles} className={cn("bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-hidden print:shadow-none print:rounded-none print:max-h-full flex text-[var(--body-font-size)] transition-colors duration-500", fontClass)}>
+        <MotionDiv {...containerProps} style={dynamicStyles} className={cn("bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-hidden print:shadow-none print:rounded-none print:max-h-full flex text-[var(--body-font-size)] transition-colors duration-500", fontClass)}>
             <aside className="w-1/3 text-primary-foreground p-8 bg-primary transition-colors duration-500">
                 {/* Sidebar can be decorative or hold contact details */}
             </aside>
             <main className="w-2/3 p-10 leading-relaxed space-y-4 whitespace-pre-wrap">
                 <header className="text-left mb-8">
-                    <motion.h1 layout style={{ fontSize: 'var(--title-font-size)'}} className="font-bold text-gray-900 font-headline leading-tight">{personalInfo.name}</motion.h1>
-                    <motion.h2 layout style={{ fontSize: 'var(--heading-font-size)', color: 'var(--accent-color)'}} className="font-semibold transition-colors duration-500">{personalInfo.title}</motion.h2>
+                    <MotionH1 layout style={{ fontSize: 'var(--title-font-size)'}} className="font-bold text-gray-900 font-headline leading-tight">{personalInfo.name}</MotionH1>
+                    <MotionH2 layout style={{ fontSize: 'var(--heading-font-size)', color: 'var(--accent-color)'}} className="font-semibold transition-colors duration-500">{personalInfo.title}</MotionH2>
                 </header>
-                <motion.p variants={sectionVariants} className="text-sm text-gray-600">{date}</motion.p>
+                <MotionP variants={sectionVariants} className="text-sm text-gray-600">{date}</MotionP>
                 {companyInfo?.name && (
-                    <motion.div variants={sectionVariants}>
+                    <MotionDiv variants={sectionVariants}>
                         <p className="font-semibold">Hiring Manager</p>
                         <p>{companyInfo.name}</p>
-                    </motion.div>
+                    </MotionDiv>
                 )}
                 <br/>
-                <motion.p variants={sectionVariants}>Dear Hiring Manager,</p>
-                <motion.div variants={sectionVariants} className="space-y-4 text-gray-700">
+                <MotionP variants={sectionVariants}>Dear Hiring Manager,</MotionP>
+                <MotionDiv variants={sectionVariants} className="space-y-4 text-gray-700">
                     {coverLetter?.split('\n').filter(p => p.trim() !== '').map((paragraph, index) => (
                         <p key={index}>{paragraph}</p>
                     ))}
-                </motion.div>
+                </MotionDiv>
                 <br/>
-                <motion.div variants={sectionVariants}>
+                <MotionDiv variants={sectionVariants}>
                     <p>Sincerely,</p>
                     <p className="font-semibold">{personalInfo.name}</p>
-                </motion.div>
+                </MotionDiv>
             </main>
-        </motion.div>
+        </MotionDiv>
     );
   }
   
   if (templateId === 'professional') {
     return (
-        <motion.div {...containerProps} style={dynamicStyles} className={cn("bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-hidden print:shadow-none print:rounded-none print:max-h-full flex flex-col p-10 text-[var(--body-font-size)] transition-colors duration-500", fontClass)}>
+        <MotionDiv {...containerProps} style={dynamicStyles} className={cn("bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-hidden print:shadow-none print:rounded-none print:max-h-full flex flex-col p-10 text-[var(--body-font-size)] transition-colors duration-500", fontClass)}>
             <header className="text-center mb-8">
-                <motion.h1 layout style={{ fontSize: 'var(--title-font-size)', color: 'var(--accent-color)'}} className="font-bold font-headline leading-tight transition-colors duration-500">{personalInfo.name}</motion.h1>
-                <motion.h2 layout style={{ fontSize: 'var(--heading-font-size)'}} className="font-semibold text-gray-600">{personalInfo.title}</motion.h2>
-                 <motion.div variants={sectionVariants} className="flex justify-center items-center gap-4 text-sm mt-2 text-gray-500">
+                <MotionH1 layout style={{ fontSize: 'var(--title-font-size)', color: 'var(--accent-color)'}} className="font-bold font-headline leading-tight transition-colors duration-500">{personalInfo.name}</MotionH1>
+                <MotionH2 layout style={{ fontSize: 'var(--heading-font-size)'}} className="font-semibold text-gray-600">{personalInfo.title}</MotionH2>
+                 <MotionDiv variants={sectionVariants} className="flex justify-center items-center gap-4 text-sm mt-2 text-gray-500">
                     <div className="flex items-center gap-1.5"><AtSign size={14} />{personalInfo.email}</div>
                     <div className="flex items-center gap-1.5"><Phone size={14} />{personalInfo.phone}</div>
                     <div className="flex items-center gap-1.5"><MapPin size={14} />{personalInfo.location}</div>
-                 </motion.div>
+                 </MotionDiv>
             </header>
             <main className="leading-relaxed space-y-4 whitespace-pre-wrap flex-grow">
-            <motion.p variants={sectionVariants} className="text-sm text-gray-600">{date}</motion.p>
+            <MotionP variants={sectionVariants} className="text-sm text-gray-600">{date}</MotionP>
             {companyInfo?.name && (
-              <motion.div variants={sectionVariants}>
+              <MotionDiv variants={sectionVariants}>
                   <p className="font-semibold">Hiring Manager</p>
                   <p>{companyInfo.name}</p>
-              </motion.div>
+              </MotionDiv>
             )}
             <br/>
-            <motion.p variants={sectionVariants}>Dear Hiring Manager,</motion.p>
-            <motion.div variants={sectionVariants} className="space-y-4 text-gray-700">
+            <MotionP variants={sectionVariants}>Dear Hiring Manager,</MotionP>
+            <MotionDiv variants={sectionVariants} className="space-y-4 text-gray-700">
               {coverLetter?.split('\n').filter(p => p.trim() !== '').map((paragraph, index) => (
                   <p key={index}>{paragraph}</p>
               ))}
-            </motion.div>
+            </MotionDiv>
             <br/>
-            <motion.div variants={sectionVariants}>
+            <MotionDiv variants={sectionVariants}>
                 <p>Sincerely,</p>
                 <p className="font-semibold">{personalInfo.name}</p>
-            </motion.div>
+            </MotionDiv>
             </main>
-        </motion.div>
+        </MotionDiv>
     );
   }
 
   return (
-     <motion.div {...containerProps} style={dynamicStyles} className={cn("bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full p-8 mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-auto print:shadow-none print:rounded-none print:max-h-full text-[var(--body-font-size)] transition-colors duration-500", fontClass)}>
-      <motion.header layout className={cn(templateStyles.header, "transition-all duration-500")} style={templateId === 'creative' ? { backgroundColor: accentColor } : {}}>
-        <motion.h1 layout style={{ fontSize: 'var(--title-font-size)'}} className={cn("font-bold font-headline leading-tight transition-colors duration-500", templateId === 'creative' ? 'text-white' : 'text-gray-900')}>{personalInfo.name}</motion.h1>
-        <motion.h2 layout style={{ fontSize: 'var(--heading-font-size)'}} className={cn("font-semibold font-headline transition-colors duration-500", templateId === 'creative' ? 'text-white/90' : 'text-[var(--accent-color)]')}>{personalInfo.title}</motion.h2>
+     <MotionDiv {...containerProps} style={dynamicStyles} className={cn("bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full p-8 mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-auto print:shadow-none print:rounded-none print:max-h-full text-[var(--body-font-size)] transition-colors duration-500", fontClass)}>
+      <MotionHeader layout className={cn(templateStyles.header, "transition-all duration-500")} style={templateId === 'creative' ? { backgroundColor: accentColor } : {}}>
+        <MotionH1 layout style={{ fontSize: 'var(--title-font-size)'}} className={cn("font-bold font-headline leading-tight transition-colors duration-500", templateId === 'creative' ? 'text-white' : 'text-gray-900')}>{personalInfo.name}</MotionH1>
+        <MotionH2 layout style={{ fontSize: 'var(--heading-font-size)'}} className={cn("font-semibold font-headline transition-colors duration-500", templateId === 'creative' ? 'text-white/90' : 'text-[var(--accent-color)]')}>{personalInfo.title}</MotionH2>
         <div className={cn("flex justify-center items-center gap-4 text-sm mt-2 flex-wrap transition-colors duration-500", templateId === 'creative' ? 'text-white/80' : 'text-gray-600')}>
           <div className="flex items-center gap-1.5"><AtSign size={14} />{personalInfo.email}</div>
           <div className="flex items-center gap-1.5"><Phone size={14} />{personalInfo.phone}</div>
           <div className="flex items-center gap-1.5"><MapPin size={14} />{personalInfo.location}</div>
           {personalInfo.website && <div className="flex items-center gap-1.5"><Globe size={14} />{personalInfo.website}</div>}
         </div>
-      </motion.header>
+      </MotionHeader>
       <Separator className={cn("my-6", templateId === 'minimalist' ? 'bg-gray-200' : '')} />
       <main className="leading-relaxed space-y-4 whitespace-pre-wrap">
-          <motion.p variants={sectionVariants}>{date}</motion.p>
+          <MotionP variants={sectionVariants}>{date}</MotionP>
           {companyInfo?.name && (
-            <motion.p variants={sectionVariants}>
+            <MotionP variants={sectionVariants}>
               Hiring Manager
               <br/>
               {companyInfo.name}
-            </motion.p>
+            </MotionP>
           )}
           <br/>
-          <motion.p variants={sectionVariants}>Dear Hiring Manager,</motion.p>
-          <motion.div variants={sectionVariants} className="space-y-4">
+          <MotionP variants={sectionVariants}>Dear Hiring Manager,</MotionP>
+          <MotionDiv variants={sectionVariants} className="space-y-4">
             {coverLetter?.split('\n').filter(p => p.trim() !== '').map((paragraph, index) => (
                 <p key={index}>{paragraph}</p>
             ))}
-          </motion.div>
+          </MotionDiv>
           <br/>
-          <motion.div variants={sectionVariants}>
+          <MotionDiv variants={sectionVariants}>
             <p>Sincerely,</p>
             <p>{personalInfo.name}</p>
-          </motion.div>
+          </MotionDiv>
         </main>
-    </motion.div>
-  )
+    </MotionDiv>
+  );
 }

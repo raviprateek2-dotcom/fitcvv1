@@ -1,16 +1,21 @@
-
 'use client';
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { AtSign, Globe, MapPin, Phone, Star, Briefcase, Code, BookOpen } from 'lucide-react';
+import { AtSign, Globe, MapPin, Phone, Star, Briefcase, Code } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import type { ResumePreviewProps } from '../ResumePreview';
 import { Progress } from '@/components/ui/progress';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
-const skillLevelToValue = {
+const MotionDiv = motion.div;
+const MotionSection = motion.section;
+const MotionHeader = motion.header;
+const MotionH1 = motion.h1;
+const MotionH2 = motion.h2;
+
+const skillLevelToValue: Record<string, number> = {
     'Beginner': 25,
     'Intermediate': 50,
     'Advanced': 75,
@@ -78,29 +83,29 @@ export function DefaultTemplate({ resumeData }: ResumePreviewProps) {
 
   if (templateId === 'professional') {
     return (
-        <motion.div {...containerProps} style={dynamicStyles} className={cn("bg-white text-slate-800 shadow-2xl rounded-lg w-full h-full mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-hidden print:shadow-none print:rounded-none print:max-h-full flex text-[var(--body-font-size)] transition-colors duration-500", fontClass)}>
+        <MotionDiv {...containerProps} style={dynamicStyles} className={cn("bg-white text-slate-800 shadow-2xl rounded-lg w-full h-full mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-hidden print:shadow-none print:rounded-none print:max-h-full flex text-[var(--body-font-size)] transition-colors duration-500", fontClass)}>
             <aside className="w-1/3 bg-slate-50 text-slate-700 p-8 space-y-8 flex flex-col border-r-4 transition-all duration-500" style={{borderColor: 'var(--accent-color)'}}>
-                <motion.div variants={sectionVariants} className="space-y-4 text-sm">
+                <MotionDiv variants={sectionVariants} className="space-y-4 text-sm">
                     <h3 style={{ fontSize: 'var(--heading-font-size)'}} className="font-bold text-slate-900 uppercase tracking-wider font-headline border-b-2 border-slate-300 pb-2">Contact</h3>
                      <div className="flex items-start gap-3"><AtSign size={14} className="mt-1 flex-shrink-0 transition-colors duration-500" style={{ color: 'var(--accent-color)' }}/><span className="break-all">{personalInfo.email}</span></div>
                     <div className="flex items-start gap-3"><Phone size={14} className="mt-1 flex-shrink-0 transition-colors duration-500" style={{ color: 'var(--accent-color)' }}/><span>{personalInfo.phone}</span></div>
                     <div className="flex items-start gap-3"><MapPin size={14} className="mt-1 flex-shrink-0 transition-colors duration-500" style={{ color: 'var(--accent-color)' }}/><span>{personalInfo.location}</span></div>
                     {personalInfo.website && <div className="flex items-start gap-3"><Globe size={14} className="mt-1 flex-shrink-0 transition-colors duration-500" style={{ color: 'var(--accent-color)' }}/><span className="break-all">{personalInfo.website}</span></div>}
-                </motion.div>
+                </MotionDiv>
                 {skills && skills.length > 0 && (
-                    <motion.div variants={sectionVariants} className="space-y-4">
+                    <MotionDiv variants={sectionVariants} className="space-y-4">
                          <h3 style={{ fontSize: 'var(--heading-font-size)'}} className="font-bold text-slate-900 uppercase tracking-wider font-headline border-b-2 border-slate-300 pb-2">Skills</h3>
                          <div className="space-y-4">
                             {(skills || []).map(skill => (
                                 <div key={skill.id} className="text-sm">
                                     <p className="font-semibold mb-1">{skill.name}</p>
-                                    <Progress value={skillLevelToValue[skill.level]} className="h-1.5 bg-slate-200" indicatorClassName="bg-[var(--accent-color)] transition-all duration-500" />
+                                    <Progress value={skillLevelToValue[skill.level] || 0} className="h-1.5 bg-slate-200" indicatorClassName="bg-[var(--accent-color)] transition-all duration-500" />
                                 </div>
                             ))}
                          </div>
-                    </motion.div>
+                    </MotionDiv>
                 )}
-                <motion.div variants={sectionVariants} className="space-y-4">
+                <MotionDiv variants={sectionVariants} className="space-y-4">
                      <h3 style={{ fontSize: 'var(--heading-font-size)'}} className="font-bold text-slate-900 uppercase tracking-wider font-headline border-b-2 border-slate-300 pb-2">Education</h3>
                      <div className="space-y-3">
                         {education.map(edu => (
@@ -111,19 +116,19 @@ export function DefaultTemplate({ resumeData }: ResumePreviewProps) {
                             </div>
                         ))}
                      </div>
-                </motion.div>
+                </MotionDiv>
             </aside>
             <main className="w-2/3 p-10 overflow-y-auto bg-white">
                 <header className="mb-8">
-                     <motion.h1 layout style={{ fontSize: 'var(--title-font-size)', color: 'var(--accent-color)'}} className="font-bold font-headline leading-tight transition-colors duration-500">{personalInfo.name}</motion.h1>
-                    <motion.h2 layout style={{ fontSize: 'var(--heading-font-size)'}} className="font-semibold text-slate-600">{personalInfo.title}</motion.h2>
+                     <MotionH1 layout style={{ fontSize: 'var(--title-font-size)', color: 'var(--accent-color)'}} className="font-bold font-headline leading-tight transition-colors duration-500">{personalInfo.name}</MotionH1>
+                    <MotionH2 layout style={{ fontSize: 'var(--heading-font-size)'}} className="font-semibold text-slate-600">{personalInfo.title}</MotionH2>
                 </header>
-                <motion.section variants={sectionVariants}>
+                <MotionSection variants={sectionVariants}>
                     <h3 className={templateStyles.sectionTitle} style={{ fontSize: 'var(--heading-font-size)', borderColor: 'var(--accent-color)'}}><Star className="inline-block mr-2 transition-colors duration-500" size={16} style={{color: 'var(--accent-color)'}}/>Summary</h3>
                     <p className="leading-relaxed text-slate-700">{summary}</p>
-                </motion.section>
+                </MotionSection>
                 <Separator className="my-6 bg-slate-200" />
-                <motion.section variants={sectionVariants}>
+                <MotionSection variants={sectionVariants}>
                     <h3 className={templateStyles.sectionTitle} style={{ fontSize: 'var(--heading-font-size)', borderColor: 'var(--accent-color)'}}><Briefcase className="inline-block mr-2 transition-colors duration-500" size={16} style={{color: 'var(--accent-color)'}}/>Experience</h3>
                     <div className="space-y-5">
                     {experience.map((exp) => (
@@ -144,10 +149,10 @@ export function DefaultTemplate({ resumeData }: ResumePreviewProps) {
                         </div>
                     ))}
                     </div>
-                </motion.section>
+                </MotionSection>
                 {projects && projects.length > 0 && <Separator className="my-6 bg-slate-200" />}
                 {projects && projects.length > 0 && (
-                    <motion.section variants={sectionVariants}>
+                    <MotionSection variants={sectionVariants}>
                         <h3 className={templateStyles.sectionTitle} style={{ fontSize: 'var(--heading-font-size)', borderColor: 'var(--accent-color)'}}><Code className="inline-block mr-2 transition-colors duration-500" size={16} style={{color: 'var(--accent-color)'}}/>Projects</h3>
                         <div className="space-y-5">
                         {(projects || []).map((proj) => (
@@ -167,26 +172,26 @@ export function DefaultTemplate({ resumeData }: ResumePreviewProps) {
                             </div>
                         ))}
                         </div>
-                    </motion.section>
+                    </MotionSection>
                 )}
             </main>
-        </motion.div>
+        </MotionDiv>
     )
   }
 
   if (templateId === 'executive') {
     return (
-        <motion.div {...containerProps} style={dynamicStyles} className={cn("bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-hidden print:shadow-none print:rounded-none print:max-h-full flex text-[var(--body-font-size)] transition-colors duration-500", fontClass)}>
+        <MotionDiv {...containerProps} style={dynamicStyles} className={cn("bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-hidden print:shadow-none print:rounded-none print:max-h-full flex text-[var(--body-font-size)] transition-colors duration-500", fontClass)}>
             <aside className="w-1/3 bg-primary text-primary-foreground p-8 space-y-8 flex flex-col transition-colors duration-500">
-                <motion.div variants={sectionVariants} className="space-y-4 text-sm">
+                <MotionDiv variants={sectionVariants} className="space-y-4 text-sm">
                     <h3 style={{ fontSize: 'var(--heading-font-size)'}} className="font-bold uppercase tracking-wider font-headline border-b-2 border-primary-foreground/50 pb-2">Contact</h3>
                      <div className="flex items-start gap-3"><AtSign size={14} className="mt-1 flex-shrink-0" /><span className="break-all">{personalInfo.email}</span></div>
                     <div className="flex items-start gap-3"><Phone size={14} className="mt-1 flex-shrink-0" /><span>{personalInfo.phone}</span></div>
                     <div className="flex items-start gap-3"><MapPin size={14} className="mt-1 flex-shrink-0" /><span>{personalInfo.location}</span></div>
                     {personalInfo.website && <div className="flex items-start gap-3"><Globe size={14} className="mt-1 flex-shrink-0" /><span className="break-all">{personalInfo.website}</span></div>}
-                </motion.div>
+                </MotionDiv>
                 {skills && skills.length > 0 && (
-                    <motion.div variants={sectionVariants} className="space-y-4">
+                    <MotionDiv variants={sectionVariants} className="space-y-4">
                          <h3 style={{ fontSize: 'var(--heading-font-size)'}} className="font-bold uppercase tracking-wider font-headline border-b-2 border-primary-foreground/50 pb-2">Skills</h3>
                          <ul className="space-y-1 text-sm">
                             {(skills || []).map(skill => (
@@ -196,9 +201,9 @@ export function DefaultTemplate({ resumeData }: ResumePreviewProps) {
                                 </li>
                             ))}
                          </ul>
-                    </motion.div>
+                    </MotionDiv>
                 )}
-                <motion.div variants={sectionVariants} className="space-y-4">
+                <MotionDiv variants={sectionVariants} className="space-y-4">
                      <h3 style={{ fontSize: 'var(--heading-font-size)'}} className="font-bold uppercase tracking-wider font-headline border-b-2 border-primary-foreground/50 pb-2">Education</h3>
                      <div className="space-y-4 text-sm">
                         {education.map(edu => (
@@ -209,19 +214,19 @@ export function DefaultTemplate({ resumeData }: ResumePreviewProps) {
                             </div>
                         ))}
                      </div>
-                </motion.div>
+                </MotionDiv>
             </aside>
             <main className="w-2/3 p-10 overflow-y-auto">
                 <header className="text-left mb-8">
-                    <motion.h1 layout style={{ fontSize: 'var(--title-font-size)'}} className="font-bold text-gray-900 font-headline leading-tight">{personalInfo.name}</motion.h1>
-                    <motion.h2 layout style={{ fontSize: 'var(--heading-font-size)', color: 'var(--accent-color)'}} className="font-semibold transition-colors duration-500">{personalInfo.title}</motion.h2>
+                    <MotionH1 layout style={{ fontSize: 'var(--title-font-size)'}} className="font-bold text-gray-900 font-headline leading-tight">{personalInfo.name}</MotionH1>
+                    <MotionH2 layout style={{ fontSize: 'var(--heading-font-size)', color: 'var(--accent-color)'}} className="font-semibold transition-colors duration-500">{personalInfo.title}</MotionH2>
                 </header>
-                <motion.section variants={sectionVariants}>
+                <MotionSection variants={sectionVariants}>
                     <h3 className={templateStyles.sectionTitle} style={{ fontSize: 'var(--heading-font-size)'}}>Summary</h3>
                     <p className="leading-relaxed text-gray-700">{summary}</p>
-                </motion.section>
+                </MotionSection>
                 <Separator className="my-6" />
-                <motion.section variants={sectionVariants}>
+                <MotionSection variants={sectionVariants}>
                     <h3 className={templateStyles.sectionTitle} style={{ fontSize: 'var(--heading-font-size)'}}>Experience</h3>
                     <div className="space-y-5">
                     {experience.map((exp) => (
@@ -242,10 +247,10 @@ export function DefaultTemplate({ resumeData }: ResumePreviewProps) {
                         </div>
                     ))}
                     </div>
-                </motion.section>
+                </MotionSection>
                 {projects && projects.length > 0 && <Separator className="my-6" />}
                 {projects && projects.length > 0 && (
-                    <motion.section variants={sectionVariants}>
+                    <MotionSection variants={sectionVariants}>
                         <h3 className={templateStyles.sectionTitle} style={{ fontSize: 'var(--heading-font-size)'}}>Projects</h3>
                         <div className="space-y-5">
                         {(projects || []).map((proj) => (
@@ -265,37 +270,37 @@ export function DefaultTemplate({ resumeData }: ResumePreviewProps) {
                             </div>
                         ))}
                         </div>
-                    </motion.section>
+                    </MotionSection>
                 )}
             </main>
-        </motion.div>
+        </MotionDiv>
     )
   }
 
   // Fallback to default single-column templates
   return (
-    <motion.div {...containerProps} style={dynamicStyles} className={cn("bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full p-8 mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-auto print:shadow-none print:rounded-none print:max-h-full text-[var(--body-font-size)] transition-colors duration-500", fontClass)}>
-      <motion.header layout className={cn(templateStyles.header, "transition-all duration-500")} style={templateId === 'creative' ? { backgroundColor: accentColor } : {}}>
-        <motion.h1 layout style={{ fontSize: 'var(--title-font-size)'}} className={cn("font-bold font-headline leading-tight transition-colors duration-500", templateId === 'creative' ? 'text-white' : 'text-gray-900')}>{personalInfo.name}</motion.h1>
-        <motion.h2 layout style={{ fontSize: 'var(--heading-font-size)'}} className={cn("font-semibold font-headline transition-colors duration-500", templateId === 'creative' ? 'text-white/90' : 'text-[var(--accent-color)]')}>{personalInfo.title}</motion.h2>
+    <MotionDiv {...containerProps} style={dynamicStyles} className={cn("bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full p-8 mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-auto print:shadow-none print:rounded-none print:max-h-full text-[var(--body-font-size)] transition-colors duration-500", fontClass)}>
+      <MotionHeader layout className={cn(templateStyles.header, "transition-all duration-500")} style={templateId === 'creative' ? { backgroundColor: accentColor } : {}}>
+        <MotionH1 layout style={{ fontSize: 'var(--title-font-size)'}} className={cn("font-bold font-headline leading-tight transition-colors duration-500", templateId === 'creative' ? 'text-white' : 'text-gray-900')}>{personalInfo.name}</MotionH1>
+        <MotionH2 layout style={{ fontSize: 'var(--heading-font-size)'}} className={cn("font-semibold font-headline transition-colors duration-500", templateId === 'creative' ? 'text-white/90' : 'text-[var(--accent-color)]')}>{personalInfo.title}</MotionH2>
         <div className={cn("flex justify-center items-center gap-4 text-sm mt-2 flex-wrap transition-colors duration-500", templateId === 'creative' ? 'text-white/80' : 'text-gray-600')}>
           <div className="flex items-center gap-1.5"><AtSign size={14} />{personalInfo.email}</div>
           <div className="flex items-center gap-1.5"><Phone size={14} />{personalInfo.phone}</div>
           <div className="flex items-center gap-1.5"><MapPin size={14} />{personalInfo.location}</div>
           {personalInfo.website && <div className="flex items-center gap-1.5"><Globe size={14} />{personalInfo.website}</div>}
         </div>
-      </motion.header>
+      </MotionHeader>
 
       <Separator className={cn("my-6", templateId === 'minimalist' ? 'bg-gray-200' : '')} />
 
-      <motion.section variants={sectionVariants}>
+      <MotionSection variants={sectionVariants}>
         <h3 className={templateStyles.sectionTitle} style={{ fontSize: 'var(--heading-font-size)'}}>Summary</h3>
         <p className="leading-relaxed">{summary}</p>
-      </motion.section>
+      </MotionSection>
 
       <Separator className={cn("my-6", templateId === 'minimalist' ? 'bg-gray-200' : '')} />
 
-      <motion.section variants={sectionVariants}>
+      <MotionSection variants={sectionVariants}>
         <h3 className={templateStyles.sectionTitle} style={{ fontSize: 'var(--heading-font-size)'}}>Experience</h3>
         <div className="space-y-4">
           {experience.map((exp) => (
@@ -316,12 +321,12 @@ export function DefaultTemplate({ resumeData }: ResumePreviewProps) {
             </div>
           ))}
         </div>
-      </motion.section>
+      </MotionSection>
 
       {projects && projects.length > 0 && <Separator className={cn("my-6", templateId === 'minimalist' ? 'bg-gray-200' : '')} />}
       
       {projects && projects.length > 0 && (
-        <motion.section variants={sectionVariants}>
+        <MotionSection variants={sectionVariants}>
           <h3 className={templateStyles.sectionTitle} style={{ fontSize: 'var(--heading-font-size)'}}>Projects</h3>
           <div className="space-y-4">
             {(projects || []).map((proj) => (
@@ -341,25 +346,25 @@ export function DefaultTemplate({ resumeData }: ResumePreviewProps) {
               </div>
             ))}
           </div>
-        </motion.section>
+        </MotionSection>
       )}
 
       {skills && skills.length > 0 && <Separator className={cn("my-6", templateId === 'minimalist' ? 'bg-gray-200' : '')} />}
 
       {skills && skills.length > 0 && (
-        <motion.section variants={sectionVariants}>
+        <MotionSection variants={sectionVariants}>
           <h3 className={templateStyles.sectionTitle} style={{ fontSize: 'var(--heading-font-size)'}}>Skills</h3>
           <div className="flex flex-wrap gap-2">
               {(skills || []).map((skill) => (
                   <Badge key={skill.id} variant="secondary" className="transition-all duration-500" style={{ backgroundColor: `${accentColor}1A`, color: accentColor, borderColor: `${accentColor}40` }}>{skill.name}</Badge>
               ))}
           </div>
-        </motion.section>
+        </MotionSection>
       )}
       
       <Separator className={cn("my-6", templateId === 'minimalist' ? 'bg-gray-200' : '')} />
 
-      <motion.section variants={sectionVariants}>
+      <MotionSection variants={sectionVariants}>
         <h3 className={templateStyles.sectionTitle} style={{ fontSize: 'var(--heading-font-size)'}}>Education</h3>
         <div className="space-y-2">
             {education.map(edu => (
@@ -372,7 +377,7 @@ export function DefaultTemplate({ resumeData }: ResumePreviewProps) {
                 </div>
             ))}
         </div>
-      </motion.section>
-    </motion.div>
+      </MotionSection>
+    </MotionDiv>
   );
 }
