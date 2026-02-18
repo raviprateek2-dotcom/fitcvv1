@@ -21,3 +21,4 @@ import '@/ai/flows/ai-goal-setter.ts';
 import '@/ai/flows/ai-linkedin-optimizer.ts';
 import '@/ai/flows/ai-question-predictor.ts';
 import '@/ai/flows/ai-followup-writer.ts';
+import '@/ai/flows/ai-company-researcher.ts';

@@ -34,7 +34,7 @@ import { cn } from '@/lib/utils';
 import { GoalSetter } from '@/components/dashboard/GoalSetter';
 import { aiNarrate } from '@/app/actions/ai-narrator';
 import { ApplicationTracker } from '@/components/dashboard/ApplicationTracker';
-import { ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { ChartTooltip, ChartTooltipContent, ChartContainer } from '@/components/ui/chart';
 import { Pie, PieChart, Cell, ResponsiveContainer } from 'recharts';
 
 
@@ -233,19 +233,18 @@ const SuccessPath = ({ resumes }: { resumes: Resume[] }) => {
     const [isNarratingTip, setIsNarratingTip] = useState(false);
     const audioRef = useRef<HTMLAudioElement | null>(null);
     
-    const strategistTips = [
+    const strategistTips = useMemo(() => [
         "Hiring managers look for growth. Use our Skill Gap analyzer to identify exactly what you need to learn to land that high-stakes senior role.",
         "Quality beats quantity. Tailoring one resume to a 90% match score is more effective than sending 10 generic applications.",
         "LinkedIn is your social proof. Use our Optimizer to ensure your profile headline stops the scroll for recruiters.",
         "Confidence comes from preparation. Practice the predicted interview questions to reduce anxiety and sound like an expert."
-    ];
+    ], []);
 
     const [tipText, setTipText] = useState(strategistTips[0]);
 
     useEffect(() => {
-        // Randomize tip on load
         setTipText(strategistTips[Math.floor(Math.random() * strategistTips.length)]);
-    }, []);
+    }, [strategistTips]);
 
     const handleNarrateTip = async () => {
         setIsNarratingTip(true);
@@ -360,9 +359,9 @@ const HiringInsights = ({ applications }: { applications: Application[] }) => {
         });
         
         return [
-            { name: 'Active', value: counts.applied + counts['phone-screen'] + counts.technical + counts.final, color: 'hsl(var(--primary))' },
-            { name: 'Offers', value: counts.offer, color: 'hsl(var(--accent))' },
-            { name: 'Closed', value: counts.rejected + counts.ghosted, color: 'hsl(var(--muted-foreground))' },
+            { name: 'Active', value: counts.applied + counts['phone-screen'] + counts.technical + counts.final, fill: 'hsl(var(--primary))' },
+            { name: 'Offers', value: counts.offer, fill: 'hsl(var(--accent))' },
+            { name: 'Closed', value: counts.rejected + counts.ghosted, fill: 'hsl(var(--muted-foreground))' },
         ].filter(d => d.value > 0);
     }, [applications]);
 
@@ -378,7 +377,7 @@ const HiringInsights = ({ applications }: { applications: Application[] }) => {
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="h-48">
-                    <ResponsiveContainer width="100%" height="100%">
+                    <ChartContainer config={{}}>
                         <PieChart>
                             <Pie
                                 data={chartData}
@@ -390,17 +389,17 @@ const HiringInsights = ({ applications }: { applications: Application[] }) => {
                                 dataKey="value"
                             >
                                 {chartData.map((entry, index) => (
-                                    <Cell key={`cell-${index}`} fill={entry.color} />
+                                    <Cell key={`cell-${index}`} fill={entry.fill} />
                                 ))}
                             </Pie>
                             <ChartTooltip content={<ChartTooltipContent hideLabel />} />
                         </PieChart>
-                    </ResponsiveContainer>
+                    </ChartContainer>
                 </CardContent>
                 <CardFooter className="flex flex-wrap gap-4 pt-0">
                     {chartData.map((entry, i) => (
                         <div key={i} className="flex items-center gap-1.5 text-xs">
-                            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
+                            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.fill }} />
                             <span>{entry.name} ({entry.value})</span>
                         </div>
                     ))}
@@ -688,27 +687,30 @@ export default function DashboardPage() {
       </div>
 
       {!isLoading && resumes && resumes.length > 0 && (
-        <>
+        <div className="space-y-12">
             <SuccessPath resumes={resumes} />
             <HiringInsights applications={applications || []} />
             <GoalSetter />
             <ApplicationTracker resumes={resumes} />
-        </>
+        </div>
       )}
 
-      {(isLoading) && <LoadingState />}
+      {isLoading && <LoadingState />}
 
       {!isLoading && resumes && resumes.length > 0 ? (
-        <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {resumes.map((resume) => (
-            <ResumeCard key={resume.id} resume={resume} onDuplicate={handleDuplicate} onDelete={handleDelete} />
-          ))}
-        </motion.div>
+        <div className="mt-12">
+            <h2 className="text-2xl font-headline font-bold mb-6">Your Resumes</h2>
+            <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            >
+            {resumes.map((resume) => (
+                <ResumeCard key={resume.id} resume={resume} onDuplicate={handleDuplicate} onDelete={handleDelete} />
+            ))}
+            </motion.div>
+        </div>
       ) : !isLoading && (
         <EmptyState onPdfUploadClick={() => fileInputRef.current?.click()} />
       )}

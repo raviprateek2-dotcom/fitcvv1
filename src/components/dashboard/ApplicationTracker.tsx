@@ -12,12 +12,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Briefcase, Building2, ExternalLink, Loader2, Mail, MoreHorizontal, Plus, Trash2, Copy, CheckCircle2, Sparkles } from 'lucide-react';
+import { Briefcase, Building2, ExternalLink, Loader2, Mail, MoreHorizontal, Plus, Trash2, Copy, CheckCircle2, Sparkles, Search, Info } from 'lucide-react';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useMemoFirebase } from '@/firebase/provider';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { generateFollowUpEmail } from '@/app/actions/ai-followup';
+import { getCompanyInsights } from '@/app/actions/ai-company-research';
+import type { CompanyResearchOutput } from '@/ai/flows/ai-company-researcher';
 import { ScrollArea } from '../ui/scroll-area';
 
 type Application = {
@@ -66,9 +68,15 @@ export function ApplicationTracker({ resumes }: { resumes: Resume[] }) {
     const { toast } = useToast();
     const [isAddOpen, setIsAddOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    
     const [isGeneratingFollowUp, setIsGeneratingFollowUp] = useState(false);
     const [followUpEmail, setFollowUpEmail] = useState<string | null>(null);
     const [isFollowUpOpen, setIsFollowUpOpen] = useState(false);
+    
+    const [isResearching, setIsResearching] = useState(false);
+    const [researchResult, setResearchResult] = useState<CompanyResearchOutput | null>(null);
+    const [isResearchOpen, setIsResearchOpen] = useState(false);
+    
     const [copied, setCopied] = useState(false);
 
     const [newApp, setNewApp] = useState({
@@ -115,6 +123,26 @@ export function ApplicationTracker({ resumes }: { resumes: Resume[] }) {
         if (!user || !firestore) return;
         const docRef = doc(firestore, `users/${user.uid}/applications`, id);
         updateDocumentNonBlocking(docRef, { status });
+    };
+
+    const handleResearchCompany = async (companyName: string) => {
+        setIsResearching(true);
+        setResearchResult(null);
+        setIsResearchOpen(true);
+        try {
+            const result = await getCompanyInsights({ companyName });
+            if (result.success && result.data) {
+                setResearchResult(result.data);
+            } else {
+                toast({ variant: 'destructive', title: 'Research Failed', description: result.error });
+                setIsResearchOpen(false);
+            }
+        } catch (error: any) {
+            toast({ variant: 'destructive', title: 'Error', description: error.message });
+            setIsResearchOpen(false);
+        } finally {
+            setIsResearching(false);
+        }
     };
 
     const handleDraftFollowUp = async (app: Application) => {
@@ -277,6 +305,9 @@ export function ApplicationTracker({ resumes }: { resumes: Resume[] }) {
                                         </TableCell>
                                         <TableCell className="text-right">
                                             <div className="flex justify-end gap-1">
+                                                <Button variant="ghost" size="icon" onClick={() => handleResearchCompany(app.companyName)} title="AI Company Research">
+                                                    <Search className="w-4 h-4 text-accent" />
+                                                </Button>
                                                 {['phone-screen', 'technical', 'final'].includes(app.status) && (
                                                     <Button variant="ghost" size="icon" onClick={() => handleDraftFollowUp(app)} title="AI Draft Follow-up">
                                                         <Mail className="w-4 h-4 text-primary" />
@@ -301,6 +332,7 @@ export function ApplicationTracker({ resumes }: { resumes: Resume[] }) {
                 )}
             </CardContent>
 
+            {/* AI Follow-up Dialog */}
             <Dialog open={isFollowUpOpen} onOpenChange={setIsFollowUpOpen}>
                 <DialogContent className="sm:max-w-[600px]">
                     <DialogHeader>
@@ -331,6 +363,46 @@ export function ApplicationTracker({ resumes }: { resumes: Resume[] }) {
                             </div>
                         ) : null}
                     </div>
+                </DialogContent>
+            </Dialog>
+
+            {/* AI Company Research Dialog */}
+            <Dialog open={isResearchOpen} onOpenChange={setIsResearchOpen}>
+                <DialogContent className="sm:max-w-[500px]">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                            <Info className="w-5 h-5 text-accent" />
+                            Strategic Company Insights
+                        </DialogTitle>
+                        <DialogDescription>AI-generated briefing to give you an edge in interviews.</DialogDescription>
+                    </DialogHeader>
+                    <div className="py-4">
+                        {isResearching ? (
+                            <div className="flex flex-col items-center justify-center py-12 space-y-4">
+                                <Loader2 className="w-8 h-8 animate-spin text-accent" />
+                                <p className="text-sm text-muted-foreground">Gathering corporate intelligence...</p>
+                            </div>
+                        ) : researchResult ? (
+                            <div className="space-y-6">
+                                <div>
+                                    <h4 className="text-xs font-bold uppercase text-muted-foreground mb-2">Industry & Summary</h4>
+                                    <Badge variant="secondary" className="mb-2">{researchResult.industry}</Badge>
+                                    <p className="text-sm leading-relaxed">{researchResult.summary}</p>
+                                </div>
+                                <div className="p-4 bg-accent/5 border border-accent/10 rounded-xl">
+                                    <h4 className="text-xs font-bold uppercase text-accent mb-2">Culture Vibe</h4>
+                                    <p className="text-sm italic">"{researchResult.cultureInsights}"</p>
+                                </div>
+                                <div>
+                                    <h4 className="text-xs font-bold uppercase text-muted-foreground mb-2">Likely Interview Focus</h4>
+                                    <p className="text-sm leading-relaxed">{researchResult.likelyInterviewFocus}</p>
+                                </div>
+                            </div>
+                        ) : null}
+                    </div>
+                    <DialogFooter>
+                        <Button variant="ghost" onClick={() => setIsResearchOpen(false)}>Close Briefing</Button>
+                    </DialogFooter>
                 </DialogContent>
             </Dialog>
         </Card>
