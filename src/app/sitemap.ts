@@ -1,3 +1,4 @@
+
 import { MetadataRoute } from 'next';
 import { blogPosts } from '@/lib/blog-posts';
 
