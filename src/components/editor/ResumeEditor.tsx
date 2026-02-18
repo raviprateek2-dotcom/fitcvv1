@@ -5,10 +5,10 @@ import { Accordion } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Download, Share2, Sparkles, Bot, Newspaper, Brush, Loader2, SearchCheck, ArrowLeft, Upload, CheckCircle, XCircle, PlusCircle, FileText, KeySquare, Eye, Edit3, MessageSquareText, Linkedin, Target } from 'lucide-react';
+import { Download, Share2, Sparkles, Bot, Newspaper, Brush, Loader2, SearchCheck, ArrowLeft, Upload, CheckCircle, XCircle, PlusCircle, FileText, KeySquare, Eye, Edit3, MessageSquareText, Linkedin, Target, ArrowRight } from 'lucide-react';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { ResumePreview, CoverLetterPreview } from './ResumePreview';
-import { useDoc, useUser, useFirestore, useMemoFirebase, setDocumentNonBlocking } from '@/firebase';
+import { useDoc, useUser, useFirestore, useMemoFirebase, setDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
 import { doc, serverTimestamp } from 'firebase/firestore';
 import { Skeleton } from '../ui/skeleton';
 import { useSearchParams } from 'next/navigation';
@@ -40,6 +40,7 @@ import { ScrollArea } from '../ui/scroll-area';
 import { ProFeatureWrapper } from './ProFeatureWrapper';
 import { AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
 import { LinkedInOptimizerTab } from './LinkedInOptimizerTab';
+import { Badge } from '../ui/badge';
 
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
@@ -389,7 +390,16 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     setAnalysisResult(null);
     try {
       const result = await analyzeResumeAction({ resumeContent: JSON.stringify(resumeData), jobDescription: resumeData.jobDescription });
-      if (result.success && result.data) setAnalysisResult(result.data);
+      if (result.success && result.data) {
+          setAnalysisResult(result.data);
+          // Persist match score to resume document
+          if (resumeDocRef) {
+              updateDocumentNonBlocking(resumeDocRef, { 
+                  matchScore: result.data.matchScore,
+                  auditSummary: result.data.summary
+              });
+          }
+      }
     } finally {
       setIsAnalyzing(false);
     }

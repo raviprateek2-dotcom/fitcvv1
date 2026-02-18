@@ -7,7 +7,7 @@ import { serverTimestamp, collection, doc } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, PlusCircle, ArrowRight, Upload, FileText, Loader2, CheckCircle2, Circle, Sparkles, TrendingUp, Zap, Lightbulb, Ear, BarChart3 } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, ArrowRight, Upload, FileText, Loader2, CheckCircle2, Circle, Sparkles, TrendingUp, Zap, Lightbulb, Ear, BarChart3, Target } from 'lucide-react';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useRouter } from 'next/navigation';
@@ -34,7 +34,7 @@ import { GoalSetter } from '@/components/dashboard/GoalSetter';
 import { aiNarrate } from '@/app/actions/ai-narrator';
 import { ApplicationTracker } from '@/components/dashboard/ApplicationTracker';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { Pie, PieChart, Cell, ResponsiveContainer, Bar, BarChart, XAxis, YAxis } from 'recharts';
+import { Pie, PieChart, Cell, ResponsiveContainer } from 'recharts';
 
 
 type Resume = {
@@ -44,6 +44,8 @@ type Resume = {
   updatedAt: {
     toDate: () => Date;
   };
+  matchScore?: number;
+  auditSummary?: string;
   personalInfo?: any;
   summary?: string;
   experience?: any[];
@@ -103,11 +105,17 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
   return (
     <motion.div variants={itemVariants}>
       <Card className="overflow-hidden group flex flex-col h-full transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl relative" variant="neuro">
-        <div className="absolute top-2 left-2 z-10">
+        <div className="absolute top-2 left-2 z-10 flex flex-col gap-1">
             <Badge variant={strength === 100 ? "default" : "secondary"} className="bg-background/80 backdrop-blur-sm shadow-sm border-primary/20">
                 <Zap className={cn("w-3 h-3 mr-1", strength > 70 ? "text-yellow-500 fill-yellow-500" : "text-muted-foreground")} />
-                {strength}% Strength
+                {strength}% Health
             </Badge>
+            {resume.matchScore !== undefined && (
+                <Badge variant="outline" className="bg-accent/10 backdrop-blur-sm shadow-sm border-accent/20 text-accent font-bold">
+                    <Target className="w-3 h-3 mr-1" />
+                    {resume.matchScore}% Match
+                </Badge>
+            )}
         </div>
         
         <Link href={`/editor/${resume.id}`} className="block overflow-hidden">
@@ -183,7 +191,7 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
 const SuccessPath = ({ resumes }: { resumes: Resume[] }) => {
     const steps = [
         { label: 'Create your first resume', done: resumes.length > 0, link: '/templates' },
-        { label: 'Optimize for a job description', done: resumes.some(r => (r.jobDescription?.length || 0) > 100), link: '#' },
+        { label: 'Optimize for a job description', done: resumes.some(r => (r.matchScore || 0) > 0), link: '#' },
         { label: 'Generate an AI cover letter', done: resumes.some(r => (r.coverLetter?.length || 0) > 200), link: '#' },
         { label: 'Practice with the AI Interviewer', done: false, link: '/interview' },
     ];
@@ -302,8 +310,6 @@ const HiringInsights = ({ applications }: { applications: Application[] }) => {
             { name: 'Closed', value: counts.rejected + counts.ghosted, color: 'hsl(var(--muted-foreground))' },
         ].filter(d => d.value > 0);
     }, [applications]);
-
-    const COLORS = ['hsl(var(--primary))', 'hsl(var(--accent))', 'hsl(var(--muted-foreground))'];
 
     if (applications.length === 0) return null;
 

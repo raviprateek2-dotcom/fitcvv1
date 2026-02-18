@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { useCollection, useUser, useFirestore, addDocumentNonBlocking, deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
 import { collection, doc, serverTimestamp } from 'firebase/firestore';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,11 +12,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Briefcase, Building2, Calendar, Link as LinkIcon, MoreHorizontal, Plus, Trash2, ExternalLink, Loader2 } from 'lucide-react';
+import { Briefcase, Building2, ExternalLink, Loader2, Mail, MoreHorizontal, Plus, Trash2, Copy, CheckCircle2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { useMemoFirebase } from '@/firebase/provider';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { generateFollowUpEmail } from '@/app/actions/ai-followup';
+import { ScrollArea } from '../ui/scroll-area';
 
 type Application = {
     id: string;
@@ -32,6 +34,10 @@ type Application = {
 type Resume = {
     id: string;
     title: string;
+    personalInfo: any;
+    summary: string;
+    experience: any[];
+    education: any[];
 };
 
 const statusColors: Record<Application['status'], string> = {
@@ -60,6 +66,10 @@ export function ApplicationTracker({ resumes }: { resumes: Resume[] }) {
     const { toast } = useToast();
     const [isAddOpen, setIsAddOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isGeneratingFollowUp, setIsGeneratingFollowUp] = useState(false);
+    const [followUpEmail, setFollowUpEmail] = useState<string | null>(null);
+    const [isFollowUpOpen, setIsFollowUpOpen] = useState(false);
+    const [copied, setCopied] = useState(false);
 
     const [newApp, setNewApp] = useState({
         companyName: '',
@@ -105,6 +115,46 @@ export function ApplicationTracker({ resumes }: { resumes: Resume[] }) {
         if (!user || !firestore) return;
         const docRef = doc(firestore, `users/${user.uid}/applications`, id);
         updateDocumentNonBlocking(docRef, { status });
+    };
+
+    const handleDraftFollowUp = async (app: Application) => {
+        const resume = resumes.find(r => r.id === app.resumeId);
+        if (!resume) {
+            toast({ variant: 'destructive', title: 'Resume Required', description: 'Please link a resume to this application to draft a follow-up.' });
+            return;
+        }
+
+        setIsGeneratingFollowUp(true);
+        setFollowUpEmail(null);
+        setIsFollowUpOpen(true);
+
+        try {
+            const result = await generateFollowUpEmail({
+                jobTitle: app.jobTitle,
+                companyName: app.companyName,
+                interviewType: statusLabels[app.status],
+                resumeContent: JSON.stringify(resume)
+            });
+
+            if (result.success && result.data) {
+                setFollowUpEmail(result.data.emailContent);
+            } else {
+                toast({ variant: 'destructive', title: 'Drafting Failed', description: result.error });
+                setIsFollowUpOpen(false);
+            }
+        } catch (error: any) {
+            toast({ variant: 'destructive', title: 'Error', description: error.message });
+            setIsFollowUpOpen(false);
+        } finally {
+            setIsGeneratingFollowUp(false);
+        }
+    };
+
+    const copyToClipboard = () => {
+        if (!followUpEmail) return;
+        navigator.clipboard.writeText(followUpEmail);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
     };
 
     return (
@@ -226,9 +276,16 @@ export function ApplicationTracker({ resumes }: { resumes: Resume[] }) {
                                             ) : '-'}
                                         </TableCell>
                                         <TableCell className="text-right">
-                                            <Button variant="ghost" size="icon" onClick={() => handleDelete(app.id)} className="text-destructive hover:text-destructive hover:bg-destructive/10">
-                                                <Trash2 className="w-4 h-4" />
-                                            </Button>
+                                            <div className="flex justify-end gap-1">
+                                                {['phone-screen', 'technical', 'final'].includes(app.status) && (
+                                                    <Button variant="ghost" size="icon" onClick={() => handleDraftFollowUp(app)} title="AI Draft Follow-up">
+                                                        <Mail className="w-4 h-4 text-primary" />
+                                                    </Button>
+                                                )}
+                                                <Button variant="ghost" size="icon" onClick={() => handleDelete(app.id)} className="text-destructive hover:text-destructive hover:bg-destructive/10">
+                                                    <Trash2 className="w-4 h-4" />
+                                                </Button>
+                                            </div>
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -243,6 +300,39 @@ export function ApplicationTracker({ resumes }: { resumes: Resume[] }) {
                     </div>
                 )}
             </CardContent>
+
+            <Dialog open={isFollowUpOpen} onOpenChange={setIsFollowUpOpen}>
+                <DialogContent className="sm:max-w-[600px]">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                            <Sparkles className="w-5 h-5 text-primary" />
+                            AI Follow-up Draft
+                        </DialogTitle>
+                        <DialogDescription>A personalized thank-you note based on your interview stage.</DialogDescription>
+                    </DialogHeader>
+                    <div className="py-4">
+                        {isGeneratingFollowUp ? (
+                            <div className="flex flex-col items-center justify-center py-12 space-y-4">
+                                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                                <p className="text-sm text-muted-foreground">Writing your strategic follow-up...</p>
+                            </div>
+                        ) : followUpEmail ? (
+                            <div className="space-y-4">
+                                <ScrollArea className="h-64 rounded-md border p-4 bg-secondary/20">
+                                    <p className="text-sm leading-relaxed whitespace-pre-wrap">{followUpEmail}</p>
+                                </ScrollArea>
+                                <div className="flex justify-between items-center text-xs text-muted-foreground italic">
+                                    <p>* Remember to personalize with specific details from your conversation.</p>
+                                    <Button size="sm" onClick={copyToClipboard} className="shrink-0">
+                                        {copied ? <CheckCircle2 className="w-4 h-4 mr-2" /> : <Copy className="w-4 h-4 mr-2" />}
+                                        {copied ? 'Copied' : 'Copy Email'}
+                                    </Button>
+                                </div>
+                            </div>
+                        ) : null}
+                    </div>
+                </DialogContent>
+            </Dialog>
         </Card>
     );
 }

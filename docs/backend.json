@@ -79,6 +79,14 @@
             "type": "string",
             "description": "The public ID for the shared version of this resume."
         },
+        "matchScore": {
+          "type": "number",
+          "description": "The AI-calculated match score against the target job description."
+        },
+        "auditSummary": {
+          "type": "string",
+          "description": "Brief summary of the latest AI audit."
+        },
         "projects": {
           "type": "array",
           "items": {
