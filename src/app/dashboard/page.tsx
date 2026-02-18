@@ -6,7 +6,7 @@ import { serverTimestamp, collection, doc } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, PlusCircle, ArrowRight, Upload, FileText, Loader2, CheckCircle2, Circle, Sparkles, TrendingUp, Zap, Lightbulb, Ear, BarChart3, Target, Share2, MessageSquare } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, ArrowRight, Upload, FileText, Loader2, CheckCircle2, Circle, Sparkles, TrendingUp, Zap, Lightbulb, Ear, BarChart3, Target, Share2 } from 'lucide-react';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useRouter } from 'next/navigation';
@@ -32,7 +32,7 @@ import { cn } from '@/lib/utils';
 import { GoalSetter } from '@/components/dashboard/GoalSetter';
 import { aiNarrate } from '@/app/actions/ai-narrator';
 import { ApplicationTracker } from '@/components/dashboard/ApplicationTracker';
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { Pie, PieChart, Cell, ResponsiveContainer } from 'recharts';
 
 
@@ -76,7 +76,7 @@ const calculateResumeStrength = (resume: Resume) => {
     if (resume.skills && resume.skills.length > 0) score += 10;
     if (resume.projects && resume.projects.length > 0) score += 10;
     if (resume.jobDescription && resume.jobDescription.length > 100) score += 10;
-    if (resume.matchScore !== undefined) score += 15; // Reward for auditing
+    if (resume.matchScore !== undefined) score += 15; 
     return Math.min(score, 100);
 }
 
@@ -293,7 +293,7 @@ const SuccessPath = ({ resumes }: { resumes: Resume[] }) => {
                         <Link href="/blog">Expert Articles <ArrowRight className="ml-1 w-4 h-4" /></Link>
                     </Button>
                 </CardFooter>
-            </div>
+            </Card>
         </div>
     );
 };
