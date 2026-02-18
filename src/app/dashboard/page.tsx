@@ -6,7 +6,7 @@ import { serverTimestamp, collection, doc } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, PlusCircle, ArrowRight, Upload, FileText, Loader2, CheckCircle2, Circle, Sparkles, TrendingUp, Zap, Lightbulb, Ear, BarChart3, Target, Share2 } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, ArrowRight, Upload, FileText, Loader2, CheckCircle2, Circle, Sparkles, TrendingUp, Zap, Lightbulb, Ear, BarChart3, Target, Share2, Copy } from 'lucide-react';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useRouter } from 'next/navigation';
@@ -46,6 +46,8 @@ type Resume = {
   };
   matchScore?: number;
   auditSummary?: string;
+  skillGaps?: string[];
+  learningPath?: string;
   personalInfo?: any;
   summary?: string;
   experience?: any[];
@@ -84,6 +86,7 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [updatedAtText, setUpdatedAtText] = useState('just now');
   const strength = useMemo(() => calculateResumeStrength(resume), [resume]);
+  const { toast } = useToast();
   
   useEffect(() => {
     if (!resume.updatedAt) return;
@@ -100,6 +103,16 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
     const printUrl = `/editor/${resume.id}?print=true`;
     window.open(printUrl, '_blank');
   };
+
+  const handleCopyShareLink = () => {
+    if (!resume.shareId) return;
+    const shareUrl = `${window.location.origin}/share/${resume.shareId}`;
+    navigator.clipboard.writeText(shareUrl);
+    toast({
+        title: "Link Copied",
+        description: "Public feedback link copied to clipboard."
+    });
+  }
   
   const templateImage = PlaceHolderImages.find(img => img.id === `template-${resume.templateId}`);
 
@@ -171,6 +184,12 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
                 <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={() => onDuplicate(resume)}>Duplicate</DropdownMenuItem>
                 <DropdownMenuItem onClick={handleDownloadPdf}>Download PDF</DropdownMenuItem>
+                {resume.shareId && (
+                    <DropdownMenuItem onClick={handleCopyShareLink}>
+                        <Copy className="w-4 h-4 mr-2" />
+                        Copy Share Link
+                    </DropdownMenuItem>
+                )}
                 <AlertDialog>
                     <DropdownMenuTrigger asChild>
                     <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:bg-destructive/90 focus:text-destructive-foreground">Delete</DropdownMenuItem>
@@ -198,11 +217,12 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
 };
 
 const SuccessPath = ({ resumes }: { resumes: Resume[] }) => {
+    const { toast } = useToast();
     const steps = [
         { label: 'Create your first resume', done: resumes.length > 0, link: '/templates' },
         { label: 'Optimize for a job description', done: resumes.some(r => (r.matchScore || 0) > 0), link: '#' },
         { label: 'Generate an AI cover letter', done: resumes.some(r => (r.coverLetter?.length || 0) > 200), link: '#' },
-        { label: 'Identify and bridge skill gaps', done: resumes.some(r => (r as any).skillGaps?.length > 0), link: '#' },
+        { label: 'Identify and bridge skill gaps', done: resumes.some(r => (r.skillGaps?.length || 0) > 0), link: '#' },
     ];
 
     const completedSteps = steps.filter(s => s.done).length;
@@ -210,7 +230,20 @@ const SuccessPath = ({ resumes }: { resumes: Resume[] }) => {
     
     const [isNarratingTip, setIsNarratingTip] = useState(false);
     const audioRef = useRef<HTMLAudioElement | null>(null);
-    const tipText = "Hiring managers look for growth. Use our Skill Gap analyzer to identify exactly what you need to learn to land that high-stakes senior role.";
+    
+    const strategistTips = [
+        "Hiring managers look for growth. Use our Skill Gap analyzer to identify exactly what you need to learn to land that high-stakes senior role.",
+        "Quality beats quantity. Tailoring one resume to a 90% match score is more effective than sending 10 generic applications.",
+        "LinkedIn is your social proof. Use our Optimizer to ensure your profile headline stops the scroll for recruiters.",
+        "Confidence comes from preparation. Practice the predicted interview questions to reduce anxiety and sound like an expert."
+    ];
+
+    const [tipText, setTipText] = useState(strategistTips[0]);
+
+    useEffect(() => {
+        // Randomize tip on load
+        setTipText(strategistTips[Math.floor(Math.random() * strategistTips.length)]);
+    }, []);
 
     const handleNarrateTip = async () => {
         setIsNarratingTip(true);
@@ -219,9 +252,15 @@ const SuccessPath = ({ resumes }: { resumes: Resume[] }) => {
             if (res.success && res.data && audioRef.current) {
                 audioRef.current.src = res.data.audioDataUri;
                 audioRef.current.play();
+            } else {
+                throw new Error(res.error || "Failed to generate narration.");
             }
-        } catch (e) {
-            console.error("Narration failed");
+        } catch (e: any) {
+            toast({
+                variant: 'destructive',
+                title: 'Narration Failed',
+                description: e.message || 'Could not narrate the strategist tip.'
+            });
         } finally {
             setIsNarratingTip(false);
         }

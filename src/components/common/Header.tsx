@@ -32,6 +32,14 @@ export function Header() {
   const auth = useAuth();
   const isAuthenticated = !!user;
 
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/20 bg-gradient-glass backdrop-blur-2xl no-print">
       <div className="container flex h-16 items-center">
@@ -64,7 +72,7 @@ export function Header() {
           {!isUserLoading && (
             <>
               {isAuthenticated ? (
-                <UserMenu />
+                <UserMenu onLogout={handleLogout} />
               ) : (
                 <div className="hidden md:flex items-center gap-4">
                   <Button variant="ghost" asChild>
@@ -118,7 +126,7 @@ export function Header() {
                     </Button>
                   </div>
                 ) : (
-                    <Button variant="ghost" onClick={() => signOut(auth)} className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10">
+                    <Button variant="ghost" onClick={handleLogout} className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10">
                         <LogOut className="mr-2 h-5 w-5" /> Log Out
                     </Button>
                 )}
@@ -131,18 +139,9 @@ export function Header() {
   );
 }
 
-function UserMenu() {
+function UserMenu({ onLogout }: { onLogout: () => void }) {
   const { user, userProfile } = useUser();
-  const auth = useAuth();
 
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
-  };
-  
   const getInitials = (name: string) => {
     if (!name) return '';
     const names = name.split(' ');
@@ -181,7 +180,7 @@ function UserMenu() {
           <Link href="/settings" className="flex items-center gap-2"><Settings className="h-4 w-4 text-primary" /> Settings</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleLogout} className="p-3 cursor-pointer text-destructive focus:bg-destructive/10 focus:text-destructive">
+        <DropdownMenuItem onClick={onLogout} className="p-3 cursor-pointer text-destructive focus:bg-destructive/10 focus:text-destructive">
           <LogOut className="h-4 w-4 mr-2" /> Log out
         </DropdownMenuItem>
       </DropdownMenuContent>

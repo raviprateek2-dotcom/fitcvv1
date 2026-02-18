@@ -1,4 +1,3 @@
-
 'use client';
 
 import { AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -59,13 +58,10 @@ export function ProjectsSection({ resumeData, setResumeData }: ProjectsSectionPr
             if (!prev || !prev.projects) return prev;
     
             const updatedProjects = prev.projects.filter(p => p.id !== id);
-    
-            if (updatedProjects.length === 0) {
-                // If the last project is removed, remove the whole section
-                const { projects, ...rest } = prev;
-                return rest as ResumeData;
-            }
-    
+            
+            // Note: We no longer auto-remove the 'projects' key if the array is empty.
+            // This prevents the UI from jumping/section disappearing jarringly.
+            // The user must explicitly click "Remove Projects Section" to delete the category.
             return { ...prev, projects: updatedProjects };
         });
     };

@@ -58,13 +58,10 @@ export function SkillsSection({ resumeData, setResumeData }: SkillsSectionProps)
             if (!prev || !prev.skills) return prev;
             
             const updatedSkills = prev.skills.filter(skill => skill.id !== id);
-
-            if (updatedSkills.length === 0) {
-                // If the last skill is removed, remove the whole section
-                const { skills, ...rest } = prev;
-                return rest as ResumeData;
-            }
-
+            
+            // Note: We no longer auto-remove the 'skills' key if the array is empty.
+            // This prevents the UI from jumping/section disappearing jarringly.
+            // The user must explicitly click "Remove Skills Section" to delete the category.
             return { ...prev, skills: updatedSkills };
         });
     };
