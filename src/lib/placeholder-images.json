@@ -39,7 +39,7 @@
     {
       "id": "template-professional",
       "description": "A preview of a professional resume template.",
-      "imageUrl": "https://images.unsplash.com/photo-1761821815927-4a0b3b4f62e8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxyZXN1bWUlMjB0ZW1wbGF0ZSUyMHByb2Zlc3Npb25hbHxlbnwwfHx8fDE3NjE0NDI5NzN8MA&ixlibrb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1761821815927-4a0b3b4f62e8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxyZXN1bWUlMjB0ZW1wbGF0ZSUyMHByb2Zlc3Npb25hbHxlbnwwfHx8fDE3NjE0NDI5NzN8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "corporate document"
     },
     {
@@ -189,8 +189,8 @@
     {
       "id": "founder-portrait",
       "description": "A portrait of the founder, Ravi Prateek.",
-      "imageUrl": "https://images.unsplash.com/photo-1560250097-0b93528c311a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxwcm9mZXNzaW9uYWwlMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjA3MzEwODd8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "founder portrait"
+      "imageUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&h=400&auto=format&fit=crop",
+      "imageHint": "professional man portrait"
     },
     {
       "id": "testimonial-avatar-1",
