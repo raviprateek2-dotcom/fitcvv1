@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useCollection, useUser } from '@/firebase';
@@ -8,7 +7,7 @@ import { useFirestore } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, PlusCircle, ArrowRight, Upload, FileText, Loader2, CheckCircle2, Circle, Sparkles, TrendingUp } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, ArrowRight, Upload, FileText, Loader2, CheckCircle2, Circle, Sparkles, TrendingUp, Zap, Lightbulb } from 'lucide-react';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useMemoFirebase } from '@/firebase/provider';
@@ -31,6 +30,7 @@ import { parseResumeFromPdf } from '@/app/actions/ai-resume-parser';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
 
 
 type Resume = {
@@ -40,7 +40,14 @@ type Resume = {
   updatedAt: {
     toDate: () => Date;
   };
-  content?: any;
+  personalInfo?: any;
+  summary?: string;
+  experience?: any[];
+  education?: any[];
+  skills?: any[];
+  projects?: any[];
+  jobDescription?: string;
+  coverLetter?: string;
 };
 
 const itemVariants = {
@@ -48,9 +55,21 @@ const itemVariants = {
   visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100 } },
 };
 
+const calculateResumeStrength = (resume: Resume) => {
+    let score = 0;
+    if (resume.personalInfo?.name && resume.personalInfo?.name !== 'Your Name') score += 10;
+    if (resume.summary && resume.summary.length > 50) score += 15;
+    if (resume.experience && resume.experience.length > 0) score += 25;
+    if (resume.education && resume.education.length > 0) score += 15;
+    if (resume.skills && resume.skills.length > 0) score += 15;
+    if (resume.projects && resume.projects.length > 0) score += 10;
+    if (resume.jobDescription && resume.jobDescription.length > 100) score += 10;
+    return Math.min(score, 100);
+}
 
 const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDuplicate: (resume: Resume) => void; onDelete: (resumeId: string) => void; }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const strength = useMemo(() => calculateResumeStrength(resume), [resume]);
   
   const updatedAt = useMemo(() => {
     if (!resume.updatedAt) return 'never';
@@ -72,10 +91,17 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
 
   return (
     <motion.div variants={itemVariants}>
-      <Card className="overflow-hidden group flex flex-col h-full transition-all duration-300 hover:scale-105 hover:shadow-2xl" variant="neuro">
+      <Card className="overflow-hidden group flex flex-col h-full transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl relative" variant="neuro">
+        <div className="absolute top-2 left-2 z-10">
+            <Badge variant={strength === 100 ? "default" : "secondary"} className="bg-background/80 backdrop-blur-sm shadow-sm border-primary/20">
+                <Zap className={cn("w-3 h-3 mr-1", strength > 70 ? "text-yellow-500 fill-yellow-500" : "text-muted-foreground")} />
+                {strength}% Strength
+            </Badge>
+        </div>
+        
         <Link href={`/editor/${resume.id}`} className="block overflow-hidden">
           <motion.div
-            className="h-60 bg-secondary rounded-t-lg flex items-center justify-center relative"
+            className="h-60 bg-secondary rounded-t-lg flex items-center justify-center relative border-b"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -86,7 +112,7 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
                     alt={resume.title || 'Resume preview'}
                     width={400}
                     height={566}
-                    className="w-auto h-full object-contain transition-transform duration-500 ease-in-out group-hover:scale-105"
+                    className="w-auto h-full object-contain transition-transform duration-500 ease-in-out group-hover:scale-105 p-4"
                 />
              ) : (
                 <div className="w-full h-full bg-muted flex items-center justify-center">
@@ -105,8 +131,8 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
         </CardHeader>
         
         <CardFooter className="p-4 pt-0 mt-auto flex justify-between items-center text-sm text-muted-foreground">
-          <Button variant="ghost" asChild>
-            <Link href={`/editor/${resume.id}`}>Edit</Link>
+          <Button variant="ghost" size="sm" asChild>
+            <Link href={`/editor/${resume.id}`}>Edit Resume</Link>
           </Button>
           <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
             <DropdownMenuTrigger asChild>
@@ -143,11 +169,11 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
   );
 };
 
-const SuccessPath = ({ resumeCount }: { resumeCount: number }) => {
+const SuccessPath = ({ resumes }: { resumes: Resume[] }) => {
     const steps = [
-        { label: 'Create your first resume', done: resumeCount > 0, link: '/templates' },
-        { label: 'Optimize for a job description', done: false, link: '#' },
-        { label: 'Generate an AI cover letter', done: false, link: '#' },
+        { label: 'Create your first resume', done: resumes.length > 0, link: '/templates' },
+        { label: 'Optimize for a job description', done: resumes.some(r => (r.jobDescription?.length || 0) > 100), link: '#' },
+        { label: 'Generate an AI cover letter', done: resumes.some(r => (r.coverLetter?.length || 0) > 200), link: '#' },
         { label: 'Practice with the AI Interviewer', done: false, link: '/interview' },
     ];
 
@@ -155,43 +181,67 @@ const SuccessPath = ({ resumeCount }: { resumeCount: number }) => {
     const progress = (completedSteps / steps.length) * 100;
 
     return (
-        <Card variant="neuro" className="mb-12 overflow-hidden border-primary/10">
-            <div className="absolute top-0 right-0 p-4 opacity-10">
-                <TrendingUp className="w-32 h-32 text-primary" />
-            </div>
-            <CardHeader className="pb-4">
-                <div className="flex items-center justify-between">
-                    <div>
-                        <CardTitle className="text-xl flex items-center gap-2">
-                            <Sparkles className="w-5 h-5 text-primary" />
-                            Your Success Path
-                        </CardTitle>
-                        <CardDescription>Complete these steps to maximize your chances of getting hired.</CardDescription>
-                    </div>
-                    <div className="text-right hidden sm:block">
-                        <p className="text-2xl font-bold text-primary">{Math.round(progress)}%</p>
-                        <p className="text-xs text-muted-foreground">Ready for hire</p>
-                    </div>
+        <div className="grid lg:grid-cols-3 gap-8 mb-12">
+            <Card variant="neuro" className="lg:col-span-2 overflow-hidden border-primary/10">
+                <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
+                    <TrendingUp className="w-32 h-32 text-primary" />
                 </div>
-                <Progress value={progress} className="h-2 mt-4" />
-            </CardHeader>
-            <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-2">
-                    {steps.map((step, i) => (
-                        <div key={i} className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30 border border-transparent hover:border-primary/20 transition-all">
-                            {step.done ? (
-                                <CheckCircle2 className="w-5 h-5 text-accent shrink-0" />
-                            ) : (
-                                <Circle className="w-5 h-5 text-muted-foreground shrink-0" />
-                            )}
-                            <span className={`text-sm ${step.done ? 'line-through text-muted-foreground' : 'font-medium'}`}>
-                                {step.label}
-                            </span>
+                <CardHeader className="pb-4">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <CardTitle className="text-xl flex items-center gap-2">
+                                <Sparkles className="w-5 h-5 text-primary" />
+                                Your Success Path
+                            </CardTitle>
+                            <CardDescription>Complete these steps to maximize your hiring potential.</CardDescription>
                         </div>
-                    ))}
-                </div>
-            </CardContent>
-        </Card>
+                        <div className="text-right hidden sm:block">
+                            <p className="text-2xl font-bold text-primary">{Math.round(progress)}%</p>
+                            <p className="text-xs text-muted-foreground uppercase tracking-widest">Progress</p>
+                        </div>
+                    </div>
+                    <Progress value={progress} className="h-2 mt-4 bg-secondary" />
+                </CardHeader>
+                <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                        {steps.map((step, i) => (
+                            <div key={i} className={cn(
+                                "flex items-center gap-3 p-3 rounded-xl transition-all border",
+                                step.done ? 'bg-accent/5 border-accent/20' : 'bg-secondary/30 border-transparent hover:border-primary/20'
+                            )}>
+                                {step.done ? (
+                                    <CheckCircle2 className="w-5 h-5 text-accent shrink-0" />
+                                ) : (
+                                    <Circle className="w-5 h-5 text-muted-foreground shrink-0" />
+                                )}
+                                <span className={`text-sm ${step.done ? 'line-through text-muted-foreground' : 'font-medium'}`}>
+                                    {step.label}
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+                </CardContent>
+            </Card>
+            
+            <Card variant="neuro" className="bg-gradient-to-br from-primary/10 to-accent/10 border-primary/20 relative overflow-hidden">
+                <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                        <Lightbulb className="w-5 h-5 text-primary" />
+                        Tip of the Day
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-sm leading-relaxed text-muted-foreground">
+                        "Recruiters spend an average of 7 seconds scanning a resume. Use <strong>bold keywords</strong> and <strong>quantifiable results</strong> (like 'increased sales by 20%') to make every second count."
+                    </p>
+                </CardContent>
+                <CardFooter>
+                    <Button variant="link" className="p-0 text-primary" asChild>
+                        <Link href="/blog">Read more tips <ArrowRight className="ml-1 w-4 h-4" /></Link>
+                    </Button>
+                </CardFooter>
+            </Card>
+        </div>
     );
 };
 
@@ -244,7 +294,7 @@ const EmptyState = ({ onPdfUploadClick }: { onPdfUploadClick: () => void; }) => 
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ delay: 0.3, ease: 'easeOut' }}
           >
-            Create Your First Resume
+            Design Your Future with FitCV
           </motion.h2>
           <motion.p 
             className="text-muted-foreground mb-8 text-lg max-w-2xl mx-auto"
@@ -267,7 +317,7 @@ const EmptyState = ({ onPdfUploadClick }: { onPdfUploadClick: () => void; }) => 
             </Button>
             <Button asChild size="lg" className="group" variant="neuro">
               <Link href="/templates">
-                Choose a Template
+                Explore Templates
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
@@ -432,24 +482,24 @@ export default function DashboardPage() {
       
       <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
         <div>
-            <h1 className="text-3xl font-headline font-bold">Welcome Back, {user.displayName?.split(' ')[0] || 'User'}!</h1>
-            <p className="text-muted-foreground">Manage your resumes and career progress.</p>
+            <h1 className="text-3xl font-headline font-bold">Welcome back, {user.displayName?.split(' ')[0] || 'User'}!</h1>
+            <p className="text-muted-foreground">The smartest way to build your career is right here.</p>
         </div>
         <div className="flex items-center gap-2">
            <Button variant="outline" onClick={() => fileInputRef.current?.click()} disabled={isParsing}>
               {isParsing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
-              {isParsing ? 'Importing...' : 'Import from PDF'}
+              {isParsing ? 'Importing...' : 'Import PDF'}
             </Button>
           <Button asChild variant="neuro">
             <Link href="/templates">
               <PlusCircle className="mr-2 h-4 w-4" />
-              Create New Resume
+              New Resume
             </Link>
           </Button>
         </div>
       </div>
 
-      {!isLoading && resumes && resumes.length > 0 && <SuccessPath resumeCount={resumes.length} />}
+      {!isLoading && resumes && resumes.length > 0 && <SuccessPath resumes={resumes} />}
 
       {(isLoading) && <LoadingState />}
 
