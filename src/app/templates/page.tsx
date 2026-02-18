@@ -1,14 +1,11 @@
-
 'use client';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Eye, Plus, Sparkles, Lock } from 'lucide-react';
+import { Eye, Plus, Sparkles } from 'lucide-react';
 import Image from 'next/image';
-import Link from 'next/link';
-import { useUser } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 
@@ -52,16 +49,11 @@ const templates = [
 ];
 
 export default function TemplatesPage() {
-  const { userProfile } = useUser();
   const router = useRouter();
-  const isProUser = userProfile?.subscription === 'premium';
 
-  const handleUseTemplate = (templateId: string, isPremium: boolean) => {
-    if (isPremium && !isProUser) {
-      router.push('/pricing');
-    } else {
-      router.push(`/editor/new?template=${templateId}`);
-    }
+  const handleUseTemplate = (templateId: string) => {
+    // FitCV: All templates are now free for all users.
+    router.push(`/editor/new?template=${templateId}`);
   };
 
   const containerVariants = {
@@ -89,7 +81,7 @@ export default function TemplatesPage() {
           animate="visible"
         >
           <motion.h1 variants={itemVariants} className="text-4xl font-headline font-bold tracking-tight sm:text-5xl">Choose Your Template</motion.h1>
-          <motion.p variants={itemVariants} className="mt-4 text-lg text-muted-foreground">Select a professionally designed template to start building your resume.</motion.p>
+          <motion.p variants={itemVariants} className="mt-4 text-lg text-muted-foreground">Select any of our professionally designed templates. Now all free for everyone.</motion.p>
         </motion.div>
 
         <motion.div
@@ -106,7 +98,7 @@ export default function TemplatesPage() {
                       <div className="absolute top-2 right-2 z-10">
                           <div className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg">
                             <Sparkles className="w-3 h-3" />
-                            Pro
+                            Premium
                           </div>
                       </div>
                   )}
@@ -145,9 +137,9 @@ export default function TemplatesPage() {
                         )}
                       </DialogContent>
                     </Dialog>
-                    <Button size="lg" onClick={() => handleUseTemplate(template.id, template.isPremium)} className="transition-all hover:scale-105">
-                        {template.isPremium && !isProUser ? <Lock className="mr-2 h-4 w-4" /> : <Plus className="mr-2 h-4 w-4" />}
-                        {template.isPremium && !isProUser ? 'Upgrade to Use' : 'Use Template'}
+                    <Button size="lg" onClick={() => handleUseTemplate(template.id)} className="transition-all hover:scale-105">
+                        <Plus className="mr-2 h-4 w-4" />
+                        Use Template
                     </Button>
                   </div>
                 </CardContent>

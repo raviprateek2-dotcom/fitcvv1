@@ -23,10 +23,10 @@ async function createUserProfile(user: import('firebase/auth').User) {
     const db = getFirestore(user.app);
     const userDocRef = doc(db, `users/${user.uid}`);
     
-    const isDummyUser = user.email === 'test@test.com';
+    // FitCV: All users now get the premium subscription for free.
     const newUserProfile: UserProfile = {
       email: user.email || '',
-      subscription: isDummyUser ? 'premium' : 'free',
+      subscription: 'premium',
       profilePhotoUrl: user.photoURL || '',
     };
     

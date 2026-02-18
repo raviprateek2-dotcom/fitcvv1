@@ -1,7 +1,6 @@
-
 'use client';
 
-import { useUser, useFirestore, getCollection, addDocumentNonBlocking } from '@/firebase';
+import { useUser, useFirestore, addDocumentNonBlocking } from '@/firebase';
 import { collection, serverTimestamp } from 'firebase/firestore';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
@@ -9,8 +8,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { defaultResumeData } from '@/lib/default-resume-data';
 
-
-const premiumTemplates = ['minimalist', 'professional', 'executive'];
 
 // A simple loading state while the resume is being created and we redirect.
 const CreatingResumeLoading = () => {
@@ -27,7 +24,7 @@ const CreatingResumeLoading = () => {
 };
 
 export default function NewResumePage() {
-  const { user, userProfile, isUserLoading, isProfileLoading } = useUser();
+  const { user, isUserLoading, isProfileLoading } = useUser();
   const firestore = useFirestore();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -53,35 +50,7 @@ export default function NewResumePage() {
             return;
         }
 
-        const isProUser = userProfile?.subscription === 'premium';
-        const isPremiumTemplate = premiumTemplates.includes(templateId);
-
-        // Block free users from using premium templates
-        if (isPremiumTemplate && !isProUser) {
-            toast({
-                variant: 'destructive',
-                title: 'Upgrade Required',
-                description: 'You need a Pro plan to use this template.',
-            });
-            router.push('/pricing');
-            return;
-        }
-        
-        // Block free users from creating more than one resume
-        if (!isProUser) {
-            const resumesCollection = collection(firestore, `users/${user.uid}/resumes`);
-            const existingResumes = await getCollection(resumesCollection);
-            
-            if (existingResumes.length > 0) {
-                toast({
-                    variant: 'destructive',
-                    title: 'Free Plan Limit Reached',
-                    description: 'You can only create one resume on the Free plan. Please upgrade to create more.',
-                });
-                router.push('/dashboard'); // Redirect to dashboard instead of pricing
-                return;
-            }
-        }
+        // FitCV: All features are now free. Restrictions removed.
 
         // All checks passed, create the new resume.
         const resumesCollection = collection(firestore, `users/${user.uid}/resumes`);
@@ -120,7 +89,7 @@ export default function NewResumePage() {
     
     createResumeFlow();
 
-  }, [user, isUserLoading, userProfile, isProfileLoading, firestore, router, templateId, toast]);
+  }, [user, isUserLoading, isProfileLoading, firestore, router, templateId, toast]);
 
   // Show a loading indicator while the async operations are in progress.
   return <CreatingResumeLoading />;

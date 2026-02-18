@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -6,21 +5,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useFirestore, useUser, updateDocumentNonBlocking } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { doc } from 'firebase/firestore';
-import { Check, X, Sparkles, Star } from 'lucide-react';
+import { Check, Sparkles, Star } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-
-const freeFeatures = [
-  { text: '1 Resume', included: true },
-  { text: 'Basic Templates', included: true },
-  { text: 'PDF Export with Watermark', included: true },
-  { text: 'Basic AI Suggestions', included: true },
-  { text: 'Unlimited Resumes', included: false },
-  { text: 'Access to All Templates', included: false },
-  { text: 'Advanced AI Features', included: false },
-  { text: 'Priority Support', included: false },
-];
 
 const proFeatures = [
   'Unlimited Resumes & Downloads',
@@ -32,25 +20,34 @@ const proFeatures = [
 ];
 
 export default function PricingPage() {
-  const { user } = useUser();
+  const { user, userProfile } = useUser();
   const firestore = useFirestore();
   const router = useRouter();
   const { toast } = useToast();
 
-  const handleUpgrade = (plan: string) => {
+  const handleUpgrade = () => {
     if (!user) {
-      router.push(`/signup?plan=${plan}`);
+      router.push(`/signup?plan=pro-free`);
       return;
     }
     if (!firestore) return;
 
+    if (userProfile?.subscription === 'premium') {
+        toast({
+            title: 'Already on Pro!',
+            description: "You already have access to all premium features.",
+        });
+        router.push('/dashboard');
+        return;
+    }
+
     const userDocRef = doc(firestore, `users/${user.uid}`);
     updateDocumentNonBlocking(userDocRef, { subscription: 'premium' });
     toast({
-      title: 'Upgrade Successful!',
-      description: "Welcome to Pro! You now have access to all premium features.",
+      title: 'Success!',
+      description: "Welcome to Pro! You now have access to all features for free.",
     });
-    router.push('/settings');
+    router.push('/dashboard');
   };
 
   const containerVariants = {
@@ -77,56 +74,28 @@ export default function PricingPage() {
           animate="visible"
           variants={containerVariants}
         >
-          <motion.h1 variants={itemVariants} className="text-4xl font-headline font-bold tracking-tight sm:text-5xl">Simple, Transparent Pricing</motion.h1>
-          <motion.p variants={itemVariants} className="mt-4 text-lg text-muted-foreground">Choose the plan that's right for you. No hidden fees.</motion.p>
+          <motion.h1 variants={itemVariants} className="text-4xl font-headline font-bold tracking-tight sm:text-5xl">Professional Power, Totally Free</motion.h1>
+          <motion.p variants={itemVariants} className="mt-4 text-lg text-muted-foreground">We've made all FitCV Pro features free for everyone. Build your future without limits.</motion.p>
         </motion.div>
 
         <motion.div
-          className="grid grid-cols-1 lg:grid-cols-2 justify-center items-stretch gap-8 max-w-4xl mx-auto"
+          className="max-w-2xl mx-auto"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
         >
           <motion.div variants={itemVariants} className="w-full">
-            <Card className="shadow-lg h-full flex flex-col transition-all duration-300 hover:shadow-2xl" variant="neuro">
-              <CardHeader className="text-center p-8">
-                <CardTitle className="font-headline text-3xl">Free</CardTitle>
-                <CardDescription>Perfect for getting started and landing your first interview.</CardDescription>
-                <div className="text-5xl font-bold mt-4">$0<span className="text-lg font-normal text-muted-foreground">/month</span></div>
-              </CardHeader>
-              <CardContent className="p-8 pt-0 flex-grow">
-                <ul className="space-y-4">
-                  {freeFeatures.map((feature) => (
-                    <li key={feature.text} className="flex items-center gap-3">
-                      {feature.included ? (
-                        <Check className="h-5 w-5 text-green-500 flex-shrink-0" />
-                      ) : (
-                        <X className="h-5 w-5 text-destructive flex-shrink-0" />
-                      )}
-                      <span className={!feature.included ? 'text-muted-foreground line-through' : ''}>{feature.text}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-              <CardFooter className="p-8 pt-0 mt-auto">
-                <Button variant="outline" className="w-full" asChild>
-                  <Link href="/signup">Get Started</Link>
-                </Button>
-              </CardFooter>
-            </Card>
-          </motion.div>
-
-          <motion.div variants={itemVariants} className="w-full">
-            <Card className="shadow-2xl border-2 border-primary/50 relative h-full flex flex-col transition-all duration-300" variant="neuro">
+            <Card className="shadow-2xl border-2 border-primary relative h-full flex flex-col transition-all duration-300" variant="neuro">
                <div className="absolute top-0 -translate-y-1/2 w-full flex justify-center">
-                <div className="bg-primary/20 text-primary px-4 py-1 rounded-full text-sm font-semibold shadow-lg flex items-center gap-2">
+                <div className="bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-semibold shadow-lg flex items-center gap-2">
                   <Sparkles className="w-4 h-4" />
-                  Pro Plan
+                  Free Forever
                 </div>
               </div>
               <CardHeader className="text-center p-8">
-                <CardTitle className="font-headline text-3xl text-primary">Go Pro</CardTitle>
-                <CardDescription>Unlock all features to land your dream job, faster.</CardDescription>
+                <CardTitle className="font-headline text-3xl text-primary">FitCV Pro</CardTitle>
+                <CardDescription>Unlock all features to land your dream job, faster. Now at zero cost.</CardDescription>
+                <div className="text-5xl font-bold mt-4">$0<span className="text-lg font-normal text-muted-foreground">/month</span></div>
               </CardHeader>
               <CardContent className="p-8 pt-0 flex-grow">
                 <ul className="space-y-4 mb-8">
@@ -138,39 +107,35 @@ export default function PricingPage() {
                   ))}
                 </ul>
                 <div className="space-y-4">
-                    <div className="border p-4 rounded-lg flex justify-between items-center">
-                        <div>
-                            <p className="font-semibold">Monthly</p>
-                            <p className="text-2xl font-bold">₹499</p>
-                        </div>
-                        <Button onClick={() => handleUpgrade('pro-monthly')}>Choose Plan</Button>
-                    </div>
-                     <div className="border p-4 rounded-lg flex justify-between items-center">
-                        <div>
-                            <p className="font-semibold">6 Months</p>
-                            <p className="text-2xl font-bold">₹999</p>
-                        </div>
-                        <Button onClick={() => handleUpgrade('pro-6-months')}>Choose Plan</Button>
-                    </div>
-                     <div className="border-2 border-accent p-4 rounded-lg flex justify-between items-center relative">
+                     <div className="border-2 border-accent p-6 rounded-lg flex flex-col sm:flex-row justify-between items-center gap-4 relative">
                          <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                             <div className="bg-accent text-accent-foreground px-3 py-0.5 rounded-full text-xs font-semibold flex items-center gap-1">
                                 <Star className="w-3 h-3" />
-                                Best Value
+                                Current Offer
                             </div>
                         </div>
-                        <div>
-                            <p className="font-semibold text-accent">Yearly</p>
-                            <p className="text-2xl font-bold">₹1499</p>
+                        <div className="text-center sm:text-left">
+                            <p className="font-semibold text-accent">Full Access</p>
+                            <p className="text-2xl font-bold">$0.00</p>
                         </div>
-                        <Button onClick={() => handleUpgrade('pro-yearly')} variant="default" style={{backgroundColor: 'hsl(var(--accent))', color: 'hsl(var(--accent-foreground))'}}>Choose Plan</Button>
+                        <Button 
+                            onClick={handleUpgrade} 
+                            size="lg"
+                            className="w-full sm:w-auto"
+                            variant="default" 
+                            style={{backgroundColor: 'hsl(var(--accent))', color: 'hsl(var(--accent-foreground))'}}
+                        >
+                            {userProfile?.subscription === 'premium' ? 'Current Plan' : 'Get Started for Free'}
+                        </Button>
                     </div>
                 </div>
               </CardContent>
+              <CardFooter className="p-8 pt-0 text-center">
+                  <p className="text-xs text-muted-foreground w-full">No credit card required. No hidden fees. Just great resumes.</p>
+              </CardFooter>
             </Card>
           </motion.div>
         </motion.div>
-        <p className="text-center text-muted-foreground text-sm mt-12">All prices are in INR. You can cancel your subscription at any time.</p>
       </div>
     </div>
   );
