@@ -2,7 +2,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { ArrowRight, DraftingCompass, FileText, Sparkles, Zap } from 'lucide-react';
+import { ArrowRight, CheckCircle2, DraftingCompass, FileText, Sparkles, Zap, XCircle } from 'lucide-react';
 import Link from 'next/link';
 import { motion, type Variants, useScroll, useTransform } from 'framer-motion';
 import { TypingAnimation } from '@/components/common/TypingAnimation';
@@ -54,7 +54,7 @@ const testimonials = [
     {
       author: 'Sarah L.',
       title: 'Software Engineer',
-      quote: 'ResumeAI helped me land my dream job in just two weeks! The AI suggestions were a game-changer.',
+      quote: 'FitCV helped me land my dream job in just two weeks! The AI suggestions were a game-changer.',
       imageId: 'testimonial-avatar-1',
       rating: 5,
     },
@@ -75,14 +75,14 @@ const testimonials = [
     {
       author: 'Mike R.',
       title: 'Marketing Director',
-      quote: 'The ATS checker gave me peace of mind. I started getting more callbacks almost immediately after using ResumeAI.',
+      quote: 'The ATS checker gave me peace of mind. I started getting more callbacks almost immediately after using FitCV.',
       imageId: 'testimonial-avatar-4',
       rating: 5,
     },
     {
       author: 'Jessica B.',
       title: 'Recent Graduate',
-      quote: 'I was struggling to create my first resume. This tool made it so easy and helped me look professional.',
+      quote: 'I was struggling to create my first resume. FitCV made it so easy and helped me look professional.',
       imageId: 'testimonial-avatar-5',
       rating: 5,
     }
@@ -128,7 +128,7 @@ export function HomePageClient() {
                             />
                         </motion.div>
                         <motion.p variants={itemVariants} className="max-w-2xl mx-auto text-muted-foreground md:text-xl">
-                            Create a professional, ATS-optimized resume in minutes. Let our AI guide you to landing your dream job, faster.
+                            Create a professional, ATS-optimized resume in minutes. Let our AI guide you from blank page to dream offer.
                         </motion.p>
                         <motion.div variants={itemVariants} className="flex flex-col gap-4 sm:flex-row justify-center">
                             <Button asChild size="lg" className="group" variant='neuro'>
@@ -234,8 +234,47 @@ export function HomePageClient() {
                     </div>
                 </div>
             </motion.section>
+
+            {/* Comparison Section */}
+            <section className="py-20 md:py-32 bg-secondary/30">
+                <div className="container mx-auto px-4 md:px-6">
+                    <div className="text-center mb-16 space-y-4">
+                        <div className="inline-block rounded-lg bg-background px-3 py-1 text-sm font-medium border">The FitCV Advantage</div>
+                        <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl">Why choose FitCV?</h2>
+                    </div>
+                    <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                        <Card variant="neuro" className="bg-destructive/5 border-destructive/10">
+                            <CardHeader>
+                                <CardTitle className="text-destructive flex items-center gap-2">
+                                    <XCircle className="w-5 h-5" /> Traditional Builders
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <p className="flex items-center gap-3 text-sm"><XCircle className="w-4 h-4 opacity-50" /> Manual keyword research</p>
+                                <p className="flex items-center gap-3 text-sm"><XCircle className="w-4 h-4 opacity-50" /> Generic bullet points</p>
+                                <p className="flex items-center gap-3 text-sm"><XCircle className="w-4 h-4 opacity-50" /> Guessing if it's ATS-friendly</p>
+                                <p className="flex items-center gap-3 text-sm"><XCircle className="w-4 h-4 opacity-50" /> Limited to just the document</p>
+                            </CardContent>
+                        </Card>
+                        <Card variant="neuro" className="bg-accent/5 border-accent/10">
+                            <CardHeader>
+                                <CardTitle className="text-accent flex items-center gap-2">
+                                    <CheckCircle2 className="w-5 h-5" /> The FitCV Way
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <p className="flex items-center gap-3 text-sm font-medium"><CheckCircle2 className="w-4 h-4 text-accent" /> AI-driven keyword matching</p>
+                                <p className="flex items-center gap-3 text-sm font-medium"><CheckCircle2 className="w-4 h-4 text-accent" /> Custom impact-driven writing</p>
+                                <p className="flex items-center gap-3 text-sm font-medium"><CheckCircle2 className="w-4 h-4 text-accent" /> Verified ATS-optimized templates</p>
+                                <p className="flex items-center gap-3 text-sm font-medium"><CheckCircle2 className="w-4 h-4 text-accent" /> Complete interview prep suite</p>
+                            </CardContent>
+                        </Card>
+                    </div>
+                </div>
+            </section>
+
             <section 
-                className="relative w-full py-20 md:py-32 bg-secondary/30"
+                className="relative w-full py-20 md:py-32"
             >
                 <div id="testimonials" className="container mx-auto px-4 md:px-6">
                 <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">

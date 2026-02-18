@@ -8,7 +8,7 @@ import { useFirestore } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, PlusCircle, ArrowRight, Upload, FileText, Loader2 } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, ArrowRight, Upload, FileText, Loader2, CheckCircle2, Circle, Sparkles, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useMemoFirebase } from '@/firebase/provider';
@@ -30,6 +30,7 @@ import { useToast } from '@/hooks/use-toast';
 import { parseResumeFromPdf } from '@/app/actions/ai-resume-parser';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { Progress } from '@/components/ui/progress';
 
 
 type Resume = {
@@ -142,6 +143,58 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
   );
 };
 
+const SuccessPath = ({ resumeCount }: { resumeCount: number }) => {
+    const steps = [
+        { label: 'Create your first resume', done: resumeCount > 0, link: '/templates' },
+        { label: 'Optimize for a job description', done: false, link: '#' },
+        { label: 'Generate an AI cover letter', done: false, link: '#' },
+        { label: 'Practice with the AI Interviewer', done: false, link: '/interview' },
+    ];
+
+    const completedSteps = steps.filter(s => s.done).length;
+    const progress = (completedSteps / steps.length) * 100;
+
+    return (
+        <Card variant="neuro" className="mb-12 overflow-hidden border-primary/10">
+            <div className="absolute top-0 right-0 p-4 opacity-10">
+                <TrendingUp className="w-32 h-32 text-primary" />
+            </div>
+            <CardHeader className="pb-4">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <CardTitle className="text-xl flex items-center gap-2">
+                            <Sparkles className="w-5 h-5 text-primary" />
+                            Your Success Path
+                        </CardTitle>
+                        <CardDescription>Complete these steps to maximize your chances of getting hired.</CardDescription>
+                    </div>
+                    <div className="text-right hidden sm:block">
+                        <p className="text-2xl font-bold text-primary">{Math.round(progress)}%</p>
+                        <p className="text-xs text-muted-foreground">Ready for hire</p>
+                    </div>
+                </div>
+                <Progress value={progress} className="h-2 mt-4" />
+            </CardHeader>
+            <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-2">
+                    {steps.map((step, i) => (
+                        <div key={i} className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30 border border-transparent hover:border-primary/20 transition-all">
+                            {step.done ? (
+                                <CheckCircle2 className="w-5 h-5 text-accent shrink-0" />
+                            ) : (
+                                <Circle className="w-5 h-5 text-muted-foreground shrink-0" />
+                            )}
+                            <span className={`text-sm ${step.done ? 'line-through text-muted-foreground' : 'font-medium'}`}>
+                                {step.label}
+                            </span>
+                        </div>
+                    ))}
+                </div>
+            </CardContent>
+        </Card>
+    );
+};
+
 const ResumeSkeleton = () => {
     return (
         <Card className="overflow-hidden" variant="neuro">
@@ -199,7 +252,7 @@ const EmptyState = ({ onPdfUploadClick }: { onPdfUploadClick: () => void; }) => 
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ delay: 0.4, ease: 'easeOut' }}
           >
-            Welcome! Start by choosing a professional template or importing an existing resume.
+            Welcome to FitCV! Start by choosing a professional template or importing an existing resume to see the power of AI guidance.
           </motion.p>
           
           <motion.div 
@@ -303,8 +356,8 @@ export default function DashboardPage() {
           
           const newResumeData = {
             title: result.data.resumeData.personalInfo.name ? `${result.data.resumeData.personalInfo.name}'s Resume` : 'Imported Resume',
-            templateId: 'modern', // Default to 'modern' template for imported resumes
-            ...result.data.resumeData, // Spread the parsed data
+            templateId: 'modern',
+            ...result.data.resumeData,
             createdAt: serverTimestamp(),
             updatedAt: serverTimestamp(),
             jobDescription: '',
@@ -312,29 +365,15 @@ export default function DashboardPage() {
             companyInfo: { name: '', jobTitle: '' },
           };
           
-          // Use non-blocking write and optimistic navigation
           addDocumentNonBlocking(resumesQuery, newResumeData)
             .then(newDocRef => {
               if (newDocRef) {
                 toast({ title: 'Success!', description: 'Your resume has been imported.' });
                 router.push(`/editor/${newDocRef.id}`);
-              } else {
-                throw new Error("Could not get document reference after creation.");
               }
-            })
-            .catch(error => {
-              // This catch block will handle permissions errors from addDocumentNonBlocking
-              console.error("Error creating resume from PDF:", error);
-              toast({
-                  variant: "destructive",
-                  title: "Import Failed",
-                  description: "Could not save the imported resume due to a permission error or other issue.",
-              });
             });
   
         } catch (innerError: any) {
-            // This catches errors from parseResumeFromPdf or file reading
-            console.error('Error parsing or saving PDF resume:', innerError);
             toast({
               variant: 'destructive',
               title: 'Import Failed',
@@ -345,21 +384,8 @@ export default function DashboardPage() {
             if(fileInputRef.current) fileInputRef.current.value = '';
         }
       };
-      reader.onerror = (error) => {
-        // Handle file reading error
-        setIsParsing(false);
-        if(fileInputRef.current) fileInputRef.current.value = '';
-        toast({
-          variant: 'destructive',
-          title: 'File Read Error',
-          description: 'Could not read the selected file.',
-        });
-      };
-  
     } catch (error: any) {
-        // This catches errors if the initial file selection fails (less likely)
         setIsParsing(false);
-        if(fileInputRef.current) fileInputRef.current.value = '';
         toast({
             variant: 'destructive',
             title: 'Import Failed',
@@ -403,15 +429,15 @@ export default function DashboardPage() {
           className="hidden"
           disabled={isParsing}
         />
+      
       <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-        <h1 className="text-3xl font-headline font-bold">My Resumes</h1>
+        <div>
+            <h1 className="text-3xl font-headline font-bold">Welcome Back, {user.displayName?.split(' ')[0] || 'User'}!</h1>
+            <p className="text-muted-foreground">Manage your resumes and career progress.</p>
+        </div>
         <div className="flex items-center gap-2">
            <Button variant="outline" onClick={() => fileInputRef.current?.click()} disabled={isParsing}>
-              {isParsing ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <Upload className="mr-2 h-4 w-4" />
-              )}
+              {isParsing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
               {isParsing ? 'Importing...' : 'Import from PDF'}
             </Button>
           <Button asChild variant="neuro">
@@ -422,6 +448,8 @@ export default function DashboardPage() {
           </Button>
         </div>
       </div>
+
+      {!isLoading && resumes && resumes.length > 0 && <SuccessPath resumeCount={resumes.length} />}
 
       {(isLoading) && <LoadingState />}
 
