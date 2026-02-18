@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useCollection, useUser } from '@/firebase';
@@ -31,6 +32,8 @@ import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+import { GoalSetter } from '@/components/dashboard/GoalSetter';
 
 
 type Resume = {
@@ -181,7 +184,7 @@ const SuccessPath = ({ resumes }: { resumes: Resume[] }) => {
     const progress = (completedSteps / steps.length) * 100;
 
     return (
-        <div className="grid lg:grid-cols-3 gap-8 mb-12">
+        <div className="grid lg:grid-cols-3 gap-8 mb-8">
             <Card variant="neuro" className="lg:col-span-2 overflow-hidden border-primary/10">
                 <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
                     <TrendingUp className="w-32 h-32 text-primary" />
@@ -499,7 +502,12 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {!isLoading && resumes && resumes.length > 0 && <SuccessPath resumes={resumes} />}
+      {!isLoading && resumes && resumes.length > 0 && (
+        <>
+            <SuccessPath resumes={resumes} />
+            <GoalSetter />
+        </>
+      )}
 
       {(isLoading) && <LoadingState />}
 
