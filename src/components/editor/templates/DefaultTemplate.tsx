@@ -9,6 +9,7 @@ import type { ResumePreviewProps } from '../ResumePreview';
 import { Progress } from '@/components/ui/progress';
 import { motion } from 'framer-motion';
 
+// Explicitly define motion components to avoid SWC parser issues with member expressions in JSX
 const MotionDiv = motion.div;
 const MotionSection = motion.section;
 const MotionHeader = motion.header;
@@ -256,7 +257,7 @@ export function DefaultTemplate({ resumeData }: ResumePreviewProps) {
                         {(projects || []).map((proj) => (
                             <div key={proj.id} className="group/item transition-all duration-300 hover:translate-x-1">
                             <div className="flex justify-between items-baseline">
-                                <h4 className="font-bold text-md font-headline text-gray-900">{proj.name}</h4>
+                                <h4 className="font-bold text-md text-gray-900 font-headline">{proj.name}</h4>
                                 {proj.link && <a href={proj.link} target="_blank" rel="noopener noreferrer" className="text-xs text-[var(--accent-color)] hover:underline font-medium transition-colors duration-500">View Project</a>}
                             </div>
                             <ul className="list-disc pl-5 space-y-1.5 leading-relaxed text-sm text-gray-600 mt-1">

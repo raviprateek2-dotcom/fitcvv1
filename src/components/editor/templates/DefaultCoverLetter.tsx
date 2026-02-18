@@ -7,6 +7,7 @@ import { Separator } from '@/components/ui/separator';
 import type { CoverLetterPreviewProps } from '../ResumePreview';
 import { motion } from 'framer-motion';
 
+// Explicitly define motion components to avoid SWC parser issues with member expressions in JSX
 const MotionDiv = motion.div;
 const MotionHeader = motion.header;
 const MotionH1 = motion.h1;
@@ -70,7 +71,14 @@ export function DefaultCoverLetter({ resumeData }: CoverLetterPreviewProps) {
     return (
         <MotionDiv {...containerProps} style={dynamicStyles} className={cn("bg-white text-gray-800 shadow-2xl rounded-lg w-full h-full mx-auto aspect-[8.5/11] max-w-[816px] max-h-[1056px] overflow-hidden print:shadow-none print:rounded-none print:max-h-full flex text-[var(--body-font-size)] transition-colors duration-500", fontClass)}>
             <aside className="w-1/3 text-primary-foreground p-8 bg-primary transition-colors duration-500">
-                {/* Sidebar can be decorative or hold contact details */}
+                <div className="space-y-4">
+                    <p className="font-bold uppercase tracking-widest text-xs opacity-80">Contact</p>
+                    <div className="text-sm space-y-2">
+                        <p>{personalInfo.email}</p>
+                        <p>{personalInfo.phone}</p>
+                        <p>{personalInfo.location}</p>
+                    </div>
+                </div>
             </aside>
             <main className="w-2/3 p-10 leading-relaxed space-y-4 whitespace-pre-wrap">
                 <header className="text-left mb-8">

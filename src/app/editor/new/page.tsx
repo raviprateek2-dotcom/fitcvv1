@@ -3,7 +3,7 @@
 import { useUser, useFirestore, addDocumentNonBlocking } from '@/firebase';
 import { collection, serverTimestamp } from 'firebase/firestore';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { defaultResumeData } from '@/lib/default-resume-data';
@@ -23,7 +23,7 @@ const CreatingResumeLoading = () => {
     );
 };
 
-export default function NewResumePage() {
+function NewResumeContent() {
   const { user, isUserLoading, isProfileLoading } = useUser();
   const firestore = useFirestore();
   const router = useRouter();
@@ -38,21 +38,13 @@ export default function NewResumePage() {
           return;
         }
 
-        // If user is not logged in, redirect to login page.
-        if (!user) {
-            router.push(`/login?redirect=/templates`);
-            return;
-        }
-
         // The logic for PDF uploads is handled on the dashboard, so we only proceed if there is a templateId
         if (!templateId) {
             router.push('/dashboard');
             return;
         }
 
-        // FitCV: All features are now free. Restrictions removed.
-
-        // All checks passed, create the new resume.
+        // FitCV: All features are now free.
         const resumesCollection = collection(firestore, `users/${user.uid}/resumes`);
         const newResumeData = {
             ...defaultResumeData,
@@ -81,7 +73,7 @@ export default function NewResumePage() {
             toast({
                 variant: "destructive",
                 title: "Creation Failed",
-                description: "Could not create the new resume due to a permission error or other issue.",
+                description: "Could not create the new resume. Please try again.",
             });
             router.push('/dashboard');
         });
@@ -91,6 +83,13 @@ export default function NewResumePage() {
 
   }, [user, isUserLoading, isProfileLoading, firestore, router, templateId, toast]);
 
-  // Show a loading indicator while the async operations are in progress.
   return <CreatingResumeLoading />;
+}
+
+export default function NewResumePage() {
+  return (
+    <Suspense fallback={<CreatingResumeLoading />}>
+      <NewResumeContent />
+    </Suspense>
+  );
 }

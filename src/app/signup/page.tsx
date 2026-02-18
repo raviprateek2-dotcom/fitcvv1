@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -11,7 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Rocket } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { motion } from 'framer-motion';
 
 
@@ -38,7 +37,7 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-export default function SignupPage() {
+function SignupContent() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -138,7 +137,7 @@ export default function SignupPage() {
               </motion.div>
           </div>
           <CardTitle className="font-headline text-2xl">Create an Account</CardTitle>
-          <CardDescription>Start your journey to a perfect resume.</CardDescription>
+          <CardDescription>Start your journey to a perfect resume with FitCV.</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">
           <Button variant="neuro" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading}>
@@ -180,4 +179,10 @@ export default function SignupPage() {
   );
 }
 
-    
+export default function SignupPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center">Loading...</div>}>
+      <SignupContent />
+    </Suspense>
+  );
+}
