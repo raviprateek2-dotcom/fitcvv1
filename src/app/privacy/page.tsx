@@ -8,7 +8,7 @@ export default function PrivacyPolicyPage() {
         <CardHeader>
           <CardTitle className="text-3xl font-headline">Privacy Policy</CardTitle>
         </CardHeader>
-        <CardContent className="prose prose-lg max-w-none">
+        <CardContent className="prose prose-lg max-w-none dark:prose-invert">
           <h2>1. Information We Collect</h2>
           <p>
             We collect information that you provide directly to us, such as when you create an account, create a resume, or communicate with us. This may include personal information like your name, email address, and the content of your resume.
@@ -42,7 +42,7 @@ export default function PrivacyPolicyPage() {
           <h2>7. Contact Us</h2>
           <p>If you have any questions about this Privacy Policy, please contact us at privacy@fitcv.ai.</p>
 
-          <p className="text-sm text-muted-foreground mt-8">Last updated: {new Date().toLocaleDateString()}</p>
+          <p className="text-sm text-muted-foreground mt-8">Last updated: May 24, 2024</p>
         </CardContent>
       </Card>
     </div>

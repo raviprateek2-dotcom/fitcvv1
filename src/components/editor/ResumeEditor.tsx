@@ -114,7 +114,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   const isPrintMode = searchParams.get('print') === 'true';
 
   const resumeDocRef = useMemoFirebase(
-    () => (user ? doc(firestore, `users/${user.uid}/resumes`, resumeId) : null),
+    () => (user ? doc(firestore!, `users/${user.uid}/resumes`, resumeId) : null),
     [firestore, user, resumeId]
   );
   const { data: initialResumeData, isLoading: isResumeLoading } = useDoc<ResumeData>(resumeDocRef);
@@ -158,6 +158,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
         }
         if (updatedData.skills === undefined) updatedData.skills = [];
         if (updatedData.projects === undefined) updatedData.projects = [];
+        if (updatedData.jobDescription === undefined) updatedData.jobDescription = '';
 
 
         setResumeData(updatedData);
@@ -213,12 +214,14 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   useEffect(() => {
     if (!resumeData || !initialDataRef.current || isPrintMode) return;
     
+    // Simple deep equality check for auto-save trigger
     if (JSON.stringify(resumeData) === JSON.stringify(initialDataRef.current)) {
       return;
     }
 
     const handler = setTimeout(() => {
       handleSave(resumeData);
+      initialDataRef.current = resumeData; // Update ref to reflect last saved state
     }, 1500);
 
     return () => {
@@ -257,7 +260,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     }
     
     setIsAiLoading(true);
-    const resumeText = JSON.stringify(resumeData); // Simple serialization for now
+    const resumeText = JSON.stringify(resumeData); 
     
     try {
       const result = await writeCoverLetterAction({
@@ -282,19 +285,6 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   const handleTemplateChange = (templateId: string) => {
     const template = availableTemplates.find(t => t.id === templateId);
     if (!template) return;
-
-    const isProUser = userProfile?.subscription === 'premium';
-
-    if (template.isPremium && !isProUser) {
-        toast({
-            variant: 'destructive',
-            title: 'Upgrade Required',
-            description: `The "${template.name}" template is a Pro feature.`,
-            action: <Button asChild><Link href="/pricing">Upgrade</Link></Button>
-        });
-        return;
-    }
-    
     handleFieldChange('templateId', templateId);
   };
   
@@ -303,14 +293,11 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
 
     let shareId = resumeData.shareId;
     
-    // If there is no shareId, create one and save it to the user's resume doc.
     if (!shareId) {
         shareId = nanoid(10);
         setResumeData(prev => (prev ? { ...prev, shareId } : null)); 
     }
 
-    // Create a clean object with only the data needed for the public resume.
-    // Exclude sensitive or internal-only fields.
     const dataToShare = {
         title: resumeData.title,
         personalInfo: resumeData.personalInfo,
@@ -323,7 +310,6 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
         styling: resumeData.styling,
     };
 
-    // Create or update the public document non-blockingly
     const publicResumeRef = doc(firestore, 'publicResumes', shareId);
     setDocumentNonBlocking(publicResumeRef, dataToShare, { merge: true });
 
@@ -375,39 +361,16 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   const handleAddKeywordAsSkill = (keyword: string) => {
     if (!resumeData) return;
   
-    // Check if skills section exists, if not, create it
-    const skillsExist = resumeData.skills !== undefined;
-    let currentSkills = resumeData.skills || [];
-  
-    // Check for duplicates (case-insensitive)
+    const currentSkills = resumeData.skills || [];
     const isDuplicate = currentSkills.some(skill => skill.name.toLowerCase() === keyword.toLowerCase());
     if (isDuplicate) {
-      toast({
-        title: 'Skill Already Exists',
-        description: `"${keyword}" is already in your skills list.`,
-      });
+      toast({ title: 'Skill Already Exists', description: `"${keyword}" is already in your skills list.` });
       return;
     }
   
-    const newSkill: Skill = {
-      id: Date.now(),
-      name: keyword,
-      level: 'Advanced', // Default level
-    };
-  
-    const updatedSkills = [...currentSkills, newSkill];
-  
-    // Use the setResumeData function to update the state
-    setResumeData(prev => ({
-      ...prev!,
-      skills: updatedSkills,
-    }));
-    
-    if (!skillsExist) {
-        toast({ title: 'Skills Section Added', description: `The "Skills" section was created and "${keyword}" was added.` });
-    } else {
-        toast({ title: 'Skill Added', description: `"${keyword}" has been added to your skills.` });
-    }
+    const newSkill: Skill = { id: Date.now(), name: keyword, level: 'Advanced' };
+    handleFieldChange('skills', [...currentSkills, newSkill]);
+    toast({ title: 'Skill Added', description: `"${keyword}" has been added to your skills.` });
   };
   
   const handlePdfUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -422,14 +385,12 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
       reader.readAsDataURL(file);
       reader.onload = async () => {
         const base64String = reader.result as string;
-        
         const result = await parseResumeFromPdf(base64String);
         
         if (!result.success || !result.data) {
           throw new Error(result.error || 'Failed to parse resume.');
         }
         
-        // Update the current resume data with the parsed content
         setResumeData(prev => ({
           ...prev!,
           ...result.data!.resumeData,
@@ -438,10 +399,6 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   
         toast({ title: 'Success!', description: 'Your resume has been imported into the editor.' });
       };
-      reader.onerror = (error) => {
-        throw new Error('Failed to read the file.');
-      };
-  
     } catch (error: any) {
       console.error('Error parsing PDF resume:', error);
       toast({
@@ -451,7 +408,6 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
       });
     } finally {
       setIsParsing(false);
-      // Reset file input
       if(fileInputRef.current) fileInputRef.current.value = '';
     }
   };
@@ -467,9 +423,8 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     }
     setIsAnalyzing(true);
     setAnalysisResult(null);
-    setReviewResult(null); // Clear other results
+    setReviewResult(null); 
     setKeywordSuggestions([]);
-
 
     const resumeContent = JSON.stringify(resumeData);
 
@@ -478,7 +433,6 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
       if (result.success && result.data) {
         setAnalysisResult(result.data);
       } else {
-        setAnalysisResult(null);
         toast({ variant: 'destructive', title: 'Analysis Failed', description: result.error });
       }
     } catch (error: any) {
@@ -492,7 +446,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
       if (!resumeData) return;
       setIsReviewing(true);
       setReviewResult(null);
-      setAnalysisResult(null); // Clear other results
+      setAnalysisResult(null);
       setKeywordSuggestions([]);
 
       const resumeContent = JSON.stringify(resumeData);
@@ -501,7 +455,6 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
           if (result.success && result.data) {
               setReviewResult(result.data);
           } else {
-              setReviewResult(null);
               toast({ variant: 'destructive', title: 'Review Failed', description: result.error });
           }
       } catch (error: any) {
@@ -560,7 +513,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
               PDF
             </Button>
             <Button variant="outline" size="icon" asChild>
-                <Link href="/dashboard"><ArrowLeft className="h-4 w-4"/></Link>
+                <Link href="/dashboard" aria-label="Back to Dashboard"><ArrowLeft className="h-4 w-4"/></Link>
             </Button>
           </div>
         </div>
@@ -589,7 +542,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                                       </SelectTrigger>
                                       <SelectContent>
                                           {availableTemplates.map(template => (
-                                              <SelectItem key={template.id} value={template.id} disabled={template.isPremium && !isProUser}>
+                                              <SelectItem key={template.id} value={template.id}>
                                                   <div className="flex items-center gap-2">
                                                       {template.name}
                                                       {template.isPremium && <span className="text-xs bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full">PRO</span>}
@@ -671,17 +624,17 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                         <PersonalInfoSection 
                             resumeData={resumeData}
                             setResumeData={setResumeData}
-                            isProUser={isProUser}
+                            isProUser={true}
                         />
                         <SummarySection
                              resumeData={resumeData}
                              setResumeData={setResumeData}
-                             isProUser={isProUser}
+                             isProUser={true}
                         />
                         <ExperienceSection
                             resumeData={resumeData}
                             setResumeData={setResumeData}
-                            isProUser={isProUser}
+                            isProUser={true}
                         />
                         <EducationSection
                             resumeData={resumeData}
@@ -709,7 +662,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                                 <Label htmlFor="job-description-analysis">Target Job Description</Label>
                                 <Textarea
                                 id="job-description-analysis"
-                                value={resumeData.jobDescription}
+                                value={resumeData.jobDescription || ''}
                                 onChange={(e) => handleFieldChange('jobDescription', e.target.value)}
                                 rows={8}
                                 placeholder="Paste a job description here to enable analysis features..."
@@ -717,7 +670,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                             </div>
                         </CardContent>
                         <CardFooter>
-                            <ProFeatureWrapper isPro={isProUser}>
+                            <ProFeatureWrapper isPro={true}>
                                 <div className="w-full space-y-2">
                                     <div className="flex flex-wrap gap-2">
                                         <Button onClick={handleAnalyzeResume} disabled={!resumeData.jobDescription || isAnalyzing || isReviewing || isAiLoading} className="flex-1">
@@ -737,7 +690,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
 
                     {(isAnalyzing || isReviewing || isAiLoading) && <div className="text-center p-4"><Loader2 className="h-6 w-6 animate-spin mx-auto"/></div>}
                     
-                    <ProFeatureWrapper isPro={isProUser}>
+                    <ProFeatureWrapper isPro={true}>
                         {analysisResult && (
                              <Card variant="neuro">
                                 <CardHeader>
@@ -833,7 +786,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                       <div className="p-4 border rounded-lg space-y-4">
                           <h3 className="font-semibold text-lg">Cover Letter Content</h3>
                           <Textarea 
-                              value={resumeData.coverLetter}
+                              value={resumeData.coverLetter || ''}
                               onChange={e => handleFieldChange('coverLetter', e.target.value)}
                               rows={15}
                               placeholder="Your generated cover letter will appear here..."

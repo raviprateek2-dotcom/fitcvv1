@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -45,7 +46,7 @@ export default function PricingPage() {
     updateDocumentNonBlocking(userDocRef, { subscription: 'premium' });
     toast({
       title: 'Success!',
-      description: "Welcome to Pro! You now have access to all features for free.",
+      description: "Welcome to FitCV Pro! You now have access to all features for free.",
     });
     router.push('/dashboard');
   };

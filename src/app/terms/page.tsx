@@ -8,7 +8,7 @@ export default function TermsOfServicePage() {
         <CardHeader>
           <CardTitle className="text-3xl font-headline">Terms of Service</CardTitle>
         </CardHeader>
-        <CardContent className="prose prose-lg max-w-none">
+        <CardContent className="prose prose-lg max-w-none dark:prose-invert">
           <h2>1. Introduction</h2>
           <p>
             Welcome to FitCV. These Terms of Service ("Terms") govern your use of our website and services. By accessing or using our service, you agree to be bound by these Terms.
@@ -42,7 +42,7 @@ export default function TermsOfServicePage() {
           <h2>7. Contact Us</h2>
           <p>If you have any questions about these Terms, please contact us at support@fitcv.ai.</p>
           
-          <p className="text-sm text-muted-foreground mt-8">Last updated: {new Date().toLocaleDateString()}</p>
+          <p className="text-sm text-muted-foreground mt-8">Last updated: May 24, 2024</p>
         </CardContent>
       </Card>
     </div>
