@@ -1,13 +1,10 @@
 
 import { ResumeEditor } from '@/components/editor/ResumeEditor';
 
-export default async function EditorPage({ params }: { params: Promise<{ id: string }> }) {
-  // This is a Server Component.
-  // We need to `await` the `params` promise to resolve its value.
-  const { id } = await params;
+// In Next.js 14.2, params is a plain object, not a promise.
+export default function EditorPage({ params }: { params: { id: string } }) {
+  const { id } = params;
   
-  // Then we pass the resolved `id` as a simple string prop 
-  // to the ResumeEditor client component.
   return (
     <div className="flex flex-col h-screen bg-secondary">
       <div className="flex-grow overflow-hidden">

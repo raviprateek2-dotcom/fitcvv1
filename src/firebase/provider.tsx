@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { DependencyList, createContext, useContext, ReactNode, useMemo, useState, useEffect } from 'react';
@@ -19,6 +20,12 @@ export type UserProfile = {
   email: string;
   subscription: 'free' | 'premium';
   profilePhotoUrl?: string;
+  careerGoals?: {
+    id: string;
+    title: string;
+    description: string;
+    type: 'networking' | 'optimization' | 'skill-building' | 'other';
+  }[];
 };
 
 // Internal state for user authentication

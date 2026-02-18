@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,6 +11,8 @@ import { generateCareerGoals } from '@/app/actions/ai-goal-setter';
 import { Loader2, Target, Sparkles, Network, Zap, BookOpen, CheckCircle2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
+import { useUser, updateDocumentNonBlocking } from '@/firebase';
+import { doc } from 'firebase/firestore';
 
 type Goal = {
     id: string;
@@ -27,10 +29,18 @@ const typeIcons = {
 };
 
 export function GoalSetter() {
+    const { user, userProfile, firestore } = useUser();
     const [jobTitle, setJobTitle] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [goals, setGoals] = useState<Goal[]>([]);
     const { toast } = useToast();
+
+    // Initialize goals from user profile
+    useEffect(() => {
+        if (userProfile?.careerGoals) {
+            setGoals(userProfile.careerGoals);
+        }
+    }, [userProfile]);
 
     const handleGenerate = async () => {
         if (!jobTitle) {
@@ -42,8 +52,14 @@ export function GoalSetter() {
         try {
             const response = await generateCareerGoals({ jobTitle });
             if (response.success && response.data) {
-                setGoals(response.data.goals);
-                toast({ title: 'Application Strategy Ready!', description: 'We have generated some custom goals for you.' });
+                const newGoals = response.data.goals as Goal[];
+                setGoals(newGoals);
+                
+                // Persist to Firestore
+                if (user && firestore) {
+                    const userRef = doc(firestore, `users/${user.uid}`);
+                    updateDocumentNonBlocking(userRef, { careerGoals: newGoals });
+                }
             } else {
                 throw new Error(response.error);
             }
@@ -53,6 +69,14 @@ export function GoalSetter() {
             setIsLoading(false);
         }
     };
+
+    const handleClear = () => {
+        setGoals([]);
+        if (user && firestore) {
+            const userRef = doc(firestore, `users/${user.uid}`);
+            updateDocumentNonBlocking(userRef, { careerGoals: [] });
+        }
+    }
 
     return (
         <Card variant="neuro" className="mb-12 border-primary/10 bg-gradient-to-br from-background to-primary/5">
@@ -114,9 +138,9 @@ export function GoalSetter() {
                 <CardFooter className="bg-secondary/30 rounded-b-2xl py-3 px-6 flex justify-between items-center">
                     <p className="text-[10px] text-muted-foreground italic flex items-center gap-1">
                         <CheckCircle2 className="w-3 h-3" />
-                        Goals are automatically optimized for your current level.
+                        Goals are saved to your profile and automatically optimized.
                     </p>
-                    <Button variant="ghost" size="sm" className="h-7 text-[10px]" onClick={() => setGoals([])}>Clear Strategy</Button>
+                    <Button variant="ghost" size="sm" className="h-7 text-[10px]" onClick={handleClear}>Clear Strategy</Button>
                 </CardFooter>
             )}
         </Card>

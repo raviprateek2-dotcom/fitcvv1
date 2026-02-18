@@ -24,6 +24,18 @@
           "type": "string",
           "description": "URL or Data URI of the user's profile photo.",
           "format": "uri"
+        },
+        "careerGoals": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "title": { "type": "string" },
+              "description": { "type": "string" },
+              "type": { "type": "string", "enum": ["networking", "optimization", "skill-building", "other"] }
+            }
+          }
         }
       },
       "required": ["email", "subscription"]

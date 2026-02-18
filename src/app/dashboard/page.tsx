@@ -8,7 +8,7 @@ import { useFirestore } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, PlusCircle, ArrowRight, Upload, FileText, Loader2, CheckCircle2, Circle, Sparkles, TrendingUp, Zap, Lightbulb } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, ArrowRight, Upload, FileText, Loader2, CheckCircle2, Circle, Sparkles, TrendingUp, Zap, Lightbulb, Ear } from 'lucide-react';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useMemoFirebase } from '@/firebase/provider';
@@ -34,6 +34,7 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { GoalSetter } from '@/components/dashboard/GoalSetter';
+import { aiNarrate } from '@/app/actions/ai-narrator';
 
 
 type Resume = {
@@ -72,17 +73,18 @@ const calculateResumeStrength = (resume: Resume) => {
 
 const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDuplicate: (resume: Resume) => void; onDelete: (resumeId: string) => void; }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [updatedAtText, setUpdatedAtText] = useState('just now');
   const strength = useMemo(() => calculateResumeStrength(resume), [resume]);
   
-  const updatedAt = useMemo(() => {
-    if (!resume.updatedAt) return 'never';
+  useEffect(() => {
+    if (!resume.updatedAt) return;
     const date = resume.updatedAt.toDate();
     const diff = new Date().getTime() - date.getTime();
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    if (days < 1) return 'today';
-    if (days < 2) return 'yesterday';
-    if (days < 7) return `${days} days ago`;
-    return date.toLocaleDateString();
+    if (days < 1) setUpdatedAtText('today');
+    else if (days < 2) setUpdatedAtText('yesterday');
+    else if (days < 7) setUpdatedAtText(`${days} days ago`);
+    else setUpdatedAtText(date.toLocaleDateString());
   }, [resume.updatedAt]);
 
   const handleDownloadPdf = () => {
@@ -130,7 +132,7 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
               {resume.title || 'Untitled Resume'}
             </Link>
           </CardTitle>
-          <CardDescription>Updated {updatedAt}</CardDescription>
+          <CardDescription>Updated {updatedAtText}</CardDescription>
         </CardHeader>
         
         <CardFooter className="p-4 pt-0 mt-auto flex justify-between items-center text-sm text-muted-foreground">
@@ -182,6 +184,25 @@ const SuccessPath = ({ resumes }: { resumes: Resume[] }) => {
 
     const completedSteps = steps.filter(s => s.done).length;
     const progress = (completedSteps / steps.length) * 100;
+    
+    const [isNarratingTip, setIsNarratingTip] = useState(false);
+    const audioRef = useRef<HTMLAudioElement | null>(null);
+    const tipText = "Recruiters spend an average of 7 seconds scanning a resume. Use bold keywords and quantifiable results like 'increased sales by 20%' to make every second count.";
+
+    const handleNarrateTip = async () => {
+        setIsNarratingTip(true);
+        try {
+            const res = await aiNarrate(tipText);
+            if (res.success && res.data && audioRef.current) {
+                audioRef.current.src = res.data.audioDataUri;
+                audioRef.current.play();
+            }
+        } catch (e) {
+            console.error("Narration failed");
+        } finally {
+            setIsNarratingTip(false);
+        }
+    }
 
     return (
         <div className="grid lg:grid-cols-3 gap-8 mb-8">
@@ -228,15 +249,21 @@ const SuccessPath = ({ resumes }: { resumes: Resume[] }) => {
             
             <Card variant="neuro" className="bg-gradient-to-br from-primary/10 to-accent/10 border-primary/20 relative overflow-hidden">
                 <CardHeader>
-                    <CardTitle className="text-lg flex items-center gap-2">
-                        <Lightbulb className="w-5 h-5 text-primary" />
-                        Tip of the Day
+                    <CardTitle className="text-lg flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <Lightbulb className="w-5 h-5 text-primary" />
+                            Tip of the Day
+                        </div>
+                        <Button size="icon" variant="ghost" className="h-8 w-8" onClick={handleNarrateTip} disabled={isNarratingTip}>
+                            {isNarratingTip ? <Loader2 className="h-4 w-4 animate-spin"/> : <Ear className="h-4 w-4" />}
+                        </Button>
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <p className="text-sm leading-relaxed text-muted-foreground">
-                        "Recruiters spend an average of 7 seconds scanning a resume. Use <strong>bold keywords</strong> and <strong>quantifiable results</strong> (like 'increased sales by 20%') to make every second count."
+                    <p className="text-sm leading-relaxed text-muted-foreground italic">
+                        "{tipText}"
                     </p>
+                    <audio ref={audioRef} className="hidden" />
                 </CardContent>
                 <CardFooter>
                     <Button variant="link" className="p-0 text-primary" asChild>
@@ -364,11 +391,6 @@ export default function DashboardPage() {
       updatedAt: serverTimestamp(),
     };
 
-    toast({
-      title: 'Duplicating Resume...',
-      description: `Copying "${resumeToDuplicate.title || 'Untitled Resume'}".`,
-    });
-
     addDocumentNonBlocking(resumesQuery, newResumeData)
       .then(newDocRef => {
         if (newDocRef) {
@@ -381,10 +403,6 @@ export default function DashboardPage() {
     if (!user || !firestore) return;
     const docRef = doc(firestore, `users/${user.uid}/resumes`, resumeId);
     deleteDocumentNonBlocking(docRef);
-    toast({
-      title: 'Resume Deleted',
-      description: 'Your resume has been successfully removed.',
-    });
   };
   
   const handlePdfUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -392,7 +410,6 @@ export default function DashboardPage() {
     if (!file || !user || !resumesQuery) return;
   
     setIsParsing(true);
-    toast({ title: 'Parsing PDF...', description: 'Our AI is reading your resume. This may take a moment.' });
   
     try {
       const reader = new FileReader();
@@ -421,7 +438,6 @@ export default function DashboardPage() {
           addDocumentNonBlocking(resumesQuery, newResumeData)
             .then(newDocRef => {
               if (newDocRef) {
-                toast({ title: 'Success!', description: 'Your resume has been imported.' });
                 router.push(`/editor/${newDocRef.id}`);
               }
             });

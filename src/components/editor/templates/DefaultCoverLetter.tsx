@@ -1,7 +1,7 @@
 
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { AtSign, Globe, MapPin, Phone } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
@@ -50,9 +50,15 @@ const sectionVariants = {
 export function DefaultCoverLetter({ resumeData }: CoverLetterPreviewProps) {
   const { personalInfo, coverLetter, companyInfo, templateId = 'modern', styling } = resumeData;
   const templateStyles = templates[templateId] || templates.modern;
-  const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   const accentColor = styling?.accentColor || 'hsl(221.2 83.2% 53.3%)';
   const fontClass = styling?.fontFamily ? styling.fontFamily.replace('font-', 'font-') : 'font-body';
+
+  const [formattedDate, setFormattedDate] = useState('');
+
+  useEffect(() => {
+    // Handling date formatting client-side to prevent hydration errors
+    setFormattedDate(new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }));
+  }, []);
 
   const dynamicStyles = {
     '--title-font-size': `${styling?.titleFontSize || 36}px`,
@@ -92,7 +98,7 @@ export function DefaultCoverLetter({ resumeData }: CoverLetterPreviewProps) {
                     <MotionH1 layout style={{ fontSize: 'var(--title-font-size)'}} className="font-bold text-gray-900 font-headline leading-tight">{personalInfo.name}</MotionH1>
                     <MotionH2 layout style={{ fontSize: 'var(--heading-font-size)', color: 'var(--accent-color)'}} className="font-semibold transition-colors duration-500">{personalInfo.title}</MotionH2>
                 </header>
-                <MotionP variants={sectionVariants} className="text-sm text-gray-600">{date}</MotionP>
+                <MotionP variants={sectionVariants} className="text-sm text-gray-600">{formattedDate}</MotionP>
                 {companyInfo?.name && (
                     <MotionDiv variants={sectionVariants}>
                         <p className="font-semibold">Hiring Manager</p>
@@ -129,7 +135,7 @@ export function DefaultCoverLetter({ resumeData }: CoverLetterPreviewProps) {
                  </MotionDiv>
             </header>
             <main className="leading-relaxed space-y-4 whitespace-pre-wrap flex-grow">
-            <MotionP variants={sectionVariants} className="text-sm text-gray-600">{date}</MotionP>
+            <MotionP variants={sectionVariants} className="text-sm text-gray-600">{formattedDate}</MotionP>
             {companyInfo?.name && (
               <MotionDiv variants={sectionVariants}>
                   <p className="font-semibold">Hiring Manager</p>
@@ -167,7 +173,7 @@ export function DefaultCoverLetter({ resumeData }: CoverLetterPreviewProps) {
       </MotionHeader>
       <Separator className={cn("my-6", templateId === 'minimalist' ? 'bg-gray-200' : '')} />
       <main className="leading-relaxed space-y-4 whitespace-pre-wrap">
-          <MotionP variants={sectionVariants}>{date}</MotionP>
+          <MotionP variants={sectionVariants}>{formattedDate}</MotionP>
           {companyInfo?.name && (
             <MotionP variants={sectionVariants}>
               Hiring Manager
