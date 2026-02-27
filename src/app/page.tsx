@@ -34,12 +34,12 @@ export default function LandingPage() {
 
       {/* Blog Section */}
       <section 
-        className="relative w-full py-20 md:py-32"
+        className="relative w-full py-16 sm:py-24 md:py-32"
       >
         <div id="blog" className="container mx-auto px-4 md:px-6">
-            <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
+            <div className="flex flex-col items-center justify-center space-y-4 text-center mb-10 sm:mb-12">
               <div className="inline-block rounded-lg bg-secondary px-3 py-1 text-sm font-medium">From Our Blog</div>
-              <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl bg-gradient-to-r from-primary via-foreground to-accent bg-clip-text text-transparent">Career Advice & Resume Tips</h2>
+              <h2 className="text-3xl font-headline font-bold tracking-tight sm:text-4xl md:text-5xl bg-gradient-to-r from-primary via-foreground to-accent bg-clip-text text-transparent px-2">Career Advice & Resume Tips</h2>
               <p className="max-w-[600px] text-muted-foreground md:text-lg">
                 Get the latest insights from our career experts to help you land your dream job.
               </p>
@@ -93,10 +93,10 @@ export default function LandingPage() {
 
       {/* Final CTA */}
       <section 
-        className="relative w-full py-20 md:py-32"
+        className="relative w-full py-16 sm:py-24 md:py-32"
       >
         <div className="container mx-auto px-4 md:px-6 text-center">
-          <h2 className="text-3xl font-headline font-bold tracking-tighter sm:text-5xl bg-gradient-to-r from-primary via-foreground to-accent bg-clip-text text-transparent">Ready to Build Your Future?</h2>
+          <h2 className="text-3xl font-headline font-bold tracking-tight sm:text-4xl md:text-5xl bg-gradient-to-r from-primary via-foreground to-accent bg-clip-text text-transparent px-2">Ready to Build Your Future?</h2>
           <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl mt-4">
             Start for free and see how FitCV can transform your job search. No credit card required.
           </p>

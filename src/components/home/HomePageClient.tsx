@@ -143,7 +143,7 @@ export function HomePageClient() {
             {/* Ambient Background Mesh */}
             <div className="fixed inset-0 -z-10 opacity-[0.08] dark:opacity-[0.12] animate-mesh filter blur-[80px]" />
             
-            <section className="w-full py-24 md:py-48 relative overflow-hidden">
+            <section className="w-full py-16 sm:py-24 md:py-48 relative overflow-hidden">
                 <div className="container mx-auto px-4 md:px-6 relative z-10">
                     <motion.div
                         initial="hidden"
@@ -157,12 +157,12 @@ export function HomePageClient() {
                         
                         <motion.h1 
                             variants={itemVariants} 
-                            className="text-5xl font-headline font-extrabold tracking-tight sm:text-6xl md:text-7xl lg:text-8xl"
+                            className="text-4xl font-headline font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl"
                         >
                             Don't just write a <span className="text-gradient">resume</span>
                         </motion.h1>
                         
-                        <motion.div variants={itemVariants} className="text-4xl font-headline font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl min-h-[60px] sm:min-h-[70px] md:min-h-[80px] lg:min-h-[90px]">
+                        <motion.div variants={itemVariants} className="text-3xl font-headline font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl min-h-[50px] sm:min-h-[60px] md:min-h-[80px] lg:min-h-[90px] w-full max-w-[90vw] overflow-visible">
                             <TypingAnimation 
                                 phrases={[
                                     "Design your future.",
@@ -178,14 +178,14 @@ export function HomePageClient() {
                             Experience the most advanced AI-powered resume builder. We combine minimalist design with powerful algorithms to help you bypass ATS and land interviews at top companies.
                         </motion.p>
                         
-                        <motion.div variants={itemVariants} className="flex flex-col gap-4 sm:flex-row justify-center pt-4">
-                            <Button asChild size="lg" variant="premium" className="h-14 px-8 text-lg rounded-full">
+                        <motion.div variants={itemVariants} className="flex flex-col gap-4 sm:flex-row justify-center pt-4 w-full px-4 sm:px-0">
+                            <Button asChild size="lg" variant="premium" className="h-14 px-6 sm:px-8 text-base sm:text-lg rounded-full w-full sm:w-auto">
                                 <Link href="/templates">
                                     Start Building Now
                                     <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                                 </Link>
                             </Button>
-                            <Button asChild size="lg" variant="glass" className="h-14 px-8 text-lg rounded-full border-primary/20 hover:border-primary/40">
+                            <Button asChild size="lg" variant="glass" className="h-14 px-6 sm:px-8 text-base sm:text-lg rounded-full border-primary/20 hover:border-primary/40 w-full sm:w-auto">
                                 <Link href="#features">
                                     Explore Features
                                 </Link>
@@ -201,9 +201,9 @@ export function HomePageClient() {
 
             <TrustMarquee />
             
-            <section className="py-12 bg-white/[0.02] border-y border-white/5 relative overflow-hidden">
+            <section className="py-10 md:py-12 bg-white/[0.02] border-y border-white/5 relative overflow-hidden">
                 <div className="container mx-auto px-4 relative z-10">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
                         {stats.map((stat, i) => (
                             <div key={i} className="text-center group">
                                 <motion.div 
@@ -222,23 +222,23 @@ export function HomePageClient() {
             </section>
             
             <motion.section 
-                className="relative w-full py-24 md:py-40"
+                className="relative w-full py-16 sm:py-24 md:py-40"
                 variants={sectionVariants}
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, amount: 0.3 }}
             >
                 <div id="how-it-works" className="container mx-auto px-4 md:px-6">
-                    <div className="flex flex-col items-center justify-center space-y-4 text-center mb-16">
+                    <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12 sm:mb-16">
                         <motion.div variants={itemVariants} className="inline-block rounded-full bg-primary/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-primary border border-primary/20">The Process</motion.div>
-                        <motion.h2 variants={itemVariants} className="text-4xl font-headline font-extrabold tracking-tight sm:text-6xl text-gradient">Three Steps to Perfection</motion.h2>
+                        <motion.h2 variants={itemVariants} className="text-3xl font-headline font-extrabold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl text-gradient">Three Steps to Perfection</motion.h2>
                         <motion.p variants={itemVariants} className="max-w-[600px] text-muted-foreground md:text-lg">Our streamlined workflow ensures you get the best results with minimal effort.</motion.p>
                     </div>
                     <motion.div
                         variants={sectionVariants}
-                        className="mx-auto grid items-start gap-8 sm:max-w-5xl sm:grid-cols-3 md:gap-12"
+                        className="mx-auto grid items-start gap-6 sm:gap-8 sm:max-w-5xl sm:grid-cols-3 md:gap-12"
                     >
-                        <motion.div variants={itemVariants} className="premium-card text-center group">
+                        <motion.div variants={itemVariants} className="premium-card text-center group p-6 sm:p-8">
                             <div className="flex flex-col gap-4 items-center">
                                 <div className="bg-primary/10 p-5 rounded-2xl group-hover:bg-primary/20 transition-colors">
                                     <FileText className="w-10 h-10 text-primary transition-transform group-hover:scale-110"/>
@@ -256,7 +256,7 @@ export function HomePageClient() {
                                 <p className="text-muted-foreground text-sm leading-relaxed">Our AI analyzes your experience and suggests high-impact bullet points that get seen.</p>
                             </div>
                         </motion.div>
-                        <motion.div variants={itemVariants} className="premium-card text-center group">
+                        <motion.div variants={itemVariants} className="premium-card text-center group p-6 sm:p-8">
                             <div className="flex flex-col gap-4 items-center">
                                 <div className="bg-blue-500/10 p-5 rounded-2xl group-hover:bg-blue-500/20 transition-colors">
                                     <Zap className="w-10 h-10 text-blue-500 transition-transform group-hover:scale-110"/>
@@ -270,19 +270,19 @@ export function HomePageClient() {
             </motion.section>
 
              <motion.section 
-                className="relative w-full py-24 md:py-40 bg-white/[0.02] dark:bg-black/[0.02] border-y border-white/5"
+                className="relative w-full py-16 sm:py-24 md:py-40 bg-white/[0.02] dark:bg-black/[0.02] border-y border-white/5"
                 variants={sectionVariants}
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ once: true, amount: 0.3 }}
+                viewport={{ once: true, amount: 0.1 }}
                 ref={featuresRef}
             >
                 <div id="features" className="container mx-auto px-4 md:px-6">
-                    <div className="grid md:grid-cols-2 gap-20 items-center">
-                        <motion.div variants={sectionVariants} className="space-y-10">
+                    <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-center">
+                        <motion.div variants={sectionVariants} className="space-y-8 sm:space-y-10">
                             <motion.div variants={itemVariants} className="space-y-4">
                                 <div className="inline-block rounded-full bg-secondary px-4 py-1.5 text-xs font-bold uppercase tracking-widest border">The Engine</div>
-                                <h2 className="text-4xl font-headline font-extrabold tracking-tight sm:text-6xl text-gradient">Built for the modern market</h2>
+                                <h2 className="text-3xl font-headline font-extrabold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl text-gradient">Built for the modern market</h2>
                                 <p className="text-muted-foreground md:text-lg leading-relaxed">Every feature is engineered to solve a specific hurdle in your job search, from initial draft to final interview.</p>
                             </motion.div>
                             <motion.div
@@ -318,14 +318,14 @@ export function HomePageClient() {
             </motion.section>
 
             {/* Comparison Section */}
-            <section className="py-24 md:py-40 relative">
+            <section className="py-16 sm:py-24 md:py-40 relative">
                 <div className="container mx-auto px-4 md:px-6">
-                    <div className="text-center mb-20 space-y-4">
+                    <div className="text-center mb-12 sm:mb-20 space-y-4">
                         <div className="inline-block rounded-full bg-background px-4 py-1.5 text-xs font-bold uppercase tracking-widest border">The FitCV Advantage</div>
-                        <h2 className="text-4xl font-headline font-extrabold tracking-tight sm:text-6xl text-gradient">Why settle for ordinary?</h2>
+                        <h2 className="text-3xl font-headline font-extrabold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl text-gradient">Why settle for ordinary?</h2>
                     </div>
-                    <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-                        <div className="premium-card bg-destructive/5 border-destructive/10 hover:border-destructive/30">
+                    <div className="grid md:grid-cols-2 gap-6 sm:gap-8 max-w-5xl mx-auto">
+                        <div className="premium-card bg-destructive/5 border-destructive/10 hover:border-destructive/30 p-6 sm:p-8">
                             <h3 className="text-2xl font-bold font-headline mb-6 text-destructive flex items-center gap-2">
                                 <XCircle className="w-6 h-6" /> Traditional Builders
                             </h3>
@@ -336,8 +336,8 @@ export function HomePageClient() {
                                 <p className="flex items-center gap-3 text-muted-foreground"><XCircle className="w-5 h-5 opacity-50" /> Limited to just the document</p>
                             </div>
                         </div>
-                        <div className="premium-card bg-primary/5 border-primary/20 hover:border-primary/40">
-                            <h3 className="text-2xl font-bold font-headline mb-6 text-primary flex items-center gap-2">
+                        <div className="premium-card bg-primary/5 border-primary/20 hover:border-primary/40 p-6 sm:p-8">
+                            <h3 className="text-xl sm:text-2xl font-bold font-headline mb-6 text-primary flex items-center gap-2">
                                 <Sparkles className="w-6 h-6" /> The FitCV Way
                             </h3>
                             <div className="space-y-4 font-medium text-foreground">
@@ -352,12 +352,12 @@ export function HomePageClient() {
             </section>
 
             {/* FAQ Section */}
-            <section className="py-24 md:py-40 relative">
+            <section className="py-16 sm:py-24 md:py-40 relative">
                 <div className="container mx-auto px-4 md:px-6">
                     <div className="max-w-3xl mx-auto">
-                        <div className="text-center mb-16 space-y-4">
+                        <div className="text-center mb-12 sm:mb-16 space-y-4">
                             <div className="inline-block rounded-full bg-primary/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-primary border border-primary/20">Clarity & Confidence</div>
-                            <h2 className="text-4xl font-headline font-extrabold tracking-tight sm:text-6xl text-gradient">Common Inquiries</h2>
+                            <h2 className="text-3xl font-headline font-extrabold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl text-gradient">Common Inquiries</h2>
                             <p className="text-muted-foreground">Everything you need to know about the FitCV ecosystem.</p>
                         </div>
                         <Accordion type="single" collapsible className="w-full space-y-4">
@@ -377,12 +377,12 @@ export function HomePageClient() {
             </section>
 
             <section 
-                className="relative w-full py-24 md:py-40 bg-white/[0.02] dark:bg-black/[0.02] border-y border-white/5"
+                className="relative w-full py-16 sm:py-24 md:py-40 bg-white/[0.02] dark:bg-black/[0.02] border-y border-white/5"
             >
                 <div id="testimonials" className="container mx-auto px-4 md:px-6">
-                    <div className="flex flex-col items-center justify-center space-y-4 text-center mb-16">
+                    <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12 sm:mb-16">
                         <div className="inline-block rounded-full bg-primary/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-primary border border-primary/20">Success Stories</div>
-                        <h2 className="text-4xl font-headline font-extrabold tracking-tight sm:text-6xl text-gradient">Loved by ambitious seekers</h2>
+                        <h2 className="text-3xl font-headline font-extrabold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl text-gradient">Loved by ambitious seekers</h2>
                     </div>
                     <div>
                         <Carousel
@@ -424,25 +424,25 @@ export function HomePageClient() {
             </section>
 
             {/* Final CTA */}
-            <section className="py-24 md:py-48 overflow-hidden relative">
-                <div className="container mx-auto px-4 text-center">
+            <section className="py-16 sm:py-24 md:py-48 overflow-hidden relative w-full">
+                <div className="container mx-auto px-4 text-center w-full">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         viewport={{ once: true }}
-                        className="premium-card max-w-4xl mx-auto py-20 px-8 flex flex-col items-center space-y-8 relative overflow-hidden"
+                        className="premium-card w-full max-w-4xl mx-auto py-12 sm:py-20 px-4 sm:px-8 flex flex-col items-center space-y-6 sm:space-y-8 relative overflow-hidden"
                     >
                         <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-64 h-64 bg-primary/20 rounded-full blur-[100px]" />
-                        <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-64 h-64 bg-purple-500/20 rounded-full blur-[100px]" />
+                        <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-32 sm:w-64 h-32 sm:h-64 bg-purple-500/20 rounded-full blur-[100px]" />
                         
-                        <h2 className="text-4xl md:text-6xl font-headline font-extrabold tracking-tight">Ready to <span className="text-gradient">skyrocket</span> your career?</h2>
-                        <p className="text-xl text-muted-foreground max-w-2xl">
+                        <h2 className="text-3xl sm:text-4xl md:text-6xl font-headline font-extrabold tracking-tight px-2">Ready to <span className="text-gradient">skyrocket</span> your career?</h2>
+                        <p className="text-base sm:text-xl text-muted-foreground max-w-2xl px-2">
                             Join over 10,000 professionals who used FitCV to land positions at companies like Google, Meta, and Tesla.
                         </p>
-                        <Button asChild size="lg" variant="premium" className="h-16 px-12 text-xl rounded-full shadow-2xl">
-                            <Link href="/signup">
-                                Claim My Free Account
-                                <Sparkles className="ml-2 h-6 w-6" />
+                        <Button asChild size="lg" variant="premium" className="h-14 sm:h-16 px-8 sm:px-12 text-lg sm:text-xl rounded-full shadow-2xl w-[90%] sm:w-auto overflow-hidden whitespace-nowrap text-ellipsis flex-nowrap shrink-0">
+                            <Link href="/templates" className="flex items-center justify-center w-full">
+                                <span className="truncate max-w-[calc(100%-2rem)]">Claim My Free Account</span>
+                                <Sparkles className="ml-2 h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0" />
                             </Link>
                         </Button>
                         <p className="text-sm text-muted-foreground opacity-60">
