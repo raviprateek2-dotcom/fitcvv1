@@ -1,0 +1,31 @@
+{
+  "version": 2,
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "installCommand": "npm ci",
+  "ignoreCommand": "bash -c 'if [ \"$VERCEL_ENV\" = \"production\" ]; then exit 1; else exit 0; fi'",
+  "regions": ["iad1", "sfo1", "cle1", "pdx1", "gru1", "fra1", "lhr1", "dub1", "ams1", "cdg1", "arn1", "bom1", "sin1", "hnd1", "icn1", "syd1"],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    }
+  ]
+}
