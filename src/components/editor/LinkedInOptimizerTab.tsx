@@ -28,7 +28,6 @@ export function LinkedInOptimizerTab({ resumeData }: LinkedInOptimizerTabProps) 
         try {
             const response = await optimizeLinkedInProfile({
                 resumeContent: JSON.stringify(resumeData),
-                targetRole: resumeData.personalInfo.title
             });
 
             if (response.success && response.data) {
@@ -63,7 +62,7 @@ export function LinkedInOptimizerTab({ resumeData }: LinkedInOptimizerTabProps) 
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <p className="text-sm text-muted-foreground">
-                        We'll use your current resume data to craft a headline and 'About' section designed to catch the eye of recruiters on LinkedIn.
+                        We&apos;ll use your current resume data to craft a headline and &apos;About&apos; section designed to catch the eye of recruiters on LinkedIn.
                     </p>
                     <Button onClick={handleOptimize} disabled={isLoading} className="w-full bg-[#0A66C2] hover:bg-[#004182] text-white">
                         {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
@@ -91,7 +90,7 @@ export function LinkedInOptimizerTab({ resumeData }: LinkedInOptimizerTabProps) 
                     <Card variant="neuro" className="border-l-4 border-l-[#0A66C2]">
                         <CardHeader className="pb-2">
                             <div className="flex justify-between items-center">
-                                <Label className="text-xs font-bold uppercase tracking-wider text-[#0A66C2]">Optimized 'About' Section</Label>
+                                <Label className="text-xs font-bold uppercase tracking-wider text-[#0A66C2]">Optimized &apos;About&apos; Section</Label>
                                 <Button variant="ghost" size="sm" onClick={() => copyToClipboard(result.about, 'about')}>
                                     {copiedField === 'about' ? <CheckCircle2 className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
                                 </Button>

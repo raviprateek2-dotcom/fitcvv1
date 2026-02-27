@@ -1,14 +1,14 @@
-
 'use server';
 
-import { predictInterviewQuestions as predictFlow, type PredictQuestionsInput } from '@/ai/flows/ai-question-predictor';
+import { predictInterviewQuestions as predictFlow } from '@/ai/flows/ai-question-predictor';
+import type { PredictQuestionsInput } from '@/ai/flows/ai-question-predictor';
+import { z } from 'zod';
+import { guardedAction } from '@/lib/action-guard';
 
-export async function predictInterviewQuestions(input: PredictQuestionsInput) {
-  try {
-    const result = await predictFlow(input);
-    return { success: true, data: result };
-  } catch (error: any) {
-    console.error('AI question predictor failed:', error);
-    return { success: false, error: error.message || 'Failed to predict questions. Please try again.' };
-  }
-}
+// Flow only takes: { jobDescription: string } — resumeContent is not in the flow schema
+const schema = z.object({
+  jobDescription: z.string().min(1, 'Job description is required').max(10_000, 'Job description too large'),
+});
+
+export const predictInterviewQuestions = async (input: PredictQuestionsInput, userId?: string) =>
+  guardedAction(schema, (validated) => predictFlow(validated))(input, userId);

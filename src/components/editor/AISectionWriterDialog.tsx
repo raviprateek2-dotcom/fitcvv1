@@ -16,7 +16,8 @@ interface AISectionWriterDialogProps {
 }
 
 type GenerationResult = {
-  generatedContent: string;
+  improvedContent: string;
+  reasoning: string;
 };
 
 export default function AISectionWriterDialog({ sectionName, jobDescription, existingContent, onApply, children }: AISectionWriterDialogProps) {
@@ -38,9 +39,8 @@ export default function AISectionWriterDialog({ sectionName, jobDescription, exi
     setResult(null);
     try {
       const response = await writeResumeSection({
-        sectionToGenerate: sectionName,
+        resumeSection: existingContent ? `${sectionName}: ${existingContent}` : sectionName,
         jobDescription,
-        existingContent,
       });
 
       if (response.success && response.data) {
@@ -65,7 +65,7 @@ export default function AISectionWriterDialog({ sectionName, jobDescription, exi
 
   const handleApply = () => {
     if (result) {
-      onApply(result.generatedContent);
+      onApply(result.improvedContent);
       setOpen(false);
     }
   };
@@ -105,7 +105,7 @@ export default function AISectionWriterDialog({ sectionName, jobDescription, exi
           <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-4">
             <div>
               <h3 className="font-semibold mb-2">Generated Content:</h3>
-              <div className="p-4 bg-secondary rounded-md text-sm whitespace-pre-wrap font-mono">{result.generatedContent}</div>
+              <div className="p-4 bg-secondary rounded-md text-sm whitespace-pre-wrap font-mono">{result.improvedContent}</div>
             </div>
           </div>
         )}

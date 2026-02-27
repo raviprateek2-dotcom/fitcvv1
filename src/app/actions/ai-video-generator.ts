@@ -1,14 +1,12 @@
-
 'use server';
 
-import { generateVideo as generateVideoFlow, type GenerateVideoInput } from '@/ai/flows/ai-video-generator';
+import { generateVideo as generateVideoFlow } from '@/ai/flows/ai-video-generator';
+import { z } from 'zod';
+import { guardedAction } from '@/lib/action-guard';
 
-export async function generateVideo(input: GenerateVideoInput) {
-  try {
-    const result = await generateVideoFlow(input);
-    return { success: true, data: result };
-  } catch (error: any) {
-    console.error('AI video generator failed:', error);
-    return { success: false, error: error.message || 'Failed to generate video. Please try again later.' };
-  }
-}
+const schema = z.object({
+  prompt: z.string().min(1).max(1_000, 'Video prompt too long'),
+});
+
+export const generateVideo = async (input: z.infer<typeof schema>, userId?: string) =>
+  guardedAction(schema, (validated) => generateVideoFlow(validated))(input, userId);

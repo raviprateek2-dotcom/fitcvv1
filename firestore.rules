@@ -49,7 +49,14 @@ service cloud.firestore {
         allow update, delete: if isSignedIn() && resource.data.userId == request.auth.uid;
 
         match /feedback/{feedbackId} {
-          allow get, list, create: if true;
+          allow get, list: if true;
+          allow create: if request.resource.data.keys().hasAll(['name', 'comment'])
+                        && request.resource.data.name is string
+                        && request.resource.data.name.size() > 0
+                        && request.resource.data.name.size() <= 100
+                        && request.resource.data.comment is string
+                        && request.resource.data.comment.size() > 0
+                        && request.resource.data.comment.size() <= 2000;
           allow update, delete: if false;
         }
      }

@@ -1,5 +1,5 @@
 
-import { blogPosts } from '@/lib/blog-posts';
+import { getAllPosts } from '@/lib/blog-posts';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:9002';
 
@@ -15,7 +15,7 @@ function generateRssFeed() {
   <atom:link href="${siteUrl}/rss.xml" rel="self" type="application/rss+xml" />
 `;
 
-  blogPosts.forEach(post => {
+  getAllPosts().forEach(post => {
     rss += `
   <item>
     <title>${post.title}</title>

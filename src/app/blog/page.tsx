@@ -1,5 +1,6 @@
 
 import { BlogClientPage } from '@/components/blog/BlogClientPage';
+import { getAllPosts } from '@/lib/blog-posts';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -8,5 +9,6 @@ export const metadata: Metadata = {
 };
 
 export default function BlogPage() {
-  return <BlogClientPage />;
+  const posts = getAllPosts();
+  return <BlogClientPage posts={posts} />;
 }

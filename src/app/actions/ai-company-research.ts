@@ -1,14 +1,15 @@
-
 'use server';
 
-import { researchCompany as researchFlow, type CompanyResearchInput } from '@/ai/flows/ai-company-researcher';
+import { researchCompany } from '@/ai/flows/ai-company-researcher';
+import type { CompanyResearchOutput } from '@/ai/flows/ai-company-researcher';
+import { z } from 'zod';
+import { guardedAction } from '@/lib/action-guard';
 
-export async function getCompanyInsights(input: CompanyResearchInput) {
-  try {
-    const result = await researchFlow(input);
-    return { success: true, data: result };
-  } catch (error: any) {
-    console.error('AI Company Research failed:', error);
-    return { success: false, error: error.message || 'Failed to research company.' };
-  }
-}
+export type { CompanyResearchOutput };
+
+const schema = z.object({
+  companyName: z.string().min(1, 'Company name is required').max(200, 'Company name too long'),
+});
+
+export const getCompanyInsights = async (input: z.infer<typeof schema>, userId?: string) =>
+  guardedAction(schema, (validated) => researchCompany(validated))(input, userId);

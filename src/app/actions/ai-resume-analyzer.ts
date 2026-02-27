@@ -1,17 +1,17 @@
-
 'use server';
 
-import { analyzeResume as analyzeResumeFlow, type AnalyzeResumeOutput as AnalyzeResumeOutputFlow } from '@/ai/flows/ai-resume-analyzer';
-import type { AnalyzeResumeInput } from '@/ai/flows/ai-resume-analyzer';
+import { analyzeResume as analyzeResumeFlow } from '@/ai/flows/ai-resume-analyzer';
+import type { AnalyzeResumeInput, AnalyzeResumeOutput } from '@/ai/flows/ai-resume-analyzer';
+import { z } from 'zod';
+import { guardedAction } from '@/lib/action-guard';
 
-export type AnalyzeResumeOutput = AnalyzeResumeOutputFlow;
+export type { AnalyzeResumeOutput };
 
-export async function analyzeResume(input: AnalyzeResumeInput) {
-  try {
-    const result = await analyzeResumeFlow(input);
-    return { success: true, data: result };
-  } catch (error: any) {
-    console.error('AI resume analyzer failed:', error);
-    return { success: false, error: error.message || 'Failed to analyze resume. Please try again later.' };
-  }
-}
+// Both fields are required in the flow schema
+const schema = z.object({
+  resumeContent: z.string().min(1, 'Resume content is required').max(50_000, 'Resume content too large'),
+  jobDescription: z.string().min(1, 'Job description is required').max(10_000, 'Job description too large'),
+});
+
+export const analyzeResume = async (input: AnalyzeResumeInput, userId?: string) =>
+  guardedAction(schema, (validated) => analyzeResumeFlow(validated))(input, userId);

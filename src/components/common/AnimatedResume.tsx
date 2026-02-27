@@ -3,7 +3,7 @@
 
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -136,6 +136,13 @@ const ClassicTemplate = () => (
 
 const templates = ['professional', 'executive', 'modern', 'classic'];
 
+const TemplateMap: Record<string, React.FC> = {
+  professional: ProfessionalTemplate,
+  executive: ExecutiveTemplate,
+  modern: ModernTemplate,
+  classic: ClassicTemplate,
+};
+
 export function AnimatedResume({ className }: AnimatedResumeProps) {
   const [templateId, setTemplateId] = useState('professional');
 
@@ -151,22 +158,7 @@ export function AnimatedResume({ className }: AnimatedResumeProps) {
     return () => clearInterval(interval);
   }, []);
   
-  const ResumeTemplate = () => {
-    switch (templateId) {
-        case 'professional':
-            return <ProfessionalTemplate />;
-        case 'executive':
-            return <ExecutiveTemplate />;
-        case 'modern':
-            return <ModernTemplate />;
-        case 'classic':
-            return <ClassicTemplate />;
-        case 'creative':
-        case 'minimalist':
-        default:
-            return <ProfessionalTemplate />;
-    }
-  }
+  const ResumeTemplate = TemplateMap[templateId] || ProfessionalTemplate;
 
   return (
     <div

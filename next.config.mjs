@@ -1,15 +1,25 @@
-
+import { withSentryConfig } from '@sentry/nextjs';
 
 const contentSecurityPolicy = `
   default-src 'self';
-  script-src 'self' 'unsafe-eval' 'unsafe-inline' *.youtube.com *.twitter.com;
+  script-src 'self' 'unsafe-inline' 'unsafe-eval' *.youtube.com *.twitter.com;
   child-src 'self' *.youtube.com *.google.com *.twitter.com;
   style-src 'self' 'unsafe-inline' *.googleapis.com;
   img-src * blob: data:;
-  media-src 'self' *.youtube.com;
-  connect-src *;
+  media-src 'self' blob: data: *.youtube.com;
+  connect-src 'self'
+    https://*.googleapis.com
+    https://*.firebaseio.com
+    https://*.firebase.google.com
+    https://firestore.googleapis.com
+    https://identitytoolkit.googleapis.com
+    https://securetoken.googleapis.com
+    https://generativelanguage.googleapis.com
+    wss://*.firebaseio.com;
   font-src 'self' data: *.googleapis.com *.gstatic.com;
+  worker-src 'self' blob:;
 `;
+
 
 const securityHeaders = [
   {
@@ -41,12 +51,6 @@ const securityHeaders = [
 
 const nextConfig = {
   /* config options here */
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   devIndicators: {
     allowedDevOrigins: ["*.cloudworkstations.dev"],
   },
@@ -85,6 +89,7 @@ const nextConfig = {
     ],
   },
   async headers() {
+    if (process.env.NODE_ENV !== 'production') return [];
     return [
       {
         // Apply these headers to all routes in your application.
@@ -96,3 +101,22 @@ const nextConfig = {
 };
 
 export default nextConfig;
+
+/*
+export default withSentryConfig(
+  nextConfig,
+  {
+    silent: true,
+    org: "fitcv",
+    project: "fitcv",
+  },
+  {
+    widenClientFileUpload: true,
+    transpileClientSDK: true,
+    tunnelRoute: "/monitoring",
+    hideSourceMaps: true,
+    disableLogger: true,
+    automaticVercelMonitors: true,
+  }
+);
+*/

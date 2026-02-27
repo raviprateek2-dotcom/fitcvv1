@@ -1,24 +1,20 @@
 
 'use client';
 
-import { blogPostsMetadata } from '@/lib/blog-posts-metadata';
 import { Card, CardContent } from '@/components/ui/card';
+import type { BlogPost } from '@/lib/blog-posts';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, BookOpen, Clock, Target } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { cn } from '@/lib/utils';
 
-export function BlogClientPage() {
+export function BlogClientPage({ posts }: { posts: BlogPost[] }) {
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
+    visible: { opacity: 1, transition: { staggerChildren: 0.1 } },
   };
 
   const itemVariants = {
@@ -27,17 +23,28 @@ export function BlogClientPage() {
   };
 
   return (
-    <div className="bg-secondary">
-      <div className="container mx-auto px-4 md:px-6 py-12 md:py-20">
+    <div className="relative min-h-screen overflow-hidden">
+      {/* Animated Mesh Background (Unified with Landing/Editor) */}
+      <div className="fixed inset-0 -z-10 bg-background">
+        <div className="absolute inset-0 animate-mesh opacity-[0.08] dark:opacity-[0.12]" />
+      </div>
+
+      <div className="container mx-auto px-4 md:px-6 py-12 md:py-24 relative">
         <motion.div 
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          className="max-w-3xl mb-16"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
         >
-          <h1 className="text-4xl font-headline font-bold tracking-tight sm:text-5xl">From the Blog</h1>
-          <p className="mt-4 text-lg text-muted-foreground">
-            Explore articles on resume writing, career development, and interview tips.
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest mb-6">
+            <BookOpen className="w-3.5 h-3.5" />
+            Engineering Knowledge
+          </div>
+          <h1 className="text-4xl md:text-6xl font-headline font-extrabold tracking-tight mb-6 leading-tight">
+            Advanced Career <span className="text-gradient">Insights</span>
+          </h1>
+          <p className="text-xl text-muted-foreground leading-relaxed">
+            Strategic advice on resume engineering, ATS optimization, and high-stakes interview performance for elite professionals.
           </p>
         </motion.div>
 
@@ -47,36 +54,57 @@ export function BlogClientPage() {
           initial="hidden"
           animate="visible"
         >
-          {blogPostsMetadata.map((post) => {
+          {posts.map((post) => {
             const image = PlaceHolderImages.find(img => img.id === post.imageId);
+            const wordCount = post.content.trim().split(/\s+/).length;
+            const readingTime = Math.ceil(wordCount / 200);
+
             return (
-              <motion.div key={post.slug} variants={itemVariants}>
-                <Card className="group overflow-hidden flex flex-col transition-all duration-300 hover:shadow-2xl h-full" variant="neuro">
-                  <Link href={`/blog/${post.slug}`} className="block overflow-hidden">
-                    {image && (
-                      <Image
-                        src={image.imageUrl}
-                        alt={post.title}
-                        width={600}
-                        height={400}
-                        data-ai-hint={image.imageHint}
-                        className="w-full h-48 object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
-                      />
-                    )}
-                  </Link>
-                <CardContent className="p-6 flex flex-col flex-grow">
-                  <h2 className="text-xl font-bold font-headline mb-2 group-hover:text-primary transition-colors">
-                      <Link href={`/blog/${post.slug}`}>{post.title}</Link>
-                  </h2>
-                  <p className="text-muted-foreground text-sm flex-grow mb-4">{post.description}</p>
-                  <Button variant="link" asChild className="p-0 h-auto self-start font-semibold">
-                      <Link href={`/blog/${post.slug}`}>
-                      Read More <ArrowRight className="ml-2 h-4 w-4" />
-                      </Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            </motion.div>
+              <motion.div key={post.slug} variants={itemVariants} className="flex h-full">
+                <Link href={`/blog/${post.slug}`} className="group w-full">
+                  <div className="premium-card bg-glass h-full flex flex-col p-0 overflow-hidden border-white/5 group-hover:border-primary/30 group-hover:shadow-2xl transition-all duration-500">
+                    <div className="relative h-48 overflow-hidden">
+                      {image && (
+                        <Image
+                          src={image.imageUrl}
+                          alt={post.title}
+                          fill
+                          priority={posts.indexOf(post) < 3}
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          className="object-cover transition-transform duration-700 group-hover:scale-110"
+                        />
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
+                      <div className="absolute bottom-4 left-4">
+                        <span className="px-2 py-1 rounded bg-primary text-[10px] font-bold text-primary-foreground uppercase tracking-widest">
+                          Article
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div className="p-6 flex flex-col flex-grow">
+                      <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-3">
+                        <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {readingTime}m Read</span>
+                        <span className="flex items-center gap-1 text-primary"><Target className="w-3 h-3" /> Strategy</span>
+                      </div>
+                      
+                      <h2 className="text-xl font-bold font-headline mb-3 leading-tight group-hover:text-primary transition-colors">
+                        {post.title}
+                      </h2>
+                      
+                      <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 mb-6 leading-relaxed flex-grow">
+                        {post.description}
+                      </p>
+                      
+                      <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
+                        <span className="text-xs font-bold uppercase tracking-widest text-primary group-hover:gap-2 flex items-center gap-1 transition-all">
+                          Read Insight <ArrowRight className="w-4 h-4" />
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
             )
           })}
         </motion.div>

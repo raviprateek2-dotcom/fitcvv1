@@ -41,14 +41,15 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/20 bg-gradient-glass backdrop-blur-2xl no-print">
-      <div className="container flex h-16 items-center">
-        <div className="mr-auto flex items-center">
-          <Link href="/" className="flex items-center gap-2 font-bold font-headline text-lg group">
-             <div className="animate-float">
-              <Rocket className="h-6 w-6 text-primary transition-transform group-hover:scale-110" />
+    <header className="sticky top-4 z-50 w-[95%] max-w-7xl mx-auto rounded-2xl bg-glass backdrop-blur-xl no-print transition-all duration-300">
+      <div className="container px-4 flex h-16 items-center">
+        <div className="mr-8 flex items-center">
+          <Link href="/" className="flex items-center gap-2 font-bold font-headline text-xl group">
+             <div className="relative">
+              <div className="absolute -inset-1 bg-primary/20 blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+              <Rocket className="h-6 w-6 text-primary relative transition-transform group-hover:scale-110 group-hover:rotate-12" />
             </div>
-            <span className="tracking-tight">FitCV</span>
+            <span className="tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">FitCV</span>
           </Link>
         </div>
 

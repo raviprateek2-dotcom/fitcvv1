@@ -10,6 +10,7 @@ import { aiNarrate } from '@/app/actions/ai-narrator';
 import { Loader2, Mic, MicOff, RefreshCw, Volume2, Ear, AlertCircle, Terminal, Database, Layers, Rocket, ChartLine, Briefcase } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
 
 const interviewQuestions: Record<string, string[]> = {
   general: [
@@ -67,7 +68,8 @@ export function VoiceMockInterview() {
   const [questionAudio, setQuestionAudio] = useState<string | null>(null);
   const [track, setTrack] = useState<typeof tracks[number]['id']>('general');
 
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const recognitionRef = useRef<any>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const { toast } = useToast();
@@ -107,7 +109,7 @@ export function VoiceMockInterview() {
     }
     
     try {
-      const feedbackResponse = await mockInterview({ userAnswer: transcript, question: currentQuestion, track });
+      const feedbackResponse = await mockInterview({ userAnswer: transcript, question: currentQuestion, track, persona: 'friendly' });
       if (!feedbackResponse.success || !feedbackResponse.data) {
         throw new Error(feedbackResponse.error || 'Failed to get interview feedback.');
       }
@@ -121,8 +123,8 @@ export function VoiceMockInterview() {
       setFeedbackAudio(audioResponse.data.audioDataUri);
       setInterviewState('speaking');
 
-    } catch (error: any) {
-      toast({ variant: 'destructive', title: 'Processing Failed', description: error.message });
+    } catch (error: unknown) {
+      toast({ variant: 'destructive', title: 'Processing Failed', description: error instanceof Error ? error.message : 'Processing failed' });
       setInterviewState('idle');
     }
   }, [transcript, currentQuestion, toast, track]);
@@ -140,21 +142,23 @@ export function VoiceMockInterview() {
             recognition.interimResults = true;
             recognition.lang = 'en-US';
 
-            recognition.onresult = (event) => {
+            recognition.onresult = (event: Event) => {
+                const se = event as unknown as { resultIndex: number; results: SpeechRecognitionResultList };
                 let finalTranscript = '';
-                for (let i = event.resultIndex; i < event.results.length; ++i) {
-                if (event.results[i].isFinal) {
-                    finalTranscript += event.results[i][0].transcript;
-                }
+                for (let i = se.resultIndex; i < se.results.length; ++i) {
+                  if (se.results[i].isFinal) {
+                    finalTranscript += se.results[i][0].transcript;
+                  }
                 }
                 if (finalTranscript) {
-                setTranscript(prev => prev + finalTranscript + ' ');
+                  setTranscript(prev => prev + finalTranscript + ' ');
                 }
             };
 
-            recognition.onerror = (event) => {
-                if (event.error !== 'no-speech') {
-                    toast({ variant: 'destructive', title: 'Recognition Error', description: `Voice system error: ${event.error}` });
+            recognition.onerror = (event: Event) => {
+                const errorEvent = event as unknown as { error: string };
+                if (errorEvent.error !== 'no-speech') {
+                    toast({ variant: 'destructive', title: 'Recognition Error', description: `Voice system error: ${errorEvent.error}` });
                 }
                 setInterviewState('idle');
             };
@@ -175,8 +179,6 @@ export function VoiceMockInterview() {
   }, [toast, interviewState, processTranscript]);
   
   const readQuestionAloud = async () => {
-    if (interviewState !== 'idle' || interviewState === 'unsupported') return;
-
     if (questionAudio && audioRef.current) {
         audioRef.current.src = questionAudio;
         audioRef.current.play();
@@ -193,7 +195,7 @@ export function VoiceMockInterview() {
         } else {
             throw new Error(audioResponse.error || 'Failed to generate question audio.');
         }
-    } catch (error: any) {
+    } catch (error: unknown) {
         toast({ variant: 'destructive', title: 'Narration Failed', description: "Could not read the question aloud." });
     } finally {
         setInterviewState('idle');
@@ -250,7 +252,8 @@ export function VoiceMockInterview() {
             <CardContent className="space-y-6 flex flex-col items-center">
                 <div className="w-full max-w-xs space-y-2">
                     <Label className="text-xs font-bold uppercase text-muted-foreground block text-center">Practice Track</Label>
-                    <Select value={track} onValueChange={(v: any) => handleTrackChange(v)}>
+                    <Select value={track}
+                        onValueChange={(v) => handleTrackChange(v as typeof tracks[number]['id'])}>
                         <SelectTrigger>
                             <SelectValue />
                         </SelectTrigger>

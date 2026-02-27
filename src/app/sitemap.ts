@@ -1,6 +1,6 @@
 
 import { MetadataRoute } from 'next';
-import { blogPosts } from '@/lib/blog-posts';
+import { getAllPosts } from '@/lib/blog-posts';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:9002';
 
@@ -14,7 +14,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   // Dynamic blog posts
-  const posts = blogPosts.map((post) => ({
+  const posts = getAllPosts().map((post) => ({
     url: `${siteUrl}/blog/${post.slug}`,
     lastModified: new Date().toISOString(), // In a real app, this would be the post's update date
     changeFrequency: 'weekly' as const,

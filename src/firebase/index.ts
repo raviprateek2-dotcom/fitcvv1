@@ -4,9 +4,11 @@ import { firebaseConfig } from '@/firebase/config';
 import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
 import type { Firestore } from 'firebase/firestore';
+import type { Analytics } from 'firebase/analytics';
 
 // Store the dynamic import promise to ensure Firestore is only imported once.
 let firestorePromise: Promise<typeof import('firebase/firestore')> | null = null;
+let analyticsPromise: Promise<typeof import('firebase/analytics')> | null = null;
 
 // IMPORTANT: DO NOT MODIFY THIS FUNCTION
 export function initializeFirebase() {
@@ -45,10 +47,24 @@ export function getSdks(firebaseApp: FirebaseApp) {
     return getFirestore(firebaseApp);
   };
 
+  const getAnalyticsInstance = async (): Promise<Analytics | null> => {
+    if (typeof window === 'undefined') return null;
+    if (!analyticsPromise) {
+      analyticsPromise = import('firebase/analytics');
+    }
+    const { getAnalytics, isSupported } = await analyticsPromise;
+    const supported = await isSupported();
+    if (supported) {
+      return getAnalytics(firebaseApp);
+    }
+    return null;
+  };
+
   return {
     firebaseApp,
     auth: getAuth(firebaseApp),
-    getFirestore: getFirestoreInstance, // Return a function to get Firestore
+    getFirestore: getFirestoreInstance,
+    getAnalytics: getAnalyticsInstance,
   };
 }
 

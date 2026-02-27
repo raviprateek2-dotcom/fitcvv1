@@ -3,199 +3,200 @@
     {
       "id": "hero-image",
       "description": "A person working on a laptop in a modern workspace.",
-      "imageUrl": "https://images.unsplash.com/photo-1758876202983-c36dd5019142?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxwcm9mZXNzaW9uYWwlMjB3b3Jrc3BhY2V8ZW58MHx8fHwxNzYwNzM0NjcwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://placehold.co/1080x720/222222/FFFFFF?text=FitCV+Hero",
       "imageHint": "professional workspace"
     },
     {
       "id": "why-us-image",
       "description": "A split image showing a plain document transforming into a beautifully designed resume.",
-      "imageUrl": "https://images.unsplash.com/photo-1556740758-90de374c12ad?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1740&q=80",
+      "imageUrl": "https://placehold.co/1080x720/222222/FFFFFF?text=The+FitCV+Advantage",
       "imageHint": "resume builder interface"
     },
     {
       "id": "template-modern",
       "description": "A preview of a modern resume template.",
-      "imageUrl": "https://images.unsplash.com/photo-1761821815839-254117975853?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxyZXN1bWUlMjB0ZW1wbGF0ZSUyMG1vZGVybnxlbnwwfHx8fDE3NjE0NDI4Njd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://placehold.co/600x400/222222/FFFFFF?text=Modern+Template",
       "imageHint": "modern resume"
     },
     {
       "id": "template-classic",
       "description": "A preview of a classic resume template.",
-      "imageUrl": "https://images.unsplash.com/photo-1761821815887-18a7c2b0c399?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxyZXN1bWUlMjB0ZW1wbGF0ZSUyMGNsYXNzaWN8ZW58MHx8fHwxNzYxNDQyODUwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://placehold.co/600x400/222222/FFFFFF?text=Classic+Template",
       "imageHint": "classic document"
     },
     {
       "id": "template-creative",
       "description": "A preview of a creative resume template.",
-      "imageUrl": "https://images.unsplash.com/photo-1761821815858-c1c5d3dad0d7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxyZXN1bWUlMjB0ZW1wbGF0ZSUyMGNyZWF0aXZlfGVufDB8fHx8MTc2MTQ0Mjg5Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://placehold.co/600x400/222222/FFFFFF?text=Creative+Template",
       "imageHint": "creative design"
     },
     {
       "id": "template-minimalist",
       "description": "A preview of a minimalist resume template.",
-      "imageUrl": "https://images.unsplash.com/photo-1761821815918-a63e9f45e7bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxyZXN1bWUlMjB0ZW1wbGF0ZSUyMG1pbmltYWx8ZW58MHx8fHwxNzYxNDQyOTMyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://placehold.co/600x400/222222/FFFFFF?text=Minimalist+Template",
       "imageHint": "minimalist layout"
     },
     {
       "id": "template-professional",
       "description": "A preview of a professional resume template.",
-      "imageUrl": "https://images.unsplash.com/photo-1761821815927-4a0b3b4f62e8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxyZXN1bWUlMjB0ZW1wbGF0ZSUyMHByb2Zlc3Npb25hbHxlbnwwfHx8fDE3NjE0NDI5NzN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://placehold.co/600x400/222222/FFFFFF?text=Professional+Template",
       "imageHint": "corporate document"
     },
     {
       "id": "template-executive",
       "description": "A preview of an executive resume template with a sidebar.",
-      "imageUrl": "https://images.unsplash.com/photo-1761821815904-813e3130c2c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxyZXN1bWUlMjB0ZW1wbGF0ZSUyMGV4ZWN1dGl2ZXxlbnwwfHx8fDE3NjE0NDMwMjZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://placehold.co/600x400/222222/FFFFFF?text=Executive+Template",
       "imageHint": "executive paper"
     },
     {
       "id": "template-elegant",
       "description": "A preview of an elegant, sophisticated resume template.",
-      "imageUrl": "https://images.unsplash.com/photo-1761821815823-9ed0ec096697?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxlbGVnYW50JTIwcmVzdW1lfGVufDB8fHx8MTc2MjQ0MzEwNnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://placehold.co/600x400/222222/FFFFFF?text=Elegant+Template",
       "imageHint": "elegant resume"
     },
     {
       "id": "template-technical",
       "description": "A preview of a technical, high-density resume template.",
-      "imageUrl": "https://images.unsplash.com/photo-1761821815873-ea6060000ed3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx0ZWNobmljYWwlMjByZXN1bWV8ZW58MHx8fHwxNzYyNDQzMTIxfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://placehold.co/600x400/222222/FFFFFF?text=Technical+Template",
       "imageHint": "technical document"
     },
     {
       "id": "blog-resume-guide",
       "description": "A person writing or editing a document on a desk.",
-      "imageUrl": "https://images.unsplash.com/photo-1634245482527-60ac666a8c9f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx3cml0aW5nJTIwcmVzdW1lfGVufDB8fHx8MTc2MDc1NTA1OHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/articles/blog-resume-guide.png",
       "imageHint": "writing resume"
     },
     {
       "id": "blog-resume-mistakes",
       "description": "A document with a red X or cross mark over it.",
-      "imageUrl": "https://images.unsplash.com/photo-1593547014324-50d0c454ac27?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx3cm9uZyUyMHBhcGVyfGVufDB8fHx8MTc2MDc1NTA1OHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/articles/blog-resume-mistakes.png",
       "imageHint": "wrong paper"
     },
     {
       "id": "blog-ats-bots",
       "description": "An illustration of a robot scanning a document.",
-      "imageUrl": "https://images.unsplash.com/photo-1593377202145-c5e97fd065f4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxyb2JvdCUyMGRvY3VtZW50fGVufDB8fHx8MTc2MDc1NTA1OHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/articles/blog-ats-bots.png",
       "imageHint": "robot document"
     },
     {
       "id": "blog-action-verbs",
       "description": "A list of powerful words on a notebook.",
-      "imageUrl": "https://images.unsplash.com/photo-1685022407983-1100320a9754?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxhY3Rpb24lMjB3b3Jkc3xlbnwwfHx8fDE3NjA3NTUwNTh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/articles/blog-action-verbs.png",
       "imageHint": "action words"
     },
     {
       "id": "blog-cv-resume",
       "description": "Two documents side-by-side, one short (resume) and one long (CV).",
-      "imageUrl": "https://images.unsplash.com/photo-1759894508843-a0d45fe52ea9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxkb2N1bWVudCUyMGNvbXBhcmlzb258ZW58MHx8fHwxNzYwNzU1MDU4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/articles/blog-cv-resume.png",
       "imageHint": "document comparison"
     },
     {
       "id": "blog-skills",
       "description": "A word cloud or collection of skill-related icons.",
-      "imageUrl": "https://images.unsplash.com/photo-1743004144302-5ddc985c2a9e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxza2lsbHMlMjBjb25jZXB0fGVufDB8fHx8MTc2MDc1NTA1OHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/articles/blog-skills.png",
       "imageHint": "skills concept"
     },
     {
       "id": "blog-cover-letter",
       "description": "A person writing a formal letter.",
-      "imageUrl": "https://images.unsplash.com/photo-1588338949401-8fd705bca823?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8d3JpdGluZyUyMGxldHRlcnxlbnwwfHx8fDE3NjA3NTUwNTh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/articles/blog-cover-letter.png",
       "imageHint": "writing letter"
     },
     {
       "id": "blog-networking",
       "description": "An abstract illustration of interconnected people or nodes.",
-      "imageUrl": "https://images.unsplash.com/photo-1571978289967-56c98e5c67b7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxwZW9wbGUlMjBuZXR3b3JrfGVufDB8fHx8MTc2MDc1NTA1OHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/articles/blog-networking.png",
       "imageHint": "people network"
     },
     {
       "id": "blog-interview-prep",
       "description": "A person sitting at a desk preparing for an interview, with notes and a laptop.",
-      "imageUrl": "https://images.unsplash.com/photo-1549923746-9507eec27243?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxpbnRlcnZpZXclMjBwcmVwYXJhdGlvbnxlbnwwfHx8fDE3NjA3NTUwNTh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/articles/blog-interview-prep.png",
       "imageHint": "interview preparation"
     },
     {
       "id": "blog-soft-skills",
       "description": "Icons representing communication, teamwork, and problem-solving.",
-      "imageUrl": "https://images.unsplash.com/photo-1760624591122-e587b406b391?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHx0ZWFtd29yayUyMGNvbW11bmljYXRpb258ZW58MHx8fHwxNzYwNzU1MDU5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/articles/blog-soft-skills.png",
       "imageHint": "teamwork communication"
     },
     {
       "id": "blog-resume-gaps",
       "description": "A timeline with a noticeable gap in the middle.",
-      "imageUrl": "https://images.unsplash.com/photo-1610484826915-2f8319c35582?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx0aW1lbGluZSUyMGdhcHxlbnwwfHx8fDE3NjE4NTg5ODh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/articles/blog-resume-gaps.png",
       "imageHint": "timeline gap"
     },
     {
       "id": "blog-tech-skills",
       "description": "A futuristic screen displaying code and data.",
-      "imageUrl": "https://images.unsplash.com/photo-1650600538903-ec09f670c391?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxjb2RlJTIwc2NyZWVufGVufDB8fHx8MTc2MDczNDc3MHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/articles/blog-tech-skills.png",
       "imageHint": "code screen"
     },
     {
       "id": "blog-linkedin",
       "description": "A person's profile page on a professional social network.",
-      "imageUrl": "https://images.unsplash.com/photo-1746014600751-831d8d49efaa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxwcm9maWxlJTIwcGFnZXxlbnwwfHx8fDE3NjA3NTUwNTh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/articles/blog-linkedin.png",
       "imageHint": "profile page"
     },
     {
       "id": "blog-follow-up",
       "description": "A person sending an email on a laptop.",
-      "imageUrl": "https://images.unsplash.com/photo-1683117927786-f146491fb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxzZW5kaW5nJTIwZW1haWx8ZW58MHx8fHwxNzYwNzU1MDU4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/articles/blog-follow-up.png",
       "imageHint": "sending email"
     },
     {
       "id": "blog-interview-question",
       "description": "A person talking to an interviewer across a table.",
-      "imageUrl": "https://images.unsplash.com/photo-1573496130407-57329f01f769?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxqb2IlMjBpbnRlcnZpZXd8ZW58MHx8fHwxNzYwNzMxNzc3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/articles/blog-interview-question.png",
       "imageHint": "job interview"
     },
     {
       "id": "blog-portfolio",
       "description": "A grid layout of different website or project designs.",
-      "imageUrl": "https://images.unsplash.com/photo-1567406485713-7a6f1abcccde?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxwb3J0Zm9saW8lMjBncmlkfGVufDB8fHx8MTc2MDc1NTA1OHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://placehold.co/600x400/222222/FFFFFF?text=Portfolio+Tips",
       "imageHint": "portfolio grid"
     },
     {
       "id": "blog-resign",
       "description": "A person shaking hands with their manager while holding an envelope.",
-      "imageUrl": "https://images.unsplash.com/photo-1638262052640-82e94d64664a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBoYW5kc2hha2V8ZW58MHx8fHwxNzYwNzU1MDU4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://placehold.co/600x400/222222/FFFFFF?text=Resigning",
       "imageHint": "professional handshake"
-    },
+    }
+,
     {
       "id": "founder-portrait",
       "description": "A portrait of the founder, Ravi Prateek.",
-      "imageUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&h=400&auto=format&fit=crop",
+      "imageUrl": "https://placehold.co/400x400/222222/FFFFFF?text=Founder",
       "imageHint": "professional man portrait"
     },
     {
       "id": "testimonial-avatar-1",
       "description": "Avatar for Sarah L.",
-      "imageUrl": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      "imageUrl": "https://placehold.co/256x256/222222/FFFFFF?text=SL",
       "imageHint": "woman portrait"
     },
     {
       "id": "testimonial-avatar-2",
       "description": "Avatar for John D.",
-      "imageUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      "imageUrl": "https://placehold.co/256x256/222222/FFFFFF?text=JD",
       "imageHint": "man portrait"
     },
     {
       "id": "testimonial-avatar-3",
       "description": "Avatar for Emily C.",
-      "imageUrl": "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      "imageUrl": "https://placehold.co/256x256/222222/FFFFFF?text=EC",
       "imageHint": "woman smiling"
     },
     {
       "id": "testimonial-avatar-4",
       "description": "Avatar for Mike R.",
-      "imageUrl": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      "imageUrl": "https://placehold.co/256x256/222222/FFFFFF?text=MR",
       "imageHint": "man smiling"
     },
     {
       "id": "testimonial-avatar-5",
       "description": "Avatar for Jessica B.",
-      "imageUrl": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      "imageUrl": "https://placehold.co/256x256/222222/FFFFFF?text=JB",
       "imageHint": "woman professional"
     }
   ]

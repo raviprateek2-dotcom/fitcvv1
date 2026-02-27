@@ -33,13 +33,13 @@ type Application = {
     notes?: string;
 };
 
-type Resume = {
+type TrackerResume = {
     id: string;
     title: string;
-    personalInfo: any;
-    summary: string;
-    experience: any[];
-    education: any[];
+    personalInfo?: { name?: string };
+    summary?: string;
+    experience?: unknown[];
+    education?: unknown[];
 };
 
 const statusColors: Record<Application['status'], string> = {
@@ -62,7 +62,7 @@ const statusLabels: Record<Application['status'], string> = {
     ghosted: 'No Response',
 };
 
-export function ApplicationTracker({ resumes }: { resumes: Resume[] }) {
+export function ApplicationTracker({ resumes }: { resumes: TrackerResume[] }) {
     const { user } = useUser();
     const firestore = useFirestore();
     const { toast } = useToast();
@@ -205,7 +205,7 @@ export function ApplicationTracker({ resumes }: { resumes: Resume[] }) {
                         <form onSubmit={handleAdd}>
                             <DialogHeader>
                                 <DialogTitle>Track New Application</DialogTitle>
-                                <DialogDescription>Enter the details of the position you've applied for.</DialogDescription>
+                                <DialogDescription>Enter the details of the position you&apos;ve applied for.</DialogDescription>
                             </DialogHeader>
                             <div className="grid gap-4 py-4">
                                 <div className="grid grid-cols-2 gap-4">
@@ -389,7 +389,7 @@ export function ApplicationTracker({ resumes }: { resumes: Resume[] }) {
                                 </div>
                                 <div className="p-4 bg-accent/5 border border-accent/10 rounded-xl">
                                     <h4 className="text-xs font-bold uppercase text-accent mb-2">Culture Vibe</h4>
-                                    <p className="text-sm italic">"{researchResult.cultureInsights}"</p>
+                                    <p className="text-sm italic">&quot;{researchResult.cultureInsights}&quot;</p>
                                 </div>
                                 <div>
                                     <h4 className="text-xs font-bold uppercase text-muted-foreground mb-2">Likely Interview Focus</h4>

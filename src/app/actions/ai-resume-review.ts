@@ -1,17 +1,15 @@
-
 'use server';
 
-import { reviewResume as reviewResumeFlow, type ReviewResumeOutput as ReviewResumeOutputFlow } from '@/ai/flows/ai-resume-review';
-import type { ReviewResumeInput } from '@/ai/flows/ai-resume-review';
+import { reviewResume as reviewResumeFlow } from '@/ai/flows/ai-resume-review';
+import type { ReviewResumeOutput } from '@/ai/flows/ai-resume-review';
+import { z } from 'zod';
+import { guardedAction } from '@/lib/action-guard';
 
-export type ReviewResumeOutput = ReviewResumeOutputFlow;
+export type { ReviewResumeOutput };
 
-export async function reviewResume(input: ReviewResumeInput) {
-  try {
-    const result = await reviewResumeFlow(input);
-    return { success: true, data: result };
-  } catch (error: any) {
-    console.error('AI resume review failed:', error);
-    return { success: false, error: error.message || 'Failed to review resume. Please try again later.' };
-  }
-}
+const schema = z.object({
+  resumeContent: z.string().min(1, 'Resume content is required').max(50_000, 'Resume content too large'),
+});
+
+export const reviewResume = async (input: z.infer<typeof schema>, userId?: string) =>
+  guardedAction(schema, (validated) => reviewResumeFlow(validated))(input, userId);

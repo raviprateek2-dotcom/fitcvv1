@@ -1,17 +1,11 @@
-
 'use server';
 
 import { aiNarrate as aiNarrateFlow } from '@/ai/flows/ai-narrator';
+import { z } from 'zod';
+import { guardedAction } from '@/lib/action-guard';
 
-export async function aiNarrate(text: string) {
-  try {
-    const result = await aiNarrateFlow(text);
-    return { success: true, data: result };
-  } catch (error: any) {
-    console.error('AI narrator failed:', error);
-    return {
-      success: false,
-      error: error.message || 'Failed to generate audio. Please try again later.',
-    };
-  }
-}
+// The narrator flow takes a plain string, not an object
+const schema = z.string().min(1).max(5_000, 'Text too long for narration');
+
+export const aiNarrate = async (text: string, userId?: string) =>
+  guardedAction(schema, (validated) => aiNarrateFlow(validated))(text, userId);

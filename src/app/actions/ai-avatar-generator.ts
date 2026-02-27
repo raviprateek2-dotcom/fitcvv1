@@ -1,14 +1,12 @@
-
 'use server';
 
-import { generateAvatar as generateAvatarFlow, type GenerateAvatarInput } from '@/ai/flows/ai-avatar-generator';
+import { generateAvatar as generateAvatarFlow } from '@/ai/flows/ai-avatar-generator';
+import { z } from 'zod';
+import { guardedAction } from '@/lib/action-guard';
 
-export async function generateAvatar(input: GenerateAvatarInput) {
-  try {
-    const result = await generateAvatarFlow(input);
-    return { success: true, data: result };
-  } catch (error: any) {
-    console.error('AI avatar generator failed:', error);
-    return { success: false, error: error.message || 'Failed to generate avatar. Please try again later.' };
-  }
-}
+const schema = z.object({
+  prompt: z.string().min(1).max(500, 'Prompt too long'),
+});
+
+export const generateAvatar = async (input: z.infer<typeof schema>, userId?: string) =>
+  guardedAction(schema, (validated) => generateAvatarFlow(validated))(input, userId);

@@ -1,15 +1,9 @@
-
 'use server';
 
 import { mockInterview as mockInterviewFlow } from '@/ai/flows/ai-mock-interviewer';
-import type { MockInterviewInput } from './schemas/ai-mock-interviewer';
+import { MockInterviewInputSchema } from '@/app/actions/schemas/ai-mock-interviewer';
+import { guardedAction } from '@/lib/action-guard';
+import type { z } from 'zod';
 
-export async function mockInterview(input: MockInterviewInput) {
-  try {
-    const result = await mockInterviewFlow(input);
-    return { success: true, data: result };
-  } catch (error: any) {
-    console.error('AI mock interview failed:', error);
-    return { success: false, error: error.message || 'Failed to get interview feedback. Please try again later.' };
-  }
-}
+export const mockInterview = async (input: z.infer<typeof MockInterviewInputSchema>, userId?: string) =>
+  guardedAction(MockInterviewInputSchema, (validated) => mockInterviewFlow(validated))(input, userId);

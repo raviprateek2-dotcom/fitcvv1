@@ -121,6 +121,7 @@ export default function TemplatesPage() {
                       alt={template.name}
                       width={400}
                       height={566}
+                      unoptimized={template.image.imageUrl.startsWith('https://placehold.co')}
                       data-ai-hint={template.image.imageHint}
                       className="w-full h-auto object-contain transition-transform duration-500 ease-in-out group-hover:scale-105"
                     />
@@ -144,6 +145,7 @@ export default function TemplatesPage() {
                             alt={`${template.name} preview`}
                             width={800}
                             height={1131}
+                            unoptimized={template.image.imageUrl.startsWith('https://placehold.co')}
                             data-ai-hint={template.image.imageHint}
                             className="w-full h-auto object-contain rounded-lg"
                           />

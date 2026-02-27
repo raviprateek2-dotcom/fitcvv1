@@ -1,14 +1,17 @@
-
 'use server';
 
-import { generateCareerGoals as generateCareerGoalsFlow, type GenerateCareerGoalsInput } from '@/ai/flows/ai-goal-setter';
+import { generateCareerGoals as generateCareerGoalsFlow } from '@/ai/flows/ai-goal-setter';
+import type { GenerateCareerGoalsInput, GenerateCareerGoalsOutput } from '@/ai/flows/ai-goal-setter';
+import { z } from 'zod';
+import { guardedAction } from '@/lib/action-guard';
 
-export async function generateCareerGoals(input: GenerateCareerGoalsInput) {
-  try {
-    const result = await generateCareerGoalsFlow(input);
-    return { success: true, data: result };
-  } catch (error: any) {
-    console.error('AI goal setter failed:', error);
-    return { success: false, error: error.message || 'Failed to generate career goals. Please try again.' };
-  }
-}
+export type { GenerateCareerGoalsOutput };
+
+// Flow expects: { jobTitle: string, jobDescription?: string }
+const schema = z.object({
+  jobTitle: z.string().min(1).max(200),
+  jobDescription: z.string().max(10_000, 'Job description too large').optional(),
+});
+
+export const generateCareerGoals = async (input: GenerateCareerGoalsInput, userId?: string) =>
+  guardedAction(schema, (validated) => generateCareerGoalsFlow(validated))(input, userId);

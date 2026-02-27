@@ -12,6 +12,7 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "types": ["node", "react", "react-dom", "jest"],
     "jsx": "preserve",
     "incremental": true,
     "plugins": [

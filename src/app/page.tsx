@@ -1,6 +1,5 @@
-
 import { Button } from '@/components/ui/button';
-import { blogPostsMetadata } from '@/lib/blog-posts-metadata';
+import { getAllPosts } from '@/lib/blog-posts';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
@@ -25,7 +24,9 @@ const HomePageClient = dynamic(
 );
 
 
-export default function Home() {
+export default function LandingPage() {
+  const featuredBlogs = getAllPosts().slice(0, 3);
+
   return (
     <div className="flex flex-col items-center bg-background text-foreground overflow-x-hidden">
       
@@ -46,7 +47,7 @@ export default function Home() {
             <div
               className="grid gap-8 md:grid-cols-3"
             >
-              {blogPostsMetadata.slice(0, 3).map((post) => {
+              {featuredBlogs.map((post) => {
                   const image = PlaceHolderImages.find(img => img.id === post.imageId);
                   return (
                       <div key={post.slug}>
@@ -59,6 +60,7 @@ export default function Home() {
                                     width={600}
                                     height={400}
                                     data-ai-hint={image.imageHint}
+                                    sizes="(max-width: 768px) 100vw, 300px"
                                     className="w-full h-48 object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
                                 />
                                 )}

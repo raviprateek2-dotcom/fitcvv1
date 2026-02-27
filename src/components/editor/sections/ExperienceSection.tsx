@@ -1,4 +1,5 @@
 'use client';
+import React from 'react';
 
 import { AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
@@ -12,16 +13,26 @@ import AISectionWriterDialog from "../AISectionWriterDialog";
 import { ProFeatureWrapper } from "../ProFeatureWrapper";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useResumeEditorStore } from "@/store/resume-editor-store";
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { SortableItem } from './SortableItem';
 
 interface ExperienceSectionProps {
-    resumeData: ResumeData;
-    setResumeData: React.Dispatch<React.SetStateAction<ResumeData | null>>;
     isProUser: boolean;
 }
 
 const strongVerbs = ['Spearheaded', 'Orchestrated', 'Quantified', 'Engineered', 'Pioneered', 'Accelerated', 'Executed', 'Optimized'];
 
-export function ExperienceSection({ resumeData, setResumeData, isProUser }: ExperienceSectionProps) {
+export const ExperienceSection = React.memo(function ExperienceSection({ isProUser }: ExperienceSectionProps) {
+    const { resumeData, setResumeData } = useResumeEditorStore();
+
+    const sensors = useSensors(
+        useSensor(PointerSensor),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    );
 
     const handleNestedChange = (
         section: 'experience',
@@ -30,7 +41,6 @@ export function ExperienceSection({ resumeData, setResumeData, isProUser }: Expe
         value: string
     ) => {
         setResumeData(prev => {
-            if (!prev) return null;
             const list = prev[section] || [];
             const updatedList = (list as any[]).map(item =>
                 item.id === id ? { ...item, [field]: value } : item
@@ -40,133 +50,158 @@ export function ExperienceSection({ resumeData, setResumeData, isProUser }: Expe
     };
 
     const addExperience = () => {
-        setResumeData(prev => (prev ? {
+        setResumeData(prev => ({
             ...prev,
             experience: [{ id: Date.now(), company: '', role: '', date: '', description: '' }, ...prev.experience]
-        } : null));
+        }));
     };
 
     const removeExperience = (id: number) => {
-        setResumeData(prev => (prev ? {
+        setResumeData(prev => ({
             ...prev,
             experience: prev.experience.filter(exp => exp.id !== id)
-        } : null));
+        }));
     };
 
     const checkImpact = (text: string) => {
         const numbers = (text.match(/\d+/g) || []).length;
         const hasActionVerb = strongVerbs.some(v => text.toLowerCase().includes(v.toLowerCase()));
         
-        if (numbers >= 2 && hasActionVerb) return { score: 100, label: 'High Impact', color: 'text-green-600 bg-green-50 border-green-100', icon: <TrendingUp className="w-3 h-3" /> };
-        if (numbers >= 1 || hasActionVerb) return { score: 60, label: 'Good Start', color: 'text-amber-600 bg-amber-50 border-amber-100', icon: <Target className="w-3 h-3" /> };
-        return { score: 30, label: 'Low Impact', color: 'text-muted-foreground bg-secondary/50 border-transparent', icon: <Lightbulb className="w-3 h-3" /> };
+        if (numbers >= 2 && hasActionVerb) return { score: 100, label: 'High Velocity', color: 'text-green-500 bg-green-500/10 border-green-500/20', icon: <TrendingUp className="w-3 h-3" /> };
+        if (numbers >= 1 || hasActionVerb) return { score: 60, label: 'Stable Impact', color: 'text-primary bg-primary/10 border-primary/20', icon: <Target className="w-3 h-3" /> };
+        return { score: 30, label: 'Developing', color: 'text-muted-foreground bg-white/5 border-white/10', icon: <Lightbulb className="w-3 h-3" /> };
+    };
+
+    if (!resumeData) return null;
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+        if (over && active.id !== over.id) {
+            setResumeData((prev) => {
+                const oldIndex = prev.experience.findIndex((item) => item.id === active.id);
+                const newIndex = prev.experience.findIndex((item) => item.id === over.id);
+                return {
+                    ...prev,
+                    experience: arrayMove(prev.experience, oldIndex, newIndex),
+                };
+            });
+        }
     };
 
     return (
-        <AccordionItem value="experience" className="border-none mb-4">
-            <AccordionTrigger className="font-semibold text-lg hover:no-underline py-2 px-4 rounded-xl hover:bg-secondary/50 transition-all data-[state=open]:bg-secondary/50">
-                <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-primary/10 text-primary">
+        <AccordionItem value="experience" className="border-none mb-6">
+            <AccordionTrigger className="hover:no-underline py-0 group">
+                <div className="flex items-center gap-4 transition-all group-data-[state=open]:translate-x-1">
+                    <div className="p-2.5 rounded-xl bg-primary/10 text-primary shadow-sm border border-primary/20 group-data-[state=open]:bg-primary group-data-[state=open]:text-primary-foreground group-data-[state=open]:scale-110 transition-all duration-300">
                         <Briefcase className="w-5 h-5" />
                     </div>
-                    <span>Work Experience</span>
+                    <span className="text-xl font-bold font-headline transition-all group-data-[state=open]:text-primary text-gradient">Career Trajectory</span>
                 </div>
             </AccordionTrigger>
-            <AccordionContent className="space-y-6 pt-4 px-4 pb-6 border-x border-b rounded-b-xl bg-secondary/20">
-                
-                <div className="p-4 bg-background/50 border border-primary/10 rounded-xl space-y-3">
-                    <div className="flex items-start gap-3">
-                        <TrendingUp className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                        <div className="space-y-1">
-                            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Strategic Impact Tip</p>
-                            <p className="text-sm text-muted-foreground leading-relaxed">
-                                Use the <strong className="text-foreground">STAR Method</strong>: Situation, Task, Action, Result. Always try to include numbers (e.g., "Increased sales by 20%" or "Led a team of 10").
+            <AccordionContent className="pt-8 space-y-8 border-none px-1">
+                <div className="p-5 bg-white/5 border border-white/10 rounded-2xl space-y-4 shadow-inner">
+                    <div className="flex items-start gap-4">
+                        <div className="bg-primary/20 p-2 rounded-xl">
+                            <TrendingUp className="w-5 h-5 text-primary" />
+                        </div>
+                        <div className="space-y-1.5">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-primary/80">Velocity Protocol</p>
+                            <p className="text-sm text-muted-foreground/90 leading-relaxed font-medium">
+                                Deploy the <span className="text-foreground font-bold">STAR Framework</span>. Quantify results with precision (e.g., "Led 12+ stakeholders to realize 22% ARR growth"). Data-driven bullets outperform passive lists 3:1.
                             </p>
                         </div>
                     </div>
                 </div>
 
-                <div className="space-y-4">
-                    {resumeData.experience.map((exp) => {
-                        const impact = checkImpact(exp.description);
-                        return (
-                            <div key={exp.id} className="p-5 border bg-background rounded-xl space-y-4 shadow-sm group transition-all hover:border-primary/20">
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <Label className="text-[10px] font-bold uppercase text-muted-foreground">Company Name</Label>
-                                        <Input value={exp.company} onChange={e => handleNestedChange('experience', exp.id, 'company', e.target.value)} className="h-9" placeholder="e.g. Google" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-[10px] font-bold uppercase text-muted-foreground">Your Role</Label>
-                                        <Input value={exp.role} onChange={e => handleNestedChange('experience', exp.id, 'role', e.target.value)} className="h-9" placeholder="e.g. Senior Product Manager" />
-                                    </div>
-                                </div>
-                                <div className="space-y-2">
-                                    <Label className="text-[10px] font-bold uppercase text-muted-foreground">Employment Period</Label>
-                                    <Input value={exp.date} onChange={e => handleNestedChange('experience', exp.id, 'date', e.target.value)} className="h-9" placeholder="e.g. Jan 2020 - Present" />
-                                </div>
-                                <div className="space-y-3">
-                                    <div className="flex justify-between items-center">
-                                        <Label className="text-[10px] font-bold uppercase text-muted-foreground">Description & Key Achievements</Label>
-                                        <div className="flex items-center gap-2">
-                                            <Badge variant="outline" className={cn("text-[9px] px-1.5 py-0 h-5 flex items-center gap-1 font-medium transition-colors", impact.color)}>
-                                                {impact.icon}
-                                                {impact.label}
-                                            </Badge>
-                                        </div>
-                                    </div>
-                                    <Textarea rows={5} value={exp.description} onChange={e => handleNestedChange('experience', exp.id, 'description', e.target.value)} className="bg-secondary/10 text-sm resize-none" placeholder="• Led a cross-functional team...&#10;• Increased revenue by 15% through..." />
-                                    
-                                    {impact.score < 60 && (
-                                        <div className="p-3 bg-primary/5 rounded-lg border border-dashed border-primary/20">
-                                            <p className="text-[10px] font-bold text-primary uppercase mb-2 flex items-center gap-1"><Zap className="w-3 h-3" /> Impact Boosters:</p>
-                                            <div className="flex flex-wrap gap-1.5">
-                                                {strongVerbs.slice(0, 5).map(verb => (
-                                                    <Badge key={verb} variant="secondary" className="text-[9px] cursor-help bg-background hover:bg-primary hover:text-white transition-colors" onClick={() => handleNestedChange('experience', exp.id, 'description', exp.description + `\n• ${verb} `)}>
-                                                        {verb}
-                                                    </Badge>
-                                                ))}
+                <div className="space-y-6">
+                    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                        <SortableContext items={resumeData.experience.map(e => e.id)} strategy={verticalListSortingStrategy}>
+                            {resumeData.experience.map((exp) => {
+                                const impact = checkImpact(exp.description);
+                                return (
+                                    <div key={exp.id}>
+                                        <SortableItem id={exp.id}>
+                                            <div className="p-6 border border-white/10 bg-white/5 rounded-2xl space-y-6 shadow-sm transition-all hover:bg-white/[0.07] hover:border-white/20 group/item">
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                                    <div className="space-y-3">
+                                                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Corporate Tier</Label>
+                                                        <Input value={exp.company} onChange={e => handleNestedChange('experience', exp.id, 'company', e.target.value)} className="bg-white/5 border-white/10 h-11 rounded-xl focus:ring-primary/20 transition-all" placeholder="e.g. Google Cloud" />
+                                                    </div>
+                                                    <div className="space-y-3">
+                                                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Functional Authority</Label>
+                                                        <Input value={exp.role} onChange={e => handleNestedChange('experience', exp.id, 'role', e.target.value)} className="bg-white/5 border-white/10 h-11 rounded-xl focus:ring-primary/20 transition-all" placeholder="e.g. Principal Lead" />
+                                                    </div>
+                                                </div>
+                                                <div className="space-y-3">
+                                                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Tenure Horizon</Label>
+                                                    <Input value={exp.date} onChange={e => handleNestedChange('experience', exp.id, 'date', e.target.value)} className="bg-white/5 border-white/10 h-11 rounded-xl focus:ring-primary/20 transition-all" placeholder="e.g. Jan 2020 - Present" />
+                                                </div>
+                                                <div className="space-y-4">
+                                                    <div className="flex justify-between items-center">
+                                                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Impact Narrative & Key Results</Label>
+                                                        <div className="flex items-center gap-2">
+                                                            <Badge variant="outline" className={cn("text-[9px] px-2 py-0.5 rounded-lg flex items-center gap-1.5 font-bold transition-all border shadow-sm", impact.color)}>
+                                                                {impact.icon}
+                                                                {impact.label}
+                                                            </Badge>
+                                                        </div>
+                                                    </div>
+                                                    <Textarea rows={6} value={exp.description} onChange={e => handleNestedChange('experience', exp.id, 'description', e.target.value)} className="bg-white/5 border-white/10 rounded-2xl text-sm leading-relaxed p-4 resize-none focus:ring-primary/20 transition-all" placeholder="• Orchestrated migration of legacy monolith to Kubernetes, reducing latency by 45%..." />
+                                                    
+                                                    {impact.score < 60 && (
+                                                        <div className="p-4 bg-primary/5 rounded-xl border border-dashed border-primary/20 animate-in fade-in zoom-in-95 duration-500">
+                                                            <p className="text-[10px] font-black text-primary uppercase mb-3 flex items-center gap-2"><Zap className="w-4 h-4" /> Performance Boosters:</p>
+                                                            <div className="flex flex-wrap gap-2">
+                                                                {strongVerbs.slice(0, 6).map(verb => (
+                                                                    <Badge key={verb} variant="secondary" className="text-[9px] font-bold cursor-pointer bg-white/5 hover:bg-primary hover:text-white transition-all rounded-lg border border-white/10 px-2 py-1" onClick={() => handleNestedChange('experience', exp.id, 'description', exp.description + `\n• ${verb} `)}>
+                                                                        {verb}
+                                                                    </Badge>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div className="flex justify-between items-center pt-2 border-t border-white/5 mt-4">
+                                                    <div className="flex gap-3">
+                                                        <ProFeatureWrapper isPro={isProUser}>
+                                                            <AISectionWriterDialog
+                                                                sectionName={`Experience at ${exp.company || 'Company'}`}
+                                                                jobDescription={resumeData.jobDescription}
+                                                                existingContent={exp.description}
+                                                                onApply={(newContent) => handleNestedChange('experience', exp.id, 'description', newContent)}
+                                                            >
+                                                                <Button variant="premium" size="sm" className="h-9 px-4 rounded-xl shadow-lg">
+                                                                    <Sparkles className="mr-2 h-4 w-4" />
+                                                                    AI Optimized Rewrite
+                                                                </Button>
+                                                            </AISectionWriterDialog>
+                                                        </ProFeatureWrapper>
+                                                        <ProFeatureWrapper isPro={isProUser}>
+                                                            <AIContentDialog
+                                                                sectionName={`Experience at ${exp.company || 'Company'}`}
+                                                                currentContent={exp.description}
+                                                                jobDescription={resumeData.jobDescription}
+                                                                onApply={(newContent) => handleNestedChange('experience', exp.id, 'description', newContent)}
+                                                            />
+                                                        </ProFeatureWrapper>
+                                                    </div>
+                                                    <Button variant="ghost" size="icon" onClick={() => removeExperience(exp.id)} className="h-9 w-9 rounded-xl text-destructive hover:bg-destructive/10 hover:text-destructive transition-colors">
+                                                        <Trash2 className="h-4.5 w-4.5" />
+                                                    </Button>
+                                                </div>
                                             </div>
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="flex justify-between items-center pt-2">
-                                    <div className="flex gap-2">
-                                        <ProFeatureWrapper isPro={isProUser}>
-                                            <AISectionWriterDialog
-                                                sectionName={`Experience at ${exp.company || 'Company'}`}
-                                                jobDescription={resumeData.jobDescription}
-                                                existingContent={exp.description}
-                                                onApply={(newContent) => handleNestedChange('experience', exp.id, 'description', newContent)}
-                                            >
-                                                <Button variant="outline" size="sm" className="h-8 text-xs">
-                                                    <Bot className="mr-2 h-3.5 w-3.5" />
-                                                    AI Writer
-                                                </Button>
-                                            </AISectionWriterDialog>
-                                        </ProFeatureWrapper>
-                                        <ProFeatureWrapper isPro={isProUser}>
-                                            <AIContentDialog
-                                                sectionName={`Experience at ${exp.company || 'Company'}`}
-                                                currentContent={exp.description}
-                                                jobDescription={resumeData.jobDescription}
-                                                onApply={(newContent) => handleNestedChange('experience', exp.id, 'description', newContent)}
-                                            />
-                                        </ProFeatureWrapper>
+                                        </SortableItem>
                                     </div>
-                                    <Button variant="ghost" size="icon" onClick={() => removeExperience(exp.id)} className="h-8 w-8 text-destructive hover:bg-destructive/10">
-                                        <Trash2 className="h-4 w-4" />
-                                    </Button>
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
+                                );
+                            })}
+                        </SortableContext>
+                    </DndContext>
 
-                <Button variant="outline" onClick={addExperience} className="w-full border-dashed border-2 py-6 rounded-xl hover:bg-primary/5 hover:border-primary/20">
-                    <PlusCircle className="mr-2 h-4 w-4" /> Add Experience Entry
-                </Button>
+                    <Button variant="glass" onClick={addExperience} className="w-full border-dashed border-2 py-8 rounded-2xl hover:bg-white/5 hover:border-primary/40 transition-all font-bold text-sm">
+                        <PlusCircle className="mr-2 h-5 w-5" /> Integrate New Experience Milestone
+                    </Button>
+                </div>
             </AccordionContent>
         </AccordionItem>
     );
-}
+});

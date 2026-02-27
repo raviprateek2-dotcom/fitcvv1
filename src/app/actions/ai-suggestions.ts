@@ -1,26 +1,20 @@
 'use server';
 
-import { suggestResumeImprovements as suggestResumeImprovementsFlow } from '@/ai/flows/ai-content-suggestions';
-import type { SuggestResumeImprovementsInput } from '@/ai/flows/ai-content-suggestions';
-import { writeResumeSection as writeResumeSectionFlow } from '@/ai/flows/ai-resume-section-writer';
-import type { WriteResumeSectionInput } from '@/ai/flows/ai-resume-section-writer';
+import { suggestResumeImprovements as suggestImprovementsFlow } from '@/ai/flows/ai-content-suggestions';
+import type { SuggestResumeImprovementsInput, SuggestResumeImprovementsOutput } from '@/ai/flows/ai-content-suggestions';
+import { z } from 'zod';
+import { guardedAction } from '@/lib/action-guard';
 
-export async function suggestResumeImprovements(input: SuggestResumeImprovementsInput) {
-  try {
-    const result = await suggestResumeImprovementsFlow(input);
-    return { success: true, data: result };
-  } catch (error: any) {
-    console.error('AI suggestion failed:', error);
-    return { success: false, error: error.message || 'Failed to get AI suggestions. Please try again later.' };
-  }
-}
+export type { SuggestResumeImprovementsOutput };
 
-export async function writeResumeSection(input: WriteResumeSectionInput) {
-  try {
-    const result = await writeResumeSectionFlow(input);
-    return { success: true, data: result };
-  } catch (error: any) {
-    console.error('AI section writer failed:', error);
-    return { success: false, error: error.message || 'Failed to generate AI content. Please try again later.' };
-  }
-}
+// Match the AI flow's field names: resumeSection + optional jobDescription
+const schema = z.object({
+  resumeSection: z.string().min(1).max(10_000, 'Section content too large'),
+  jobDescription: z.string().max(10_000, 'Job description too large').optional(),
+});
+
+export const suggestResumeImprovements = async (input: SuggestResumeImprovementsInput, userId?: string) =>
+  guardedAction(schema, (validated) => suggestImprovementsFlow(validated))(input, userId);
+
+// Alias used in AISectionWriterDialog — maps to the same flow
+export { suggestResumeImprovements as writeResumeSection };

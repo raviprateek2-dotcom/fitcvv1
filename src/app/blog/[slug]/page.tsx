@@ -1,5 +1,5 @@
 
-import { blogPosts } from '@/lib/blog-posts';
+import { getPostBySlug, getRelatedPosts } from '@/lib/blog-posts';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
@@ -8,7 +8,7 @@ import { BlogPostClient } from '@/components/blog/BlogPostClient';
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:9002';
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const post = blogPosts.find((p) => p.slug === params.slug);
+  const post = getPostBySlug(params.slug);
 
   if (!post) {
     return {};
@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
 
 export default function BlogPostPage({ params }: { params: { slug: string } }) {
-  const post = blogPosts.find((p) => p.slug === params.slug);
+  const post = getPostBySlug(params.slug);
 
   if (!post) {
     notFound();
@@ -84,5 +84,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
     dateModified: post.updatedAt,
   };
 
-  return <BlogPostClient post={post} image={image} structuredDataJSON={JSON.stringify(structuredData)} />;
+  const relatedPosts = getRelatedPosts(params.slug);
+
+  return <BlogPostClient post={post} relatedPosts={relatedPosts} image={image} structuredDataJSON={JSON.stringify(structuredData)} />;
 }
