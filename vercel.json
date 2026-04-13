@@ -3,7 +3,6 @@
   "framework": "nextjs",
   "buildCommand": "npm run build",
   "installCommand": "npm ci",
-  "regions": ["iad1", "sfo1", "cle1", "pdx1", "gru1", "fra1", "lhr1", "dub1", "ams1", "cdg1", "arn1", "bom1", "sin1", "hnd1", "icn1", "syd1"],
   "headers": [
     {
       "source": "/(.*)",
