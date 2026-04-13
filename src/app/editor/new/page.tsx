@@ -3,10 +3,11 @@
 import { useUser, useFirestore, addDocumentNonBlocking } from '@/firebase';
 import { collection, serverTimestamp } from 'firebase/firestore';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, Suspense } from 'react';
+import { useEffect, Suspense, useRef } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { defaultResumeData } from '@/lib/default-resume-data';
+import { buildGuestResumeSeed, createGuestResumeId, saveGuestResume } from '@/lib/guest-resume';
 
 
 // A simple loading state while the resume is being created and we redirect.
@@ -30,58 +31,79 @@ function NewResumeContent() {
   const searchParams = useSearchParams();
   const templateId = searchParams.get('template') || 'modern';
   const { toast } = useToast();
+  const createOnceRef = useRef(false);
 
   useEffect(() => {
-    const createResumeFlow = async () => {
-        // Wait until we know the user's status
-        if (isUserLoading || isProfileLoading || !firestore || !user) {
-          return;
-        }
+    if (isUserLoading) return;
 
-        // The logic for PDF uploads is handled on the dashboard, so we only proceed if there is a templateId
-        if (!templateId) {
-            router.push('/dashboard');
-            return;
-        }
+    if (!user) {
+      const guestId = createGuestResumeId();
+      const guestSeed = buildGuestResumeSeed(templateId);
+      saveGuestResume(guestId, guestSeed);
+      toast({
+        title: 'Guest draft ready',
+        description: 'You can edit now. Create a free account later to sync and unlock all actions.',
+      });
+      router.replace(`/editor/${guestId}`);
+      return;
+    }
 
-        // FitCV: All features are now free.
-        const resumesCollection = collection(firestore, `users/${user.uid}/resumes`);
-        const newResumeData = {
-            ...defaultResumeData,
-            title: 'Untitled Resume',
-            templateId,
-            createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp(),
-            personalInfo: {
-                ...defaultResumeData.personalInfo,
-                name: user.displayName || 'Your Name',
-                email: user.email || '',
-            },
-        };
-        
-        // Use non-blocking write and optimistic navigation
-        addDocumentNonBlocking(resumesCollection, newResumeData)
-          .then(docRef => {
-            if (docRef) {
-                router.replace(`/editor/${docRef.id}`);
-            } else {
-                 throw new Error("Could not get document reference after creation.");
-            }
-          })
-          .catch(error => {
-            console.error("Error creating resume: ", error);
-            toast({
-                variant: "destructive",
-                title: "Creation Failed",
-                description: "Could not create the new resume. Please try again.",
-            });
-            router.push('/dashboard');
-        });
+    if (!firestore || isProfileLoading) return;
+
+    if (!templateId) {
+      router.push('/dashboard');
+      return;
+    }
+
+    if (createOnceRef.current) return;
+    createOnceRef.current = true;
+
+    const resumesCollection = collection(firestore, `users/${user.uid}/resumes`);
+    const newResumeData = {
+      ...defaultResumeData,
+      title: 'Untitled Resume',
+      templateId,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+      personalInfo: {
+        ...defaultResumeData.personalInfo,
+        name: user.displayName || 'Your Name',
+        email: user.email || '',
+      },
     };
-    
-    createResumeFlow();
 
-  }, [user, isUserLoading, isProfileLoading, firestore, router, templateId, toast]);
+    addDocumentNonBlocking(resumesCollection, newResumeData)
+      .then((docRef) => {
+        if (docRef) {
+          toast({
+            title: 'Resume created',
+            description:
+              'Your editor is opening — add experience and export when you’re ready.',
+          });
+          router.replace(`/editor/${docRef.id}`);
+        } else {
+          throw new Error('Could not get document reference after creation.');
+        }
+      })
+      .catch((error) => {
+        createOnceRef.current = false;
+        console.error('Error creating resume: ', error);
+        toast({
+          variant: 'destructive',
+          title: 'Creation Failed',
+          description: 'Could not create the new resume. Please try again.',
+        });
+        router.push('/dashboard');
+      });
+  }, [
+    user,
+    isUserLoading,
+    isProfileLoading,
+    firestore,
+    router,
+    templateId,
+    toast,
+  ]);
 
   return <CreatingResumeLoading />;
 }

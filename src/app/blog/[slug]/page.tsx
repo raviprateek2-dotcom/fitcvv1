@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { BlogPostClient } from '@/components/blog/BlogPostClient';
+import { buildBlogPostGraph, safeJsonLdStringify } from '@/lib/blog-jsonld';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:9002';
 
@@ -25,6 +26,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       description: post.description,
       url: `${siteUrl}/blog/${post.slug}`,
       type: 'article',
+      publishedTime: post.createdAt,
+      modifiedTime: post.updatedAt,
       images: [
         {
           url: imageUrl,
@@ -56,35 +59,23 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
   
   const image = PlaceHolderImages.find(img => img.id === post.imageId);
 
-  // Generate structured data on the server to prevent hydration errors
-  const structuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `${siteUrl}/blog/${post.slug}`,
-    },
-    headline: post.title,
-    description: post.description,
-    image: image?.imageUrl,
-    author: {
-      '@type': 'Organization',
-      name: 'ResumeAI Team',
-       url: siteUrl,
-    },
-    publisher: {
-        '@type': 'Organization',
-        name: 'ResumeAI',
-        logo: {
-            '@type': 'ImageObject',
-            url: `${siteUrl}/icon.png`,
-        },
-    },
-    datePublished: post.createdAt,
-    dateModified: post.updatedAt,
-  };
+  const structuredData = buildBlogPostGraph({
+    siteUrl,
+    post,
+    heroImageUrl: image?.imageUrl,
+  });
 
   const relatedPosts = getRelatedPosts(params.slug);
 
-  return <BlogPostClient post={post} relatedPosts={relatedPosts} image={image} structuredDataJSON={JSON.stringify(structuredData)} />;
+  const articleUrl = `${siteUrl}/blog/${post.slug}`;
+
+  return (
+    <BlogPostClient
+      post={post}
+      relatedPosts={relatedPosts}
+      image={image}
+      structuredDataJSON={safeJsonLdStringify(structuredData)}
+      articleUrl={articleUrl}
+    />
+  );
 }

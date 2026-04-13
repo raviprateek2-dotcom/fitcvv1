@@ -61,7 +61,7 @@ export function FeaturesSection() {
             viewport={{ once: true, amount: 0.3 }}
             ref={featuresRef}
         >
-            <div id="features" className="container mx-auto px-4 md:px-6">
+            <div className="container mx-auto px-4 md:px-6">
                 <div className="grid md:grid-cols-2 gap-16 items-center">
                     <motion.div variants={sectionVariants} className="space-y-8">
                         <motion.div variants={itemVariants} className="space-y-4">

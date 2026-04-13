@@ -8,7 +8,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: 'http://localhost:3000',
+    baseURL: process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:9002',
     trace: 'on-first-retry',
   },
   projects: [
@@ -18,8 +18,14 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: '$env:PATH = "C:\\Program Files\\nodejs;" + $env:PATH; & "C:\\Program Files\\nodejs\\npm.cmd" run dev',
-    url: 'http://localhost:3000',
-    reuseExistingServer: true,
+    command: 'npm run dev',
+    url: process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:9002',
+    reuseExistingServer: !process.env.CI,
+    timeout: 180_000,
+    env: {
+      ...process.env,
+      // Avoid Next.js "non-standard NODE_ENV" when the runner inherits production/test.
+      NODE_ENV: 'development',
+    },
   },
 });

@@ -10,8 +10,14 @@ import { initiateEmailSignIn, initiateGoogleSignIn } from '@/firebase/non-blocki
 import { useToast } from '@/hooks/use-toast';
 import { Rocket, Info } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState, Suspense } from 'react';
+import { safeInternalRedirectPath } from '@/lib/safe-redirect';
+import {
+  DEMO_LOGIN_EMAIL,
+  DEMO_LOGIN_PASSWORD,
+  isDemoLoginUiEnabled,
+} from '@/lib/demo-credentials';
 import { motion } from 'framer-motion';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
@@ -38,20 +44,28 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-export default function LoginPage() {
+function LoginPageContent() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const auth = useAuth();
   const { toast } = useToast();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user } = useUser();
+
+  const redirectTarget =
+    safeInternalRedirectPath(searchParams.get('redirect')) ?? '/dashboard';
+  const signupHref =
+    redirectTarget !== '/dashboard'
+      ? `/signup?redirect=${encodeURIComponent(redirectTarget)}`
+      : '/signup';
 
   useEffect(() => {
     if (user) {
-      router.push('/dashboard');
+      router.replace(redirectTarget);
     }
-  }, [user, router]);
+  }, [user, router, redirectTarget]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -130,8 +144,12 @@ export default function LoginPage() {
                     <TooltipTrigger asChild>
                         <Info className="h-4 w-4 text-muted-foreground cursor-help" />
                     </TooltipTrigger>
-                    <TooltipContent>
-                        <p className="font-sans text-sm">Use <strong className="font-semibold">test@test.com</strong> / <strong className="font-semibold">password</strong> for a dummy Pro account.</p>
+                    <TooltipContent className="max-w-xs">
+                        <p className="font-sans text-sm">
+                          Testing: <strong className="font-semibold">{DEMO_LOGIN_EMAIL}</strong> /{' '}
+                          <strong className="font-semibold">{DEMO_LOGIN_PASSWORD}</strong>
+                          . Create this user once via Sign up or Firebase Console.
+                        </p>
                     </TooltipContent>
                 </Tooltip>
              </TooltipProvider>
@@ -171,12 +189,26 @@ export default function LoginPage() {
             <Button variant="neuro" className="w-full" type="submit" disabled={isLoading}>
               {isLoading ? 'Logging In...' : 'Log In'}
             </Button>
+            {isDemoLoginUiEnabled() ? (
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full text-muted-foreground"
+                disabled={isLoading}
+                onClick={() => {
+                  setEmail(DEMO_LOGIN_EMAIL);
+                  setPassword(DEMO_LOGIN_PASSWORD);
+                }}
+              >
+                Fill demo credentials
+              </Button>
+            ) : null}
           </form>
         </CardContent>
         <CardFooter className="flex flex-col gap-4">
           <div className="text-center text-sm">
             Don&apos;t have an account?{' '}
-            <Link href="/signup" className="underline">
+            <Link href={signupHref} className="underline">
               Sign up
             </Link>
           </div>
@@ -186,8 +218,16 @@ export default function LoginPage() {
   );
 }
 
-    
-
-    
-
-    
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-[calc(100vh-10rem)] items-center justify-center p-4 text-muted-foreground">
+          Loading…
+        </div>
+      }
+    >
+      <LoginPageContent />
+    </Suspense>
+  );
+}

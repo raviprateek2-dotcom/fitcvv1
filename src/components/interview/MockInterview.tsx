@@ -160,16 +160,16 @@ export function MockInterview({ initialQuestion }: MockInterviewProps) {
     <section id="mock-interviewer">
         <audio ref={audioRef} className="hidden" />
         <Card variant='neuro' className="bg-background">
-            <CardHeader>
-                <CardTitle className="text-2xl font-headline font-bold flex items-center gap-2">
-                    <Bot className="text-primary"/>
+            <CardHeader className="px-4 pt-4 sm:px-6 sm:pt-6">
+                <CardTitle className="text-xl sm:text-2xl font-headline font-bold flex items-center gap-2">
+                    <Bot className="text-primary h-6 w-6 shrink-0" aria-hidden />
                     AI Mock Interviewer
                 </CardTitle>
-                <CardDescription>
-                    Choose a persona and a specialized track to practice your answers.
+                <CardDescription className="text-sm sm:text-base leading-relaxed">
+                    Choose a persona and track. Type an answer here or use voice practice above for spoken rehearsal.
                 </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 px-4 pb-4 sm:px-6 sm:pb-6">
                  <div className="grid sm:grid-cols-2 gap-4">
                     <div className="space-y-4">
                         <div className="space-y-2">
@@ -191,17 +191,28 @@ export function MockInterview({ initialQuestion }: MockInterviewProps) {
                             </Select>
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-xs font-bold uppercase text-muted-foreground">2. Question Context</Label>
-                            <p className="p-3 bg-secondary rounded-md text-sm font-medium h-24 flex items-center justify-center text-center leading-relaxed">"{currentQuestion}"</p>
-                            <Button variant="ghost" size="sm" onClick={() => getNewQuestion(track)} className="w-full">
-                                <RefreshCw className="mr-2 h-3 w-3"/> New Question
+                            <Label className="text-xs font-bold uppercase text-muted-foreground">2. Question context</Label>
+                            <p
+                              className="p-4 bg-secondary rounded-xl text-lg md:text-base font-semibold min-h-[6.5rem] flex items-center justify-center text-center leading-snug text-foreground"
+                              role="status"
+                            >
+                                &ldquo;{currentQuestion}&rdquo;
+                            </p>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => getNewQuestion(track)}
+                              className="w-full min-h-[44px] text-base md:text-sm"
+                            >
+                                <RefreshCw className="mr-2 h-4 w-4 shrink-0" aria-hidden />
+                                New question
                             </Button>
                         </div>
                     </div>
                     <div className="space-y-2">
                         <Label className="text-xs font-bold uppercase text-muted-foreground">3. Interviewer Persona</Label>
                         <Select value={persona} onValueChange={(v: any) => setPersona(v)}>
-                            <SelectTrigger className="h-[188px]">
+                            <SelectTrigger className="min-h-[120px] h-auto md:h-[188px] py-3 md:py-2">
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -232,9 +243,10 @@ export function MockInterview({ initialQuestion }: MockInterviewProps) {
                         placeholder="Type your answer here or use the voice mode above for real-time practice..."
                         rows={6}
                         disabled={isLoading}
+                        className="min-h-[160px] text-base md:text-sm"
                     />
                  </div>
-                 <Button onClick={handleAnalyze} disabled={isLoading} className="w-full h-12 text-lg">
+                 <Button onClick={handleAnalyze} disabled={isLoading} className="w-full min-h-[52px] h-auto py-3 text-base font-semibold">
                     {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Sparkles className="mr-2 h-5 w-5" />}
                     {isLoading ? 'Consulting Coach...' : 'Get Personalized Feedback'}
                  </Button>

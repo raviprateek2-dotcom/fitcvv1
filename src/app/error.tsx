@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { captureException } from '@sentry/browser';
 import { Button } from '@/components/ui/button';
 
 export default function Error({
@@ -11,8 +12,10 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    // Log the error to an error reporting service
     console.error(error);
+    if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
+      captureException(error);
+    }
   }, [error]);
 
   return (

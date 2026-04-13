@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { ArrowLeft, Check, Download, FileText, Loader2, Share2, Target, Upload, ScanText, History } from 'lucide-react';
+import { ArrowLeft, Check, Download, FileText, Loader2, Share2, Target, Upload, ScanText, History, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -12,10 +12,12 @@ import { useUser, useFirestore, addDocumentNonBlocking } from '@/firebase';
 import { collection, serverTimestamp } from 'firebase/firestore';
 import { nanoid } from 'nanoid';
 import { useResumeEditorStore, SaveStatus } from '@/store/resume-editor-store';
-import { generateResumePdf } from '@/app/actions/export-pdf';
 import { generateResumeDocx } from '@/app/actions/export-docx';
 import { readFileAsDataURL, downloadBase64File } from '@/lib/file-utils';
+import { downloadResumePdfClient } from '@/lib/resume-download-client';
 import { parseResumeFromPdf } from '@/app/actions/ai-resume-parser';
+import { trackEvent } from '@/lib/analytics-events';
+import { isGuestResumeId } from '@/lib/guest-resume';
 import type { ResumeData } from './types';
 
 function SaveStatusIndicator({ status }: { status: SaveStatus }) {
@@ -53,6 +55,7 @@ export function EditorHeader() {
     hiringReadiness,
     isAtsMode, setIsAtsMode
   } = useResumeEditorStore();
+  const isGuestMode = isGuestResumeId(resumeId);
 
   const handleFieldChange = <T extends keyof ResumeData>(field: T, value: ResumeData[T]) => {
     setResumeData(prev => ({ ...prev, [field]: value }));
@@ -60,46 +63,50 @@ export function EditorHeader() {
 
   const handlePrint = async () => {
     if (!resumeData) return;
-    setIsExporting(true);
-    try {
-      const result = await generateResumePdf(resumeData, resumeId);
-      if (result.success && result.pdfBase64) {
-        const filename = `${resumeData.title || resumeData.personalInfo.name || 'Resume'}.pdf`;
-        downloadBase64File(result.pdfBase64, filename, 'application/pdf');
-        toast({ title: 'PDF Downloaded', description: filename });
-      } else {
-        console.warn('Server PDF failed, falling back to browser print:', result.error);
-        window.open(`/editor/${resumeId}?print=true`, '_blank');
-      }
-    } catch (error: unknown) {
-      console.error('PDF export error:', error);
+    if (!user || isGuestMode) {
       window.open(`/editor/${resumeId}?print=true`, '_blank');
-    } finally {
-      setIsExporting(false);
+      toast({
+        title: 'Guest export opened',
+        description: 'Sign in for server-side PDF generation and cloud saves.',
+      });
+      trackEvent('guest_export_print', { source: 'editor_header' });
+      return;
     }
+    await downloadResumePdfClient(resumeData, resumeId, toast, setIsExporting);
   };
 
   const handleDocxExport = async () => {
     if (!resumeData) return;
     setIsExporting(true);
+    trackEvent('docx_export_start', { source: 'editor_header' });
     try {
       const result = await generateResumeDocx(resumeData);
       if (result.success && result.docxBase64) {
         const filename = `${resumeData.title || resumeData.personalInfo.name || 'Resume'}.docx`;
         downloadBase64File(result.docxBase64, filename, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
         toast({ title: 'DOCX Downloaded', description: filename });
+        trackEvent('docx_export_success', { source: 'editor_header' });
       } else {
         toast({ variant: 'destructive', title: 'DOCX Export Failed', description: result.error });
+        trackEvent('docx_export_fail', { reason: result.error ?? 'unknown' });
       }
     } catch (error: unknown) {
       toast({ variant: 'destructive', title: 'Export Error', description: error instanceof Error ? error.message : 'Failed to generate DOCX' });
+      trackEvent('docx_export_fail', { reason: 'runtime_error' });
     } finally {
       setIsExporting(false);
     }
   };
 
   const handleShare = () => {
-    if (!resumeData || !firestore || !user) return;
+    if (!resumeData || !firestore || !user || isGuestMode) {
+      toast({
+        title: 'Sign in to share',
+        description: 'Guest drafts stay on this browser. Create a free account to generate share links.',
+      });
+      trackEvent('signup_gate_hit', { action: 'share_resume' });
+      return;
+    }
 
     let shareId = resumeData.shareId;
 
@@ -110,8 +117,31 @@ export function EditorHeader() {
 
     const shareUrl = `${window.location.origin}/share/${shareId || resumeData.shareId}`;
     navigator.clipboard.writeText(shareUrl);
+    trackEvent('resume_share_copy', { source: 'editor_header' });
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);
+  };
+
+  const handleShareWhatsApp = () => {
+    if (!resumeData || !firestore || !user || isGuestMode) {
+      toast({
+        title: 'Sign in to share',
+        description: 'WhatsApp sharing for public resume links needs an account.',
+      });
+      trackEvent('signup_gate_hit', { action: 'share_whatsapp' });
+      return;
+    }
+
+    let shareId = resumeData.shareId;
+    if (!shareId) {
+      shareId = nanoid(10);
+      setResumeData(prev => ({ ...prev, shareId }));
+    }
+
+    const shareUrl = `${window.location.origin}/share/${shareId || resumeData.shareId}`;
+    const waUrl = `https://wa.me/?text=${encodeURIComponent(`Check out my resume: ${shareUrl}`)}`;
+    window.open(waUrl, '_blank', 'noopener,noreferrer');
+    trackEvent('resume_share_whatsapp', { source: 'editor_header' });
   };
 
   const handlePdfUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -119,6 +149,7 @@ export function EditorHeader() {
     if (!file) return;
 
     setIsParsing(true);
+    trackEvent('resume_import_start', { source: 'editor_header' });
     try {
       const base64String = await readFileAsDataURL(file);
       const result = await parseResumeFromPdf(base64String);
@@ -130,11 +161,14 @@ export function EditorHeader() {
           title: result.data!.resumeData.personalInfo.name ? `${result.data!.resumeData.personalInfo.name}'s Resume` : 'Imported Resume',
         } as ResumeData));
         toast({ title: 'Resume Imported', description: 'Resume data has been populated from your PDF.' });
+        trackEvent('resume_import_success', { source: 'editor_header' });
       } else {
         toast({ variant: 'destructive', title: 'Parse Failed', description: result.error });
+        trackEvent('resume_import_fail', { reason: result.error ?? 'unknown' });
       }
     } catch (error: unknown) {
       toast({ variant: 'destructive', title: 'Upload Error', description: error instanceof Error ? error.message : 'Failed to read file' });
+      trackEvent('resume_import_fail', { reason: 'runtime_error' });
     } finally {
       setIsParsing(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
@@ -142,7 +176,14 @@ export function EditorHeader() {
   };
 
   const handleSaveVersion = () => {
-    if (!resumeData || !firestore || !user || !resumeId) return;
+    if (!resumeData || !firestore || !user || !resumeId || isGuestMode) {
+      toast({
+        title: 'Sign in to save versions',
+        description: 'Version history sync is available after account creation.',
+      });
+      trackEvent('signup_gate_hit', { action: 'version_history' });
+      return;
+    }
     
     // Save to the subcollection `users/{uid}/resumes/{resumeId}/versions`
     const versionsRef = collection(firestore, `users/${user.uid}/resumes/${resumeId}/versions`);
@@ -188,6 +229,11 @@ export function EditorHeader() {
         </div>
 
         <div className="flex items-center gap-3">
+          {isGuestMode && (
+            <Badge variant="outline" className="hidden lg:inline-flex border-amber-500/30 text-amber-500">
+              Guest draft
+            </Badge>
+          )}
           <SaveStatusIndicator status={saveStatus} />
           
           <input
@@ -219,6 +265,10 @@ export function EditorHeader() {
             <Button variant="glass" size="icon" onClick={handleShare} className="h-9 w-9 rounded-xl" title="Share Link">
               {isCopied ? <Check className="h-4 w-4 text-green-500" /> : <Share2 className="h-4 w-4" />}
             </Button>
+
+            <Button variant="glass" size="icon" onClick={handleShareWhatsApp} className="h-9 w-9 rounded-xl" title="Share on WhatsApp">
+              <MessageCircle className="h-4 w-4" />
+            </Button>
             
             <Button variant="glass" size="icon" onClick={handleSaveVersion} className="h-9 w-9 rounded-xl" title="Save Snapshot">
               <History className="h-4 w-4" />
@@ -231,7 +281,14 @@ export function EditorHeader() {
               DOCX
             </Button>
 
-            <Button variant="premium" size="sm" onClick={handlePrint} disabled={isExporting} className="h-9 px-4 rounded-xl shadow-[0_0_20px_rgba(139,92,246,0.35)]">
+            <Button
+              variant="premium"
+              size="sm"
+              onClick={handlePrint}
+              disabled={isExporting}
+              className="h-9 px-4 rounded-xl"
+              data-tour="editor-download"
+            >
               {isExporting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Download className="mr-2 h-4 w-4" />}
               Export PDF
             </Button>

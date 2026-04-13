@@ -5,11 +5,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import type { BlogPost } from '@/lib/blog-posts';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { ArrowRight, BookOpen, Clock, Target } from 'lucide-react';
+import { ArrowRight, BookOpen, Clock, Rss, Target } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { cn } from '@/lib/utils';
+import { cn, isPlaceholderCoUrl } from '@/lib/utils';
+import { BLOG_TOPICS } from '@/lib/blog-topics';
 
 export function BlogClientPage({ posts }: { posts: BlogPost[] }) {
   const containerVariants = {
@@ -46,6 +47,22 @@ export function BlogClientPage({ posts }: { posts: BlogPost[] }) {
           <p className="text-xl text-muted-foreground leading-relaxed">
             Strategic advice on resume engineering, ATS optimization, and high-stakes interview performance for elite professionals.
           </p>
+          <div className="flex flex-wrap gap-2 mt-8">
+            <Button asChild variant="default" size="sm" className="min-h-[40px] rounded-full">
+              <Link href="/blog/topics">Browse by topic</Link>
+            </Button>
+            <Button asChild variant="outline" size="sm" className="min-h-[40px] rounded-full">
+              <Link href="/blog/feed.xml" className="inline-flex items-center gap-2">
+                <Rss className="h-3.5 w-3.5" aria-hidden />
+                RSS feed
+              </Link>
+            </Button>
+            {BLOG_TOPICS.map((t) => (
+              <Button key={t.slug} asChild variant="outline" size="sm" className="min-h-[40px] rounded-full">
+                <Link href={`/blog/topic/${t.slug}`}>{t.shortTitle}</Link>
+              </Button>
+            ))}
+          </div>
         </motion.div>
 
         <motion.div
@@ -54,10 +71,11 @@ export function BlogClientPage({ posts }: { posts: BlogPost[] }) {
           initial="hidden"
           animate="visible"
         >
-          {posts.map((post) => {
+          {posts.map((post, postIndex) => {
             const image = PlaceHolderImages.find(img => img.id === post.imageId);
             const wordCount = post.content.trim().split(/\s+/).length;
             const readingTime = Math.ceil(wordCount / 200);
+            const unopt = image ? isPlaceholderCoUrl(image.imageUrl) : false;
 
             return (
               <motion.div key={post.slug} variants={itemVariants} className="flex h-full">
@@ -69,7 +87,8 @@ export function BlogClientPage({ posts }: { posts: BlogPost[] }) {
                           src={image.imageUrl}
                           alt={post.title}
                           fill
-                          priority={posts.indexOf(post) < 3}
+                          priority={postIndex < 3}
+                          unoptimized={unopt}
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                           className="object-cover transition-transform duration-700 group-hover:scale-110"
                         />
@@ -92,7 +111,7 @@ export function BlogClientPage({ posts }: { posts: BlogPost[] }) {
                         {post.title}
                       </h2>
                       
-                      <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 mb-6 leading-relaxed flex-grow">
+                      <p className="text-[17px] md:text-sm text-muted-foreground line-clamp-2 mb-6 leading-[1.75] md:leading-relaxed flex-grow">
                         {post.description}
                       </p>
                       
@@ -108,6 +127,30 @@ export function BlogClientPage({ posts }: { posts: BlogPost[] }) {
             )
           })}
         </motion.div>
+
+        <section
+          className="mt-20 md:mt-28 max-w-3xl mx-auto rounded-2xl border border-border bg-card/60 p-6 sm:p-8 text-center space-y-4"
+          aria-labelledby="blog-cta-heading"
+        >
+          <h2 id="blog-cta-heading" className="text-xl sm:text-2xl font-headline font-bold text-foreground">
+            Put this advice to work
+          </h2>
+          <p className="text-muted-foreground text-[17px] sm:text-base leading-relaxed">
+            Open a template, fill your experience, then run AI review against a real job description — or practice answers in{' '}
+            <Link href="/interview" className="text-primary font-semibold underline-offset-2 hover:underline">
+              interview mode
+            </Link>
+            . A free account is required to save and export resumes.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+            <Button asChild size="lg" className="min-h-[48px] w-full sm:w-auto">
+              <Link href="/templates">Browse templates</Link>
+            </Button>
+            <Button asChild variant="outline" size="lg" className="min-h-[48px] w-full sm:w-auto">
+              <Link href="/dashboard">Open dashboard</Link>
+            </Button>
+          </div>
+        </section>
       </div>
     </div>
   );

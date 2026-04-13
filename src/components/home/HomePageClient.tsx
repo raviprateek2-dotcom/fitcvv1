@@ -1,10 +1,15 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { ArrowRight, CheckCircle2, DraftingCompass, FileText, Sparkles, Zap, XCircle } from 'lucide-react';
+import { CheckCircle2, DraftingCompass, FileText, Sparkles, Zap, XCircle } from 'lucide-react';
 import Link from 'next/link';
-import { motion, type Variants, useScroll, useTransform } from 'framer-motion';
-import { TypingAnimation } from '@/components/common/TypingAnimation';
+import {
+  motion,
+  type Variants,
+  useScroll,
+  useTransform,
+  useReducedMotion,
+} from 'framer-motion';
 import dynamic from 'next/dynamic';
 
 const TrustMarquee = dynamic(() => import('./TrustMarquee').then(mod => mod.TrustMarquee), {
@@ -71,7 +76,7 @@ const testimonials = [
     {
       author: 'Sarah L.',
       title: 'Software Engineer',
-      quote: 'FitCV helped me land my dream job in just two weeks! The AI suggestions were a game-changer.',
+      quote: 'The AI suggestions helped me tighten my bullets and feel more confident sending applications.',
       imageId: 'testimonial-avatar-1',
       rating: 5,
     },
@@ -106,29 +111,30 @@ const testimonials = [
 ];
 
 const stats = [
-    { label: 'Resumes Generated', value: '124,k+' },
-    { label: 'Success Rate', value: '98%' },
-    { label: 'ATS Optimized', value: '100%' },
-    { label: 'Career Growth', value: 'Lv. Max' }
+    { label: 'ATS-friendly templates', value: '8+' },
+    { label: 'Core builder & AI', value: 'Free' },
+    { label: 'Interview tools', value: 'Built-in' },
+    { label: 'Built for', value: 'India jobs' },
 ];
 
 const faqs = [
     {
         question: "Is FitCV really free?",
-        answer: "Yes! Our core designer templates and AI analysis tools are free for everyone. We offer a Premium tier for advanced AI exports and unlimited interview simulations."
+        answer: "Yes. Core templates, JD matching tools, and editing are free. Create an account to save, sync, and unlock full export/share flows."
     },
     {
         question: "How does the AI optimize for ATS?",
-        answer: "Our engine uses a multi-layered verification process that checks your document's structural readability against the top 5 global ATS providers (Workday, iCIMS, Greenhouse, etc.)."
+        answer: "We combine template structure (clear headings, simple layouts) with AI checks against your job description — keyword gaps, match score, and concrete edits — so your file is easier for both parsers and humans to read."
     },
     {
-        question: "Can I import my existing LinkedIn profile?",
-        answer: "Absolutely. Our LinkedIn Optimizer tool can scrap your public profile data and transform it into a high-impact cinematic resume in one click."
+        question: "Do you have templates for Indian hiring contexts?",
+        answer: "Yes. We provide layouts that work for campus placements, private-sector roles, and exam-focused applications. Start with a category and tailor with JD analysis."
     }
 ];
 
 
 export function HomePageClient() {
+    const reduceMotion = useReducedMotion();
     const featuresRef = useRef<HTMLDivElement>(null);
     const { scrollYProgress } = useScroll({
       target: featuresRef,
@@ -139,66 +145,7 @@ export function HomePageClient() {
     const scale = useTransform(scrollYProgress, [0, 0.2], [0.8, 1]);
 
     return (
-        <div className="relative isolate">
-            {/* Ambient Background Mesh */}
-            <div className="fixed inset-0 -z-10 opacity-[0.08] dark:opacity-[0.12] animate-mesh filter blur-[80px]" />
-            
-            <section className="w-full py-16 sm:py-24 md:py-48 relative overflow-hidden">
-                <div className="container mx-auto px-4 md:px-6 relative z-10">
-                    <motion.div
-                        initial="hidden"
-                        animate="visible"
-                        variants={sectionVariants}
-                        className="flex flex-col items-center text-center space-y-8"
-                    >
-                        <motion.div variants={itemVariants} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest animate-pulse">
-                            <Sparkles className="w-3 h-3" /> The Future of Careers is Here
-                        </motion.div>
-                        
-                        <motion.h1 
-                            variants={itemVariants} 
-                            className="text-4xl font-headline font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl"
-                        >
-                            Don't just write a <span className="text-gradient">resume</span>
-                        </motion.h1>
-                        
-                        <motion.div variants={itemVariants} className="text-3xl font-headline font-bold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl min-h-[50px] sm:min-h-[60px] md:min-h-[80px] lg:min-h-[90px] w-full max-w-[90vw] overflow-visible">
-                            <TypingAnimation 
-                                phrases={[
-                                    "Design your future.",
-                                    "Build your career.",
-                                    "Land your dream job.",
-                                    "Showcase your skills."
-                                ]}
-                                colors={['text-primary', 'text-purple-400', 'text-foreground', 'text-blue-400']}
-                            />
-                        </motion.div>
-                        
-                        <motion.p variants={itemVariants} className="max-w-3xl mx-auto text-muted-foreground/80 md:text-xl leading-relaxed">
-                            Experience the most advanced AI-powered resume builder. We combine minimalist design with powerful algorithms to help you bypass ATS and land interviews at top companies.
-                        </motion.p>
-                        
-                        <motion.div variants={itemVariants} className="flex flex-col gap-4 sm:flex-row justify-center pt-4 w-full px-4 sm:px-0">
-                            <Button asChild size="lg" variant="premium" className="h-14 px-6 sm:px-8 text-base sm:text-lg rounded-full w-full sm:w-auto">
-                                <Link href="/templates">
-                                    Start Building Now
-                                    <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                                </Link>
-                            </Button>
-                            <Button asChild size="lg" variant="glass" className="h-14 px-6 sm:px-8 text-base sm:text-lg rounded-full border-primary/20 hover:border-primary/40 w-full sm:w-auto">
-                                <Link href="#features">
-                                    Explore Features
-                                </Link>
-                            </Button>
-                        </motion.div>
-                    </motion.div>
-                </div>
-                
-                {/* Decorative Elements */}
-                <div className="absolute top-1/2 left-0 -translate-y-1/2 -z-10 w-64 h-64 bg-primary/20 rounded-full blur-[120px] animae-pulse" />
-                <div className="absolute bottom-1/4 right-0 -z-10 w-96 h-96 bg-purple-500/10 rounded-full blur-[150px]" />
-            </section>
-
+        <>
             <TrustMarquee />
             
             <section className="py-10 md:py-12 bg-white/[0.02] border-y border-white/5 relative overflow-hidden">
@@ -214,7 +161,7 @@ export function HomePageClient() {
                                 >
                                     {stat.value}
                                 </motion.div>
-                                <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/40 font-bold">{stat.label}</div>
+                                <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/60 font-bold">{stat.label}</div>
                             </div>
                         ))}
                     </div>
@@ -231,7 +178,7 @@ export function HomePageClient() {
                 <div id="how-it-works" className="container mx-auto px-4 md:px-6">
                     <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12 sm:mb-16">
                         <motion.div variants={itemVariants} className="inline-block rounded-full bg-primary/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-primary border border-primary/20">The Process</motion.div>
-                        <motion.h2 variants={itemVariants} className="text-3xl font-headline font-extrabold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl text-gradient">Three Steps to Perfection</motion.h2>
+                        <motion.h2 variants={itemVariants} className="text-3xl font-headline font-extrabold tracking-tight sm:text-4xl md:text-5xl lg:text-6xl text-gradient">Three steps to a stronger resume</motion.h2>
                         <motion.p variants={itemVariants} className="max-w-[600px] text-muted-foreground md:text-lg">Our streamlined workflow ensures you get the best results with minimal effort.</motion.p>
                     </div>
                     <motion.div
@@ -244,10 +191,10 @@ export function HomePageClient() {
                                     <FileText className="w-10 h-10 text-primary transition-transform group-hover:scale-110"/>
                                 </div>
                                 <h3 className="text-2xl font-bold font-headline">1. Choose</h3>
-                                <p className="text-muted-foreground text-sm leading-relaxed">Select from 20+ designer templates optimized for your specific industry and seniority.</p>
+                                <p className="text-muted-foreground text-sm leading-relaxed">Pick from multiple ATS-friendly layouts tuned for clarity — then make it yours.</p>
                             </div>
                         </motion.div>
-                        <motion.div variants={itemVariants} className="premium-card text-center group">
+                        <motion.div variants={itemVariants} className="premium-card text-center group p-6 sm:p-8">
                             <div className="flex flex-col gap-4 items-center">
                                 <div className="bg-purple-500/10 p-5 rounded-2xl group-hover:bg-purple-500/20 transition-colors">
                                     <Sparkles className="w-10 h-10 text-purple-500 transition-transform group-hover:scale-110"/>
@@ -261,8 +208,8 @@ export function HomePageClient() {
                                 <div className="bg-blue-500/10 p-5 rounded-2xl group-hover:bg-blue-500/20 transition-colors">
                                     <Zap className="w-10 h-10 text-blue-500 transition-transform group-hover:scale-110"/>
                                 </div>
-                                <h3 className="text-2xl font-bold font-headline">3. Dominate</h3>
-                                <p className="text-muted-foreground text-sm leading-relaxed">Export in multiple formats and track your applications with our built-in career tools.</p>
+                                <h3 className="text-2xl font-bold font-headline">3. Ship it</h3>
+                                <p className="text-muted-foreground text-sm leading-relaxed">Export when you’re ready, practice interviews in-app, and iterate with AI feedback on each draft.</p>
                             </div>
                         </motion.div>
                     </motion.div>
@@ -387,7 +334,11 @@ export function HomePageClient() {
                     <div>
                         <Carousel
                         opts={{ align: "start", loop: true }}
-                        plugins={[Autoplay({ delay: 5000 })]}
+                        plugins={
+                          reduceMotion === true
+                            ? []
+                            : [Autoplay({ delay: 5000, stopOnInteraction: true, stopOnMouseEnter: true })]
+                        }
                         className="w-full max-w-6xl mx-auto"
                         >
                         <CarouselContent>
@@ -423,8 +374,8 @@ export function HomePageClient() {
                 </div>
             </section>
 
-            {/* Final CTA */}
-            <section className="py-16 sm:py-24 md:py-48 overflow-hidden relative w-full">
+            {/* Final CTA — single landing closure (blog follows in page.tsx) */}
+            <section id="get-started" className="py-16 sm:py-24 md:py-48 overflow-hidden relative w-full scroll-mt-20">
                 <div className="container mx-auto px-4 text-center w-full">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
@@ -435,13 +386,13 @@ export function HomePageClient() {
                         <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-64 h-64 bg-primary/20 rounded-full blur-[100px]" />
                         <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-32 sm:w-64 h-32 sm:h-64 bg-purple-500/20 rounded-full blur-[100px]" />
                         
-                        <h2 className="text-3xl sm:text-4xl md:text-6xl font-headline font-extrabold tracking-tight px-2">Ready to <span className="text-gradient">skyrocket</span> your career?</h2>
+                        <h2 className="text-3xl sm:text-4xl md:text-6xl font-headline font-extrabold tracking-tight px-2">Ready to <span className="text-gradient">stand out</span> with a clear story?</h2>
                         <p className="text-base sm:text-xl text-muted-foreground max-w-2xl px-2">
-                            Join over 10,000 professionals who used FitCV to land positions at companies like Google, Meta, and Tesla.
+                            Start free with templates and AI help, then add Pro when you want the full interview and export stack. No credit card to begin.
                         </p>
                         <Button asChild size="lg" variant="premium" className="h-14 sm:h-16 px-8 sm:px-12 text-lg sm:text-xl rounded-full shadow-2xl w-[90%] sm:w-auto overflow-hidden whitespace-nowrap text-ellipsis flex-nowrap shrink-0">
                             <Link href="/templates" className="flex items-center justify-center w-full">
-                                <span className="truncate max-w-[calc(100%-2rem)]">Claim My Free Account</span>
+                                <span className="truncate max-w-[calc(100%-2rem)]">Pick a template — start free</span>
                                 <Sparkles className="ml-2 h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0" />
                             </Link>
                         </Button>
@@ -451,6 +402,6 @@ export function HomePageClient() {
                     </motion.div>
                 </div>
             </section>
-        </div>
+        </>
     );
 }

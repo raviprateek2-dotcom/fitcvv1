@@ -11,7 +11,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Menu, Rocket, User, LayoutDashboard, FileText, BrainCircuit, Settings, LogOut } from 'lucide-react';
+import { Menu, Rocket, User, Home, LayoutDashboard, FileText, BrainCircuit, Settings, LogOut, CircleHelp } from 'lucide-react';
+import { useWalkthrough } from '@/components/walkthrough/WalkthroughProvider';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -19,6 +20,7 @@ import React from 'react';
 import { useUser, useAuth } from '@/firebase';
 import { signOut } from 'firebase/auth';
 import { ThemeToggleButton } from './ThemeToggleButton';
+import { trackEvent } from '@/lib/analytics-events';
 
 const navLinks = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -29,6 +31,7 @@ const navLinks = [
 export function Header() {
   const pathname = usePathname();
   const { user, isUserLoading } = useUser();
+  const { openWalkthrough } = useWalkthrough();
   const auth = useAuth();
   const isAuthenticated = !!user;
 
@@ -58,6 +61,13 @@ export function Header() {
             <Link
               key={link.href}
               href={link.href}
+              data-tour={
+                link.href === '/templates'
+                  ? 'nav-templates'
+                  : link.href === '/interview'
+                    ? 'nav-interview'
+                    : undefined
+              }
               className={cn(
                 'transition-colors hover:text-foreground/80 flex items-center gap-1.5',
                 pathname === link.href ? 'text-foreground' : 'text-foreground/60'
@@ -73,14 +83,26 @@ export function Header() {
           {!isUserLoading && (
             <>
               {isAuthenticated ? (
-                <UserMenu onLogout={handleLogout} />
+                <UserMenu onLogout={handleLogout} onOpenWalkthrough={openWalkthrough} />
               ) : (
-                <div className="hidden md:flex items-center gap-4">
+                <div className="hidden md:flex items-center gap-3">
+                  <Link
+                    href="/#get-started"
+                    onClick={() => trackEvent('cta_get_started', { surface: 'header_desktop' })}
+                    className={cn(
+                      'text-sm font-medium transition-colors hover:text-foreground/80 min-h-9 inline-flex items-center px-1',
+                      pathname === '/' ? 'text-foreground' : 'text-foreground/60'
+                    )}
+                  >
+                    Get started
+                  </Link>
                   <Button variant="ghost" asChild>
                     <Link href="/login">Log In</Link>
                   </Button>
                   <Button asChild variant="neuro">
-                    <Link href="/signup">Sign Up</Link>
+                    <Link href="/signup" onClick={() => trackEvent('cta_signup', { surface: 'header_desktop' })}>
+                      Sign Up
+                    </Link>
                   </Button>
                 </div>
               )}
@@ -100,11 +122,36 @@ export function Header() {
                   <Rocket className="h-8 w-8 text-primary" />
                   <span>FitCV</span>
                 </Link>
+                {!isUserLoading &&
+                  (!isAuthenticated ? (
+                    <Link
+                      href="/#get-started"
+                      onClick={() => trackEvent('cta_get_started', { surface: 'header_mobile' })}
+                      className="flex items-center min-h-[48px] px-3 rounded-xl text-base font-semibold text-primary bg-primary/10 border border-primary/20 hover:bg-primary/15 transition-colors"
+                    >
+                      Get started
+                    </Link>
+                  ) : (
+                    <Link
+                      href="/#get-started"
+                      className="flex items-center gap-2 min-h-[48px] px-3 rounded-xl text-base font-semibold text-foreground/80 border border-border hover:bg-secondary transition-colors"
+                    >
+                      <Home className="h-5 w-5 text-primary shrink-0" aria-hidden />
+                      Homepage
+                    </Link>
+                  ))}
                 <div className="flex flex-col gap-2">
                   {navLinks.map((link) => (
                     <Link
                       key={link.href}
                       href={link.href}
+                      data-tour={
+                        link.href === '/templates'
+                          ? 'nav-templates'
+                          : link.href === '/interview'
+                            ? 'nav-interview'
+                            : undefined
+                      }
                       className={cn(
                         'flex items-center gap-3 p-3 rounded-xl text-lg font-medium transition-all',
                         pathname === link.href ? 'bg-primary/10 text-primary' : 'hover:bg-secondary text-foreground/60'
@@ -123,7 +170,9 @@ export function Header() {
                       <Link href="/login">Log In</Link>
                     </Button>
                     <Button asChild variant="neuro" className="w-full">
-                      <Link href="/signup">Sign Up Free</Link>
+                      <Link href="/signup" onClick={() => trackEvent('cta_signup', { surface: 'header_mobile' })}>
+                        Sign Up Free
+                      </Link>
                     </Button>
                   </div>
                 ) : (
@@ -140,7 +189,13 @@ export function Header() {
   );
 }
 
-function UserMenu({ onLogout }: { onLogout: () => void }) {
+function UserMenu({
+  onLogout,
+  onOpenWalkthrough,
+}: {
+  onLogout: () => void;
+  onOpenWalkthrough: () => void;
+}) {
   const { user, userProfile } = useUser();
 
   const getInitials = (name: string) => {
@@ -175,10 +230,20 @@ function UserMenu({ onLogout }: { onLogout: () => void }) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild className="p-3 cursor-pointer">
+          <Link href="/#get-started" className="flex items-center gap-2"><Home className="h-4 w-4 text-primary" /> Homepage</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild className="p-3 cursor-pointer">
           <Link href="/dashboard" className="flex items-center gap-2"><LayoutDashboard className="h-4 w-4 text-primary" /> Dashboard</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild className="p-3 cursor-pointer">
           <Link href="/settings" className="flex items-center gap-2"><Settings className="h-4 w-4 text-primary" /> Settings</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className="p-3 cursor-pointer"
+          onClick={() => onOpenWalkthrough()}
+        >
+          <CircleHelp className="h-4 w-4 text-primary mr-2" />
+          Platform guide
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={onLogout} className="p-3 cursor-pointer text-destructive focus:bg-destructive/10 focus:text-destructive">

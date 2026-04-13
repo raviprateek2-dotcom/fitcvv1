@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 const variants = {
@@ -37,12 +37,19 @@ export function TypingAnimation({
   pauseDuration = 2000,
   colors = ['text-primary']
 }: TypingAnimationProps) {
+  const reduceMotion = useReducedMotion();
   const [phraseIndex, setPhraseIndex] = useState(0);
   const [typedText, setTypedText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
   const [colorIndex, setColorIndex] = useState(0);
 
+  const first = phrases[0] ?? '';
+  const staticClass = colors[0] ?? 'text-primary';
+  const prefersReduced = reduceMotion === true;
+
   useEffect(() => {
+    if (prefersReduced) return;
+
     let timeoutId: NodeJS.Timeout;
 
     const handleTyping = () => {
@@ -78,7 +85,21 @@ export function TypingAnimation({
     handleTyping();
 
     return () => clearTimeout(timeoutId);
-  }, [typedText, isDeleting, phraseIndex, phrases, typingSpeed, deletingSpeed, pauseDuration, colors.length]);
+  }, [
+    prefersReduced,
+    typedText,
+    isDeleting,
+    phraseIndex,
+    phrases,
+    typingSpeed,
+    deletingSpeed,
+    pauseDuration,
+    colors.length,
+  ]);
+
+  if (prefersReduced && first) {
+    return <span className={cn('inline-block', staticClass)}>{first}</span>;
+  }
 
   const textToShow = typedText || ' '; // Use non-breaking space to maintain height
   const currentColorClass = colors[colorIndex];

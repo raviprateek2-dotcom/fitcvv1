@@ -1,4 +1,9 @@
 import '@testing-library/jest-dom';
+import { cleanup } from '@testing-library/react';
+
+afterEach(() => {
+  cleanup();
+});
 
 // Mock matchMedia if not present
 if (typeof window !== 'undefined' && !window.matchMedia) {

@@ -21,13 +21,10 @@ describe('useResumeEditorStore', () => {
   };
 
   beforeEach(() => {
-    // Reset state before each test
-    const { result } = renderHook(() => useResumeEditorStore());
     act(() => {
-      result.current.setResumeData(emptyResume);
-      result.current.setResumeId('');
-      result.current.resetUiState();
-      // zundo allows manual clearing, but standard set state works
+      useResumeEditorStore.getState().setResumeData(emptyResume);
+      useResumeEditorStore.getState().setResumeId('');
+      useResumeEditorStore.getState().resetUiState();
     });
   });
 

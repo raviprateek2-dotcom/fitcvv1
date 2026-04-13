@@ -4,67 +4,76 @@
 @tailwind utilities;
 
 @layer base {
+  /* FitCV Rev2 — Calm Authority: slate blue + sage teal (HSL channels for Tailwind/shadcn) */
   :root {
-    --background: 0 0% 100%;
-    --foreground: 224 71.4% 4.1%;
+    --fit-secondary: 162 45% 45%;
+    --surface-page: 210 36% 98%;
+    --surface-card: 0 0% 100%;
+
+    --background: 210 36% 98%;
+    --foreground: 215 32% 16%;
     --card: 0 0% 100%;
-    --card-foreground: 224 71.4% 4.1%;
+    --card-foreground: 215 32% 16%;
     --popover: 0 0% 100%;
-    --popover-foreground: 224 71.4% 4.1%;
-    --primary: 263.4 70% 50.4%;
-    --primary-foreground: 210 20% 98%;
-    --secondary: 220 14.3% 95.9%;
-    --secondary-foreground: 220.9 39.3% 11%;
-    --muted: 220 14.3% 95.9%;
-    --muted-foreground: 220 8.9% 46.1%;
-    --accent: 263.4 70% 50.4%;
-    --accent-foreground: 210 20% 98%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 20% 98%;
-    --warning: 47.9 95.8% 53.1%;
-    --warning-foreground: 210 20% 98%;
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 263.4 70% 50.4%;
-    --radius: 1.25rem;
-    --neuro-shadow-light: 220 13% 91%;
+    --popover-foreground: 215 32% 16%;
+    --primary: 206 56% 40%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 162 28% 94%;
+    --secondary-foreground: 162 40% 22%;
+    --muted: 210 25% 96%;
+    --muted-foreground: 215 16% 49%;
+    --accent: 206 45% 95%;
+    --accent-foreground: 206 56% 28%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 215 32% 16%;
+    --border: 210 18% 90%;
+    --input: 210 18% 90%;
+    --ring: 206 56% 40%;
+    --radius: 0.75rem;
+    --neuro-shadow-light: 210 18% 88%;
     --neuro-shadow-dark: 0 0% 100%;
-    
+
     /* Premium Glass Tokens */
-    --glass-bg: rgba(255, 255, 255, 0.7);
-    --glass-border: rgba(255, 255, 255, 0.3);
-    --glass-shadow: rgba(31, 38, 135, 0.07);
+    --glass-bg: rgba(255, 255, 255, 0.72);
+    --glass-border: rgba(45, 106, 159, 0.12);
+    --glass-shadow: rgba(26, 37, 52, 0.06);
   }
   .dark {
-    --background: 224 71.4% 4.1%;
-    --foreground: 210 40% 98%;
-    --card: 224 71.4% 4.1%;
-    --card-foreground: 210 40% 98%;
-    --popover: 224 71.4% 4.1%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 263.4 70% 50.4%;
-    --primary-foreground: 210 20% 98%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 263.4 70% 50.4%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --warning: 47.9 95.8% 53.1%;
-    --warning-foreground: 210 20% 98%;
-    --border: 217.2 32.6% 25%;
-    --input: 217.2 32.6% 25%;
-    --ring: 263.4 70% 50.4%;
-    --radius: 1.25rem;
-    --neuro-shadow-light: 220 40% 2%;
-    --neuro-shadow-dark: 217.2 32.6% 15%;
+    --fit-secondary: 162 48% 52%;
+    --surface-page: 215 42% 10%;
+    --surface-card: 215 35% 14%;
+
+    --background: 215 42% 10%;
+    --foreground: 213 25% 93%;
+    --card: 215 35% 14%;
+    --card-foreground: 213 25% 93%;
+    --popover: 215 35% 14%;
+    --popover-foreground: 213 25% 93%;
+    --primary: 206 48% 54%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 215 28% 18%;
+    --secondary-foreground: 213 25% 93%;
+    --muted: 215 30% 18%;
+    --muted-foreground: 208 22% 58%;
+    --accent: 206 40% 18%;
+    --accent-foreground: 206 55% 88%;
+    --destructive: 0 62% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --warning: 38 88% 52%;
+    --warning-foreground: 215 32% 12%;
+    --border: 215 28% 22%;
+    --input: 215 28% 22%;
+    --ring: 206 48% 54%;
+    --radius: 0.75rem;
+    --neuro-shadow-light: 215 40% 6%;
+    --neuro-shadow-dark: 215 28% 18%;
 
     /* Premium Glass Tokens (Dark) */
-    --glass-bg: rgba(15, 23, 42, 0.7);
-    --glass-border: rgba(255, 255, 255, 0.08);
-    --glass-shadow: rgba(0, 0, 0, 0.3);
+    --glass-bg: rgba(23, 33, 49, 0.75);
+    --glass-border: rgba(74, 141, 196, 0.15);
+    --glass-shadow: rgba(0, 0, 0, 0.35);
   }
 }
 
@@ -77,6 +86,30 @@
   }
   a {
     @apply transition-colors duration-300;
+  }
+}
+
+/* Smooth theme switch only when user toggles (see ThemeToggleButton) */
+body.theme-transition,
+body.theme-transition * {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-duration: 200ms;
+  transition-timing-function: ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  body.theme-transition,
+  body.theme-transition * {
+    transition: none !important;
   }
 }
 
@@ -104,7 +137,12 @@
   }
 
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-500 to-pink-500;
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(
+      90deg,
+      hsl(var(--primary)) 0%,
+      hsl(var(--fit-secondary)) 100%
+    );
   }
 
   .premium-card {
@@ -119,7 +157,7 @@
 }
 
 .animate-mesh {
-  background: linear-gradient(-45deg, #8B5CF6, #EC4899, #3B82F6, #10B981);
+  background: linear-gradient(-45deg, #2D6A9F, #3DAA8A, #4A8DC4, #50C79E);
   background-size: 400% 400%;
   animation: mesh-gradient 15s ease infinite;
 }

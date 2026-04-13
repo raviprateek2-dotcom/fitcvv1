@@ -24,7 +24,6 @@ import { Slider } from '../ui/slider';
 import { cn } from '@/lib/utils';
 import { nanoid } from 'nanoid';
 import { parseResumeFromPdf } from '@/app/actions/ai-resume-parser';
-import { generateResumePdf } from '@/app/actions/export-pdf';
 import fastDeepEqual from 'fast-deep-equal';
 import { generateResumeDocx } from '@/app/actions/export-docx';
 import { readFileAsDataURL, downloadBase64File } from '@/lib/file-utils';
@@ -42,6 +41,8 @@ import { ProFeatureWrapper } from './ProFeatureWrapper';
 import { AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
 import { Badge } from '../ui/badge';
 import { EditorHeader } from './EditorHeader';
+import { downloadResumePdfClient } from '@/lib/resume-download-client';
+import { buildGuestResumeSeed, isGuestResumeId, loadGuestResume, saveGuestResume } from '@/lib/guest-resume';
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 type EditorTab = 'content' | 'ai-review' | 'cover-letter' | 'design';
@@ -70,7 +71,9 @@ const EditorLoadingSkeleton = () => {
 
 export function ResumeEditor({ resumeId }: { resumeId: string }) {
   const { user } = useUser();
+  const isGuestMode = isGuestResumeId(resumeId);
   const firestore = useFirestore();
+  const { toast } = useToast();
   const searchParams = useSearchParams();
   const isPrintMode = searchParams.get('print') === 'true';
 
@@ -80,6 +83,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   );
   const { data: initialResumeData, isLoading: isResumeLoading } = useDoc<ResumeData>(resumeDocRef);
   const initialDataRef = useRef<ResumeData | null>(null);
+  const [guestReady, setGuestReady] = useState(false);
 
   const {
     resumeData, setResumeData, setResumeId,
@@ -102,10 +106,28 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const [autosaveMs, setAutosaveMs] = useState(1500);
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)');
+    const apply = () => setAutosaveMs(mq.matches ? 10000 : 1500);
+    apply();
+    mq.addEventListener('change', apply);
+    return () => mq.removeEventListener('change', apply);
+  }, []);
+
   // Initialize store with resumeId
   useEffect(() => {
     setResumeId(resumeId);
   }, [resumeId, setResumeId]);
+
+  useEffect(() => {
+    if (!isGuestMode) return;
+    const fromStorage = loadGuestResume(resumeId);
+    const seed = fromStorage ?? buildGuestResumeSeed('modern');
+    setResumeData(seed);
+    initialDataRef.current = seed;
+    setGuestReady(true);
+  }, [isGuestMode, resumeId, setResumeData]);
 
   useEffect(() => {
     if (initialResumeData && !initialDataRef.current) {
@@ -135,7 +157,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
       setResumeData(updatedData);
       initialDataRef.current = updatedData;
     }
-  }, [initialResumeData, setResumeData]);
+  }, [initialResumeData, setResumeData, isGuestMode]);
 
   useEffect(() => {
     if (isPrintMode && resumeData) {
@@ -144,6 +166,12 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
   }, [isPrintMode, resumeData]);
 
   const handleSave = useCallback((dataToSave: ResumeData) => {
+    if (isGuestMode || !user) {
+      saveGuestResume(resumeId, dataToSave);
+      setSaveStatus('saved');
+      setTimeout(() => setSaveStatus('idle'), 1000);
+      return;
+    }
     if (!resumeDocRef || !firestore || !user) return;
     setSaveStatus('saving');
 
@@ -173,7 +201,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
 
     setSaveStatus('saved');
     setTimeout(() => setSaveStatus('idle'), 2000);
-  }, [resumeDocRef, firestore, user, setSaveStatus]);
+  }, [resumeDocRef, firestore, user, setSaveStatus, isGuestMode, resumeId]);
 
   useEffect(() => {
     if (!resumeData || !initialDataRef.current || isPrintMode) return;
@@ -185,18 +213,30 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     const handler = setTimeout(() => {
       handleSave(resumeData);
       initialDataRef.current = resumeData;
-    }, 1500);
+    }, autosaveMs);
 
     return () => {
       clearTimeout(handler);
     };
-  }, [resumeData, handleSave, isPrintMode]);
+  }, [resumeData, handleSave, isPrintMode, autosaveMs]);
 
   function handleFieldChange<T extends keyof ResumeData>(field: T, value: ResumeData[T]) {
     setResumeData(prev => ({ ...prev, [field]: value }));
   }
 
-  if (isResumeLoading || !resumeData) {
+  const flushSaveNow = useCallback(() => {
+    if (!resumeData || isPrintMode) return;
+    handleSave(resumeData);
+    initialDataRef.current = resumeData;
+    toast({ title: 'Saved', description: 'Your resume is up to date.' });
+  }, [resumeData, handleSave, isPrintMode, toast]);
+
+  const handleMobileExportPdf = useCallback(() => {
+    if (!resumeData) return;
+    void downloadResumePdfClient(resumeData, resumeId, toast, setIsExporting);
+  }, [resumeData, resumeId, toast, setIsExporting]);
+
+  if ((isGuestMode && !guestReady) || (!isGuestMode && isResumeLoading) || !resumeData) {
     return <EditorLoadingSkeleton />;
   }
 
@@ -216,15 +256,34 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
       <EditorHeader />
       
       <div className="flex md:hidden bg-background/60 backdrop-blur-md border-b p-2 gap-2 no-print z-20">
-        <Button variant={mobileMode === 'edit' ? 'default' : 'ghost'} className="flex-1 gap-2 rounded-xl" onClick={() => setMobileMode('edit')}><Edit3 className="w-4 h-4" /> Edit</Button>
-        <Button variant={mobileMode === 'preview' ? 'default' : 'ghost'} className="flex-1 gap-2 rounded-xl" onClick={() => setMobileMode('preview')}><Eye className="w-4 h-4" /> Preview</Button>
+        <Button
+          variant={mobileMode === 'edit' ? 'default' : 'ghost'}
+          className="flex-1 gap-2 rounded-xl min-h-[52px] text-base"
+          onClick={() => setMobileMode('edit')}
+        >
+          <Edit3 className="w-5 h-5 shrink-0" aria-hidden />
+          Edit
+        </Button>
+        <Button
+          variant={mobileMode === 'preview' ? 'default' : 'ghost'}
+          className="flex-1 gap-2 rounded-xl min-h-[52px] text-base"
+          onClick={() => setMobileMode('preview')}
+        >
+          <Eye className="w-5 h-5 shrink-0" aria-hidden />
+          Preview
+        </Button>
       </div>
 
-      <div className="flex-grow flex overflow-hidden no-print relative">
-        <div className={cn(
-          "w-full md:w-[450px] lg:w-[500px] xl:w-[550px] shrink-0 h-full border-r bg-glass backdrop-blur-3xl z-10 flex flex-col shadow-2xl transition-all duration-300", 
-          mobileMode === 'preview' ? 'hidden md:flex' : 'flex'
-        )}>
+      <div
+        className="flex-grow flex overflow-hidden no-print relative pb-[calc(4.5rem+env(safe-area-inset-bottom,0px))] md:pb-0"
+        data-tour="editor-split"
+      >
+        <div
+          className={cn(
+            'w-full md:w-[450px] lg:w-[500px] xl:w-[550px] shrink-0 h-full border-r bg-glass backdrop-blur-3xl z-10 flex flex-col shadow-2xl transition-all duration-300 max-md:[&_input]:min-h-11 max-md:[&_input]:text-base max-md:[&_textarea]:min-h-[120px] max-md:[&_textarea]:text-base',
+            mobileMode === 'preview' ? 'hidden md:flex' : 'flex'
+          )}
+        >
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as EditorTab)} className="h-full flex flex-col">
             <div className="p-5 border-b bg-white/5">
               <TabsList className="grid w-full grid-cols-5 p-1 bg-secondary/50 rounded-2xl h-11">
@@ -248,13 +307,26 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
           </Tabs>
         </div>
 
-        <div className={cn(
-          "flex-grow bg-[#f8f9fa] dark:bg-black/40 overflow-y-auto relative p-6 md:p-12 lg:p-16 scrollbar-hide", 
-          mobileMode === 'preview' ? 'block' : 'hidden md:block'
-        )}>
+        <div
+          className={cn(
+            'flex-grow bg-[#f8f9fa] dark:bg-black/40 overflow-y-auto relative p-4 md:p-12 lg:p-16 scrollbar-hide',
+            mobileMode === 'preview' ? 'block' : 'hidden md:block'
+          )}
+        >
            <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#ffffff0a_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none" />
            
-           <div className="mx-auto max-w-[900px] perspective-1000">
+           <div
+             className={cn(
+               'mx-auto max-w-[900px] perspective-1000',
+               mobileMode === 'preview' &&
+                 'max-h-[min(70vh,calc(100dvh-12rem))] overflow-auto rounded-2xl'
+             )}
+             style={
+               mobileMode === 'preview'
+                 ? { touchAction: 'pan-x pan-y pinch-zoom' as const }
+                 : undefined
+             }
+           >
              <motion.div 
                initial={{ opacity: 0, y: 30, scale: 0.98 }}
                animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -270,6 +342,48 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                 )}
              </motion.div>
            </div>
+        </div>
+      </div>
+
+      <div
+        className="md:hidden no-print fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 backdrop-blur-md px-3 pt-2 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] dark:shadow-[0_-8px_24px_rgba(0,0,0,0.35)]"
+        style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}
+      >
+        <div className="mx-auto flex max-w-lg items-stretch gap-2">
+          <Button variant="outline" size="lg" className="min-h-[48px] flex-1 gap-1.5 px-2" asChild>
+            <Link href="/dashboard">
+              <ArrowLeft className="h-4 w-4 shrink-0" aria-hidden />
+              {isGuestMode ? 'Exit guest' : 'Back'}
+            </Link>
+          </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            size="lg"
+            className="min-h-[48px] flex-1"
+            onClick={flushSaveNow}
+            disabled={saveStatus === 'saving'}
+          >
+            {saveStatus === 'saving' ? (
+              <Loader2 className="h-4 w-4 animate-spin shrink-0" aria-hidden />
+            ) : null}
+            Save
+          </Button>
+          <Button
+            type="button"
+            size="lg"
+            className="min-h-[48px] flex-1 gap-1.5 px-2"
+            onClick={handleMobileExportPdf}
+            disabled={isExporting}
+            data-tour="editor-download"
+          >
+            {isExporting ? (
+              <Loader2 className="h-4 w-4 animate-spin shrink-0" aria-hidden />
+            ) : (
+              <Download className="h-4 w-4 shrink-0" aria-hidden />
+            )}
+            PDF
+          </Button>
         </div>
       </div>
     </div>

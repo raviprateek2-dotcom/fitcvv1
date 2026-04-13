@@ -1,8 +1,11 @@
 'use client';
 
 import { useEffect } from 'react';
-import { Button } from '@/components/ui/button';
+import { captureException } from '@sentry/browser';
 
+/**
+ * Root layout errors only — must include html/body (Next.js replaces the root layout).
+ */
 export default function GlobalError({
   error,
   reset,
@@ -10,28 +13,50 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-    useEffect(() => {
-    // Log the error to an error reporting service
+  useEffect(() => {
     console.error(error);
+    if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
+      captureException(error);
+    }
   }, [error]);
 
   return (
-    <html>
-      <body>
-        <div className="flex flex-col items-center justify-center min-h-screen text-center px-4 bg-background">
-            <h2 className="text-3xl font-headline font-bold mb-4 text-foreground">Something went wrong!</h2>
-            <p className="text-muted-foreground mb-8 max-w-md">
-                An unexpected error occurred throughout the application. Please try refreshing the page.
-            </p>
-            <Button
-                onClick={
-                // Attempt to recover by trying to re-render the segment
-                () => reset()
-                }
-            >
-                Try again
-            </Button>
-        </div>
+    <html lang="en">
+      <body
+        style={{
+          minHeight: '100vh',
+          margin: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '1.5rem',
+          fontFamily: 'system-ui, sans-serif',
+          textAlign: 'center',
+          background: '#0a0a0a',
+          color: '#fafafa',
+        }}
+      >
+        <h1 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.5rem' }}>Something went wrong</h1>
+        <p style={{ color: '#a3a3a3', fontSize: '0.875rem', marginBottom: '1.5rem', maxWidth: '24rem' }}>
+          A critical error occurred. Try again, or refresh the page.
+        </p>
+        <button
+          type="button"
+          onClick={() => reset()}
+          style={{
+            borderRadius: '0.5rem',
+            border: 'none',
+            padding: '0.5rem 1rem',
+            fontSize: '0.875rem',
+            fontWeight: 600,
+            cursor: 'pointer',
+            background: '#22c55e',
+            color: '#052e16',
+          }}
+        >
+          Try again
+        </button>
       </body>
     </html>
   );

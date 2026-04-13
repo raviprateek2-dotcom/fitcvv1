@@ -35,8 +35,11 @@ export async function generateResumePdf(resumeData: ResumeData, resumeId: string
             deviceScaleFactor: 2, // 2x for crisp text
         });
 
-        // Navigate to the print-optimized view of the resume
-        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+        // Prefer deployment origin; fallback keeps local dev/test working.
+        const baseUrl =
+            process.env.NEXT_PUBLIC_APP_URL ||
+            process.env.NEXT_PUBLIC_SITE_URL ||
+            'http://localhost:9002';
         await page.goto(`${baseUrl}/editor/${resumeId}?print=true`, {
             waitUntil: 'networkidle0',
             timeout: 15000,

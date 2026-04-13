@@ -59,9 +59,40 @@ const tracks = [
 
 type InterviewState = 'idle' | 'listening' | 'processing' | 'speaking' | 'generatingQuestionAudio' | 'unsupported';
 
+type MicPlatform = 'ios' | 'android' | 'desktop';
+
+function detectMicPlatform(): MicPlatform {
+  if (typeof navigator === 'undefined') return 'desktop';
+  const ua = navigator.userAgent;
+  if (/iPad|iPhone|iPod/i.test(ua)) return 'ios';
+  if (/Android/i.test(ua)) return 'android';
+  return 'desktop';
+}
+
+function micPermissionHint(platform: MicPlatform): string {
+  if (platform === 'ios') {
+    return 'On iPhone or iPad, Safari will ask for the microphone. If nothing happens, open Settings → Safari → Microphone and choose Ask or Allow, then reload this page.';
+  }
+  if (platform === 'android') {
+    return 'On Android, tap the lock or site icon in Chrome’s address bar → Permissions → Microphone → Allow, then try the mic again.';
+  }
+  return 'Your browser may prompt for microphone access when you tap the mic. If you blocked it earlier, use the lock icon in the address bar to allow the microphone for this site.';
+}
+
+function micPermissionBrief(platform: MicPlatform): string {
+  if (platform === 'ios') {
+    return 'Tap the mic, then allow access. If it’s blocked: Settings → Safari → Microphone for this site.';
+  }
+  if (platform === 'android') {
+    return 'Tap the mic, then allow access. If it’s blocked: Chrome lock icon → Site settings → Microphone.';
+  }
+  return 'Tap the mic and allow access when your browser asks. You can change this via the address bar lock icon.';
+}
+
 export function VoiceMockInterview() {
   const [currentQuestion, setCurrentQuestion] = useState('');
   const [isMounted, setIsMounted] = useState(false);
+  const [micPlatform, setMicPlatform] = useState<MicPlatform>('desktop');
   const [interviewState, setInterviewState] = useState<InterviewState>('idle');
   const [transcript, setTranscript] = useState('');
   const [feedbackAudio, setFeedbackAudio] = useState<string | null>(null);
@@ -99,6 +130,10 @@ export function VoiceMockInterview() {
     setIsMounted(true);
     getNewQuestion('general');
   // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    setMicPlatform(detectMicPlatform());
   }, []);
 
   const processTranscript = useCallback(async () => {
@@ -157,7 +192,13 @@ export function VoiceMockInterview() {
 
             recognition.onerror = (event: Event) => {
                 const errorEvent = event as unknown as { error: string };
-                if (errorEvent.error !== 'no-speech') {
+                if (errorEvent.error === 'not-allowed' || errorEvent.error === 'service-not-allowed') {
+                    toast({
+                      variant: 'destructive',
+                      title: 'Microphone blocked',
+                      description: micPermissionHint(detectMicPlatform()),
+                    });
+                } else if (errorEvent.error !== 'no-speech') {
                     toast({ variant: 'destructive', title: 'Recognition Error', description: `Voice system error: ${errorEvent.error}` });
                 }
                 setInterviewState('idle');
@@ -211,9 +252,19 @@ export function VoiceMockInterview() {
         toast({ variant: 'destructive', title: 'Not Supported', description: 'Voice features are not available in your current browser.' });
         return;
       }
+      try {
+        recognitionRef.current.start();
+      } catch {
+        toast({
+          variant: 'destructive',
+          title: 'Could not start microphone',
+          description: micPermissionHint(detectMicPlatform()),
+        });
+        setInterviewState('idle');
+        return;
+      }
       setTranscript('');
       setFeedbackAudio(null);
-      recognitionRef.current.start();
       setInterviewState('listening');
     }
   };
@@ -270,38 +321,79 @@ export function VoiceMockInterview() {
                     </Select>
                 </div>
 
-                <div className="text-center space-y-2">
-                    <p className="font-semibold text-xs text-muted-foreground uppercase">Current Prompt:</p>
-                    <p className="p-4 bg-secondary rounded-xl text-sm font-medium border border-primary/5">"{currentQuestion}"</p>
+                <div className="text-center space-y-2 w-full max-w-lg mx-auto">
+                    <p className="font-semibold text-xs text-muted-foreground uppercase tracking-wide">Current question</p>
+                    <p
+                      className="p-4 sm:p-5 bg-secondary rounded-xl text-lg sm:text-base font-semibold border border-primary/10 leading-snug text-foreground"
+                      role="status"
+                    >
+                        &ldquo;{currentQuestion}&rdquo;
+                    </p>
                 </div>
-                 <div className="flex items-center gap-4">
-                    <Button variant="outline" size="sm" onClick={readQuestionAloud} disabled={interviewState !== 'idle'}>
-                        {interviewState === 'generatingQuestionAudio' ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Ear className="mr-2 h-4 w-4"/>}
-                        Read Question
+                 <div className="flex flex-wrap items-center justify-center gap-3 w-full max-w-md mx-auto">
+                    <Button
+                      variant="outline"
+                      className="min-h-[48px] flex-1 sm:flex-none text-base sm:text-sm px-4"
+                      onClick={readQuestionAloud}
+                      disabled={interviewState !== 'idle'}
+                    >
+                        {interviewState === 'generatingQuestionAudio' ? (
+                          <Loader2 className="mr-2 h-5 w-5 animate-spin shrink-0" aria-hidden />
+                        ) : (
+                          <Ear className="mr-2 h-5 w-5 shrink-0" aria-hidden />
+                        )}
+                        Hear question
                     </Button>
-                    <Button variant="ghost" size="sm" onClick={() => getNewQuestion()} disabled={interviewState !== 'idle'}>
-                        <RefreshCw className="mr-2 h-3 w-3"/> New Question
+                    <Button
+                      variant="ghost"
+                      className="min-h-[48px] flex-1 sm:flex-none text-base sm:text-sm px-4"
+                      onClick={() => getNewQuestion()}
+                      disabled={interviewState !== 'idle'}
+                    >
+                        <RefreshCw className="mr-2 h-4 w-4 shrink-0" aria-hidden />
+                        New question
                     </Button>
                 </div>
+
+                {interviewState !== 'unsupported' && (
+                  <p
+                    className="text-xs sm:text-sm text-muted-foreground text-center max-w-md leading-relaxed px-3"
+                    role="note"
+                  >
+                    {micPermissionBrief(micPlatform)}
+                  </p>
+                )}
                 
-                 <motion.div animate={{ scale: interviewState === 'listening' ? 1.1 : 1 }} transition={{ type: 'spring' }}>
+                 <motion.div
+                   className="relative"
+                   animate={{ scale: interviewState === 'listening' ? 1.04 : 1 }}
+                   transition={{ type: 'spring', stiffness: 260, damping: 18 }}
+                 >
+                    {interviewState === 'listening' && (
+                      <span
+                        className="absolute inset-0 rounded-full bg-primary/25 animate-ping pointer-events-none scale-110"
+                        aria-hidden
+                      />
+                    )}
                      <Button 
                         size="lg" 
-                        className="rounded-full w-28 h-28 text-lg shadow-xl"
+                        className="relative rounded-full w-[7.5rem] h-[7.5rem] min-w-[60px] min-h-[60px] text-lg shadow-xl"
                         onClick={handleToggleListening}
                         disabled={interviewState === 'processing' || interviewState === 'speaking' || interviewState === 'generatingQuestionAudio' || interviewState === 'unsupported'}
                         variant={interviewState === 'listening' ? 'destructive' : 'default'}
+                        aria-pressed={interviewState === 'listening'}
+                        aria-label={interviewState === 'listening' ? 'Stop recording answer' : 'Start recording answer'}
                     >
-                         {interviewState === 'listening' && <MicOff className="w-8 h-8" />}
-                         {interviewState === 'idle' && <Mic className="w-8 h-8" />}
-                         {interviewState === 'unsupported' && <MicOff className="w-8 h-8" />}
-                         {interviewState === 'processing' && <Loader2 className="w-8 h-8 animate-spin" />}
-                         {interviewState === 'speaking' && <Volume2 className="w-8 h-8" />}
-                          {interviewState === 'generatingQuestionAudio' && <Loader2 className="w-8 h-8 animate-spin" />}
+                         {interviewState === 'listening' && <MicOff className="w-9 h-9 sm:w-8 sm:h-8" aria-hidden />}
+                         {interviewState === 'idle' && <Mic className="w-9 h-9 sm:w-8 sm:h-8" aria-hidden />}
+                         {interviewState === 'unsupported' && <MicOff className="w-9 h-9 sm:w-8 sm:h-8" aria-hidden />}
+                         {interviewState === 'processing' && <Loader2 className="w-9 h-9 sm:w-8 sm:h-8 animate-spin" aria-hidden />}
+                         {interviewState === 'speaking' && <Volume2 className="w-9 h-9 sm:w-8 sm:h-8" aria-hidden />}
+                          {interviewState === 'generatingQuestionAudio' && <Loader2 className="w-9 h-9 sm:w-8 sm:h-8 animate-spin" aria-hidden />}
                      </Button>
                  </motion.div>
                 
-                 <div className="text-sm text-muted-foreground min-h-[40px] text-center px-8">
+                 <div className="text-base sm:text-sm text-muted-foreground min-h-[3rem] text-center px-4 max-w-md mx-auto leading-snug">
                     {interviewState === 'idle' && "Click the mic to start recording your answer."}
                     {interviewState === 'listening' && "Listening... Click to stop and get technical feedback."}
                     {interviewState === 'processing' && "Analyzing your technical answer..."}

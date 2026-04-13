@@ -10,7 +10,8 @@ import { useToast } from '@/hooks/use-toast';
 import { Rocket } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState, Suspense } from 'react';
+import { useEffect, useState, Suspense, useMemo } from 'react';
+import { safeInternalRedirectPath } from '@/lib/safe-redirect';
 import { motion } from 'framer-motion';
 
 
@@ -47,16 +48,25 @@ function SignupContent() {
   const searchParams = useSearchParams();
   const { user } = useUser();
 
+  const postAuthPath = useMemo(() => {
+    const redir = safeInternalRedirectPath(searchParams.get('redirect'));
+    if (redir) return redir;
+    if (searchParams.get('plan')) return '/settings';
+    return '/dashboard';
+  }, [searchParams]);
+
+  const loginHref = useMemo(() => {
+    const redir = safeInternalRedirectPath(searchParams.get('redirect'));
+    return redir
+      ? `/login?redirect=${encodeURIComponent(redir)}`
+      : '/login';
+  }, [searchParams]);
+
   useEffect(() => {
     if (user) {
-      const plan = searchParams.get('plan');
-      if (plan) {
-        router.push('/settings');
-      } else {
-        router.push('/dashboard');
-      }
+      router.replace(postAuthPath);
     }
-  }, [user, router, searchParams]);
+  }, [user, router, postAuthPath]);
 
   const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
@@ -169,7 +179,7 @@ function SignupContent() {
         <CardFooter className="flex flex-col gap-4">
           <div className="text-center text-sm">
             Already have an account?{' '}
-            <Link href="/login" className="underline">
+            <Link href={loginHref} className="underline">
               Log in
             </Link>
           </div>

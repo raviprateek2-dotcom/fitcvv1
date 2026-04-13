@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
+import { normalizePostTopic, type BlogTopicSlug } from '@/lib/blog-topics';
 
 export type BlogPost = {
   title: string;
@@ -10,6 +11,8 @@ export type BlogPost = {
   content: string;
   createdAt: string;
   updatedAt: string;
+  /** Content pillar for hubs and internal linking (see `blog-topics.ts`). */
+  topic: BlogTopicSlug;
 };
 
 const blogDir = path.join(process.cwd(), 'content', 'blog');
@@ -37,6 +40,7 @@ export function getAllPosts(): BlogPost[] {
         imageId: matterResult.data.imageId,
         createdAt: matterResult.data.createdAt,
         updatedAt: matterResult.data.updatedAt,
+        topic: normalizePostTopic(matterResult.data.topic),
         content: matterResult.content, // Raw MDX string
       } as BlogPost;
     });
@@ -56,9 +60,15 @@ export function getPostBySlug(slug: string): BlogPost | undefined {
   return posts.find((post) => post.slug === slug);
 }
 
+export function getPostsByTopic(topic: BlogTopicSlug): BlogPost[] {
+  return getAllPosts().filter((p) => p.topic === topic);
+}
+
 export function getRelatedPosts(currentSlug: string, count: number = 3): BlogPost[] {
   const allPosts = getAllPosts();
-  return allPosts
-    .filter((post) => post.slug !== currentSlug)
-    .slice(0, count);
+  const current = allPosts.find((p) => p.slug === currentSlug);
+  const sameTopic = allPosts.filter((p) => p.slug !== currentSlug && p.topic === current?.topic);
+  const rest = allPosts.filter((p) => p.slug !== currentSlug && p.topic !== current?.topic);
+  const merged = [...sameTopic, ...rest];
+  return merged.slice(0, count);
 }

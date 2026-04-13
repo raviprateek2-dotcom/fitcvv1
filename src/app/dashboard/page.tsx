@@ -8,7 +8,7 @@ import { serverTimestamp, collection, doc } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, PlusCircle, ArrowRight, Upload, FileText, Loader2, CheckCircle2, Circle, Sparkles, TrendingUp, Zap, Lightbulb, Ear, BarChart3, Target, Share2, Copy, Check } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, ArrowRight, Upload, FileText, Loader2, CheckCircle2, Circle, Sparkles, TrendingUp, Zap, Lightbulb, Ear, BarChart3, Target, Share2, Copy, Check, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useRouter } from 'next/navigation';
@@ -31,12 +31,13 @@ import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
+import { cn, isPlaceholderCoUrl } from '@/lib/utils';
 import { GoalSetter } from '@/components/dashboard/GoalSetter';
 import { aiNarrate } from '@/app/actions/ai-narrator';
 import { ApplicationTracker } from '@/components/dashboard/ApplicationTracker';
 import { ChartTooltip, ChartTooltipContent, ChartContainer } from '@/components/ui/chart';
 import { Pie, PieChart, Cell } from 'recharts';
+import { trackEvent } from '@/lib/analytics-events';
 
 type Resume = {
     id: string;
@@ -111,9 +112,18 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
         if (!resume.shareId) return;
         const shareUrl = `${window.location.origin}/share/${resume.shareId}`;
         navigator.clipboard.writeText(shareUrl);
+        trackEvent('resume_share_copy', { source: 'dashboard_card' });
         setIsCopied(true);
         setTimeout(() => setIsCopied(false), 2000);
     }
+
+    const handleShareWhatsApp = () => {
+        if (!resume.shareId) return;
+        const shareUrl = `${window.location.origin}/share/${resume.shareId}`;
+        const waUrl = `https://wa.me/?text=${encodeURIComponent(`Check out my resume: ${shareUrl}`)}`;
+        window.open(waUrl, '_blank', 'noopener,noreferrer');
+        trackEvent('resume_share_whatsapp', { source: 'dashboard_card' });
+    };
 
     const templateImage = PlaceHolderImages.find(img => img.id === `template-${resume.templateId}`);
 
@@ -153,6 +163,7 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
                                 width={400}
                                 height={566}
                                 sizes="(max-width: 768px) 100vw, 400px"
+                                unoptimized={isPlaceholderCoUrl(templateImage.imageUrl)}
                                 className="w-auto h-full object-contain transition-transform duration-500 ease-in-out group-hover:scale-105 p-4"
                             />
                         ) : (
@@ -192,6 +203,12 @@ const ResumeCard = ({ resume, onDuplicate, onDelete }: { resume: Resume; onDupli
                                         {isCopied ? 'Copied Link' : 'Copy Share Link'}
                                     </DropdownMenuItem>
                                 )}
+                                {resume.shareId && (
+                                    <DropdownMenuItem onClick={handleShareWhatsApp}>
+                                        <MessageCircle className="w-4 h-4 mr-2" />
+                                        Share on WhatsApp
+                                    </DropdownMenuItem>
+                                )}
                                 <AlertDialog>
                                     <AlertDialogTrigger asChild>
                                         <DropdownMenuItem onSelect={(e: Event) => e.preventDefault()} className="text-destructive focus:bg-destructive/90 focus:text-destructive-foreground">Delete</DropdownMenuItem>
@@ -222,7 +239,7 @@ const SuccessPath = ({ resumes }: { resumes: Resume[] }) => {
     const { toast } = useToast();
     const steps = [
         { label: 'Create your first resume', done: resumes.length > 0 },
-        { label: 'Optimize for a job description', done: resumes.some(r => r.matchScore !== undefined) },
+        { label: 'Run Tailor-to-JD analysis', done: resumes.some(r => r.matchScore !== undefined) },
         { label: 'Generate an AI cover letter', done: resumes.some(r => (r.coverLetter?.trim().length || 0) > 200) },
         { label: 'Identify and bridge skill gaps', done: resumes.some(r => (r.skillGaps?.length || 0) > 0) },
     ];
@@ -235,7 +252,7 @@ const SuccessPath = ({ resumes }: { resumes: Resume[] }) => {
 
     const strategistTips = useMemo(() => [
         "Hiring managers look for growth. Use our Skill Gap analyzer to identify exactly what you need to learn to land that high-stakes senior role.",
-        "Quality beats quantity. Tailoring one resume to a 90% match score is more effective than sending 10 generic applications.",
+        "Quality beats quantity. Tailor one resume to a strong JD match before sending broad applications.",
         "LinkedIn is your social proof. Use our Optimizer to ensure your profile headline stops the scroll for recruiters.",
         "Confidence comes from preparation. Practice the predicted interview questions to reduce anxiety and sound like an expert."
     ], []);

@@ -118,13 +118,13 @@ export const PersonalInfoSection = React.memo(function PersonalInfoSection({ isP
                         <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
                             <Mail className="w-3.5 h-3.5" /> Secure Email
                         </Label>
-                        <Input name="email" type="email" value={resumeData.personalInfo.email} onChange={handlePersonalInfoChange} className="bg-white/5 border-white/10 rounded-xl h-12 focus:ring-primary/20 transition-all shadow-inner" placeholder="alex@fitcv.premium" />
+                        <Input name="email" type="email" autoComplete="email" value={resumeData.personalInfo.email} onChange={handlePersonalInfoChange} className="bg-white/5 border-white/10 rounded-xl h-12 focus:ring-primary/20 transition-all shadow-inner" placeholder="you@example.com" />
                     </div>
                     <div className="space-y-3">
                         <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
                             <Phone className="w-3.5 h-3.5" /> Contact Number
                         </Label>
-                        <Input name="phone" value={resumeData.personalInfo.phone} onChange={handlePersonalInfoChange} className="bg-white/5 border-white/10 rounded-xl h-12 focus:ring-primary/20 transition-all shadow-inner" placeholder="+1 (555) 000-0000" />
+                        <Input name="phone" type="tel" inputMode="tel" autoComplete="tel" value={resumeData.personalInfo.phone} onChange={handlePersonalInfoChange} className="bg-white/5 border-white/10 rounded-xl h-12 focus:ring-primary/20 transition-all shadow-inner" placeholder="+91 98765 43210" />
                     </div>
                 </div>
 

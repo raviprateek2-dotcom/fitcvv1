@@ -1,69 +1,49 @@
 /**
- * In-memory rate limiter using a sliding-window token-bucket algorithm.
- *
- * Usage:
- *   const limiter = new RateLimiter({ limit: 10, windowMs: 60_000 });
- *   const allowed = limiter.check(userId);
- *   if (!allowed) throw new Error('Rate limit exceeded');
- *
- * IMPORTANT: This is in-memory only. In a multi-process/serverless environment,
- * replace the Map with a shared store (e.g., Redis via Upstash).
+ * In-process sliding window limiter (Phase 4). Best-effort per server instance; use Redis/edge for strict global limits.
  */
 
-interface RateLimiterOptions {
-  /** Maximum number of requests per window */
-  limit: number;
-  /** Window length in milliseconds */
-  windowMs: number;
-}
+type Bucket = { count: number; resetAt: number };
 
-interface BucketEntry {
-  count: number;
-  resetAt: number;
-}
+const store = new Map<string, Bucket>();
 
-export class RateLimiter {
-  private buckets = new Map<string, BucketEntry>();
-  private readonly limit: number;
-  private readonly windowMs: number;
+const PRUNE_EVERY = 200;
+let requestsSincePrune = 0;
 
-  constructor({ limit, windowMs }: RateLimiterOptions) {
-    this.limit = limit;
-    this.windowMs = windowMs;
-  }
-
-  /**
-   * Check whether the caller identified by `key` is within their rate limit.
-   * Increments the counter automatically.
-   *
-   * @returns `true` if the request is allowed, `false` if rate-limited.
-   */
-  check(key: string): boolean {
-    const now = Date.now();
-    const existing = this.buckets.get(key);
-
-    if (!existing || now >= existing.resetAt) {
-      // New window
-      this.buckets.set(key, { count: 1, resetAt: now + this.windowMs });
-      return true;
-    }
-
-    if (existing.count >= this.limit) {
-      return false;
-    }
-
-    existing.count++;
-    return true;
-  }
-
-  /** Remaining requests for the given key (0 if unknown). */
-  remaining(key: string): number {
-    const now = Date.now();
-    const existing = this.buckets.get(key);
-    if (!existing || now >= existing.resetAt) return this.limit;
-    return Math.max(0, this.limit - existing.count);
+function pruneExpired(now: number) {
+  requestsSincePrune += 1;
+  if (requestsSincePrune < PRUNE_EVERY) return;
+  requestsSincePrune = 0;
+  for (const [key, b] of store) {
+    if (now > b.resetAt) store.delete(key);
   }
 }
 
-// Singleton: 10 AI calls per user per minute (generous for dev; tune for prod)
-export const aiRateLimiter = new RateLimiter({ limit: 10, windowMs: 60_000 });
+export function checkRateLimit(key: string, max: number, windowMs: number): { ok: true } | { ok: false; retryAfterSec: number } {
+  const now = Date.now();
+  pruneExpired(now);
+
+  const bucket = store.get(key);
+  if (!bucket || now > bucket.resetAt) {
+    store.set(key, { count: 1, resetAt: now + windowMs });
+    return { ok: true };
+  }
+
+  if (bucket.count >= max) {
+    const retryAfterSec = Math.max(1, Math.ceil((bucket.resetAt - now) / 1000));
+    return { ok: false, retryAfterSec };
+  }
+
+  bucket.count += 1;
+  return { ok: true };
+}
+
+/** Per-user cap for AI server actions (see action-guard + PDF parser). */
+const AI_ACTION_MAX = 10;
+const AI_ACTION_WINDOW_MS = 60_000;
+
+export const aiRateLimiter = {
+  check(userId: string): boolean {
+    const r = checkRateLimit(`ai_action:${userId}`, AI_ACTION_MAX, AI_ACTION_WINDOW_MS);
+    return r.ok;
+  },
+};

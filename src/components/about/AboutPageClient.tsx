@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { isPlaceholderCoUrl } from '@/lib/utils';
 import Image from 'next/image';
 
 const containerVariants = {
@@ -136,6 +137,8 @@ export function AboutPageClient() {
                                 alt="Ravi Prateek, Founder"
                                 width={160}
                                 height={160}
+                                sizes="160px"
+                                unoptimized={isPlaceholderCoUrl(founderImage.imageUrl)}
                                 className="object-cover"
                             />
                         ) : (

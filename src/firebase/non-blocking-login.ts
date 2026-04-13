@@ -26,6 +26,7 @@ async function createUserProfile(user: import('firebase/auth').User) {
     email: user.email || '',
     subscription: 'premium',
     profilePhotoUrl: user.photoURL || '',
+    walkthrough: { status: 'pending', deferrals: 0 },
   };
 
   // Set the document. We use the blocking setDoc here because it's part of the critical auth flow.

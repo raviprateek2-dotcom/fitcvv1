@@ -13,6 +13,8 @@ interface AIContentDialogProps {
   currentContent: string;
   jobDescription?: string;
   onApply: (newContent: string) => void;
+  /** First instance on page — used for product tour spotlight. */
+  tourAnchor?: boolean;
 }
 
 type SuggestionResult = {
@@ -20,7 +22,13 @@ type SuggestionResult = {
   reasoning: string;
 };
 
-export default function AIContentDialog({ sectionName, currentContent, jobDescription, onApply }: AIContentDialogProps) {
+export default function AIContentDialog({
+  sectionName,
+  currentContent,
+  jobDescription,
+  onApply,
+  tourAnchor,
+}: AIContentDialogProps) {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [suggestion, setSuggestion] = useState<SuggestionResult | null>(null);
@@ -74,7 +82,12 @@ export default function AIContentDialog({ sectionName, currentContent, jobDescri
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="mt-2">
+        <Button
+          variant="outline"
+          size="sm"
+          className="mt-2"
+          {...(tourAnchor ? { 'data-tour': 'ai-suggestion' } : {})}
+        >
           <Sparkles className="mr-2 h-4 w-4 text-yellow-500" />
           AI Suggestion
         </Button>

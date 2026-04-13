@@ -118,6 +118,7 @@ export const ExperienceSection = React.memo(function ExperienceSection({ isProUs
                         <SortableContext items={resumeData.experience.map(e => e.id)} strategy={verticalListSortingStrategy}>
                             {resumeData.experience.map((exp) => {
                                 const impact = checkImpact(exp.description);
+                                const isFirstExp = resumeData.experience[0]?.id === exp.id;
                                 return (
                                     <div key={exp.id}>
                                         <SortableItem id={exp.id}>
@@ -182,6 +183,7 @@ export const ExperienceSection = React.memo(function ExperienceSection({ isProUs
                                                                 currentContent={exp.description}
                                                                 jobDescription={resumeData.jobDescription}
                                                                 onApply={(newContent) => handleNestedChange('experience', exp.id, 'description', newContent)}
+                                                                tourAnchor={isFirstExp}
                                                             />
                                                         </ProFeatureWrapper>
                                                     </div>

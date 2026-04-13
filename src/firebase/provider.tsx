@@ -15,11 +15,19 @@ interface FirebaseProviderProps {
   getFirestore: () => Promise<Firestore>;
 }
 
+/** Product tour / onboarding (Firestore `users/{uid}`). */
+export type WalkthroughState = {
+  status: 'pending' | 'completed' | 'skipped';
+  /** How many times the user chose “Later”; auto-tour stops after 2. */
+  deferrals: number;
+};
+
 // User profile type
 export type UserProfile = {
   email: string;
   subscription: 'free' | 'premium';
   profilePhotoUrl?: string;
+  walkthrough?: WalkthroughState;
   careerGoals?: {
     id: string;
     title: string;

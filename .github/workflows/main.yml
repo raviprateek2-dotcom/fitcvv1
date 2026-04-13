@@ -35,6 +35,8 @@ jobs:
       - name: Build (Next.js)
         run: npm run build
         env:
+          # Optional repo variable: set NEXT_PUBLIC_SITE_URL for canonicals/sitemap in CI (else code fallback).
+          NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL }}
           NEXT_PUBLIC_FIREBASE_API_KEY: ${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY }}
           NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ${{ secrets.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}
           NEXT_PUBLIC_FIREBASE_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}
@@ -46,7 +48,7 @@ jobs:
       - name: Run E2E Tests (Playwright)
         run: npx playwright test
         env:
-          PLAYWRIGHT_TEST_BASE_URL: http://localhost:3000
+          PLAYWRIGHT_TEST_BASE_URL: http://localhost:9002
 
       # Firebase Hosting deployment
       # Requires FIREBASE_SERVICE_ACCOUNT secret

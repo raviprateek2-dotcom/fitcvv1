@@ -1,5 +1,11 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Terms of Service',
+  description: 'Terms governing your use of FitCV resume and interview tools.',
+  alternates: { canonical: '/terms' },
+};
 
 export default function TermsOfServicePage() {
   return (

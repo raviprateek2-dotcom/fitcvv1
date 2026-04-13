@@ -10,6 +10,9 @@ import { Check, Sparkles, Star } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { trackEvent } from '@/lib/analytics-events';
+import Script from 'next/script';
+import { useState } from 'react';
 
 const proFeatures = [
   'Unlimited Resumes & Downloads',
@@ -25,8 +28,74 @@ export default function PricingPage() {
   const firestore = useFirestore();
   const router = useRouter();
   const { toast } = useToast();
+  const [isProcessing, setIsProcessing] = useState(false);
+  const razorpayKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+  const paymentEnabled = Boolean(razorpayKey);
+
+  const openRazorpay = async () => {
+    if (!user) {
+      router.push('/signup?plan=pro');
+      return;
+    }
+    setIsProcessing(true);
+    trackEvent('payment_checkout_start', { provider: 'razorpay' });
+    try {
+      const res = await fetch('/api/payments/create-order', { method: 'POST' });
+      const payload = (await res.json()) as {
+        ok: boolean;
+        orderId?: string;
+        amount?: number;
+        currency?: string;
+        error?: string;
+      };
+      if (!res.ok || !payload.ok || !payload.orderId || !payload.amount || !payload.currency) {
+        throw new Error(payload.error || 'Could not create payment order');
+      }
+
+      const RazorpayCtor = (window as Window & { Razorpay?: new (options: Record<string, unknown>) => { open: () => void } }).Razorpay;
+      if (!RazorpayCtor) {
+        throw new Error('Razorpay checkout script did not load');
+      }
+
+      const checkout = new RazorpayCtor({
+        key: razorpayKey,
+        amount: payload.amount,
+        currency: payload.currency,
+        name: 'FitCV Pro',
+        description: 'Monthly subscription',
+        order_id: payload.orderId,
+        prefill: {
+          email: user.email ?? '',
+          name: user.displayName ?? '',
+        },
+        handler: () => {
+          toast({
+            title: 'Payment authorized',
+            description: 'We are confirming your subscription. This usually takes a few seconds.',
+          });
+          trackEvent('payment_checkout_authorized', { provider: 'razorpay' });
+          router.push('/settings');
+        },
+      });
+      checkout.open();
+    } catch (error: unknown) {
+      toast({
+        variant: 'destructive',
+        title: 'Checkout failed',
+        description: error instanceof Error ? error.message : 'Please retry.',
+      });
+      trackEvent('payment_checkout_fail', { provider: 'razorpay' });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   const handleUpgrade = () => {
+    trackEvent('pricing_cta_click', { authenticated: !!user });
+    if (paymentEnabled) {
+      void openRazorpay();
+      return;
+    }
     if (!user) {
       router.push(`/signup?plan=pro-free`);
       return;
@@ -68,6 +137,9 @@ export default function PricingPage() {
 
   return (
     <div className="bg-background">
+      {paymentEnabled ? (
+        <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
+      ) : null}
       <div className="container mx-auto px-4 md:px-6 py-12 md:py-20">
         <motion.div
           className="text-center mb-12"
@@ -122,11 +194,16 @@ export default function PricingPage() {
                         <Button 
                             onClick={handleUpgrade} 
                             size="lg"
+                            disabled={isProcessing}
                             className="w-full sm:w-auto"
                             variant="default" 
                             style={{backgroundColor: 'hsl(var(--accent))', color: 'hsl(var(--accent-foreground))'}}
                         >
-                            {userProfile?.subscription === 'premium' ? 'Current Plan' : 'Get Started for Free'}
+                            {userProfile?.subscription === 'premium'
+                              ? 'Current Plan'
+                              : paymentEnabled
+                                ? (isProcessing ? 'Opening Checkout...' : 'Upgrade to Pro')
+                                : 'Get Started for Free'}
                         </Button>
                     </div>
                 </div>

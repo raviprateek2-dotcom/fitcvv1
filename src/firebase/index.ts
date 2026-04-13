@@ -19,15 +19,14 @@ export function initializeFirebase() {
     // without arguments.
     let firebaseApp;
     try {
-      // Attempt to initialize via Firebase App Hosting environment variables
+      // Firebase App Hosting can wire config into initializeApp() with no args. Everywhere else
+      // (local dev, Vercel, CI `next build`) that call throws — we then use explicit config below.
       firebaseApp = initializeApp();
-    } catch (e) {
-      // Only warn in production because it's normal to use the firebaseConfig to initialize
-      // during development
-      if (process.env.NODE_ENV === "production") {
-        console.warn('Automatic initialization failed. Falling back to firebase config object.', e);
-      }
+    } catch {
       firebaseApp = initializeApp(firebaseConfig);
+      if (process.env.NODE_ENV === 'development') {
+        console.info('[firebase] Using firebase/config (App Hosting auto-init not available).');
+      }
     }
 
     return getSdks(firebaseApp);
