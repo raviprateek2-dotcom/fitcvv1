@@ -1,6 +1,6 @@
 # FitCV Execution Progress
 
-Updated: 2026-04-17
+Updated: 2026-04-18
 
 ## Phase Status
 
@@ -18,6 +18,10 @@ Updated: 2026-04-17
 - Phase 12: Job Tracker conversion optimization sprint — Completed
 - Phase 13: Performance budget tightening and route-level remediation — Completed
 - Phase 14: Growth loop hardening (blog -> CTA -> signup) — Completed
+- Phase 15: Production baseline capture and operating handoff — Planned
+- Phase 16: Job Tracker experiment loop — Planned
+- Phase 17: Route-level performance sprint — Planned
+- Phase 18: Growth loop optimization — Planned
 
 ## Latest Delivered
 
@@ -52,7 +56,7 @@ Updated: 2026-04-17
 
 ## Active phase
 
-- All defined phases (1-14) are complete in-repo. Next work should be net-new roadmap phases.
+- Phase 15-18 roadmap: `docs/phase-15-18-roadmap.md`
 
 ## Progress checklist
 
@@ -70,3 +74,4 @@ Updated: 2026-04-17
 - Phase 12 spec: `docs/phase-12-job-tracker-optimization-plan.md`
 - Phase 13 spec: `docs/phase-13-performance-tightening-plan.md`
 - Phase 14 spec: `docs/phase-14-growth-loop-plan.md`
+- Phase 15-18 roadmap: `docs/phase-15-18-roadmap.md`
