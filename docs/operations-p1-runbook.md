@@ -19,9 +19,9 @@ This runbook covers production stability items for exports, newsletter capture, 
 2. Open editor and create sample resume.
 3. Trigger export PDF.
 4. Verify:
-   - Download starts within 3-8 seconds.
-   - Output has expected fonts/layout.
-   - No 401/403 when opening `?print=true` route.
+  - Download starts within 3-8 seconds.
+  - Output has expected fonts/layout.
+  - No 401/403 when opening `?print=true` route.
 
 ### Incident hints
 
@@ -78,22 +78,24 @@ Client events are emitted from `trackEvent` in `src/lib/analytics-events.ts` (GA
 
 **Events to watch**
 
-| Event | Meaning |
-| --- | --- |
-| `web_vital` | Params: `vital` (CLS, LCP, INP, FCP, TTFB), `metric_value`, `rating`, optional `navigation_type`. |
-| `blog_read_complete` | Reader reached ~95% scroll on a post (`slug`). |
-| `blog_helpful_vote` | Thumbs feedback (`slug`, `vote`: up/down). |
-| `cta_get_started`, `cta_signup` | Header and other surfaces (see `surface` param where set). |
-| `job_tracker_open` | Job Tracker opened; use `source` to identify entry point (`dashboard_header`, `editor_header`, `interview_completion`, etc.). |
-| `job_added` | New job added from tracker form (`status`, `source`). |
-| `job_stage_changed` | Stage transitions with `from`, `to`, and interaction `source` (`drag`, `menu`, `quick_action`, `detail_panel`). |
-| `job_followup_set` / `job_followup_snoozed` / `job_followup_completed` | Reminder lifecycle tracking for retention loops. |
+
+| Event                                                                  | Meaning                                                                                                                       |
+| ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `web_vital`                                                            | Params: `vital` (CLS, LCP, INP, FCP, TTFB), `metric_value`, `rating`, optional `navigation_type`.                             |
+| `blog_read_complete`                                                   | Reader reached ~95% scroll on a post (`slug`).                                                                                |
+| `blog_helpful_vote`                                                    | Thumbs feedback (`slug`, `vote`: up/down).                                                                                    |
+| `cta_get_started`, `cta_signup`                                        | Header and other surfaces (see `surface` param where set).                                                                    |
+| `job_tracker_open`                                                     | Job Tracker opened; use `source` to identify entry point (`dashboard_header`, `editor_header`, `interview_completion`, etc.). |
+| `job_added`                                                            | New job added from tracker form (`status`, `source`).                                                                         |
+| `job_stage_changed`                                                    | Stage transitions with `from`, `to`, and interaction `source` (`drag`, `menu`, `quick_action`, `detail_panel`).               |
+| `job_followup_set` / `job_followup_snoozed` / `job_followup_completed` | Reminder lifecycle tracking for retention loops.                                                                              |
+
 
 **Where to look**
 
 - **GA4**: Explore → Events (register custom dimensions for `vital`, `slug`, `surface` if you segment often).
 - **PostHog**: Events → filter by name above; build dashboards for `web_vital` by `vital` and `rating`.
-- **Sentry**: Metrics `web_vital.*` when `NEXT_PUBLIC_SENTRY_DSN` is set (distribution, not GA parity).
+- **Sentry**: Metrics `web_vital.`* when `NEXT_PUBLIC_SENTRY_DSN` is set (distribution, not GA parity).
 - **Lighthouse CI**: GitHub Actions `lhci` step on `main` PRs/pushes; budgets in `lighthouserc.json` (CLS error threshold, LCP warn).
 
 **Cadence**
@@ -104,17 +106,19 @@ Client events are emitted from `trackEvent` in `src/lib/analytics-events.ts` (GA
 
 ## 7) Thresholds and baseline loop (Phase 11)
 
-Use the baseline template in `docs/phase-11-observability-plan.md` and maintain this threshold table:
+Use the baseline template in `docs/phase-11-baseline-template.md` and maintain this threshold table:
 
-| Area | Trigger | First response |
-| --- | --- | --- |
-| Web vitals | CLS poor-rate +20% WoW | Check recent layout/font/header changes and LHCI diff on key routes |
-| Web vitals | LCP p75 > 2500ms | Inspect hero/image/font payload and route-level resource waterfalls |
-| Web vitals | INP p75 > 200ms | Profile heavy handlers on primary interactions; check long tasks |
-| Blog funnel | `blog_read_complete` -25% WoW | Verify traffic mix first, then article rendering/performance regressions |
-| Blog funnel | Helpful up-vote ratio < 60% | Inspect recent content updates and article quality outliers |
-| Job tracker | `job_added / job_tracker_open` -20% WoW | Review CTA entry source mix and tracker form friction |
-| Job tracker | `job_followup_completed / job_followup_set` < 40% | Review reminder UX and follow-up completion flow |
+
+| Area        | Trigger                                           | First response                                                           |
+| ----------- | ------------------------------------------------- | ------------------------------------------------------------------------ |
+| Web vitals  | CLS poor-rate +20% WoW                            | Check recent layout/font/header changes and LHCI diff on key routes      |
+| Web vitals  | LCP p75 > 2500ms                                  | Inspect hero/image/font payload and route-level resource waterfalls      |
+| Web vitals  | INP p75 > 200ms                                   | Profile heavy handlers on primary interactions; check long tasks         |
+| Blog funnel | `blog_read_complete` -25% WoW                     | Verify traffic mix first, then article rendering/performance regressions |
+| Blog funnel | Helpful up-vote ratio < 60%                       | Inspect recent content updates and article quality outliers              |
+| Job tracker | `job_added / job_tracker_open` -20% WoW           | Review CTA entry source mix and tracker form friction                    |
+| Job tracker | `job_followup_completed / job_followup_set` < 40% | Review reminder UX and follow-up completion flow                         |
+
 
 ### Owner model and escalation SLA
 
@@ -123,11 +127,20 @@ Use the baseline template in `docs/phase-11-observability-plan.md` and maintain 
 - Backup owner: On-call/fullstack lead for incident triage when primary owners are unavailable.
 
 Escalation path:
+
 1. Trigger breach detected in weekly review or post-deploy check.
 2. Create anomaly issue (use `docs/phase-11-anomaly-issue-template.md`).
 3. Assign product + engineering owners within 1 business day.
 4. Classify severity:
-   - P1: severe regression (core vitals/funnel collapse) -> hotfix target <= 24h
-   - P2: moderate regression -> scheduled fix target <= 7 days
-   - P3: minor regression/noise -> monitor with next weekly review
+  - P1: severe regression (core vitals/funnel collapse) -> hotfix target <= 24h
+  - P2: moderate regression -> scheduled fix target <= 7 days
+  - P3: minor regression/noise -> monitor with next weekly review
 5. Post-fix: record outcome in weekly log and close anomaly issue with evidence links.
+
+### Current owner assignments (Phase 15 handoff)
+
+- Product owner: Growth/Product lead
+- Engineering owner: Web platform lead
+- Backup owner: Fullstack on-call lead
+- Last updated: 2026-04-19
+

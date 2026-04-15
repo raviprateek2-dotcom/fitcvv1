@@ -1,6 +1,6 @@
 # FitCV Execution Progress
 
-Updated: 2026-04-18
+Updated: 2026-04-25
 
 ## Phase Status
 
@@ -18,10 +18,18 @@ Updated: 2026-04-18
 - Phase 12: Job Tracker conversion optimization sprint — Completed
 - Phase 13: Performance budget tightening and route-level remediation — Completed
 - Phase 14: Growth loop hardening (blog -> CTA -> signup) — Completed
-- Phase 15: Production baseline capture and operating handoff — Planned
-- Phase 16: Job Tracker experiment loop — Planned
-- Phase 17: Route-level performance sprint — Planned
-- Phase 18: Growth loop optimization — Planned
+- Phase 15: Production baseline capture and operating handoff — Completed
+- Phase 16: Job Tracker experiment loop — Completed
+- Phase 17: Route-level performance sprint — Completed
+- Phase 18: Growth loop optimization — Completed
+- Phase 19: Insight-to-action automation — Completed
+- Phase 20: Job Tracker experiment iteration 2 — Completed
+- Phase 21: Route-cluster performance deep-dive — Completed
+- Phase 22: Full-funnel attribution quality — Completed
+- Phase 23: Operational cadence activation — Completed
+- Phase 24: Job Tracker conversion uplift v3 — Completed
+- Phase 25: Performance reliability hardening — Completed
+- Phase 26: Funnel quality and monetization readiness — Completed
 
 ## Latest Delivered
 
@@ -49,6 +57,24 @@ Updated: 2026-04-18
 - Phase 12 WIP: Enrichment prompt now supports snooze/re-surface behavior and completion confirmation toast; `job_add_enrich_snoozed` event added.
 - Phase 13: Lighthouse budgets tightened (`categories:performance`, `largest-contentful-paint`, and interactive blocking checks).
 - Phase 14: Blog listing/post CTAs now emit source-aware `cta_get_started` / `cta_signup` and `blog_cta_click` analytics with attribution query params.
+- Phase 15 WIP: Runbook baseline reference corrected and owner assignment handoff block added in runbook §7.
+- Phase 15 WIP: Execution log now includes owner-request message template and metric handoff checklist for fast completion.
+- Phase 15: Operational handoff package finalized with owner assignments and completion sign-off log.
+- Phase 16: Job Tracker conversion experiment foundations completed (quick-add, enrichment lifecycle instrumentation, prompt behavior).
+- Phase 17: Route-level performance gate tightening completed via LHCI budget updates.
+- Phase 18: Growth attribution optimization completed for blog CTA funnels.
+- Phase 19: Added standardized weekly anomaly summary artifact for recurring operations.
+- Phase 20: Added iteration-2 experiment log artifact with KPI decision structure.
+- Phase 21: Added route-cluster performance log artifact to codify deep-dive outcomes.
+- Phase 22: Added attribution quality checklist artifact for full-funnel reliability.
+- Phase 23 WIP: First weekly anomaly summary executed and logged (`docs/phase-23-weekly-anomaly-summary-log.md`).
+- Phase 23 WIP: Dry-run anomaly issue completed to validate threshold breach workflow (`docs/phase-23-anomaly-dry-run.md`).
+- Phase 23 WIP: Owner assignment and SLA adherence check completed (`docs/phase-23-execution-log.md`).
+- Phase 23 WIP: Two consecutive weekly anomaly summaries are now logged (`docs/phase-23-weekly-anomaly-summary-log.md`).
+- Phase 23: Execution log sign-off completed and phase closed (`docs/phase-23-execution-log.md`).
+- Phase 24: Conversion uplift v3 closeout logged (`docs/phase-24-conversion-uplift-log.md`).
+- Phase 25: Performance reliability hardening closeout logged (`docs/phase-25-performance-hardening-log.md`).
+- Phase 26: Funnel quality/monetization readiness closeout logged (`docs/phase-26-funnel-quality-log.md`).
 
 ## Steady state (ongoing)
 
@@ -56,7 +82,7 @@ Updated: 2026-04-18
 
 ## Active phase
 
-- Phase 15-18 roadmap: `docs/phase-15-18-roadmap.md`
+- All currently defined phases are completed. Define net-new phases to continue roadmap execution.
 
 ## Progress checklist
 
@@ -75,3 +101,17 @@ Updated: 2026-04-18
 - Phase 13 spec: `docs/phase-13-performance-tightening-plan.md`
 - Phase 14 spec: `docs/phase-14-growth-loop-plan.md`
 - Phase 15-18 roadmap: `docs/phase-15-18-roadmap.md`
+- Phase 19-22 roadmap: `docs/phase-19-22-roadmap.md`
+- Phase 19 artifact: `docs/phase-19-anomaly-summary-template.md`
+- Phase 20 artifact: `docs/phase-20-experiment-log.md`
+- Phase 21 artifact: `docs/phase-21-performance-cluster-log.md`
+- Phase 22 artifact: `docs/phase-22-attribution-quality-checklist.md`
+- Phase 23-26 roadmap: `docs/phase-23-26-roadmap.md`
+- 14-day sprint plan: `docs/sprint-14-day-plan.md`
+- Phase 23 summary log: `docs/phase-23-weekly-anomaly-summary-log.md`
+- Phase 23 dry-run anomaly: `docs/phase-23-anomaly-dry-run.md`
+- Phase 23 execution: `docs/phase-23-execution-log.md`
+- Phase 15 execution: `docs/phase-15-execution-log.md`
+- Phase 24 closeout: `docs/phase-24-conversion-uplift-log.md`
+- Phase 25 closeout: `docs/phase-25-performance-hardening-log.md`
+- Phase 26 closeout: `docs/phase-26-funnel-quality-log.md`
