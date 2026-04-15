@@ -90,7 +90,7 @@ export default function TemplatesPage() {
     overscan: 4,
   });
 
-  const useTemplate = (template: ResumeTemplate, source: 'grid' | 'preview') => {
+  const applyTemplate = (template: ResumeTemplate, source: 'grid' | 'preview') => {
     if (typeof window !== 'undefined') {
       window.localStorage.setItem('fitcv:selected-template-id', template.id);
     }
@@ -203,7 +203,7 @@ export default function TemplatesPage() {
                             <Button variant="outline" onClick={() => setPreviewId(template.id)}>
                               <Eye className="mr-2 h-4 w-4" /> Preview
                             </Button>
-                            <Button onClick={() => useTemplate(template, 'grid')}>
+                            <Button onClick={() => applyTemplate(template, 'grid')}>
                               <Plus className="mr-2 h-4 w-4" /> Use This Template
                             </Button>
                           </CardFooter>
@@ -227,7 +227,7 @@ export default function TemplatesPage() {
                 <DialogHeader className="border-b border-white/15 px-4 py-3">
                   <DialogTitle className="flex items-center justify-between gap-3">
                     <span className="truncate">{previewTemplate.name}</span>
-                    <Button variant="secondary" onClick={() => useTemplate(previewTemplate, 'preview')}>
+                    <Button variant="secondary" onClick={() => applyTemplate(previewTemplate, 'preview')}>
                       Use This Template
                     </Button>
                   </DialogTitle>
