@@ -11,7 +11,7 @@ type Props = {
   status: JobStatus;
   items: JobApplication[];
   onOpen: (job: JobApplication) => void;
-  onMove: (jobId: string, status: JobStatus) => void;
+  onMove: (jobId: string, status: JobStatus, source?: 'quick_action' | 'menu' | 'drag') => void;
   onDelete: (jobId: string) => void;
 };
 

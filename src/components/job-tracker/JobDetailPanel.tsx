@@ -11,12 +11,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Calendar, ExternalLink, Star } from 'lucide-react';
 import type { JobApplication, JobStatus } from '@/lib/job-tracker/types';
 import { JOB_STATUS_LABELS } from '@/lib/job-tracker/types';
+import { fromInputDateTimeValue, getFollowUpSummary, toInputDateTimeValue } from '@/lib/job-tracker/reminder-utils';
 
 type Props = {
   job: JobApplication | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSave: (jobId: string, patch: Partial<JobApplication>) => void;
+  onSave: (jobId: string, patch: Partial<JobApplication>, source?: 'detail_save' | 'followup_snooze' | 'followup_complete') => void;
 };
 
 export function JobDetailPanel({ job, open, onOpenChange, onSave }: Props) {
@@ -24,6 +25,7 @@ export function JobDetailPanel({ job, open, onOpenChange, onSave }: Props) {
   const [notes, setNotes] = useState('');
   const [nextAction, setNextAction] = useState('');
   const [status, setStatus] = useState<JobStatus>('saved');
+  const [nextFollowUpAt, setNextFollowUpAt] = useState('');
 
   useEffect(() => {
     const mql = window.matchMedia('(max-width: 768px)');
@@ -38,6 +40,7 @@ export function JobDetailPanel({ job, open, onOpenChange, onSave }: Props) {
     setNotes(job.notes ?? '');
     setNextAction(job.nextAction ?? '');
     setStatus(job.status);
+    setNextFollowUpAt(toInputDateTimeValue(job.nextFollowUpAt));
   }, [job]);
 
   const title = useMemo(() => {
@@ -46,6 +49,7 @@ export function JobDetailPanel({ job, open, onOpenChange, onSave }: Props) {
   }, [job]);
 
   if (!job) return null;
+  const followUp = getFollowUpSummary(job);
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -107,6 +111,80 @@ export function JobDetailPanel({ job, open, onOpenChange, onSave }: Props) {
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="next-followup">Follow-up reminder</Label>
+            <Input
+              id="next-followup"
+              type="datetime-local"
+              value={nextFollowUpAt}
+              onChange={(e) => setNextFollowUpAt(e.target.value)}
+            />
+            <p className="text-xs text-muted-foreground">{followUp.label}</p>
+            <div className="flex flex-wrap gap-2 pt-1">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const due = new Date();
+                  due.setDate(due.getDate() + 1);
+                  const iso = due.toISOString();
+                  onSave(
+                    job.id,
+                    {
+                      nextFollowUpAt: iso,
+                      followUpCount: (job.followUpCount ?? 0) + 1,
+                    },
+                    'followup_snooze'
+                  );
+                  setNextFollowUpAt(toInputDateTimeValue(iso));
+                }}
+              >
+                Snooze 1 day
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const due = new Date();
+                  due.setDate(due.getDate() + 3);
+                  const iso = due.toISOString();
+                  onSave(
+                    job.id,
+                    {
+                      nextFollowUpAt: iso,
+                      followUpCount: (job.followUpCount ?? 0) + 1,
+                    },
+                    'followup_snooze'
+                  );
+                  setNextFollowUpAt(toInputDateTimeValue(iso));
+                }}
+              >
+                Snooze 3 days
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={() => {
+                  onSave(
+                    job.id,
+                    {
+                      lastFollowUpAt: new Date().toISOString(),
+                      nextFollowUpAt: undefined,
+                      followUpCount: (job.followUpCount ?? 0) + 1,
+                    },
+                    'followup_complete'
+                  );
+                  setNextFollowUpAt('');
+                }}
+              >
+                Mark follow-up done
+              </Button>
+            </div>
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="job-notes-editor">Notes</Label>
             <Textarea
               id="job-notes-editor"
@@ -121,7 +199,14 @@ export function JobDetailPanel({ job, open, onOpenChange, onSave }: Props) {
             <Button
               className="w-full min-h-[46px]"
               onClick={() => {
-                onSave(job.id, { notes, nextAction, status });
+                const followUpPatch = nextFollowUpAt
+                  ? {
+                      nextFollowUpAt: fromInputDateTimeValue(nextFollowUpAt),
+                    }
+                  : {
+                      nextFollowUpAt: undefined,
+                    };
+                onSave(job.id, { notes, nextAction, status, ...followUpPatch }, 'detail_save');
                 onOpenChange(false);
               }}
             >

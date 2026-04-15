@@ -11,11 +11,14 @@ import { useCollection } from '@/firebase';
 import { useMemoFirebase } from '@/firebase/provider';
 import { addDocumentNonBlocking, deleteDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 import { JobFormDialog } from './JobFormDialog';
 import { JobColumn } from './JobColumn';
 import { JobDetailPanel } from './JobDetailPanel';
 import { countByStatus, groupJobsByStatus, moveJobStatus } from '@/lib/job-tracker/board-utils';
 import { JOB_STATUS_ORDER, type JobActivityAction, type JobApplication, type JobApplicationInput, type JobStatus } from '@/lib/job-tracker/types';
+import { trackEvent } from '@/lib/analytics-events';
+import { getFollowUpState } from '@/lib/job-tracker/reminder-utils';
 
 type Props = {
   user: User | null;
@@ -44,6 +47,9 @@ function normalizeJob(raw: Partial<JobApplication> & { id: string }): JobApplica
     nextAction: raw.nextAction,
     interviewDate: raw.interviewDate,
     interviewRound: raw.interviewRound,
+    nextFollowUpAt: raw.nextFollowUpAt,
+    lastFollowUpAt: raw.lastFollowUpAt,
+    followUpCount: raw.followUpCount ?? 0,
     rating: raw.rating ?? 2,
     tags: raw.tags ?? [],
     atsKeywords: raw.atsKeywords ?? [],
@@ -56,9 +62,13 @@ export function JobBoard({ user, firestore, demoMode = false }: Props) {
   const [selectedJob, setSelectedJob] = useState<JobApplication | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [pendingEnrichmentJobId, setPendingEnrichmentJobId] = useState<string | null>(null);
   const [demoJobs, setDemoJobs] = useState<JobApplication[]>([]);
   const [demoHydrated, setDemoHydrated] = useState(false);
   const [isCoarsePointer, setIsCoarsePointer] = useState(false);
+  const [optimisticJobs, setOptimisticJobs] = useState<JobApplication[] | null>(null);
+  const [enrichmentPromptSnoozedUntil, setEnrichmentPromptSnoozedUntil] = useState<number | null>(null);
+  const { toast } = useToast();
 
   const jobsQuery = useMemoFirebase(
     () => (!demoMode && user && firestore ? collection(firestore, `users/${user.uid}/jobApplications`) : null),
@@ -99,12 +109,36 @@ export function JobBoard({ user, firestore, demoMode = false }: Props) {
   }, []);
 
   const jobs = useMemo(() => {
+    if (optimisticJobs) return optimisticJobs;
     if (demoMode) return demoJobs;
     return (jobsData ?? []).map((item) => normalizeJob(item));
-  }, [demoJobs, demoMode, jobsData]);
+  }, [demoJobs, demoMode, jobsData, optimisticJobs]);
+
+  useEffect(() => {
+    if (!optimisticJobs) return;
+    if (demoMode) return;
+    setOptimisticJobs(null);
+  }, [jobsData, optimisticJobs, demoMode]);
 
   const grouped = useMemo(() => groupJobsByStatus(jobs), [jobs]);
   const counts = useMemo(() => countByStatus(jobs), [jobs]);
+  const pendingEnrichmentJob = useMemo(
+    () => jobs.find((job) => job.id === pendingEnrichmentJobId) ?? null,
+    [jobs, pendingEnrichmentJobId]
+  );
+  const shouldShowEnrichmentPrompt =
+    Boolean(pendingEnrichmentJob) &&
+    (!enrichmentPromptSnoozedUntil || Date.now() >= enrichmentPromptSnoozedUntil);
+
+  function hasEnrichmentDetails(job: JobApplication): boolean {
+    return Boolean(
+      job.location.trim() ||
+        job.salary.trim() ||
+        job.jobUrl.trim() ||
+        job.notes.trim() ||
+        (job.nextAction ?? '').trim()
+    );
+  }
 
   async function logActivity(jobId: string, action: JobActivityAction) {
     if (!activityQuery || demoMode) return;
@@ -116,6 +150,11 @@ export function JobBoard({ user, firestore, demoMode = false }: Props) {
   }
 
   async function createJob(input: JobApplicationInput) {
+    const hasDetails =
+      Boolean(input.location.trim()) ||
+      Boolean(input.salary.trim()) ||
+      Boolean(input.jobUrl.trim()) ||
+      Boolean(input.notes.trim());
     const now = new Date().toISOString();
     const payload = {
       ...input,
@@ -128,27 +167,94 @@ export function JobBoard({ user, firestore, demoMode = false }: Props) {
       const localId = `demo-${crypto.randomUUID()}`;
       const next = [...demoJobs, normalizeJob({ id: localId, ...payload })];
       setDemoJobs(next);
+      trackEvent('job_added', { source: 'demo', status: input.status, quick_add: !hasDetails });
+      if (!hasDetails) {
+        setPendingEnrichmentJobId(localId);
+        setEnrichmentPromptSnoozedUntil(null);
+      }
       return;
     }
     if (!jobsQuery) return;
     setIsSubmitting(true);
     try {
       const ref = await addDocumentNonBlocking(jobsQuery, payload);
+      setOptimisticJobs((prev) => prev ?? [...jobs, normalizeJob({ id: ref.id, ...payload })]);
       await logActivity(ref.id, 'created');
+      trackEvent('job_added', { source: 'job_form', status: input.status, quick_add: !hasDetails });
+      if (!hasDetails) {
+        setPendingEnrichmentJobId(ref.id);
+        setEnrichmentPromptSnoozedUntil(null);
+      }
     } finally {
       setIsSubmitting(false);
     }
   }
 
-  async function updateJob(jobId: string, patch: Partial<JobApplication>) {
+  async function updateJob(
+    jobId: string,
+    patch: Partial<JobApplication>,
+    source: 'detail_save' | 'followup_snooze' | 'followup_complete' = 'detail_save'
+  ) {
+    const current = jobs.find((job) => job.id === jobId);
     const updatePatch = { ...patch, updatedAt: new Date().toISOString() };
+    const nextCandidate = current ? normalizeJob({ ...current, ...updatePatch, id: jobId }) : null;
     if (demoMode) {
       setDemoJobs((prev) => prev.map((job) => (job.id === jobId ? normalizeJob({ ...job, ...updatePatch }) : job)));
+      if (current && patch.status && patch.status !== current.status) {
+        trackEvent('job_stage_changed', { from: current.status, to: patch.status, source: 'detail_panel' });
+      }
+      if (patch.nextFollowUpAt) trackEvent('job_followup_set', { source });
+      if (source === 'followup_snooze') trackEvent('job_followup_snoozed', { source });
+      if (source === 'followup_complete') trackEvent('job_followup_completed', { source });
+      if (
+        source === 'detail_save' &&
+        pendingEnrichmentJobId === jobId &&
+        nextCandidate &&
+        hasEnrichmentDetails(nextCandidate)
+      ) {
+        trackEvent('job_add_enrich_complete', { source: 'detail_panel' });
+        setPendingEnrichmentJobId(null);
+        setEnrichmentPromptSnoozedUntil(null);
+        toast({
+          title: 'Details saved',
+          description: 'Great. This job now has richer context for follow-ups and tracking.',
+        });
+      }
       return;
     }
     if (!user || !firestore) return;
     updateDocumentNonBlocking(doc(firestore, `users/${user.uid}/jobApplications/${jobId}`), updatePatch);
     await logActivity(jobId, 'updated');
+    if (current && patch.status && patch.status !== current.status) {
+      trackEvent('job_stage_changed', { from: current.status, to: patch.status, source: 'detail_panel' });
+      await logActivity(jobId, 'status_changed');
+    }
+    if (patch.nextFollowUpAt) {
+      trackEvent('job_followup_set', { source });
+      await logActivity(jobId, 'followup_set');
+    }
+    if (source === 'followup_snooze') {
+      trackEvent('job_followup_snoozed', { source });
+      await logActivity(jobId, 'followup_snoozed');
+    }
+    if (source === 'followup_complete') {
+      trackEvent('job_followup_completed', { source });
+      await logActivity(jobId, 'followup_completed');
+    }
+    if (
+      source === 'detail_save' &&
+      pendingEnrichmentJobId === jobId &&
+      nextCandidate &&
+      hasEnrichmentDetails(nextCandidate)
+    ) {
+      trackEvent('job_add_enrich_complete', { source: 'detail_panel' });
+      setPendingEnrichmentJobId(null);
+      setEnrichmentPromptSnoozedUntil(null);
+      toast({
+        title: 'Details saved',
+        description: 'Great. This job now has richer context for follow-ups and tracking.',
+      });
+    }
   }
 
   async function deleteJob(jobId: string) {
@@ -161,25 +267,51 @@ export function JobBoard({ user, firestore, demoMode = false }: Props) {
     await logActivity(jobId, 'deleted');
   }
 
-  async function moveJob(jobId: string, status: JobStatus) {
+  async function moveJob(
+    jobId: string,
+    status: JobStatus,
+    source: 'quick_action' | 'menu' | 'drag' = 'drag'
+  ) {
     const moved = moveJobStatus(jobs, jobId, status);
     if (!moved.changed) return;
+    const previous = jobs.find((j) => j.id === jobId);
+    if (!previous) return;
 
     if (demoMode) {
       setDemoJobs(moved.items);
+      trackEvent('job_stage_changed', {
+        from: previous.status,
+        to: status,
+        source,
+      });
       return;
     }
     if (!user || !firestore) return;
 
+    setOptimisticJobs(moved.items);
     const patch: Partial<JobApplication> = {
       status,
       updatedAt: new Date().toISOString(),
     };
     if (moved.autoDateApplied) patch.dateApplied = moved.autoDateApplied;
 
-    updateDocumentNonBlocking(doc(firestore, `users/${user.uid}/jobApplications/${jobId}`), patch);
-    await logActivity(jobId, 'status_changed');
-    if (moved.autoDateApplied) await logActivity(jobId, 'date_applied_auto_set');
+    try {
+      updateDocumentNonBlocking(doc(firestore, `users/${user.uid}/jobApplications/${jobId}`), patch);
+      await logActivity(jobId, 'status_changed');
+      if (moved.autoDateApplied) await logActivity(jobId, 'date_applied_auto_set');
+      trackEvent('job_stage_changed', {
+        from: previous.status,
+        to: status,
+        source,
+      });
+    } catch {
+      setOptimisticJobs(jobs);
+      toast({
+        variant: 'destructive',
+        title: 'Could not update stage',
+        description: 'We restored the previous stage. Try again in a moment.',
+      });
+    }
   }
 
   const sensors = useSensors(
@@ -212,7 +344,7 @@ export function JobBoard({ user, firestore, demoMode = false }: Props) {
       targetStatus = targetJob?.status ?? null;
     }
     if (!targetStatus) return;
-    void moveJob(activeId, targetStatus);
+    void moveJob(activeId, targetStatus, 'drag');
   }
 
   function handleDragOver(event: DragOverEvent) {
@@ -224,7 +356,7 @@ export function JobBoard({ user, firestore, demoMode = false }: Props) {
     const targetStatus = overId as JobStatus;
     const current = jobs.find((job) => job.id === activeId);
     if (!current || current.status === targetStatus) return;
-    void moveJob(activeId, targetStatus);
+    void moveJob(activeId, targetStatus, 'drag');
   }
 
   if (!demoMode && !user) {
@@ -270,6 +402,65 @@ export function JobBoard({ user, firestore, demoMode = false }: Props) {
         ))}
       </div>
 
+      {shouldShowEnrichmentPrompt ? (
+        <div className="rounded-lg border border-primary/30 bg-primary/5 p-3 text-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <p>
+            <span className="font-semibold">Nice start.</span> Add quick details for{' '}
+            <span className="font-semibold">{pendingEnrichmentJob?.company ?? 'this role'}</span> to improve follow-up quality.
+          </p>
+          <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              onClick={() => {
+                setSelectedJob(pendingEnrichmentJob);
+                setIsPanelOpen(true);
+                trackEvent('job_add_enrich_start', { source: 'quick_add_prompt' });
+              }}
+            >
+              Add details now
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => {
+                const snoozeMs = 10 * 60 * 1000;
+                setEnrichmentPromptSnoozedUntil(Date.now() + snoozeMs);
+                trackEvent('job_add_enrich_snoozed', { source: 'quick_add_prompt', minutes: 10 });
+              }}
+            >
+              Later
+            </Button>
+          </div>
+        </div>
+      ) : null}
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+        <div className="rounded-lg border p-2">
+          <p className="text-muted-foreground">Due today</p>
+          <p className="font-semibold">{jobs.filter((j) => getFollowUpState(j.nextFollowUpAt) === 'today').length}</p>
+        </div>
+        <div className="rounded-lg border p-2">
+          <p className="text-muted-foreground">Overdue</p>
+          <p className="font-semibold">{jobs.filter((j) => getFollowUpState(j.nextFollowUpAt) === 'overdue').length}</p>
+        </div>
+        <div className="rounded-lg border p-2">
+          <p className="text-muted-foreground">This week</p>
+          <p className="font-semibold">
+            {
+              jobs.filter((j) => {
+                if (!j.nextFollowUpAt) return false;
+                const due = new Date(j.nextFollowUpAt);
+                if (Number.isNaN(due.getTime())) return false;
+                const now = new Date();
+                const in7 = new Date();
+                in7.setDate(in7.getDate() + 7);
+                return due >= now && due <= in7;
+              }).length
+            }
+          </p>
+        </div>
+      </div>
+
       <DndContext sensors={sensors} collisionDetection={closestCorners} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
         <div className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory">
           {JOB_STATUS_ORDER.map((status) => (
@@ -298,8 +489,8 @@ export function JobBoard({ user, firestore, demoMode = false }: Props) {
         job={selectedJob}
         open={isPanelOpen}
         onOpenChange={setIsPanelOpen}
-        onSave={(jobId, patch) => {
-          void updateJob(jobId, patch);
+        onSave={(jobId, patch, source) => {
+          void updateJob(jobId, patch, source);
         }}
       />
     </div>

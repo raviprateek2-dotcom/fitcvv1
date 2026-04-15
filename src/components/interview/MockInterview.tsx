@@ -13,6 +13,8 @@ import { Loader2, Sparkles, RefreshCw, Bot, Lightbulb, Volume2, UserCheck, Shiel
 import { motion, AnimatePresence } from 'framer-motion';
 import { aiNarrate } from '@/app/actions/ai-narrator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import Link from 'next/link';
+import { trackEvent } from '@/lib/analytics-events';
 
 const interviewQuestions: Record<string, string[]> = {
     general: [
@@ -271,6 +273,14 @@ export function MockInterview({ initialQuestion }: MockInterviewProps) {
                                 <h3 className="font-semibold flex items-center gap-2 text-primary"><Sparkles className="w-4 h-4" /> Strategic Phrasing</h3>
                                 <p className="text-sm p-4 border rounded-xl italic bg-primary/5 border-primary/20">"{result.suggestedImprovement}"</p>
                             </div>
+                            <Button asChild variant="outline" className="w-full sm:w-auto">
+                              <Link
+                                href="/dashboard/jobs?source=interview_completion"
+                                onClick={() => trackEvent('job_tracker_open', { source: 'interview_completion' })}
+                              >
+                                Track this interview in Job Board
+                              </Link>
+                            </Button>
                         </motion.div>
                      </CardFooter>
                 )}

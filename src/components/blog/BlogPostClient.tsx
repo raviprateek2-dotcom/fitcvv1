@@ -382,10 +382,20 @@ export function BlogPostClient({
                     Build or refine your resume with templates and tools that match what you just read.
                   </p>
                   <Button className="w-full" asChild>
-                    <Link href="/templates">Browse resume templates</Link>
+                    <Link
+                      href="/templates?source=blog_post_sidebar"
+                      onClick={() => trackEvent('cta_get_started', { surface: 'blog_post_sidebar' })}
+                    >
+                      Browse resume templates
+                    </Link>
                   </Button>
                   <Button variant="outline" className="w-full mt-2" asChild>
-                    <Link href="/dashboard">Open resume editor</Link>
+                    <Link
+                      href="/signup?source=blog_post_sidebar"
+                      onClick={() => trackEvent('cta_signup', { surface: 'blog_post_sidebar' })}
+                    >
+                      Create free account
+                    </Link>
                   </Button>
                 </div>
 

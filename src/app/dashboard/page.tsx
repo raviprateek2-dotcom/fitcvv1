@@ -607,7 +607,10 @@ export default function DashboardPage() {
                         Platform Guide
                     </Button>
                     <Button asChild variant="outline">
-                        <Link href="/dashboard/jobs">
+                        <Link
+                          href="/dashboard/jobs?source=dashboard_header"
+                          onClick={() => trackEvent('job_tracker_open', { source: 'dashboard_header' })}
+                        >
                             <BriefcaseBusiness className="mr-2 h-4 w-4" />
                             Job Board
                         </Link>

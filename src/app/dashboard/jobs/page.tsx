@@ -1,15 +1,21 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 import { useUser } from '@/firebase';
 import { JobBoard } from '@/components/job-tracker/JobBoard';
+import { trackEvent } from '@/lib/analytics-events';
 
 function JobsPageClient() {
   const searchParams = useSearchParams();
   const { user, firestore, isUserLoading } = useUser();
   const demoMode = searchParams.get('demo') === '1';
+  const source = searchParams.get('source') || (demoMode ? 'jobs_page_demo' : 'jobs_page');
+
+  useEffect(() => {
+    trackEvent('job_tracker_open', { source });
+  }, [source]);
 
   if (isUserLoading && !demoMode) {
     return (

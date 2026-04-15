@@ -6,15 +6,16 @@ import { CSS } from '@dnd-kit/utilities';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { CalendarDays, ExternalLink, GripVertical, MoreHorizontal, Star } from 'lucide-react';
+import { CalendarDays, ExternalLink, GripVertical, MoreHorizontal, Star, BellRing } from 'lucide-react';
 import type { JobApplication, JobStatus } from '@/lib/job-tracker/types';
 import { JOB_STATUS_LABELS } from '@/lib/job-tracker/types';
+import { getFollowUpSummary } from '@/lib/job-tracker/reminder-utils';
 import { cn } from '@/lib/utils';
 
 type Props = {
   job: JobApplication;
   onOpen: (job: JobApplication) => void;
-  onMove: (jobId: string, status: JobStatus) => void;
+  onMove: (jobId: string, status: JobStatus, source?: 'quick_action' | 'menu' | 'drag') => void;
   onDelete: (jobId: string) => void;
 };
 
@@ -38,6 +39,24 @@ export const JobCard = memo(function JobCard({ job, onOpen, onMove, onDelete }: 
     transform: CSS.Transform.toString(transform),
     transition,
   };
+
+  const quickActions: JobStatus[] =
+    job.status === 'saved'
+      ? ['applied']
+      : job.status === 'applied'
+        ? ['interview']
+        : job.status === 'interview'
+          ? ['offer', 'rejected']
+          : [];
+  const followUp = getFollowUpSummary(job);
+  const followUpClass =
+    followUp.state === 'overdue'
+      ? 'text-red-500'
+      : followUp.state === 'today'
+        ? 'text-amber-500'
+        : followUp.state === 'upcoming'
+          ? 'text-primary'
+          : 'text-muted-foreground';
 
   return (
     <div
@@ -80,7 +99,7 @@ export const JobCard = memo(function JobCard({ job, onOpen, onMove, onDelete }: 
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               {(Object.keys(JOB_STATUS_LABELS) as JobStatus[]).map((status) => (
-                <DropdownMenuItem key={status} onClick={() => onMove(job.id, status)}>
+                <DropdownMenuItem key={status} onClick={() => onMove(job.id, status, 'menu')}>
                   Move to {JOB_STATUS_LABELS[status]}
                 </DropdownMenuItem>
               ))}
@@ -102,6 +121,28 @@ export const JobCard = memo(function JobCard({ job, onOpen, onMove, onDelete }: 
             <ExternalLink className="h-3 w-3" />
           </a>
         ) : null}
+      </div>
+
+      {quickActions.length > 0 ? (
+        <div className="mt-3 flex flex-wrap gap-2">
+          {quickActions.map((nextStatus) => (
+            <Button
+              key={nextStatus}
+              type="button"
+              variant="outline"
+              size="sm"
+              className="h-8"
+              onClick={() => onMove(job.id, nextStatus, 'quick_action')}
+            >
+              {JOB_STATUS_LABELS[nextStatus]}
+            </Button>
+          ))}
+        </div>
+      ) : null}
+
+      <div className={cn('mt-3 text-xs inline-flex items-center gap-1.5', followUpClass)}>
+        <BellRing className="h-3.5 w-3.5" />
+        {followUp.label}
       </div>
 
       <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">

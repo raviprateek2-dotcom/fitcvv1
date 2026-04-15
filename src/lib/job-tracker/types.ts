@@ -15,7 +15,10 @@ export type JobActivityAction =
   | 'deleted'
   | 'status_changed'
   | 'date_applied_auto_set'
-  | 'note_updated';
+  | 'note_updated'
+  | 'followup_set'
+  | 'followup_snoozed'
+  | 'followup_completed';
 
 export type JobApplication = {
   id: string;
@@ -34,6 +37,9 @@ export type JobApplication = {
   nextAction?: string;
   interviewDate?: string;
   interviewRound?: number;
+  nextFollowUpAt?: string;
+  lastFollowUpAt?: string;
+  followUpCount?: number;
   rating: 1 | 2 | 3;
   tags: string[];
   atsKeywords: string[];

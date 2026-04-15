@@ -11,6 +11,7 @@ import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { cn, isPlaceholderCoUrl } from '@/lib/utils';
 import { BLOG_TOPICS } from '@/lib/blog-topics';
+import { trackEvent } from '@/lib/analytics-events';
 
 export function BlogClientPage({ posts }: { posts: BlogPost[] }) {
   const containerVariants = {
@@ -49,7 +50,12 @@ export function BlogClientPage({ posts }: { posts: BlogPost[] }) {
           </p>
           <div className="flex flex-wrap gap-2 mt-8">
             <Button asChild variant="default" size="sm" className="min-h-[40px] rounded-full">
-              <Link href="/blog/topics">Browse by topic</Link>
+              <Link
+                href="/blog/topics"
+                onClick={() => trackEvent('blog_cta_click', { source: 'blog_listing_header', target: 'topics' })}
+              >
+                Browse by topic
+              </Link>
             </Button>
             <Button asChild variant="outline" size="sm" className="min-h-[40px] rounded-full">
               <Link href="/blog/feed.xml" className="inline-flex items-center gap-2">
@@ -59,7 +65,17 @@ export function BlogClientPage({ posts }: { posts: BlogPost[] }) {
             </Button>
             {BLOG_TOPICS.map((t) => (
               <Button key={t.slug} asChild variant="outline" size="sm" className="min-h-[40px] rounded-full">
-                <Link href={`/blog/topic/${t.slug}`}>{t.shortTitle}</Link>
+                <Link
+                  href={`/blog/topic/${t.slug}`}
+                  onClick={() =>
+                    trackEvent('blog_cta_click', {
+                      source: 'blog_listing_topic_chip',
+                      target: t.slug,
+                    })
+                  }
+                >
+                  {t.shortTitle}
+                </Link>
               </Button>
             ))}
           </div>
@@ -140,7 +156,20 @@ export function BlogClientPage({ posts }: { posts: BlogPost[] }) {
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
             <Button asChild size="lg" className="min-h-[48px] w-full sm:w-auto">
-              <Link href="/templates">Build your resume free</Link>
+              <Link
+                href="/templates?source=blog_listing_endcap"
+                onClick={() => trackEvent('cta_get_started', { surface: 'blog_listing_endcap' })}
+              >
+                Build your resume free
+              </Link>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="min-h-[48px] w-full sm:w-auto">
+              <Link
+                href="/signup?source=blog_listing_endcap"
+                onClick={() => trackEvent('cta_signup', { surface: 'blog_listing_endcap' })}
+              >
+                Create free account
+              </Link>
             </Button>
           </div>
         </section>

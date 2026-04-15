@@ -34,6 +34,7 @@ export function JobFormDialog({ onCreate, isSubmitting = false }: Props) {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<JobApplicationInput>(initialState);
   const [errorText, setErrorText] = useState('');
+  const [showDetails, setShowDetails] = useState(false);
 
   const errors = useMemo(() => validateJobInput(form), [form]);
 
@@ -56,6 +57,7 @@ export function JobFormDialog({ onCreate, isSubmitting = false }: Props) {
       atsKeywords: form.atsKeywords.map((keyword) => keyword.trim()).filter(Boolean),
     });
     setForm(initialState);
+    setShowDetails(false);
     setOpen(false);
   }
 
@@ -71,7 +73,7 @@ export function JobFormDialog({ onCreate, isSubmitting = false }: Props) {
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>Add a job to your board</DialogTitle>
-            <DialogDescription>Track one opportunity and move it through your pipeline.</DialogDescription>
+            <DialogDescription>Quick add with company + role, then fill details later from the card panel.</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -95,66 +97,75 @@ export function JobFormDialog({ onCreate, isSubmitting = false }: Props) {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="job-location">Location</Label>
-                <Input
-                  id="job-location"
-                  value={form.location}
-                  onChange={(e) => setForm((prev) => ({ ...prev, location: e.target.value }))}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="job-salary">Salary</Label>
-                <Input
-                  id="job-salary"
-                  value={form.salary}
-                  onChange={(e) => setForm((prev) => ({ ...prev, salary: e.target.value }))}
-                  placeholder="e.g. ₹18-24 LPA"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Status</Label>
-                <Select
-                  value={form.status}
-                  onValueChange={(value) => setForm((prev) => ({ ...prev, status: value as JobStatus }))}
-                >
-                  <SelectTrigger className="min-h-[44px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.entries(JOB_STATUS_LABELS).map(([value, label]) => (
-                      <SelectItem key={value} value={value}>
-                        {label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+            <div className="flex items-center justify-between rounded-lg border px-3 py-2">
+              <p className="text-xs text-muted-foreground">Need more context now?</p>
+              <Button type="button" variant="ghost" size="sm" onClick={() => setShowDetails((prev) => !prev)}>
+                {showDetails ? 'Hide details' : 'Add optional details'}
+              </Button>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="job-url">Job URL</Label>
-              <Input
-                id="job-url"
-                value={form.jobUrl}
-                onChange={(e) => setForm((prev) => ({ ...prev, jobUrl: e.target.value }))}
-                placeholder="https://..."
-              />
-            </div>
+            {showDetails ? (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="job-location">Location</Label>
+                    <Input
+                      id="job-location"
+                      value={form.location}
+                      onChange={(e) => setForm((prev) => ({ ...prev, location: e.target.value }))}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="job-salary">Salary</Label>
+                    <Input
+                      id="job-salary"
+                      value={form.salary}
+                      onChange={(e) => setForm((prev) => ({ ...prev, salary: e.target.value }))}
+                      placeholder="e.g. ₹18-24 LPA"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Status</Label>
+                    <Select
+                      value={form.status}
+                      onValueChange={(value) => setForm((prev) => ({ ...prev, status: value as JobStatus }))}
+                    >
+                      <SelectTrigger className="min-h-[44px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object.entries(JOB_STATUS_LABELS).map(([value, label]) => (
+                          <SelectItem key={value} value={value}>
+                            {label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="job-notes">Notes</Label>
-              <Textarea
-                id="job-notes"
-                rows={4}
-                value={form.notes}
-                onChange={(e) => setForm((prev) => ({ ...prev, notes: e.target.value }))}
-                placeholder="Why this role? What should you follow up on?"
-                required
-              />
-            </div>
+                <div className="space-y-2">
+                  <Label htmlFor="job-url">Job URL</Label>
+                  <Input
+                    id="job-url"
+                    value={form.jobUrl}
+                    onChange={(e) => setForm((prev) => ({ ...prev, jobUrl: e.target.value }))}
+                    placeholder="https://..."
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="job-notes">Notes</Label>
+                  <Textarea
+                    id="job-notes"
+                    rows={4}
+                    value={form.notes}
+                    onChange={(e) => setForm((prev) => ({ ...prev, notes: e.target.value }))}
+                    placeholder="Why this role? What should you follow up on?"
+                  />
+                </div>
+              </>
+            ) : null}
 
             {errorText ? <p className="text-sm text-destructive">{errorText}</p> : null}
           </div>
