@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import {
@@ -13,7 +13,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { PlaceHolderImages, type ImagePlaceholder } from '@/lib/placeholder-images';
-import { Eye, Plus, Sparkles } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Eye, Plus, Sparkles } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
@@ -56,11 +56,28 @@ export default function TemplatesPage() {
   const { toast } = useToast();
   const { user } = useUser();
   const [filter, setFilter] = useState<'all' | TemplateCategory>('all');
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [previewTemplateId, setPreviewTemplateId] = useState<TemplateItem['id'] | null>(null);
+  const touchStartX = useRef<number | null>(null);
 
   const visible = useMemo(() => {
     if (filter === 'all') return templates;
     return templates.filter((t) => t.category === filter);
   }, [filter]);
+
+  const previewIndex = useMemo(
+    () => visible.findIndex((t) => t.id === previewTemplateId),
+    [visible, previewTemplateId]
+  );
+  const previewTemplate = previewIndex >= 0 ? visible[previewIndex] : null;
+
+  useEffect(() => {
+    if (!isPreviewOpen) return;
+    if (!previewTemplate) {
+      setIsPreviewOpen(false);
+      setPreviewTemplateId(null);
+    }
+  }, [isPreviewOpen, previewTemplate]);
 
   const handleUseTemplate = (templateId: string, templateName?: string) => {
     const label = templateName ?? templateId;
@@ -73,6 +90,39 @@ export default function TemplatesPage() {
       description: 'We’ll create a new resume with this layout in the editor.',
     });
     router.push(`/editor/new?template=${templateId}`);
+  };
+
+  const openPreview = (templateId: TemplateItem['id']) => {
+    setPreviewTemplateId(templateId);
+    setIsPreviewOpen(true);
+  };
+
+  const showNextTemplate = () => {
+    if (!visible.length || !previewTemplate) return;
+    const current = visible.findIndex((t) => t.id === previewTemplate.id);
+    const next = (current + 1) % visible.length;
+    setPreviewTemplateId(visible[next].id);
+  };
+
+  const showPreviousTemplate = () => {
+    if (!visible.length || !previewTemplate) return;
+    const current = visible.findIndex((t) => t.id === previewTemplate.id);
+    const prev = (current - 1 + visible.length) % visible.length;
+    setPreviewTemplateId(visible[prev].id);
+  };
+
+  const handlePreviewTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.changedTouches[0]?.clientX ?? null;
+  };
+
+  const handlePreviewTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current == null) return;
+    const endX = e.changedTouches[0]?.clientX ?? touchStartX.current;
+    const delta = endX - touchStartX.current;
+    touchStartX.current = null;
+    if (Math.abs(delta) < 40) return;
+    if (delta < 0) showNextTemplate();
+    if (delta > 0) showPreviousTemplate();
   };
 
   const containerVariants = {
@@ -183,48 +233,15 @@ export default function TemplatesPage() {
                       />
 
                       <div className="hidden md:flex absolute inset-0 bg-black/65 opacity-0 group-hover:opacity-100 transition-opacity duration-300 items-center justify-center gap-3">
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button
-                              variant="secondary"
-                              size="icon"
-                              className="h-12 w-12 min-h-[48px] min-w-[48px] rounded-full"
-                              aria-label={`Preview ${template.name}`}
-                            >
-                              <Eye className="h-6 w-6" />
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent className="max-w-4xl w-[95vw] p-0 gap-0 flex flex-col max-h-[min(92dvh,900px)]">
-                            <DialogHeader className="sr-only">
-                              <DialogTitle>{template.name} template preview</DialogTitle>
-                              <DialogDescription>
-                                Larger preview of the {template.name} resume template.
-                              </DialogDescription>
-                            </DialogHeader>
-                            <div className="overflow-y-auto flex-1 p-3 sm:p-4 min-h-0">
-                              <Image
-                                src={src}
-                                alt={`${template.name} full preview`}
-                                width={800}
-                                height={1131}
-                                sizes="(max-width: 1024px) 95vw, 800px"
-                                unoptimized={unopt}
-                                data-ai-hint={template.image.imageHint}
-                                className="w-full h-auto object-contain rounded-lg mx-auto max-h-[65dvh] sm:max-h-[70vh]"
-                              />
-                            </div>
-                            <DialogFooter className="p-4 border-t border-border bg-card shrink-0 flex-col sm:flex-row gap-2">
-                              <Button
-                                type="button"
-                                className="w-full min-h-[48px] text-base"
-                                onClick={() => handleUseTemplate(template.id, template.name)}
-                              >
-                                <Plus className="mr-2 h-4 w-4" />
-                                Use this template
-                              </Button>
-                            </DialogFooter>
-                          </DialogContent>
-                        </Dialog>
+                        <Button
+                          variant="secondary"
+                          size="icon"
+                          className="h-12 w-12 min-h-[48px] min-w-[48px] rounded-full"
+                          aria-label={`Preview ${template.name}`}
+                          onClick={() => openPreview(template.id)}
+                        >
+                          <Eye className="h-6 w-6" />
+                        </Button>
                         <Button
                           size="lg"
                           className="min-h-[48px] text-base"
@@ -237,45 +254,15 @@ export default function TemplatesPage() {
                     </div>
 
                     <div className="flex md:hidden gap-2 p-3 border-t border-border bg-card">
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className="flex-1 min-h-[48px] text-base"
-                            aria-label={`Preview ${template.name}`}
-                          >
-                            <Eye className="mr-2 h-4 w-4" />
-                            Preview
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-4xl w-[95vw] p-0 gap-0 flex flex-col max-h-[min(92dvh,900px)]">
-                          <DialogHeader className="sr-only">
-                            <DialogTitle>{template.name} template preview</DialogTitle>
-                            <DialogDescription>Preview of the {template.name} template.</DialogDescription>
-                          </DialogHeader>
-                          <div className="overflow-y-auto flex-1 p-3 min-h-0">
-                            <Image
-                              src={src}
-                              alt={`${template.name} full preview`}
-                              width={800}
-                              height={1131}
-                              sizes="(max-width: 1024px) 95vw, 800px"
-                              unoptimized={unopt}
-                              className="w-full h-auto object-contain rounded-lg mx-auto max-h-[60dvh]"
-                            />
-                          </div>
-                          <DialogFooter className="p-4 border-t border-border bg-card shrink-0 pb-[max(1rem,env(safe-area-inset-bottom))]">
-                            <Button
-                              type="button"
-                              className="w-full min-h-[52px] text-base"
-                              onClick={() => handleUseTemplate(template.id, template.name)}
-                            >
-                              <Plus className="mr-2 h-4 w-4" />
-                              Use this template
-                            </Button>
-                          </DialogFooter>
-                        </DialogContent>
-                      </Dialog>
+                      <Button
+                        variant="outline"
+                        className="flex-1 min-h-[48px] text-base"
+                        aria-label={`Preview ${template.name}`}
+                        onClick={() => openPreview(template.id)}
+                      >
+                        <Eye className="mr-2 h-4 w-4" />
+                        Preview
+                      </Button>
                       <Button
                         className="flex-1 min-h-[48px] text-base"
                         onClick={() => handleUseTemplate(template.id, template.name)}
@@ -299,6 +286,77 @@ export default function TemplatesPage() {
             );
           })}
         </motion.div>
+
+        <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+          <DialogContent className="max-w-4xl w-[95vw] p-0 gap-0 flex flex-col max-h-[min(92dvh,900px)]">
+            <DialogHeader className="sr-only">
+              <DialogTitle>{previewTemplate?.name ?? 'Template'} preview</DialogTitle>
+              <DialogDescription>
+                Swipe or use arrows to browse templates and choose one to start.
+              </DialogDescription>
+            </DialogHeader>
+            {previewTemplate ? (
+              <>
+                <div className="px-4 py-3 border-b border-border bg-card flex items-center justify-between">
+                  <div className="min-w-0">
+                    <p className="font-semibold truncate">{previewTemplate.name}</p>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {templateCategoryLabels[previewTemplate.category]} · {previewIndex + 1}/{visible.length}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      className="h-9 w-9"
+                      onClick={showPreviousTemplate}
+                      aria-label="Previous template"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      className="h-9 w-9"
+                      onClick={showNextTemplate}
+                      aria-label="Next template"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+                <div
+                  className="overflow-y-auto flex-1 p-3 sm:p-4 min-h-0"
+                  onTouchStart={handlePreviewTouchStart}
+                  onTouchEnd={handlePreviewTouchEnd}
+                >
+                  <Image
+                    src={previewTemplate.image.imageUrl}
+                    alt={`${previewTemplate.name} full preview`}
+                    width={800}
+                    height={1131}
+                    sizes="(max-width: 1024px) 95vw, 800px"
+                    unoptimized={isPlaceholderCoUrl(previewTemplate.image.imageUrl)}
+                    data-ai-hint={previewTemplate.image.imageHint}
+                    className="w-full h-auto object-contain rounded-lg mx-auto max-h-[65dvh] sm:max-h-[70vh]"
+                  />
+                </div>
+                <DialogFooter className="p-4 border-t border-border bg-card shrink-0 pb-[max(1rem,env(safe-area-inset-bottom))]">
+                  <Button
+                    type="button"
+                    className="w-full min-h-[52px] text-base"
+                    onClick={() => handleUseTemplate(previewTemplate.id, previewTemplate.name)}
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Use this template
+                  </Button>
+                </DialogFooter>
+              </>
+            ) : null}
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
