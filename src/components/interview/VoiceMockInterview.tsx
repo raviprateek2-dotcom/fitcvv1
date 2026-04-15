@@ -305,7 +305,7 @@ export function VoiceMockInterview() {
                     <Label className="text-xs font-bold uppercase text-muted-foreground block text-center">Practice Track</Label>
                     <Select value={track}
                         onValueChange={(v) => handleTrackChange(v as typeof tracks[number]['id'])}>
-                        <SelectTrigger>
+                        <SelectTrigger className="min-h-[48px] text-base sm:text-sm">
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>

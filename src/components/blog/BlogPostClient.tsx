@@ -72,19 +72,22 @@ function MarkdownRenderer({ content }: { content: string }) {
             <div><strong class="text-primary block mb-1">PRO TIP</strong><p class="text-sm italic text-muted-foreground">${trimmed.substring(6).trim()}</p></div>
         </div>`;
       }
+      if (trimmed.startsWith('> ')) {
+        return `<blockquote class="border-l-4 border-primary/30 pl-4 py-1 my-4 text-foreground/80 italic break-words">${trimmed.substring(2).trim()}</blockquote>`;
+      }
 
       if (trimmed === '') return '';
 
-      return `<p class="leading-[1.75] mb-4 text-foreground/90 text-[17px] md:text-lg">${trimmed}</p>`;
+      return `<p class="leading-[1.75] mb-4 text-foreground/90 text-[17px] md:text-lg break-words">${trimmed}</p>`;
     })
     .filter((line) => line !== '')
     .join('');
 
-  const withLists = htmlContent.replace(/(<li class="ml-5 mb-2">.*?<\/li>)+/gs, '<ul class="list-disc list-outside space-y-2 mb-4 pl-1 text-[17px] md:text-lg leading-[1.75] text-foreground/90">$&</ul>');
+  const withLists = htmlContent.replace(/(<li class="ml-5 mb-2">.*?<\/li>)+/gs, '<ul class="list-disc list-outside space-y-2 mb-4 pl-1 text-[17px] md:text-lg leading-[1.75] text-foreground/90 break-words">$&</ul>');
 
   return (
     <div
-      className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-headline mb-12 prose-a:text-primary"
+      className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-headline mb-12 prose-a:text-primary prose-code:break-words prose-pre:overflow-x-auto prose-pre:max-w-full"
       dangerouslySetInnerHTML={{ __html: withLists }}
     />
   );

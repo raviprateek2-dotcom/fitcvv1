@@ -175,7 +175,7 @@ export function MockInterview({ initialQuestion }: MockInterviewProps) {
                         <div className="space-y-2">
                             <Label className="text-xs font-bold uppercase text-muted-foreground">1. Select Interview Track</Label>
                             <Select value={track} onValueChange={(v: any) => handleTrackChange(v)}>
-                                <SelectTrigger>
+                                <SelectTrigger className="min-h-[48px] text-base md:text-sm">
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -212,7 +212,7 @@ export function MockInterview({ initialQuestion }: MockInterviewProps) {
                     <div className="space-y-2">
                         <Label className="text-xs font-bold uppercase text-muted-foreground">3. Interviewer Persona</Label>
                         <Select value={persona} onValueChange={(v: any) => setPersona(v)}>
-                            <SelectTrigger className="min-h-[120px] h-auto md:h-[188px] py-3 md:py-2">
+                            <SelectTrigger className="min-h-[140px] h-auto md:h-[188px] py-3 md:py-2">
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>

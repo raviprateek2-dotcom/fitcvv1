@@ -8,7 +8,7 @@ import { serverTimestamp, collection, doc } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, PlusCircle, ArrowRight, Upload, FileText, Loader2, CheckCircle2, Circle, Sparkles, TrendingUp, Zap, Lightbulb, Ear, BarChart3, Target, Share2, Copy, Check, MessageCircle } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, ArrowRight, Upload, FileText, Loader2, CheckCircle2, Circle, Sparkles, TrendingUp, Zap, Lightbulb, Ear, BarChart3, Target, Share2, Copy, Check, MessageCircle, CircleHelp } from 'lucide-react';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useRouter } from 'next/navigation';
@@ -38,6 +38,7 @@ import { ApplicationTracker } from '@/components/dashboard/ApplicationTracker';
 import { ChartTooltip, ChartTooltipContent, ChartContainer } from '@/components/ui/chart';
 import { Pie, PieChart, Cell } from 'recharts';
 import { trackEvent } from '@/lib/analytics-events';
+import { useWalkthrough } from '@/components/walkthrough/WalkthroughProvider';
 
 type Resume = {
     id: string;
@@ -496,6 +497,7 @@ export default function DashboardPage() {
     const firestore = useFirestore();
     const router = useRouter();
     const { toast } = useToast();
+    const { openWalkthrough } = useWalkthrough();
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [isParsing, setIsParsing] = useState(false);
     const [isHydrated, setIsHydrated] = useState(false);
@@ -600,6 +602,10 @@ export default function DashboardPage() {
                     <p className="text-muted-foreground">Your high-performance career command center.</p>
                 </div>
                 <div className="flex items-center gap-2">
+                    <Button variant="ghost" onClick={openWalkthrough}>
+                        <CircleHelp className="mr-2 h-4 w-4" />
+                        Platform Guide
+                    </Button>
                     <Button variant="outline" onClick={() => fileInputRef.current?.click()} disabled={isParsing}>
                         {isParsing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
                         {isParsing ? 'Importing...' : 'Import PDF'}

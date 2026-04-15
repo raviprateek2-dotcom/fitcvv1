@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { ArrowLeft, Check, Download, FileText, Loader2, Share2, Target, Upload, ScanText, History, MessageCircle } from 'lucide-react';
+import { ArrowLeft, Check, CircleHelp, Download, FileText, Loader2, Share2, Target, Upload, ScanText, History, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -18,6 +18,7 @@ import { downloadResumePdfClient } from '@/lib/resume-download-client';
 import { parseResumeFromPdf } from '@/app/actions/ai-resume-parser';
 import { trackEvent } from '@/lib/analytics-events';
 import { isGuestResumeId } from '@/lib/guest-resume';
+import { useWalkthrough } from '@/components/walkthrough/WalkthroughProvider';
 import type { ResumeData } from './types';
 
 function SaveStatusIndicator({ status }: { status: SaveStatus }) {
@@ -42,6 +43,7 @@ function SaveStatusIndicator({ status }: { status: SaveStatus }) {
 
 export function EditorHeader() {
   const { user } = useUser();
+  const { openWalkthrough } = useWalkthrough();
   const firestore = useFirestore();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -268,6 +270,16 @@ export function EditorHeader() {
 
             <Button variant="glass" size="icon" onClick={handleShareWhatsApp} className="h-9 w-9 rounded-xl" title="Share on WhatsApp">
               <MessageCircle className="h-4 w-4" />
+            </Button>
+
+            <Button
+              variant="glass"
+              size="icon"
+              onClick={openWalkthrough}
+              className="h-9 w-9 rounded-xl"
+              title="Show platform guide"
+            >
+              <CircleHelp className="h-4 w-4" />
             </Button>
             
             <Button variant="glass" size="icon" onClick={handleSaveVersion} className="h-9 w-9 rounded-xl" title="Save Snapshot">
