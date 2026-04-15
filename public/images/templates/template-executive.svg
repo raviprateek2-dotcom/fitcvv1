@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" fill="none">
+  <rect width="1200" height="675" fill="#F3F4F6"/>
+  <rect x="238" y="52" width="724" height="571" rx="14" fill="white" stroke="#CBD5E1"/>
+  <rect x="238" y="52" width="210" height="571" rx="14" fill="#1F2937"/>
+  <rect x="272" y="96" width="142" height="14" rx="7" fill="#F9FAFB"/>
+  <rect x="272" y="128" width="120" height="10" rx="5" fill="#9CA3AF"/>
+  <rect x="272" y="196" width="120" height="9" rx="4.5" fill="#4B5563"/>
+  <rect x="272" y="216" width="120" height="9" rx="4.5" fill="#4B5563"/>
+  <rect x="272" y="268" width="120" height="9" rx="4.5" fill="#4B5563"/>
+  <rect x="480" y="96" width="250" height="16" rx="8" fill="#111827"/>
+  <rect x="480" y="126" width="180" height="10" rx="5" fill="#6B7280"/>
+  <rect x="480" y="170" width="440" height="10" rx="5" fill="#E5E7EB"/>
+  <rect x="480" y="190" width="440" height="10" rx="5" fill="#E5E7EB"/>
+  <rect x="480" y="232" width="170" height="12" rx="6" fill="#1F2937"/>
+  <rect x="480" y="258" width="440" height="10" rx="5" fill="#E5E7EB"/>
+  <rect x="480" y="278" width="440" height="10" rx="5" fill="#E5E7EB"/>
+  <text x="480" y="560" fill="#111827" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="700">Executive Leadership</text>
+</svg>

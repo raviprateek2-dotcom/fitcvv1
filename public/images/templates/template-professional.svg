@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" fill="none">
+  <rect width="1200" height="675" fill="#F2F6FB"/>
+  <rect x="238" y="52" width="724" height="571" rx="14" fill="white" stroke="#D7E3F1"/>
+  <rect x="238" y="52" width="724" height="76" rx="14" fill="#245880"/>
+  <rect x="278" y="166" width="260" height="15" rx="7" fill="#1A2534"/>
+  <rect x="278" y="194" width="180" height="10" rx="5" fill="#6B7A8D"/>
+  <rect x="278" y="234" width="210" height="12" rx="6" fill="#245880"/>
+  <rect x="278" y="260" width="644" height="10" rx="5" fill="#E2E8EE"/>
+  <rect x="278" y="280" width="644" height="10" rx="5" fill="#E2E8EE"/>
+  <rect x="278" y="320" width="210" height="12" rx="6" fill="#245880"/>
+  <rect x="278" y="346" width="644" height="10" rx="5" fill="#E2E8EE"/>
+  <rect x="278" y="366" width="644" height="10" rx="5" fill="#E2E8EE"/>
+  <rect x="278" y="406" width="210" height="12" rx="6" fill="#245880"/>
+  <rect x="278" y="432" width="644" height="10" rx="5" fill="#E2E8EE"/>
+  <text x="278" y="108" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="700">Professional Corporate</text>
+</svg>

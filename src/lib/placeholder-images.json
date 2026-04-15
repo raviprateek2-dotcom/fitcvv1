@@ -15,49 +15,49 @@
     {
       "id": "template-modern",
       "description": "A preview of a modern resume template.",
-      "imageUrl": "https://placehold.co/600x400/222222/FFFFFF?text=Modern+Template",
+      "imageUrl": "/images/templates/template-modern.svg",
       "imageHint": "modern resume"
     },
     {
       "id": "template-classic",
       "description": "A preview of a classic resume template.",
-      "imageUrl": "https://placehold.co/600x400/222222/FFFFFF?text=Classic+Template",
+      "imageUrl": "/images/templates/template-classic.svg",
       "imageHint": "classic document"
     },
     {
       "id": "template-creative",
       "description": "A preview of a creative resume template.",
-      "imageUrl": "https://placehold.co/600x400/222222/FFFFFF?text=Creative+Template",
+      "imageUrl": "/images/templates/template-creative.svg",
       "imageHint": "creative design"
     },
     {
       "id": "template-minimalist",
       "description": "A preview of a minimalist resume template.",
-      "imageUrl": "https://placehold.co/600x400/222222/FFFFFF?text=Minimalist+Template",
+      "imageUrl": "/images/templates/template-minimalist.svg",
       "imageHint": "minimalist layout"
     },
     {
       "id": "template-professional",
       "description": "A preview of a professional resume template.",
-      "imageUrl": "https://placehold.co/600x400/222222/FFFFFF?text=Professional+Template",
+      "imageUrl": "/images/templates/template-professional.svg",
       "imageHint": "corporate document"
     },
     {
       "id": "template-executive",
       "description": "A preview of an executive resume template with a sidebar.",
-      "imageUrl": "https://placehold.co/600x400/222222/FFFFFF?text=Executive+Template",
+      "imageUrl": "/images/templates/template-executive.svg",
       "imageHint": "executive paper"
     },
     {
       "id": "template-elegant",
       "description": "A preview of an elegant, sophisticated resume template.",
-      "imageUrl": "https://placehold.co/600x400/222222/FFFFFF?text=Elegant+Template",
+      "imageUrl": "/images/templates/template-elegant.svg",
       "imageHint": "elegant resume"
     },
     {
       "id": "template-technical",
       "description": "A preview of a technical, high-density resume template.",
-      "imageUrl": "https://placehold.co/600x400/222222/FFFFFF?text=Technical+Template",
+      "imageUrl": "/images/templates/template-technical.svg",
       "imageHint": "technical document"
     },
     {

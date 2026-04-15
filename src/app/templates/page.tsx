@@ -79,9 +79,9 @@ export default function TemplatesPage() {
     }
   }, [isPreviewOpen, previewTemplate]);
 
-  const handleUseTemplate = (templateId: string, templateName?: string) => {
+  const handleUseTemplate = (templateId: string, templateName?: string, source: 'grid' | 'preview' = 'grid') => {
     const label = templateName ?? templateId;
-    trackEvent('template_use_click', { template_id: templateId, template_name: label });
+    trackEvent('template_use_click', { template_id: templateId, template_name: label, source });
     if (!user) {
       trackEvent('signup_gate_hit', { action: 'template_start' });
     }
@@ -93,6 +93,12 @@ export default function TemplatesPage() {
   };
 
   const openPreview = (templateId: TemplateItem['id']) => {
+    const selected = visible.find((t) => t.id === templateId);
+    trackEvent('template_preview_open', {
+      template_id: templateId,
+      template_name: selected?.name ?? templateId,
+      source: 'gallery',
+    });
     setPreviewTemplateId(templateId);
     setIsPreviewOpen(true);
   };
@@ -101,6 +107,10 @@ export default function TemplatesPage() {
     if (!visible.length || !previewTemplate) return;
     const current = visible.findIndex((t) => t.id === previewTemplate.id);
     const next = (current + 1) % visible.length;
+    trackEvent('template_preview_next', {
+      from_id: previewTemplate.id,
+      to_id: visible[next].id,
+    });
     setPreviewTemplateId(visible[next].id);
   };
 
@@ -108,6 +118,10 @@ export default function TemplatesPage() {
     if (!visible.length || !previewTemplate) return;
     const current = visible.findIndex((t) => t.id === previewTemplate.id);
     const prev = (current - 1 + visible.length) % visible.length;
+    trackEvent('template_preview_prev', {
+      from_id: previewTemplate.id,
+      to_id: visible[prev].id,
+    });
     setPreviewTemplateId(visible[prev].id);
   };
 
@@ -245,7 +259,7 @@ export default function TemplatesPage() {
                         <Button
                           size="lg"
                           className="min-h-[48px] text-base"
-                          onClick={() => handleUseTemplate(template.id, template.name)}
+                          onClick={() => handleUseTemplate(template.id, template.name, 'grid')}
                         >
                           <Plus className="mr-2 h-4 w-4" />
                           Use template
@@ -265,7 +279,7 @@ export default function TemplatesPage() {
                       </Button>
                       <Button
                         className="flex-1 min-h-[48px] text-base"
-                        onClick={() => handleUseTemplate(template.id, template.name)}
+                        onClick={() => handleUseTemplate(template.id, template.name, 'grid')}
                       >
                         <Plus className="mr-2 h-4 w-4" />
                         Use
@@ -347,7 +361,7 @@ export default function TemplatesPage() {
                   <Button
                     type="button"
                     className="w-full min-h-[52px] text-base"
-                    onClick={() => handleUseTemplate(previewTemplate.id, previewTemplate.name)}
+                    onClick={() => handleUseTemplate(previewTemplate.id, previewTemplate.name, 'preview')}
                   >
                     <Plus className="mr-2 h-4 w-4" />
                     Use this template

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" fill="none">
+  <rect width="1200" height="675" fill="#F4F7FB"/>
+  <rect x="238" y="60" width="724" height="555" rx="18" fill="white" stroke="#D8E2EE"/>
+  <rect x="238" y="60" width="724" height="96" rx="18" fill="#2D6A9F"/>
+  <rect x="278" y="190" width="280" height="16" rx="8" fill="#1A2534"/>
+  <rect x="278" y="220" width="210" height="12" rx="6" fill="#6B7A8D"/>
+  <rect x="278" y="258" width="644" height="10" rx="5" fill="#D4E6F5"/>
+  <rect x="278" y="278" width="644" height="10" rx="5" fill="#D4E6F5"/>
+  <rect x="278" y="318" width="220" height="12" rx="6" fill="#2D6A9F"/>
+  <rect x="278" y="344" width="644" height="10" rx="5" fill="#E2E8EE"/>
+  <rect x="278" y="364" width="644" height="10" rx="5" fill="#E2E8EE"/>
+  <rect x="278" y="404" width="220" height="12" rx="6" fill="#2D6A9F"/>
+  <rect x="278" y="430" width="644" height="10" rx="5" fill="#E2E8EE"/>
+  <rect x="278" y="450" width="500" height="10" rx="5" fill="#E2E8EE"/>
+  <text x="278" y="118" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="700">Modern Campus</text>
+</svg>

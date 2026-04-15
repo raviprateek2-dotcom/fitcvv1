@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" fill="none">
+  <rect width="1200" height="675" fill="#F5F7FF"/>
+  <rect x="238" y="56" width="724" height="563" rx="20" fill="white" stroke="#C7D2FE"/>
+  <rect x="238" y="56" width="220" height="563" rx="20" fill="#3DAA8A"/>
+  <circle cx="348" cy="146" r="54" fill="#EDFAF5"/>
+  <rect x="286" y="238" width="124" height="10" rx="5" fill="#EDFAF5"/>
+  <rect x="286" y="258" width="124" height="10" rx="5" fill="#EDFAF5"/>
+  <rect x="490" y="96" width="250" height="16" rx="8" fill="#1A2534"/>
+  <rect x="490" y="128" width="180" height="10" rx="5" fill="#6B7A8D"/>
+  <rect x="490" y="178" width="430" height="10" rx="5" fill="#D0F2E6"/>
+  <rect x="490" y="198" width="430" height="10" rx="5" fill="#D0F2E6"/>
+  <rect x="490" y="236" width="170" height="12" rx="6" fill="#2E8A6E"/>
+  <rect x="490" y="262" width="430" height="10" rx="5" fill="#E2E8EE"/>
+  <rect x="490" y="282" width="430" height="10" rx="5" fill="#E2E8EE"/>
+  <rect x="490" y="320" width="170" height="12" rx="6" fill="#2E8A6E"/>
+  <rect x="490" y="346" width="430" height="10" rx="5" fill="#E2E8EE"/>
+  <text x="490" y="560" fill="#2E8A6E" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="700">Creative Portfolio</text>
+</svg>

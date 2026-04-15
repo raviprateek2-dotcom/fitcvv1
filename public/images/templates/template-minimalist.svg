@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" fill="none">
+  <rect width="1200" height="675" fill="#F9FAFB"/>
+  <rect x="250" y="44" width="700" height="587" rx="6" fill="white" stroke="#E5E7EB"/>
+  <rect x="292" y="92" width="220" height="14" rx="7" fill="#111827"/>
+  <rect x="292" y="120" width="160" height="10" rx="5" fill="#6B7280"/>
+  <rect x="292" y="160" width="616" height="1.5" fill="#D1D5DB"/>
+  <rect x="292" y="192" width="140" height="10" rx="5" fill="#111827"/>
+  <rect x="292" y="216" width="616" height="9" rx="4.5" fill="#E5E7EB"/>
+  <rect x="292" y="234" width="616" height="9" rx="4.5" fill="#E5E7EB"/>
+  <rect x="292" y="276" width="140" height="10" rx="5" fill="#111827"/>
+  <rect x="292" y="300" width="616" height="9" rx="4.5" fill="#E5E7EB"/>
+  <rect x="292" y="318" width="616" height="9" rx="4.5" fill="#E5E7EB"/>
+  <rect x="292" y="360" width="140" height="10" rx="5" fill="#111827"/>
+  <rect x="292" y="384" width="616" height="9" rx="4.5" fill="#E5E7EB"/>
+  <rect x="292" y="402" width="480" height="9" rx="4.5" fill="#E5E7EB"/>
+  <text x="292" y="570" fill="#111827" font-family="Inter, Arial, sans-serif" font-size="27" font-weight="600">Minimal Govt Ready</text>
+</svg>
