@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Menu, Rocket, User, Home, LayoutDashboard, FileText, BrainCircuit, Settings, LogOut, CircleHelp } from 'lucide-react';
+import { Menu, Rocket, User, Home, LayoutDashboard, FileText, BrainCircuit, Settings, LogOut, CircleHelp, BriefcaseBusiness } from 'lucide-react';
 import { useWalkthrough } from '@/components/walkthrough/WalkthroughProvider';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -24,6 +24,7 @@ import { trackEvent } from '@/lib/analytics-events';
 
 const navLinks = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/dashboard/jobs', label: 'Jobs', icon: BriefcaseBusiness },
   { href: '/templates', label: 'Templates', icon: FileText },
   { href: '/interview', label: 'Interview', icon: BrainCircuit },
 ];

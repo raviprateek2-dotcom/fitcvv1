@@ -8,7 +8,7 @@ import { serverTimestamp, collection, doc } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, PlusCircle, ArrowRight, Upload, FileText, Loader2, CheckCircle2, Circle, Sparkles, TrendingUp, Zap, Lightbulb, Ear, BarChart3, Target, Share2, Copy, Check, MessageCircle, CircleHelp } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, ArrowRight, Upload, FileText, Loader2, CheckCircle2, Circle, Sparkles, TrendingUp, Zap, Lightbulb, Ear, BarChart3, Target, Share2, Copy, Check, MessageCircle, CircleHelp, BriefcaseBusiness } from 'lucide-react';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useRouter } from 'next/navigation';
@@ -605,6 +605,12 @@ export default function DashboardPage() {
                     <Button variant="ghost" onClick={openWalkthrough}>
                         <CircleHelp className="mr-2 h-4 w-4" />
                         Platform Guide
+                    </Button>
+                    <Button asChild variant="outline">
+                        <Link href="/dashboard/jobs">
+                            <BriefcaseBusiness className="mr-2 h-4 w-4" />
+                            Job Board
+                        </Link>
                     </Button>
                     <Button variant="outline" onClick={() => fileInputRef.current?.click()} disabled={isParsing}>
                         {isParsing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
