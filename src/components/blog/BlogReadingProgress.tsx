@@ -1,18 +1,24 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { trackEvent } from '@/lib/analytics-events';
 
 /** Thin fixed progress bar for article scroll (Rev2: ~3px, accent). */
-export function BlogReadingProgress() {
+export function BlogReadingProgress({ slug }: { slug?: string }) {
   const [pct, setPct] = useState(0);
 
   useEffect(() => {
+    let emitted = false;
     const onScroll = () => {
       const el = document.documentElement;
       const scrollTop = el.scrollTop;
       const height = el.scrollHeight - el.clientHeight;
       const next = height <= 0 ? 0 : Math.min(100, (scrollTop / height) * 100);
       setPct(next);
+      if (!emitted && next >= 95) {
+        emitted = true;
+        trackEvent('blog_read_complete', { slug: slug ?? 'unknown' });
+      }
     };
 
     onScroll();
@@ -22,7 +28,7 @@ export function BlogReadingProgress() {
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onScroll);
     };
-  }, []);
+  }, [slug]);
 
   return (
     <div

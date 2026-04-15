@@ -33,6 +33,7 @@ import {
 } from '@/lib/blog-utils';
 import { topicMeta } from '@/lib/blog-topics';
 import { BlogReadingProgress } from '@/components/blog/BlogReadingProgress';
+import { trackEvent } from '@/lib/analytics-events';
 
 function MarkdownRenderer({ content }: { content: string }) {
   const nextId = createHeadingIdFactory();
@@ -89,7 +90,7 @@ function MarkdownRenderer({ content }: { content: string }) {
   );
 }
 
-function TocNav({ items, className }: { items: BlogTocItem[]; className?: string }) {
+function TocNav({ items, className, slug }: { items: BlogTocItem[]; className?: string; slug?: string }) {
   return (
     <nav aria-label="Jump to section" className={cn('text-sm', className)}>
       <p className="mb-3 flex items-center gap-2 font-semibold text-foreground">
@@ -102,6 +103,7 @@ function TocNav({ items, className }: { items: BlogTocItem[]; className?: string
             <a
               href={`#${item.id}`}
               className="text-muted-foreground hover:text-primary transition-colors"
+              onClick={() => trackEvent('blog_toc_click', { slug: slug ?? 'unknown', section: item.id })}
             >
               {item.text}
             </a>
@@ -147,6 +149,7 @@ export function BlogPostClient({
   const copyLink = () => {
     navigator.clipboard.writeText(articleUrl);
     setCopied(true);
+    trackEvent('blog_share_click', { slug: post.slug, channel: 'copy_link' });
     toast({ title: 'Link copied!', description: 'The article link has been copied to your clipboard.' });
     setTimeout(() => setCopied(false), 2000);
   };
@@ -166,7 +169,7 @@ export function BlogPostClient({
 
   return (
     <div className="container mx-auto px-4 md:px-6 py-12 md:py-20">
-      <BlogReadingProgress />
+      <BlogReadingProgress slug={post.slug} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: structuredDataJSON }} />
 
       <div className="max-w-4xl mx-auto">
@@ -264,7 +267,7 @@ export function BlogPostClient({
                     />
                   </summary>
                   <div className="mt-4 pt-4 border-t border-border">
-                    <TocNav items={toc} />
+                    <TocNav items={toc} slug={post.slug} />
                   </div>
                 </details>
               )}
@@ -284,6 +287,7 @@ export function BlogPostClient({
                     className="min-h-[44px] gap-2"
                     onClick={() => {
                       setHelpful('up');
+                      trackEvent('blog_helpful_vote', { slug: post.slug, vote: 'up' });
                       toast({ title: 'Thanks for the feedback', description: 'Glad this helped you move forward.' });
                     }}
                   >
@@ -297,6 +301,7 @@ export function BlogPostClient({
                     className="min-h-[44px] gap-2"
                     onClick={() => {
                       setHelpful('down');
+                      trackEvent('blog_helpful_vote', { slug: post.slug, vote: 'down' });
                       toast({ title: 'Thanks for letting us know', description: 'We use feedback to improve our guides.' });
                     }}
                   >
@@ -320,12 +325,24 @@ export function BlogPostClient({
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="text-xs font-medium text-muted-foreground w-full sm:w-auto sm:mr-1">Share</span>
                     <Button variant="outline" size="icon" className="h-11 w-11 shrink-0 rounded-full" asChild>
-                      <a href={twitterHref} target="_blank" rel="noopener noreferrer" aria-label="Share on X (Twitter)">
+                      <a
+                        href={twitterHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="Share on X (Twitter)"
+                        onClick={() => trackEvent('blog_share_click', { slug: post.slug, channel: 'x' })}
+                      >
                         <Twitter className="h-4 w-4" />
                       </a>
                     </Button>
                     <Button variant="outline" size="icon" className="h-11 w-11 shrink-0 rounded-full" asChild>
-                      <a href={linkedInHref} target="_blank" rel="noopener noreferrer" aria-label="Share on LinkedIn">
+                      <a
+                        href={linkedInHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="Share on LinkedIn"
+                        onClick={() => trackEvent('blog_share_click', { slug: post.slug, channel: 'linkedin' })}
+                      >
                         <Linkedin className="h-4 w-4" />
                       </a>
                     </Button>
@@ -348,7 +365,7 @@ export function BlogPostClient({
               <div className="sticky top-24 space-y-8">
                 {showToc && (
                   <div className="premium-card p-5 bg-glass">
-                    <TocNav items={toc} />
+                    <TocNav items={toc} slug={post.slug} />
                   </div>
                 )}
 
@@ -383,6 +400,12 @@ export function BlogPostClient({
                             <Link
                               href={`/blog/${relatedPost.slug}`}
                               className="group block rounded-xl border border-border overflow-hidden bg-card hover:border-primary/40 transition-colors"
+                              onClick={() =>
+                                trackEvent('blog_related_click', {
+                                  from_slug: post.slug,
+                                  to_slug: relatedPost.slug,
+                                })
+                              }
                             >
                               {img && (
                                 <div className="relative aspect-video w-full">
@@ -431,6 +454,12 @@ export function BlogPostClient({
                     <Link
                       href={`/blog/${relatedPost.slug}`}
                       className="group flex flex-col rounded-xl border border-border overflow-hidden bg-card h-full hover:border-primary/40 transition-colors"
+                      onClick={() =>
+                        trackEvent('blog_related_click', {
+                          from_slug: post.slug,
+                          to_slug: relatedPost.slug,
+                        })
+                      }
                     >
                       {img && (
                         <div className="relative aspect-[16/9] w-full shrink-0">
