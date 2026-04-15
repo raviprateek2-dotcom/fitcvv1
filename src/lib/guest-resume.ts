@@ -1,5 +1,6 @@
 import type { ResumeData } from '@/components/editor/types';
 import { defaultResumeData } from '@/lib/default-resume-data';
+import { buildResumeFromTemplateId } from '@/lib/resume-template-mapper';
 
 const GUEST_PREFIX = 'guest-';
 const KEY_PREFIX = 'fitcv:guest-resume:';
@@ -38,10 +39,11 @@ export function saveGuestResume(resumeId: string, data: ResumeData): void {
 }
 
 export function buildGuestResumeSeed(templateId: string): ResumeData {
+  const templateSeed = buildResumeFromTemplateId(templateId);
   return {
     ...defaultResumeData,
+    ...templateSeed,
     title: 'Guest Resume',
-    templateId: templateId || 'modern',
     coverLetter: '',
     companyInfo: { name: '', jobTitle: '' },
     skills: [],

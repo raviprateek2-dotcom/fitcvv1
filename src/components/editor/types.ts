@@ -66,6 +66,7 @@ export type ResumeData = {
   auditSummary?: string;
   skillGaps?: string[];
   learningPath?: string;
+  templateCatalogId?: string;
 };
 
 export interface CoverLetterPreviewProps {

@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Download, Share2, Sparkles, Bot, Newspaper, Brush, Loader2, SearchCheck, ArrowLeft, Upload, CheckCircle, XCircle, PlusCircle, FileText, KeySquare, Eye, Edit3, MessageSquareText, Linkedin, Target, ArrowRight, BookOpen, AlertTriangle, Check, Copy, History, Zap, TrendingUp } from 'lucide-react';
 import React, { useCallback, useEffect, useState, useRef, useMemo } from 'react';
-import { ResumePreview, CoverLetterPreview } from './ResumePreview';
+import { CoverLetterPreview } from './ResumePreview';
 import { AtsSimulationPreview } from './AtsSimulationPreview';
 import { useDoc, useUser, useFirestore, useMemoFirebase, setDocumentNonBlocking, updateDocumentNonBlocking } from '@/firebase';
 import { doc, serverTimestamp } from 'firebase/firestore';
@@ -43,6 +43,8 @@ import { Badge } from '../ui/badge';
 import { EditorHeader } from './EditorHeader';
 import { downloadResumePdfClient } from '@/lib/resume-download-client';
 import { buildGuestResumeSeed, isGuestResumeId, loadGuestResume, saveGuestResume } from '@/lib/guest-resume';
+import { ResumePreview as UnifiedResumePreview } from '@/components/resume/ResumePreview';
+import { buildUnifiedTemplateFromResumeData } from '@/lib/resume-template-mapper';
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 type EditorTab = 'content' | 'ai-review' | 'cover-letter' | 'design';
@@ -240,10 +242,12 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
     return <EditorLoadingSkeleton />;
   }
 
+  const unifiedTemplate = buildUnifiedTemplateFromResumeData(resumeData);
+
   if (isPrintMode) {
     return (
       <div className="bg-white print:p-0">
-        <ResumePreview resumeData={resumeData} />
+        <UnifiedResumePreview template={unifiedTemplate} className="rounded-none border-none shadow-none" />
       </div>
     );
   }
@@ -338,7 +342,7 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
                 ) : isAtsMode ? (
                   <AtsSimulationPreview resumeData={resumeData} />
                 ) : (
-                  <ResumePreview resumeData={resumeData} />
+                  <UnifiedResumePreview template={unifiedTemplate} />
                 )}
              </motion.div>
            </div>

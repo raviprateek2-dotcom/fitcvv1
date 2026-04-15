@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { defaultResumeData } from '@/lib/default-resume-data';
 import { buildGuestResumeSeed, createGuestResumeId, saveGuestResume } from '@/lib/guest-resume';
+import { buildResumeFromTemplateId } from '@/lib/resume-template-mapper';
 
 
 // A simple loading state while the resume is being created and we redirect.
@@ -59,14 +60,15 @@ function NewResumeContent() {
     createOnceRef.current = true;
 
     const resumesCollection = collection(firestore, `users/${user.uid}/resumes`);
+    const templateSeed = buildResumeFromTemplateId(templateId);
     const newResumeData = {
       ...defaultResumeData,
+      ...templateSeed,
       title: 'Untitled Resume',
-      templateId,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
       personalInfo: {
-        ...defaultResumeData.personalInfo,
+        ...templateSeed.personalInfo,
         name: user.displayName || 'Your Name',
         email: user.email || '',
       },

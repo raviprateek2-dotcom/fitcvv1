@@ -1,371 +1,253 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import { useRouter } from 'next/navigation';
+import { ChevronLeft, ChevronRight, Eye, Plus } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { useUser } from '@/firebase';
+import { trackEvent } from '@/lib/analytics-events';
+import { resumeTemplates, type ProfessionCategory, type ResumeTemplate, type TemplateStyle } from '@/data/resumeTemplates';
+import { ResumePreview } from '@/components/resume/ResumePreview';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { PlaceHolderImages, type ImagePlaceholder } from '@/lib/placeholder-images';
-import { ChevronLeft, ChevronRight, Eye, Plus, Sparkles } from 'lucide-react';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { cn, isPlaceholderCoUrl } from '@/lib/utils';
-import { useToast } from '@/hooks/use-toast';
-import { Badge } from '@/components/ui/badge';
-import { trackEvent } from '@/lib/analytics-events';
-import { useUser } from '@/firebase';
-import { templateCatalog, templateCategoryLabels, type TemplateCategory } from '@/lib/template-catalog';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Slider } from '@/components/ui/slider';
+import { cn } from '@/lib/utils';
 
-type TemplateItem = {
-  id: (typeof templateCatalog)[number]['id'];
-  name: string;
-  category: TemplateCategory;
-  useCase: string;
-  atsReady: boolean;
-  isOriginal: boolean;
-  image: ImagePlaceholder;
-  isPremium: boolean;
-};
+const categories: ProfessionCategory[] = [...new Set(resumeTemplates.map((template) => template.category))];
+const styleOptions: Array<TemplateStyle | 'All'> = ['All', 'Modern', 'Classic', 'Minimalist', 'Executive', 'Creative'];
+const layoutOptions = ['All', 'single-column', 'two-column', 'sidebar-left', 'sidebar-right'] as const;
+const sortOptions = ['Popular', 'Newest', 'ATS Score'] as const;
 
-const FILTER_TABS: { id: 'all' | TemplateCategory; label: string }[] = [
-  { id: 'all', label: 'All' },
-  ...Object.entries(templateCategoryLabels).map(([id, label]) => ({
-    id: id as TemplateCategory,
-    label,
-  })),
-];
-
-const templates: TemplateItem[] = templateCatalog
-  .map((t) => {
-    const image = PlaceHolderImages.find((img) => img.id === `template-${t.id}`);
-    if (!image) return null;
-    return { ...t, image };
-  })
-  .filter((t): t is TemplateItem => t !== null);
+function scoreVariant(score: number): 'default' | 'secondary' | 'destructive' {
+  if (score >= 80) return 'default';
+  if (score >= 60) return 'secondary';
+  return 'destructive';
+}
 
 export default function TemplatesPage() {
   const router = useRouter();
   const { toast } = useToast();
   const { user } = useUser();
-  const [filter, setFilter] = useState<'all' | TemplateCategory>('all');
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [previewTemplateId, setPreviewTemplateId] = useState<TemplateItem['id'] | null>(null);
-  const touchStartX = useRef<number | null>(null);
+  const parentRef = useRef<HTMLDivElement>(null);
+  const [query, setQuery] = useState('');
+  const [category, setCategory] = useState<'All' | ProfessionCategory>('All');
+  const [style, setStyle] = useState<TemplateStyle | 'All'>('All');
+  const [layout, setLayout] = useState<(typeof layoutOptions)[number]>('All');
+  const [atsThreshold, setAtsThreshold] = useState(0);
+  const [sortBy, setSortBy] = useState<(typeof sortOptions)[number]>('Popular');
+  const [previewId, setPreviewId] = useState<string | null>(null);
+  const [columns, setColumns] = useState(3);
 
-  const visible = useMemo(() => {
-    if (filter === 'all') return templates;
-    return templates.filter((t) => t.category === filter);
-  }, [filter]);
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    const selected = resumeTemplates.filter((template) => {
+      const matchesQuery =
+        !q ||
+        template.name.toLowerCase().includes(q) ||
+        template.tags.some((tag) => tag.includes(q)) ||
+        template.category.toLowerCase().includes(q);
+      const matchesCategory = category === 'All' || template.category === category;
+      const matchesStyle = style === 'All' || template.style === style;
+      const matchesLayout = layout === 'All' || template.layout === layout;
+      const matchesAts = template.atsScore >= atsThreshold;
+      return matchesQuery && matchesCategory && matchesStyle && matchesLayout && matchesAts;
+    });
 
-  const previewIndex = useMemo(
-    () => visible.findIndex((t) => t.id === previewTemplateId),
-    [visible, previewTemplateId]
-  );
-  const previewTemplate = previewIndex >= 0 ? visible[previewIndex] : null;
+    if (sortBy === 'ATS Score') return [...selected].sort((a, b) => b.atsScore - a.atsScore);
+    if (sortBy === 'Newest') return [...selected].sort((a, b) => b.id.localeCompare(a.id));
+    return [...selected].sort((a, b) => b.tags.length - a.tags.length);
+  }, [query, category, style, layout, atsThreshold, sortBy]);
+
+  const previewIndex = filtered.findIndex((template) => template.id === previewId);
+  const previewTemplate = previewIndex >= 0 ? filtered[previewIndex] : null;
 
   useEffect(() => {
-    if (!isPreviewOpen) return;
-    if (!previewTemplate) {
-      setIsPreviewOpen(false);
-      setPreviewTemplateId(null);
+    const updateColumns = () => {
+      if (window.innerWidth < 768) {
+        setColumns(1);
+      } else if (window.innerWidth < 1200) {
+        setColumns(2);
+      } else {
+        setColumns(3);
+      }
+    };
+    updateColumns();
+    window.addEventListener('resize', updateColumns);
+    return () => window.removeEventListener('resize', updateColumns);
+  }, []);
+
+  const rows = Math.ceil(filtered.length / columns);
+  const rowVirtualizer = useVirtualizer({
+    count: rows,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 540,
+    overscan: 4,
+  });
+
+  const useTemplate = (template: ResumeTemplate, source: 'grid' | 'preview') => {
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem('fitcv:selected-template-id', template.id);
     }
-  }, [isPreviewOpen, previewTemplate]);
-
-  const handleUseTemplate = (templateId: string, templateName?: string, source: 'grid' | 'preview' = 'grid') => {
-    const label = templateName ?? templateId;
-    trackEvent('template_use_click', { template_id: templateId, template_name: label, source });
-    if (!user) {
-      trackEvent('signup_gate_hit', { action: 'template_start' });
-    }
-    toast({
-      title: `Opening ${label}`,
-      description: 'We’ll create a new resume with this layout in the editor.',
-    });
-    router.push(`/editor/new?template=${templateId}`);
+    if (!user) trackEvent('signup_gate_hit', { action: 'template_start' });
+    trackEvent('template_use_click', { template_id: template.id, template_name: template.name, source });
+    toast({ title: `Using ${template.name}`, description: 'Loading this template in your editor with starter content.' });
+    router.push(`/editor/new?template=${template.id}`);
   };
 
-  const openPreview = (templateId: TemplateItem['id']) => {
-    const selected = visible.find((t) => t.id === templateId);
-    trackEvent('template_preview_open', {
-      template_id: templateId,
-      template_name: selected?.name ?? templateId,
-      source: 'gallery',
-    });
-    setPreviewTemplateId(templateId);
-    setIsPreviewOpen(true);
-  };
-
-  const showNextTemplate = () => {
-    if (!visible.length || !previewTemplate) return;
-    const current = visible.findIndex((t) => t.id === previewTemplate.id);
-    const next = (current + 1) % visible.length;
-    trackEvent('template_preview_next', {
-      from_id: previewTemplate.id,
-      to_id: visible[next].id,
-    });
-    setPreviewTemplateId(visible[next].id);
-  };
-
-  const showPreviousTemplate = () => {
-    if (!visible.length || !previewTemplate) return;
-    const current = visible.findIndex((t) => t.id === previewTemplate.id);
-    const prev = (current - 1 + visible.length) % visible.length;
-    trackEvent('template_preview_prev', {
-      from_id: previewTemplate.id,
-      to_id: visible[prev].id,
-    });
-    setPreviewTemplateId(visible[prev].id);
-  };
-
-  const handlePreviewTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.changedTouches[0]?.clientX ?? null;
-  };
-
-  const handlePreviewTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX.current == null) return;
-    const endX = e.changedTouches[0]?.clientX ?? touchStartX.current;
-    const delta = endX - touchStartX.current;
-    touchStartX.current = null;
-    if (Math.abs(delta) < 40) return;
-    if (delta < 0) showNextTemplate();
-    if (delta > 0) showPreviousTemplate();
-  };
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.08 },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
+  const movePreview = (direction: -1 | 1) => {
+    if (!previewTemplate || !filtered.length) return;
+    const next = (previewIndex + direction + filtered.length) % filtered.length;
+    setPreviewId(filtered[next].id);
   };
 
   return (
-    <div className="bg-secondary min-h-screen">
-      <div className="container mx-auto px-4 md:px-6 py-10 md:py-20">
-        <motion.div
-          className="text-center mb-8 md:mb-12 max-w-2xl mx-auto"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          <motion.h1
-            variants={itemVariants}
-            className="text-3xl sm:text-4xl md:text-5xl font-headline font-bold tracking-tight leading-tight"
-          >
-            Choose your template
-          </motion.h1>
-          <motion.p variants={itemVariants} className="mt-3 md:mt-4 text-base md:text-lg text-muted-foreground">
-            Pick a layout for campus placements, private-sector roles, or exam-focused applications. All templates are ATS-friendly and free with a FitCV account.
-          </motion.p>
-        </motion.div>
+    <div className="min-h-screen bg-secondary/30">
+      <div className="container mx-auto px-4 py-10 md:px-6 md:py-14">
+        <header className="mx-auto mb-8 max-w-3xl text-center">
+          <h1 className="font-headline text-4xl font-bold tracking-tight md:text-5xl">Resume Templates</h1>
+          <p className="mt-3 text-muted-foreground">
+            150 professionally crafted templates across 15 industries. Click any template to preview or start editing instantly.
+          </p>
+        </header>
 
-        <div
-          className="mb-8 -mx-4 px-4 md:mx-0 md:px-0 overflow-x-auto pb-1 flex gap-2 snap-x snap-mandatory"
-          role="tablist"
-          aria-label="Filter templates"
-        >
-          {FILTER_TABS.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={filter === tab.id ? true : false}
-              onClick={() => setFilter(tab.id)}
-              className={cn(
-                'snap-start shrink-0 rounded-full px-4 py-2.5 text-sm font-semibold transition-colors min-h-[44px] border',
-                filter === tab.id
-                  ? 'bg-primary text-primary-foreground border-primary'
-                  : 'bg-card text-muted-foreground border-border hover:border-primary/40 hover:text-foreground'
-              )}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+        <section className="sticky top-16 z-20 mb-6 rounded-xl border bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/85">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
+            <div className="lg:col-span-2">
+              <Label htmlFor="template-search">Search</Label>
+              <Input id="template-search" placeholder="Search templates..." value={query} onChange={(event) => setQuery(event.target.value)} />
+            </div>
+            <div>
+              <Label>Category</Label>
+              <Select value={category} onValueChange={(value) => setCategory(value as 'All' | ProfessionCategory)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="All">All categories</SelectItem>
+                  {categories.map((item) => <SelectItem key={item} value={item}>{item}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Style</Label>
+              <Select value={style} onValueChange={(value) => setStyle(value as TemplateStyle | 'All')}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {styleOptions.map((item) => <SelectItem key={item} value={item}>{item}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Layout</Label>
+              <Select value={layout} onValueChange={(value) => setLayout(value as (typeof layoutOptions)[number])}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {layoutOptions.map((item) => <SelectItem key={item} value={item}>{item}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Sort by</Label>
+              <Select value={sortBy} onValueChange={(value) => setSortBy(value as (typeof sortOptions)[number])}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {sortOptions.map((item) => <SelectItem key={item} value={item}>{item}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="mt-4">
+            <Label>ATS Optimized ({atsThreshold}+)</Label>
+            <Slider value={[atsThreshold]} onValueChange={(value) => setAtsThreshold(value[0] ?? 0)} max={95} step={5} />
+          </div>
+        </section>
 
-        <motion.div
-          className="grid gap-6 sm:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {visible.map((template) => {
-            const src = template.image.imageUrl;
-            const unopt = isPlaceholderCoUrl(src);
-
-            return (
-              <motion.div key={template.id} variants={itemVariants}>
-                <Card className="group overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 h-full flex flex-col border-border">
-                  <CardContent className="p-0 relative">
-                    {template.isOriginal && (
-                      <Badge
-                        variant="secondary"
-                        className="absolute bottom-2 left-2 z-10 text-[10px] font-bold uppercase tracking-wide bg-primary/90 text-primary-foreground"
-                      >
-                        Original layout
-                      </Badge>
-                    )}
-                    {template.isPremium && (
-                      <div className="absolute top-2 right-2 z-10">
-                        <div className="bg-primary text-primary-foreground px-2.5 py-1 rounded-full text-[10px] font-bold flex items-center gap-1 shadow-md">
-                          <Sparkles className="w-3 h-3 shrink-0" aria-hidden />
-                          Premium
-                        </div>
-                      </div>
-                    )}
-                    {template.atsReady && (
-                      <Badge
-                        variant="secondary"
-                        className="absolute top-2 left-2 z-10 text-[10px] font-bold uppercase tracking-wide bg-background/90 backdrop-blur-sm"
-                      >
-                        ATS-friendly
-                      </Badge>
-                    )}
-
-                    <div className="relative aspect-video w-full bg-muted overflow-hidden">
-                      <Image
-                        src={src}
-                        alt={template.name}
-                        fill
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        unoptimized={unopt}
-                        data-ai-hint={template.image.imageHint}
-                        className="object-cover object-top transition-transform duration-500 ease-out md:group-hover:scale-[1.03]"
-                      />
-
-                      <div className="hidden md:flex absolute inset-0 bg-black/65 opacity-0 group-hover:opacity-100 transition-opacity duration-300 items-center justify-center gap-3">
-                        <Button
-                          variant="secondary"
-                          size="icon"
-                          className="h-12 w-12 min-h-[48px] min-w-[48px] rounded-full"
-                          aria-label={`Preview ${template.name}`}
-                          onClick={() => openPreview(template.id)}
-                        >
-                          <Eye className="h-6 w-6" />
-                        </Button>
-                        <Button
-                          size="lg"
-                          className="min-h-[48px] text-base"
-                          onClick={() => handleUseTemplate(template.id, template.name, 'grid')}
-                        >
-                          <Plus className="mr-2 h-4 w-4" />
-                          Use template
-                        </Button>
-                      </div>
+        {filtered.length === 0 ? (
+          <div className="rounded-xl border bg-background p-10 text-center text-muted-foreground">
+            No templates found. Try adjusting your filters.
+          </div>
+        ) : (
+          <div ref={parentRef} className="h-[calc(100vh-260px)] overflow-auto rounded-xl border bg-background p-4">
+            <div style={{ height: `${rowVirtualizer.getTotalSize()}px`, position: 'relative' }}>
+              {rowVirtualizer.getVirtualItems().map((item) => {
+                const start = item.index * columns;
+                const rowItems = filtered.slice(start, start + columns);
+                return (
+                  <div
+                    key={template.id}
+                    className="absolute left-0 top-0 w-full py-3"
+                    style={{ transform: `translateY(${item.start}px)` }}
+                  >
+                    <div className={cn('grid gap-4', columns === 1 ? 'grid-cols-1' : columns === 2 ? 'grid-cols-2' : 'grid-cols-3')}>
+                      {rowItems.map((template) => (
+                        <Card key={template.id} className="group flex flex-col overflow-hidden border shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg">
+                          <CardContent className="space-y-3 p-4">
+                            <div className="overflow-hidden rounded-md border bg-muted/40">
+                              <ResumePreview template={template} scale={0.24} className="mx-auto w-full max-w-[190px]" />
+                            </div>
+                            <div>
+                              <h3 className="font-headline text-lg font-semibold">{template.name}</h3>
+                              <p className="text-sm text-muted-foreground">{template.description}</p>
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                              <Badge variant="outline">{template.category}</Badge>
+                              <Badge variant={scoreVariant(template.atsScore)}>ATS {template.atsScore}</Badge>
+                              <Badge variant="secondary">{template.style}</Badge>
+                            </div>
+                          </CardContent>
+                          <CardFooter className="mt-auto grid grid-cols-2 gap-2 p-4 pt-0">
+                            <Button variant="outline" onClick={() => setPreviewId(template.id)}>
+                              <Eye className="mr-2 h-4 w-4" /> Preview
+                            </Button>
+                            <Button onClick={() => useTemplate(template, 'grid')}>
+                              <Plus className="mr-2 h-4 w-4" /> Use This Template
+                            </Button>
+                          </CardFooter>
+                        </Card>
+                      ))}
+                      {rowItems.length < columns
+                        ? Array.from({ length: columns - rowItems.length }).map((_, idx) => <div key={`spacer-${idx}`} />)
+                        : null}
                     </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
-                    <div className="flex md:hidden gap-2 p-3 border-t border-border bg-card">
-                      <Button
-                        variant="outline"
-                        className="flex-1 min-h-[48px] text-base"
-                        aria-label={`Preview ${template.name}`}
-                        onClick={() => openPreview(template.id)}
-                      >
-                        <Eye className="mr-2 h-4 w-4" />
-                        Preview
-                      </Button>
-                      <Button
-                        className="flex-1 min-h-[48px] text-base"
-                        onClick={() => handleUseTemplate(template.id, template.name, 'grid')}
-                      >
-                        <Plus className="mr-2 h-4 w-4" />
-                        Use
-                      </Button>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="p-4 bg-background/80 border-t border-border mt-auto flex items-center justify-between gap-2">
-                    <div className="min-w-0">
-                      <h3 className="font-headline text-lg font-semibold">{template.name}</h3>
-                      <p className="text-xs text-muted-foreground truncate">{template.useCase}</p>
-                    </div>
-                    <span className="text-[10px] uppercase font-bold text-muted-foreground shrink-0">
-                      {templateCategoryLabels[template.category]}
-                    </span>
-                  </CardFooter>
-                </Card>
-              </motion.div>
-            );
-          })}
-        </motion.div>
-
-        <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
-          <DialogContent className="max-w-4xl w-[95vw] p-0 gap-0 flex flex-col max-h-[min(92dvh,900px)]">
-            <DialogHeader className="sr-only">
-              <DialogTitle>{previewTemplate?.name ?? 'Template'} preview</DialogTitle>
-              <DialogDescription>
-                Swipe or use arrows to browse templates and choose one to start.
-              </DialogDescription>
-            </DialogHeader>
+        <Dialog open={Boolean(previewTemplate)} onOpenChange={(open) => !open && setPreviewId(null)}>
+          <DialogContent className="max-h-[92vh] max-w-[98vw] overflow-hidden border-none bg-black/95 p-0 text-white">
             {previewTemplate ? (
               <>
-                <div className="px-4 py-3 border-b border-border bg-card flex items-center justify-between">
-                  <div className="min-w-0">
-                    <p className="font-semibold truncate">{previewTemplate.name}</p>
-                    <p className="text-xs text-muted-foreground truncate">
-                      {templateCategoryLabels[previewTemplate.category]} · {previewIndex + 1}/{visible.length}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="icon"
-                      className="h-9 w-9"
-                      onClick={showPreviousTemplate}
-                      aria-label="Previous template"
-                    >
-                      <ChevronLeft className="h-4 w-4" />
+                <DialogHeader className="border-b border-white/15 px-4 py-3">
+                  <DialogTitle className="flex items-center justify-between gap-3">
+                    <span className="truncate">{previewTemplate.name}</span>
+                    <Button variant="secondary" onClick={() => useTemplate(previewTemplate, 'preview')}>
+                      Use This Template
                     </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="icon"
-                      className="h-9 w-9"
-                      onClick={showNextTemplate}
-                      aria-label="Next template"
-                    >
-                      <ChevronRight className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-                <div
-                  className="overflow-y-auto flex-1 p-3 sm:p-4 min-h-0"
-                  onTouchStart={handlePreviewTouchStart}
-                  onTouchEnd={handlePreviewTouchEnd}
-                >
-                  <Image
-                    src={previewTemplate.image.imageUrl}
-                    alt={`${previewTemplate.name} full preview`}
-                    width={800}
-                    height={1131}
-                    sizes="(max-width: 1024px) 95vw, 800px"
-                    unoptimized={isPlaceholderCoUrl(previewTemplate.image.imageUrl)}
-                    data-ai-hint={previewTemplate.image.imageHint}
-                    className="w-full h-auto object-contain rounded-lg mx-auto max-h-[65dvh] sm:max-h-[70vh]"
-                  />
-                </div>
-                <DialogFooter className="p-4 border-t border-border bg-card shrink-0 pb-[max(1rem,env(safe-area-inset-bottom))]">
-                  <Button
-                    type="button"
-                    className="w-full min-h-[52px] text-base"
-                    onClick={() => handleUseTemplate(previewTemplate.id, previewTemplate.name, 'preview')}
-                  >
-                    <Plus className="mr-2 h-4 w-4" />
-                    Use this template
+                  </DialogTitle>
+                  <p className="text-sm text-white/70">
+                    {previewTemplate.category} | {previewTemplate.style} | ATS {previewTemplate.atsScore} | Best for {previewTemplate.bestFor}
+                  </p>
+                </DialogHeader>
+                <div className="relative flex h-[74vh] items-center justify-center p-4">
+                  <Button className="absolute left-4 top-1/2 -translate-y-1/2" variant="outline" onClick={() => movePreview(-1)}>
+                    <ChevronLeft className="h-4 w-4" />
                   </Button>
+                  <div className="max-h-full overflow-auto rounded-lg bg-white p-2">
+                    <ResumePreview template={previewTemplate} scale={0.8} className="w-[635px]" />
+                  </div>
+                  <Button className="absolute right-4 top-1/2 -translate-y-1/2" variant="outline" onClick={() => movePreview(1)}>
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+                <DialogFooter className="border-t border-white/15 px-4 py-3">
+                  <div className="w-full text-sm text-white/70">{previewIndex + 1} / {filtered.length}</div>
                 </DialogFooter>
               </>
             ) : null}
