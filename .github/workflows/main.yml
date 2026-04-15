@@ -67,13 +67,12 @@ jobs:
         env:
           PLAYWRIGHT_TEST_BASE_URL: http://localhost:9002
 
-      # Firebase Hosting deployment
-      # Requires FIREBASE_SERVICE_ACCOUNT secret
-      - name: Deploy to Firebase Hosting
+      - name: Deploy to Vercel Production
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
-          channelId: live
-          projectId: '${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}'
+        run: |
+          npx vercel pull --yes --environment=production --token="${{ secrets.VERCEL_TOKEN }}"
+          npx vercel build --prod --token="${{ secrets.VERCEL_TOKEN }}"
+          npx vercel deploy --prebuilt --prod --token="${{ secrets.VERCEL_TOKEN }}"
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
