@@ -22,36 +22,28 @@ import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { trackEvent } from '@/lib/analytics-events';
 import { useUser } from '@/firebase';
-
-type TemplateCategory = 'campus' | 'corporate' | 'government';
+import { templateCatalog, templateCategoryLabels, type TemplateCategory } from '@/lib/template-catalog';
 
 type TemplateItem = {
-  id: string;
+  id: (typeof templateCatalog)[number]['id'];
   name: string;
   category: TemplateCategory;
+  useCase: string;
+  atsReady: boolean;
+  isOriginal: boolean;
   image: ImagePlaceholder;
   isPremium: boolean;
 };
 
 const FILTER_TABS: { id: 'all' | TemplateCategory; label: string }[] = [
   { id: 'all', label: 'All' },
-  { id: 'campus', label: 'Campus & Fresher' },
-  { id: 'corporate', label: 'Corporate' },
-  { id: 'government', label: 'Govt & Exams' },
+  ...Object.entries(templateCategoryLabels).map(([id, label]) => ({
+    id: id as TemplateCategory,
+    label,
+  })),
 ];
 
-const rawTemplates: Omit<TemplateItem, 'image'>[] = [
-  { id: 'modern', name: 'Modern Campus', category: 'campus', isPremium: false },
-  { id: 'classic', name: 'Classic Corporate', category: 'corporate', isPremium: false },
-  { id: 'creative', name: 'Creative Portfolio', category: 'campus', isPremium: false },
-  { id: 'minimalist', name: 'Minimal Govt Ready', category: 'government', isPremium: false },
-  { id: 'professional', name: 'Professional Corporate', category: 'corporate', isPremium: false },
-  { id: 'executive', name: 'Executive Leadership', category: 'corporate', isPremium: false },
-  { id: 'elegant', name: 'Elegant Consulting', category: 'corporate', isPremium: false },
-  { id: 'technical', name: 'Technical Product', category: 'campus', isPremium: false },
-];
-
-const templates: TemplateItem[] = rawTemplates
+const templates: TemplateItem[] = templateCatalog
   .map((t) => {
     const image = PlaceHolderImages.find((img) => img.id === `template-${t.id}`);
     if (!image) return null;
@@ -154,6 +146,14 @@ export default function TemplatesPage() {
               <motion.div key={template.id} variants={itemVariants}>
                 <Card className="group overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 h-full flex flex-col border-border">
                   <CardContent className="p-0 relative">
+                    {template.isOriginal && (
+                      <Badge
+                        variant="secondary"
+                        className="absolute bottom-2 left-2 z-10 text-[10px] font-bold uppercase tracking-wide bg-primary/90 text-primary-foreground"
+                      >
+                        Original layout
+                      </Badge>
+                    )}
                     {template.isPremium && (
                       <div className="absolute top-2 right-2 z-10">
                         <div className="bg-primary text-primary-foreground px-2.5 py-1 rounded-full text-[10px] font-bold flex items-center gap-1 shadow-md">
@@ -162,12 +162,14 @@ export default function TemplatesPage() {
                         </div>
                       </div>
                     )}
-                    <Badge
-                      variant="secondary"
-                      className="absolute top-2 left-2 z-10 text-[10px] font-bold uppercase tracking-wide bg-background/90 backdrop-blur-sm"
-                    >
-                      ATS-friendly
-                    </Badge>
+                    {template.atsReady && (
+                      <Badge
+                        variant="secondary"
+                        className="absolute top-2 left-2 z-10 text-[10px] font-bold uppercase tracking-wide bg-background/90 backdrop-blur-sm"
+                      >
+                        ATS-friendly
+                      </Badge>
+                    )}
 
                     <div className="relative aspect-video w-full bg-muted overflow-hidden">
                       <Image
@@ -284,9 +286,12 @@ export default function TemplatesPage() {
                     </div>
                   </CardContent>
                   <CardFooter className="p-4 bg-background/80 border-t border-border mt-auto flex items-center justify-between gap-2">
-                    <h3 className="font-headline text-lg font-semibold">{template.name}</h3>
+                    <div className="min-w-0">
+                      <h3 className="font-headline text-lg font-semibold">{template.name}</h3>
+                      <p className="text-xs text-muted-foreground truncate">{template.useCase}</p>
+                    </div>
                     <span className="text-[10px] uppercase font-bold text-muted-foreground shrink-0">
-                      {template.category}
+                      {templateCategoryLabels[template.category]}
                     </span>
                   </CardFooter>
                 </Card>

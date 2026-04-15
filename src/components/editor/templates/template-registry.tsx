@@ -13,6 +13,17 @@ const TemplateLoader = () => (
   </div>
 );
 
+export const templateRegistryKeys = [
+  'modern',
+  'classic',
+  'creative',
+  'minimalist',
+  'professional',
+  'executive',
+  'elegant',
+  'technical',
+] as const;
+
 export const templateRegistry: Record<string, React.ComponentType<ResumePreviewProps>> = {
   modern: dynamic(() => import('./ModernTemplate').then(mod => mod.ModernTemplate), { loading: () => <TemplateLoader /> }),
   classic: dynamic(() => import('./ClassicTemplate').then(mod => mod.ClassicTemplate), { loading: () => <TemplateLoader /> }),
