@@ -70,9 +70,14 @@ jobs:
       - name: Deploy to Vercel Production
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
+          if [ -z "${{ secrets.VERCEL_TOKEN }}" ]; then
+            echo "Missing required GitHub secret: VERCEL_TOKEN"
+            echo "Create it in: GitHub repo -> Settings -> Secrets and variables -> Actions"
+            exit 1
+          fi
           npx vercel pull --yes --environment=production --token="${{ secrets.VERCEL_TOKEN }}"
           npx vercel build --prod --token="${{ secrets.VERCEL_TOKEN }}"
           npx vercel deploy --prebuilt --prod --token="${{ secrets.VERCEL_TOKEN }}"
         env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_ORG_ID: team_BU9xc9N53Tk0Bsa2GkL0yYEa
+          VERCEL_PROJECT_ID: prj_DWVx06UAZAt6f21vkSLBNqgaeDkP
