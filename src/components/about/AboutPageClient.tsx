@@ -7,9 +7,6 @@ import { Rocket, Sparkles, Zap, Handshake, Target, ArrowRight } from 'lucide-rea
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { isPlaceholderCoUrl } from '@/lib/utils';
-import Image from 'next/image';
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -45,8 +42,6 @@ const values = [
 ]
 
 export function AboutPageClient() {
-    const founderImage = PlaceHolderImages.find(img => img.id === 'founder-portrait');
-
   return (
     <div className="bg-background text-foreground">
         {/* Hero Section */}
@@ -62,7 +57,7 @@ export function AboutPageClient() {
                 </motion.div>
                 <motion.h1 variants={itemVariants} className="text-4xl md:text-6xl font-headline font-bold">About FitCV</motion.h1>
                 <motion.p variants={itemVariants} className="text-lg md:text-xl mt-4 text-muted-foreground max-w-3xl mx-auto">
-                    We're on a mission to level the playing field in the job market, empowering professionals to build their dream careers with the power of AI.
+                    We're building practical tools that help job seekers tell their story clearly, apply with confidence, and prepare for real interviews.
                 </motion.p>
             </div>
         </motion.section>
@@ -80,14 +75,16 @@ export function AboutPageClient() {
                     <motion.div variants={itemVariants}>
                         <h2 className="text-3xl font-headline font-bold text-primary">Our Mission</h2>
                         <p className="mt-4 text-lg text-muted-foreground leading-relaxed">
-                            At FitCV, our mission is to provide smart, intuitive tools that help job seekers create professional, ATS-optimized resumes and cover letters that truly reflect their potential. We believe that a great resume opens doors, and everyone deserves a fair chance to walk through them.
+                            FitCV exists to make job searching less confusing and more actionable. We focus on practical workflows:
+                            build your resume, tailor it for real roles, and practice how you present your experience.
                         </p>
                     </motion.div>
                     <motion.div variants={itemVariants}>
                          <Card variant="neuro" className="p-8">
                             <h3 className="text-2xl font-headline font-bold">Our Vision</h3>
                             <p className="mt-4 text-muted-foreground">
-                                We envision a world where the hiring process is more transparent and equitable, where talent and potential are recognized over everything else. We are building the next generation of career tools to make that vision a reality.
+                                We want every job seeker to have one place to manage the full journey: resume building, job tracking,
+                                and interview practice without switching across disconnected tools.
                             </p>
                         </Card>
                     </motion.div>
@@ -131,24 +128,24 @@ export function AboutPageClient() {
                 <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold">Meet the Founder</motion.h2>
                 <motion.div variants={itemVariants} className="flex flex-col items-center gap-4 mt-8 max-w-3xl mx-auto">
                     <Avatar className="h-40 w-40 border-4 border-primary">
-                        {founderImage ? (
-                            <Image
-                                src={founderImage.imageUrl}
-                                alt="Ravi Prateek, Founder"
-                                width={160}
-                                height={160}
-                                sizes="160px"
-                                unoptimized={isPlaceholderCoUrl(founderImage.imageUrl)}
-                                className="object-cover"
-                            />
-                        ) : (
-                            <AvatarFallback>RP</AvatarFallback>
-                        )}
+                      <AvatarImage src="/images/founder/ravi-prateek.svg" alt="Ravi Prateek, Founder" />
+                      <AvatarFallback>RP</AvatarFallback>
                     </Avatar>
                     <h3 className="text-2xl font-bold font-headline mb-0">Ravi Prateek</h3>
-                    <p className="text-muted-foreground -mt-3">Founder & CEO</p>
+                    <p className="text-muted-foreground -mt-3">Founder, FitCV</p>
                     <p className="text-lg">
-                        With over 15 years of experience at the intersection of technology and business strategy, I've led product teams at both Fortune 500 companies and agile startups. My journey from a software engineer to an MBA-educated product leader has given me a unique perspective on what it takes to build a successful career. I founded FitCV to democratize career-building tools, leveraging AI to help professionals everywhere translate their experience into powerful opportunities. I'm passionate about building products that have a real impact on people's lives.
+                        I built FitCV because I was the job seeker. I have an MBA from the University of Western Australia,
+                        an engineering degree from NSIT Delhi, and hands-on experience in supply chain operations and data
+                        analytics. Even with that background, I still faced the same problem many people face: staring at
+                        a blank resume and wondering how to make it stand out.
+                    </p>
+                    <p className="text-lg">
+                        FitCV is what I wish existed then. A platform that helps you tell your story clearly, practice the
+                        conversation that gets you hired, and track the full application journey without juggling spreadsheets.
+                    </p>
+                    <p className="text-lg">
+                        We are building this for India&apos;s job seekers: students, career changers, and experienced professionals.
+                        Everyone deserves a clear shot at the right role.
                     </p>
                 </motion.div>
             </div>
@@ -168,15 +165,16 @@ export function AboutPageClient() {
                         <Sparkles className="h-12 w-12 text-primary" />
                     </motion.div>
                     <motion.h2 variants={itemVariants} className="text-3xl font-headline font-bold">
-                       Ready to Supercharge Your Job Search?
+                       Ready to build your next resume?
                     </motion.h2>
                     <motion.p variants={itemVariants} className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-                        While our core tools are free, our **Premium** subscription unlocks the full power of FitCV. This includes unlimited resumes, advanced AI features like our cover letter writer and in-depth analysis, and access to our full suite of executive templates—all designed to give you the ultimate competitive edge.
+                        Start free with ATS-friendly templates, AI writing help, and export options. When you are ready,
+                        you can also practice role-specific interviews.
                     </motion.p>
                     <motion.div variants={itemVariants} className="mt-8">
                         <Button asChild className="group" size="lg" variant="neuro">
-                            <Link href="/pricing">
-                                Explore Premium Features
+                            <Link href="/templates">
+                                Start building for free
                                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                             </Link>
                         </Button>

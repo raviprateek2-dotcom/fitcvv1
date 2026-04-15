@@ -2,4 +2,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://resumeai.app/sitemap.xml
+Sitemap: https://fitcv.in/sitemap.xml

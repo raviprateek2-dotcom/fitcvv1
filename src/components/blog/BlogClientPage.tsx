@@ -136,18 +136,11 @@ export function BlogClientPage({ posts }: { posts: BlogPost[] }) {
             Put this advice to work
           </h2>
           <p className="text-muted-foreground text-[17px] sm:text-base leading-relaxed">
-            Open a template, fill your experience, then run AI review against a real job description — or practice answers in{' '}
-            <Link href="/interview" className="text-primary font-semibold underline-offset-2 hover:underline">
-              interview mode
-            </Link>
-            . A free account is required to save and export resumes.
+            Build your resume free, tailor it with real examples from these guides, and export when you are ready to apply.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
             <Button asChild size="lg" className="min-h-[48px] w-full sm:w-auto">
-              <Link href="/templates">Browse templates</Link>
-            </Button>
-            <Button asChild variant="outline" size="lg" className="min-h-[48px] w-full sm:w-auto">
-              <Link href="/dashboard">Open dashboard</Link>
+              <Link href="/templates">Build your resume free</Link>
             </Button>
           </div>
         </section>

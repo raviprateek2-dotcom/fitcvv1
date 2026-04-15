@@ -50,3 +50,7 @@ export function blogShareTwitterUrl(pageUrl: string, title: string): string {
 export function blogShareLinkedInUrl(pageUrl: string): string {
   return `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(pageUrl)}`;
 }
+
+export function blogShareWhatsAppUrl(pageUrl: string, title: string): string {
+  return `https://wa.me/?text=${encodeURIComponent(`${title} ${pageUrl}`)}`;
+}

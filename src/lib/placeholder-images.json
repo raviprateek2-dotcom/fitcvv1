@@ -153,20 +153,20 @@
     {
       "id": "blog-portfolio",
       "description": "A grid layout of different website or project designs.",
-      "imageUrl": "https://placehold.co/600x400/222222/FFFFFF?text=Portfolio+Tips",
+      "imageUrl": "/images/articles/blog-portfolio.svg",
       "imageHint": "portfolio grid"
     },
     {
       "id": "blog-resign",
       "description": "A person shaking hands with their manager while holding an envelope.",
-      "imageUrl": "https://placehold.co/600x400/222222/FFFFFF?text=Resigning",
+      "imageUrl": "/images/articles/blog-resign.svg",
       "imageHint": "professional handshake"
     }
 ,
     {
       "id": "founder-portrait",
       "description": "A portrait of the founder, Ravi Prateek.",
-      "imageUrl": "https://placehold.co/400x400/222222/FFFFFF?text=Founder",
+      "imageUrl": "/images/founder/ravi-prateek.svg",
       "imageHint": "professional man portrait"
     },
     {

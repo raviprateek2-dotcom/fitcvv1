@@ -7,7 +7,7 @@ import {
   Clock,
   ChevronRight,
   Target,
-  Twitter,
+  MessageCircle,
   Linkedin,
   Link2,
   ThumbsUp,
@@ -29,6 +29,7 @@ import {
   readingMinutesFromContent,
   blogShareTwitterUrl,
   blogShareLinkedInUrl,
+  blogShareWhatsAppUrl,
   type BlogTocItem,
 } from '@/lib/blog-utils';
 import { topicMeta } from '@/lib/blog-topics';
@@ -157,7 +158,7 @@ export function BlogPostClient({
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const twitterHref = blogShareTwitterUrl(articleUrl, post.title);
+  const whatsAppHref = blogShareWhatsAppUrl(articleUrl, post.title);
   const linkedInHref = blogShareLinkedInUrl(articleUrl);
 
   const containerVariants = {
@@ -329,13 +330,13 @@ export function BlogPostClient({
                     <span className="text-xs font-medium text-muted-foreground w-full sm:w-auto sm:mr-1">Share</span>
                     <Button variant="outline" size="icon" className="h-11 w-11 shrink-0 rounded-full" asChild>
                       <a
-                        href={twitterHref}
+                        href={whatsAppHref}
                         target="_blank"
                         rel="noopener noreferrer"
-                        aria-label="Share on X (Twitter)"
-                        onClick={() => trackEvent('blog_share_click', { slug: post.slug, channel: 'x' })}
+                        aria-label="Share on WhatsApp"
+                        onClick={() => trackEvent('blog_share_click', { slug: post.slug, channel: 'whatsapp' })}
                       >
-                        <Twitter className="h-4 w-4" />
+                        <MessageCircle className="h-4 w-4" />
                       </a>
                     </Button>
                     <Button variant="outline" size="icon" className="h-11 w-11 shrink-0 rounded-full" asChild>
