@@ -71,3 +71,29 @@ This runbook covers production stability items for exports, newsletter capture, 
 - Production follow-up:
   - persist verified webhook events to your billing datastore
   - map payment to user and flip subscription state server-side
+
+## 6) Web vitals and blog funnel observation (Phase 9)
+
+Client events are emitted from `trackEvent` in `src/lib/analytics-events.ts` (GA4 when `NEXT_PUBLIC_GA_MEASUREMENT_ID` + `gtag`, `dataLayer`, PostHog when configured). Core Web Vitals are duplicated into that pipeline from `WebVitalsReporter` in production.
+
+**Events to watch**
+
+| Event | Meaning |
+| --- | --- |
+| `web_vital` | Params: `vital` (CLS, LCP, INP, FCP, TTFB), `metric_value`, `rating`, optional `navigation_type`. |
+| `blog_read_complete` | Reader reached ~95% scroll on a post (`slug`). |
+| `blog_helpful_vote` | Thumbs feedback (`slug`, `vote`: up/down). |
+| `cta_get_started`, `cta_signup` | Header and other surfaces (see `surface` param where set). |
+
+**Where to look**
+
+- **GA4**: Explore → Events (register custom dimensions for `vital`, `slug`, `surface` if you segment often).
+- **PostHog**: Events → filter by name above; build dashboards for `web_vital` by `vital` and `rating`.
+- **Sentry**: Metrics `web_vital.*` when `NEXT_PUBLIC_SENTRY_DSN` is set (distribution, not GA parity).
+- **Lighthouse CI**: GitHub Actions `lhci` step on `main` PRs/pushes; budgets in `lighthouserc.json` (CLS error threshold, LCP warn).
+
+**Cadence**
+
+- After each production deploy: spot-check a key URL in GA4 real-time for `web_vital` and a blog read.
+- Weekly: compare `web_vital` poor ratings vs prior week; scan `blog_read_complete` / `blog_helpful_vote` volume for anomalies.
+- If Lighthouse CI fails on CLS/LCP: reproduce locally with `npm run build && npm run start` then `npm run lhci`; adjust layout/fonts or relax assertions only with a documented reason.

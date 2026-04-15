@@ -12,6 +12,7 @@ Updated: 2026-04-15
 - Phase 6: Mobile performance and all-device polish — Completed
 - Phase 7: CLS/LCP remediation (auth shell stability, route transitions, font fallbacks) — Completed
 - Phase 8: Production observation loop (Core Web Vitals → GA / PostHog alongside Sentry) — Completed
+- Phase 9: Monitoring runbook + production branch alignment — Completed
 
 ## Latest Delivered
 
@@ -29,7 +30,8 @@ Updated: 2026-04-15
 - Page transitions: opacity-only route changes (no vertical offset) for fewer layout shifts
 - `next/font` explicit `adjustFontFallback` on all Google families used in the root layout
 - `web_vital` analytics events (`CLS`, `LCP`, `INP`, `FCP`, `TTFB`) in production for GA4 / PostHog / dataLayer
+- Phase 9: `docs/operations-p1-runbook.md` §6 documents event names, tooling, and cadence for web vitals and blog funnels.
 
-## Next Focus
+## Steady state (ongoing)
 
-- Watch Lighthouse CI and GA4 / PostHog for `web_vital` + blog funnels (`blog_read_complete`, `blog_helpful_vote`, CTAs); tighten budgets if regressions appear
+- Use runbook §6 and Lighthouse CI on `main` to watch `web_vital` and blog funnels; tighten `lighthouserc.json` only when justified by regressions.
