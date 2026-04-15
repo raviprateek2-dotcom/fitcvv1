@@ -178,7 +178,7 @@ export default function TemplatesPage() {
                 const rowItems = filtered.slice(start, start + columns);
                 return (
                   <div
-                    key={template.id}
+                    key={item.key}
                     className="absolute left-0 top-0 w-full py-3"
                     style={{ transform: `translateY(${item.start}px)` }}
                   >
