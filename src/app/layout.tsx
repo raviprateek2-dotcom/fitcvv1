@@ -23,34 +23,40 @@ import { PosthogAnalytics } from '@/components/common/PosthogAnalytics';
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
   variable: '--font-space-grotesk',
+  adjustFontFallback: true,
 });
 
 const montserrat = Montserrat({
   subsets: ['latin'],
   variable: '--font-montserrat',
+  adjustFontFallback: true,
 });
 
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
   weight: ['400', '500', '600', '700'],
+  adjustFontFallback: true,
 });
 
 const dmSans = DM_Sans({
   subsets: ['latin'],
   variable: '--font-dm-sans',
   weight: ['400', '500', '600', '700'],
+  adjustFontFallback: true,
 });
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   variable: '--font-jetbrains-mono',
   weight: ['400', '500', '600'],
+  adjustFontFallback: true,
 });
 
 const lora = Lora({
   subsets: ['latin'],
   variable: '--font-lora',
+  adjustFontFallback: true,
 });
 
 

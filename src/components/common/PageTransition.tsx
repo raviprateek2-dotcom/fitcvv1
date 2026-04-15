@@ -5,10 +5,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
 
+/** Opacity-only transitions avoid vertical layout shift during route changes (CLS). */
 const pageVariants = {
   initial: {
     opacity: 0,
-    y: 10,
+    y: 0,
   },
   in: {
     opacity: 1,
@@ -16,7 +17,7 @@ const pageVariants = {
   },
   out: {
     opacity: 0,
-    y: -10,
+    y: 0,
   },
 };
 

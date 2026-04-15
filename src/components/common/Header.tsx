@@ -81,34 +81,42 @@ export function Header() {
 
         <div className="ml-auto flex items-center gap-4">
           <ThemeToggleButton />
-          {!isUserLoading && (
-            <>
-              {isAuthenticated ? (
-                <UserMenu onLogout={handleLogout} onOpenWalkthrough={openWalkthrough} />
-              ) : (
-                <div className="hidden md:flex items-center gap-3">
-                  <Link
-                    href="/#get-started"
-                    onClick={() => trackEvent('cta_get_started', { surface: 'header_desktop' })}
-                    className={cn(
-                      'text-sm font-medium transition-colors hover:text-foreground/80 min-h-9 inline-flex items-center px-1',
-                      pathname === '/' ? 'text-foreground' : 'text-foreground/60'
-                    )}
-                  >
-                    Get started
+          <div className="hidden md:flex min-h-10 items-center justify-end">
+            {isUserLoading ? (
+              <div
+                className="flex items-center gap-3"
+                aria-busy="true"
+                aria-label="Loading account"
+              >
+                <div className="h-9 w-[5.5rem] rounded-md bg-muted/70 animate-pulse" />
+                <div className="h-9 w-16 rounded-md bg-muted/70 animate-pulse" />
+                <div className="h-9 w-[6.25rem] rounded-md bg-muted/70 animate-pulse" />
+              </div>
+            ) : isAuthenticated ? (
+              <UserMenu onLogout={handleLogout} onOpenWalkthrough={openWalkthrough} />
+            ) : (
+              <div className="flex items-center gap-3">
+                <Link
+                  href="/#get-started"
+                  onClick={() => trackEvent('cta_get_started', { surface: 'header_desktop' })}
+                  className={cn(
+                    'text-sm font-medium transition-colors hover:text-foreground/80 min-h-9 inline-flex items-center px-1',
+                    pathname === '/' ? 'text-foreground' : 'text-foreground/60'
+                  )}
+                >
+                  Get started
+                </Link>
+                <Button variant="ghost" asChild>
+                  <Link href="/login">Log In</Link>
+                </Button>
+                <Button asChild variant="neuro">
+                  <Link href="/signup" onClick={() => trackEvent('cta_signup', { surface: 'header_desktop' })}>
+                    Sign Up
                   </Link>
-                  <Button variant="ghost" asChild>
-                    <Link href="/login">Log In</Link>
-                  </Button>
-                  <Button asChild variant="neuro">
-                    <Link href="/signup" onClick={() => trackEvent('cta_signup', { surface: 'header_desktop' })}>
-                      Sign Up
-                    </Link>
-                  </Button>
-                </div>
-              )}
-            </>
-          )}
+                </Button>
+              </div>
+            )}
+          </div>
 
           <Sheet>
             <SheetTrigger asChild>
@@ -123,24 +131,29 @@ export function Header() {
                   <Rocket className="h-8 w-8 text-primary" />
                   <span>FitCV</span>
                 </Link>
-                {!isUserLoading &&
-                  (!isAuthenticated ? (
-                    <Link
-                      href="/#get-started"
-                      onClick={() => trackEvent('cta_get_started', { surface: 'header_mobile' })}
-                      className="flex items-center min-h-[48px] px-3 rounded-xl text-base font-semibold text-primary bg-primary/10 border border-primary/20 hover:bg-primary/15 transition-colors"
-                    >
-                      Get started
-                    </Link>
-                  ) : (
-                    <Link
-                      href="/#get-started"
-                      className="flex items-center gap-2 min-h-[48px] px-3 rounded-xl text-base font-semibold text-foreground/80 border border-border hover:bg-secondary transition-colors"
-                    >
-                      <Home className="h-5 w-5 text-primary shrink-0" aria-hidden />
-                      Homepage
-                    </Link>
-                  ))}
+                {isUserLoading ? (
+                  <div
+                    className="min-h-[48px] w-full rounded-xl bg-muted/70 animate-pulse"
+                    aria-busy="true"
+                    aria-label="Loading account"
+                  />
+                ) : !isAuthenticated ? (
+                  <Link
+                    href="/#get-started"
+                    onClick={() => trackEvent('cta_get_started', { surface: 'header_mobile' })}
+                    className="flex items-center min-h-[48px] px-3 rounded-xl text-base font-semibold text-primary bg-primary/10 border border-primary/20 hover:bg-primary/15 transition-colors"
+                  >
+                    Get started
+                  </Link>
+                ) : (
+                  <Link
+                    href="/#get-started"
+                    className="flex items-center gap-2 min-h-[48px] px-3 rounded-xl text-base font-semibold text-foreground/80 border border-border hover:bg-secondary transition-colors"
+                  >
+                    <Home className="h-5 w-5 text-primary shrink-0" aria-hidden />
+                    Homepage
+                  </Link>
+                )}
                 <div className="flex flex-col gap-2">
                   {navLinks.map((link) => (
                     <Link
@@ -165,7 +178,12 @@ export function Header() {
                 </div>
               </div>
               <div className="pt-6 border-t mt-auto mb-8">
-                {!isAuthenticated && !isUserLoading ? (
+                {isUserLoading ? (
+                  <div className="flex flex-col gap-4" aria-hidden>
+                    <div className="h-10 w-full rounded-md bg-muted/70 animate-pulse" />
+                    <div className="h-10 w-full rounded-md bg-muted/70 animate-pulse" />
+                  </div>
+                ) : !isAuthenticated ? (
                   <div className="flex flex-col gap-4">
                     <Button variant="outline" asChild className="w-full">
                       <Link href="/login">Log In</Link>
@@ -177,9 +195,13 @@ export function Header() {
                     </Button>
                   </div>
                 ) : (
-                    <Button variant="ghost" onClick={handleLogout} className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10">
-                        <LogOut className="mr-2 h-5 w-5" /> Log Out
-                    </Button>
+                  <Button
+                    variant="ghost"
+                    onClick={handleLogout}
+                    className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
+                  >
+                    <LogOut className="mr-2 h-5 w-5" /> Log Out
+                  </Button>
                 )}
               </div>
             </SheetContent>

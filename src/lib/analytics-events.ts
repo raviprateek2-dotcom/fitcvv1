@@ -1,8 +1,9 @@
 /**
- * Phase 4: client-side growth events. Safe to call from any client component.
+ * Phase 4+: client-side growth events. Safe to call from any client component.
  * - Dev: logs to console.
  * - If gtag is loaded + NEXT_PUBLIC_GA_MEASUREMENT_ID: sends GA4 event.
  * - If dataLayer exists: pushes a structured object (GTM-friendly).
+ * - Production Core Web Vitals also emit `web_vital` (see `WebVitalsReporter`).
  */
 
 declare global {

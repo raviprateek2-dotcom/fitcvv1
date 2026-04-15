@@ -2,6 +2,10 @@
 
 import { useReportWebVitals } from 'next/web-vitals';
 import { getClient, metrics } from '@sentry/browser';
+import { trackEvent } from '@/lib/analytics-events';
+
+/** Forward to GA4 / PostHog / dataLayer for production dashboards (values sized for GA numeric params). */
+const ANALYTICS_VITALS = new Set(['CLS', 'LCP', 'INP', 'FCP', 'TTFB']);
 
 function sendWebVitalToSentry(metric: {
   id: string;
@@ -41,6 +45,20 @@ export function WebVitalsReporter() {
     }
     if (process.env.NODE_ENV === 'production') {
       sendWebVitalToSentry(metric);
+      if (ANALYTICS_VITALS.has(metric.name)) {
+        const metricValue =
+          metric.name === 'CLS'
+            ? Math.round(metric.value * 100_000) / 100_000
+            : Math.round(metric.value);
+        trackEvent('web_vital', {
+          vital: metric.name,
+          metric_value: metricValue,
+          rating: metric.rating,
+          ...(metric.navigationType
+            ? { navigation_type: String(metric.navigationType) }
+            : {}),
+        });
+      }
     }
   });
   return null;
