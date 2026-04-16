@@ -4,7 +4,6 @@ import { useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Playfair_Display, DM_Sans } from 'next/font/google';
 import Link from 'next/link';
-import Script from 'next/script';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -13,7 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { ChevronDown, Loader2, RotateCcw, Send, Share2, Sparkles, Lock, PanelRightOpen, PanelRightClose, Settings2 } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
@@ -458,28 +457,8 @@ export default function InterviewPage() {
   }
 
   return (
-    <TooltipProvider>
       <div className={cn(dmSans.className, 'min-h-screen bg-[#09090E] pb-24 text-[#F8F6F1] md:pb-0')}>
       <div className="mx-auto w-full max-w-7xl px-4 py-12 md:px-8 md:py-20">
-        <Script
-          id="interview-faq-schema"
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'FAQPage',
-              mainEntity: FAQ_ITEMS.map((item) => ({
-                '@type': 'Question',
-                name: item.question,
-                acceptedAnswer: {
-                  '@type': 'Answer',
-                  text: item.answer,
-                },
-              })),
-            }),
-          }}
-        />
-
         <motion.section
           {...motionSectionProps}
           transition={{ duration: 0.5 }}
@@ -1136,6 +1115,5 @@ export default function InterviewPage() {
         </DialogContent>
       </Dialog>
       </div>
-    </TooltipProvider>
   );
 }
