@@ -919,6 +919,7 @@ export default function InterviewPage() {
                   </div>
                 </div>
               </div>
+              </div>
 
               {showUpgradeGate ? (
                 <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-[#09090E]/70 p-6">
