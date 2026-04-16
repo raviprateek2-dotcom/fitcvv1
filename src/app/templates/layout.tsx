@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
+import TemplatesLoading from './loading';
 
 export const metadata: Metadata = {
   title: 'Resume templates',
@@ -12,5 +14,5 @@ export const metadata: Metadata = {
 };
 
 export default function TemplatesLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  return <Suspense fallback={<TemplatesLoading />}>{children}</Suspense>;
 }
