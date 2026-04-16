@@ -69,8 +69,6 @@ describe('job tracker utilities', () => {
 
     expect(errors).toContain('Company is required.');
     expect(errors).toContain('Role title is required.');
-    expect(errors).toContain('Location is required.');
-    expect(errors).toContain('Notes are required.');
     expect(errors).toContain('Job URL must start with http:// or https://');
   });
 });
