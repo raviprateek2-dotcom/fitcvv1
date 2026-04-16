@@ -143,4 +143,3 @@ Escalation path:
 - Engineering owner: Web platform lead
 - Backup owner: Fullstack on-call lead
 - Last updated: 2026-04-19
-

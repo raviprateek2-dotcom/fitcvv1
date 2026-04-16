@@ -21,7 +21,9 @@ import { cn } from '@/lib/utils';
 
 const categories: ProfessionCategory[] = [...new Set(resumeTemplates.map((template) => template.category))];
 const styleOptions: Array<TemplateStyle | 'All'> = ['All', 'Modern', 'Classic', 'Minimalist', 'Executive', 'Creative'];
-const layoutOptions = ['All', 'single-column', 'two-column', 'sidebar-left', 'sidebar-right'] as const;
+type LayoutFilter = 'All' | 'single-column' | 'two-column' | 'sidebar';
+
+const layoutOptions: LayoutFilter[] = ['All', 'single-column', 'two-column', 'sidebar'];
 const sortOptions = ['Popular', 'Newest', 'ATS Score'] as const;
 
 function scoreVariant(score: number): 'default' | 'secondary' | 'destructive' {
@@ -38,7 +40,7 @@ export default function TemplatesPage() {
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState<'All' | ProfessionCategory>('All');
   const [style, setStyle] = useState<TemplateStyle | 'All'>('All');
-  const [layout, setLayout] = useState<(typeof layoutOptions)[number]>('All');
+  const [layout, setLayout] = useState<LayoutFilter>('All');
   const [atsThreshold, setAtsThreshold] = useState(0);
   const [sortBy, setSortBy] = useState<(typeof sortOptions)[number]>('Popular');
   const [previewId, setPreviewId] = useState<string | null>(null);
@@ -54,7 +56,12 @@ export default function TemplatesPage() {
         template.category.toLowerCase().includes(q);
       const matchesCategory = category === 'All' || template.category === category;
       const matchesStyle = style === 'All' || template.style === style;
-      const matchesLayout = layout === 'All' || template.layout === layout;
+      const matchesLayout =
+        layout === 'All'
+          ? true
+          : layout === 'sidebar'
+            ? template.layout === 'sidebar-left' || template.layout === 'sidebar-right'
+            : template.layout === layout;
       const matchesAts = template.atsScore >= atsThreshold;
       return matchesQuery && matchesCategory && matchesStyle && matchesLayout && matchesAts;
     });
@@ -64,8 +71,12 @@ export default function TemplatesPage() {
     return [...selected].sort((a, b) => b.tags.length - a.tags.length);
   }, [query, category, style, layout, atsThreshold, sortBy]);
 
-  const previewIndex = filtered.findIndex((template) => template.id === previewId);
-  const previewTemplate = previewIndex >= 0 ? filtered[previewIndex] : null;
+  const previewTemplate = filtered.find((template) => template.id === previewId) ?? null;
+  const previewSeries = useMemo(() => {
+    if (!previewTemplate) return filtered;
+    return filtered.filter((template) => template.category === previewTemplate.category);
+  }, [filtered, previewTemplate]);
+  const previewIndex = previewTemplate ? previewSeries.findIndex((template) => template.id === previewTemplate.id) : -1;
 
   useEffect(() => {
     const updateColumns = () => {
@@ -101,9 +112,9 @@ export default function TemplatesPage() {
   };
 
   const movePreview = (direction: -1 | 1) => {
-    if (!previewTemplate || !filtered.length) return;
-    const next = (previewIndex + direction + filtered.length) % filtered.length;
-    setPreviewId(filtered[next].id);
+    if (!previewTemplate || !previewSeries.length) return;
+    const next = (previewIndex + direction + previewSeries.length) % previewSeries.length;
+    setPreviewId(previewSeries[next].id);
   };
 
   return (
@@ -143,10 +154,13 @@ export default function TemplatesPage() {
             </div>
             <div>
               <Label>Layout</Label>
-              <Select value={layout} onValueChange={(value) => setLayout(value as (typeof layoutOptions)[number])}>
+              <Select value={layout} onValueChange={(value) => setLayout(value as LayoutFilter)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {layoutOptions.map((item) => <SelectItem key={item} value={item}>{item}</SelectItem>)}
+                  <SelectItem value="All">All layouts</SelectItem>
+                  <SelectItem value="single-column">Single Column</SelectItem>
+                  <SelectItem value="two-column">Two Column</SelectItem>
+                  <SelectItem value="sidebar">Sidebar</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -247,7 +261,7 @@ export default function TemplatesPage() {
                   </Button>
                 </div>
                 <DialogFooter className="border-t border-white/15 px-4 py-3">
-                  <div className="w-full text-sm text-white/70">{previewIndex + 1} / {filtered.length}</div>
+                  <div className="w-full text-sm text-white/70">{previewIndex + 1} / {previewSeries.length} in {previewTemplate.category}</div>
                 </DialogFooter>
               </>
             ) : null}
