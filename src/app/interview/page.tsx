@@ -12,7 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { ChevronDown, Loader2, RotateCcw, Send, Share2, Sparkles, Lock, PanelRightOpen, PanelRightClose, Settings2 } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
@@ -457,6 +457,7 @@ export default function InterviewPage() {
   }
 
   return (
+    <TooltipProvider>
       <div className={cn(dmSans.className, 'min-h-screen bg-[#09090E] pb-24 text-[#F8F6F1] md:pb-0')}>
       <div className="mx-auto w-full max-w-7xl px-4 py-12 md:px-8 md:py-20">
         <motion.section
@@ -1116,5 +1117,6 @@ export default function InterviewPage() {
         </DialogContent>
       </Dialog>
       </div>
+    </TooltipProvider>
   );
 }
