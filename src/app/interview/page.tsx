@@ -425,8 +425,8 @@ export default function InterviewPage() {
   const motionSectionProps = disableAnimations
     ? {}
     : {
-        initial: 'hidden' as const,
-        whileInView: 'show' as const,
+        initial: 'hidden',
+        whileInView: 'show',
         viewport: { once: true, amount: 0.2 },
       };
 
