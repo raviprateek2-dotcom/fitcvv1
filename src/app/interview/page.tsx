@@ -246,7 +246,7 @@ export default function InterviewPage() {
 
   useEffect(() => {
     const media = window.matchMedia('(max-width: 767px), (prefers-reduced-motion: reduce)');
-    const apply = () => setDisableAnimations(media.matches || shouldReduceMotion);
+    const apply = () => setDisableAnimations(media.matches || Boolean(shouldReduceMotion));
     apply();
     media.addEventListener('change', apply);
     return () => media.removeEventListener('change', apply);
