@@ -5,11 +5,13 @@ import type { Metadata } from 'next';
 // Keep metadata as a separate export in the Server Component
 export const metadata: Metadata = {
   title: 'About FitCV',
-  description: 'Mission, product principles, and the team behind FitCV — resumes and interview prep for job seekers in India and beyond.',
+  description:
+    'Why resumes get ignored — and how FitCV helps you earn attention with ATS-first structure, JD-aware help, and interview practice built for real hiring pressure.',
   alternates: { canonical: '/about' },
   openGraph: {
     title: 'About FitCV',
-    description: 'Why we built FitCV and how we think about career tools.',
+    description:
+      'The story behind FitCV: clarity over hype, structure over templates-only thinking, and tools that move you from application to interview.',
   },
 };
 

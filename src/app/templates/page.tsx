@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import Link from 'next/link';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useRouter } from 'next/navigation';
 import { ChevronLeft, ChevronRight, Eye, Plus } from 'lucide-react';

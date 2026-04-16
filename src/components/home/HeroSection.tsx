@@ -1,13 +1,13 @@
-import Link from 'next/link';
-import { ArrowRight, Sparkles } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { buttonVariants } from '@/components/ui/button';
-import { HeroTypingClient } from './HeroTypingClient';
+import { Sparkles } from 'lucide-react';
+import { getLandingHeroAb } from '@/lib/landing-ab-config';
+import { HeroLandingCtas } from '@/components/home/HeroLandingCtas';
 
 /**
- * Server-rendered hero for SEO and first paint. Typing line hydrates via {@link HeroTypingClient}.
+ * Server-rendered hero for SEO and first paint.
  */
 export function HeroSection() {
+  const heroAb = getLandingHeroAb();
+
   return (
     <section
       id="hero"
@@ -21,41 +21,25 @@ export function HeroSection() {
           </div>
 
           <h1 className="font-headline font-extrabold tracking-tight text-2xl leading-[1.2] max-w-[20ch] sm:max-w-none sm:text-4xl sm:leading-tight md:text-6xl lg:text-7xl xl:text-8xl">
-            <span className="block sm:inline">Don&apos;t just write a </span>
-            <span className="text-gradient">resume</span>
+            <span className="block sm:inline">Ship an </span>
+            <span className="text-gradient">ATS-ready resume</span>
+            <span className="block sm:inline"> in one guided flow</span>
           </h1>
 
-          <HeroTypingClient />
-
-          <p className="max-w-3xl mx-auto text-muted-foreground/90 text-[17px] sm:text-base md:text-xl leading-relaxed px-1">
-            ATS-friendly templates, AI help with wording, and interview practice — built for busy job
-            seekers who want a clear path from application to offer.
+          <p className="max-w-3xl mx-auto text-foreground text-[17px] sm:text-base md:text-xl leading-relaxed px-1 font-semibold">
+            Templates + AI edits + interview practice — built for busy job seekers who want fewer rejections and faster iterations.
           </p>
 
-          <div className="flex flex-col gap-3 sm:flex-row justify-center pt-2 sm:pt-4 w-full max-w-md sm:max-w-none sm:px-0">
-            <Link
-              href="/templates"
-              className={cn(
-                buttonVariants({ variant: 'premium', size: 'lg' }),
-                'min-h-[52px] h-auto py-3.5 px-6 sm:px-8 text-base rounded-full w-full sm:w-auto inline-flex items-center justify-center group'
-              )}
-            >
-              Start building — free
-              <ArrowRight
-                className="ml-2 h-5 w-5 shrink-0 group-hover:translate-x-1 transition-transform"
-                aria-hidden
-              />
-            </Link>
-            <Link
-              href="#features"
-              className={cn(
-                buttonVariants({ variant: 'glass', size: 'lg' }),
-                'min-h-[52px] h-auto py-3.5 px-6 sm:px-8 text-base rounded-full border-primary/20 hover:border-primary/40 w-full sm:w-auto inline-flex items-center justify-center'
-              )}
-            >
-              See features
-            </Link>
-          </div>
+          <p className="max-w-3xl mx-auto text-muted-foreground/90 text-[17px] sm:text-base md:text-xl leading-relaxed px-1">
+            Start with a strong layout, tighten bullets against your JD, then export when you’re confident — without drowning in choices on step one.
+          </p>
+
+          <HeroLandingCtas
+            primaryHref={heroAb.primary.href}
+            primaryLabel={heroAb.primary.label}
+            secondaryHref={heroAb.secondary.href}
+            secondaryLabel={heroAb.secondary.label}
+          />
 
           <p className="text-xs sm:text-sm text-muted-foreground/80 max-w-md mx-auto px-2">
             Core templates and AI help are free. Create a free account to save resumes and export.

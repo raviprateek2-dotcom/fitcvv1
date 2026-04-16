@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { ArrowLeft, BriefcaseBusiness, Check, CircleHelp, Download, FileText, Loader2, Share2, Target, Upload, ScanText, History, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useUser, useFirestore, addDocumentNonBlocking } from '@/firebase';
 import { collection, serverTimestamp } from 'firebase/firestore';
@@ -21,10 +21,16 @@ import { isGuestResumeId } from '@/lib/guest-resume';
 import { useWalkthrough } from '@/components/walkthrough/WalkthroughProvider';
 import type { ResumeData } from './types';
 import { mapResumeDataToMasterSchema } from '@/lib/resume-master-mapper';
-import { validateResumeTemplateBeforeDownload, type ResumeValidationWarning } from '@/lib/resume-template-validation';
+import {
+  validateResumeTemplateBeforeDownload,
+  type ResumeValidationResult,
+  type ResumeValidationWarning,
+} from '@/lib/resume-template-validation';
 import type { ResumeTemplateVariantId } from '@/lib/resume-template-variants';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { cn } from '@/lib/utils';
 
 function SaveStatusIndicator({ status }: { status: SaveStatus }) {
   let text = 'Saved';
@@ -83,17 +89,49 @@ export function EditorHeader() {
     setResumeData(prev => ({ ...prev, [field]: value }));
   };
 
-  const runAtsValidation = () => {
+  const runAtsValidation = useCallback((): ResumeValidationResult => {
+    if (!resumeData) {
+      return {
+        canDownload: false,
+        errors: [
+          {
+            severity: 'error',
+            category: 'empty_field',
+            code: 'resume_missing',
+            message: 'Resume data is not loaded yet.',
+          },
+        ],
+        warnings: [],
+        summary: {
+          totalErrors: 1,
+          totalWarnings: 0,
+          weakBullets: 0,
+          missingSections: 0,
+          emptyFields: 1,
+          formattingIssues: 0,
+        },
+      };
+    }
+
     const mapped = mapResumeDataToMasterSchema(resumeData);
     return validateResumeTemplateBeforeDownload(mapped, atsVariantId);
-  };
+  }, [resumeData, atsVariantId]);
 
   const atsValidationSnapshot = useMemo(() => {
     if (!isAtsMode || !resumeData) return null;
     return runAtsValidation();
-  }, [isAtsMode, resumeData, atsVariantId]);
+  }, [isAtsMode, resumeData, runAtsValidation]);
 
   const handleAtsExport = async (allowWarningsOverride = false) => {
+    if (!resumeData) {
+      toast({
+        variant: 'destructive',
+        title: 'Resume not ready',
+        description: 'Please wait for your resume to finish loading before exporting.',
+      });
+      return;
+    }
+
     const validation = runAtsValidation();
     setValidationWarnings(validation.warnings);
     setValidationErrors(validation.errors);

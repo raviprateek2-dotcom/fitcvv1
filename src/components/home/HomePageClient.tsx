@@ -35,6 +35,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Autoplay from "embla-carousel-autoplay";
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { LandingGuidedTemplates } from '@/components/home/LandingGuidedTemplates';
+import { LandingResumeScoreTeaser } from '@/components/home/LandingResumeScoreTeaser';
+import { LandingStickyCta } from '@/components/home/LandingStickyCta';
+import { LandingTrustStrip } from '@/components/home/LandingTrustStrip';
+import { LandingDesktopScrollCta } from '@/components/home/LandingDesktopScrollCta';
+import { LandingCroTriggers } from '@/components/home/LandingCroTriggers';
 
 const sectionVariants: Variants = {
     hidden: { opacity: 0, y: 30 },
@@ -147,6 +153,8 @@ export function HomePageClient() {
     return (
         <>
             <TrustMarquee />
+            <LandingTrustStrip />
+            <LandingGuidedTemplates />
             
             <section className="py-10 md:py-12 bg-white/[0.02] border-y border-white/5 relative overflow-hidden">
                 <div className="container mx-auto px-4 relative z-10">
@@ -167,6 +175,8 @@ export function HomePageClient() {
                     </div>
                 </div>
             </section>
+
+            <LandingResumeScoreTeaser />
             
             <motion.section 
                 className="relative w-full py-16 sm:py-24 md:py-40"
@@ -402,6 +412,10 @@ export function HomePageClient() {
                     </motion.div>
                 </div>
             </section>
+
+            <LandingStickyCta />
+            <LandingDesktopScrollCta />
+            <LandingCroTriggers />
         </>
     );
 }
