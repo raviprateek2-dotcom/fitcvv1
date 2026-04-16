@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { ArrowLeft, BriefcaseBusiness, Check, CircleHelp, Download, FileText, Loader2, Share2, Target, Upload, ScanText, History, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
-import { useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useUser, useFirestore, addDocumentNonBlocking } from '@/firebase';
 import { collection, serverTimestamp } from 'firebase/firestore';
@@ -14,12 +14,17 @@ import { nanoid } from 'nanoid';
 import { useResumeEditorStore, SaveStatus } from '@/store/resume-editor-store';
 import { generateResumeDocx } from '@/app/actions/export-docx';
 import { readFileAsDataURL, downloadBase64File } from '@/lib/file-utils';
-import { downloadResumePdfClient } from '@/lib/resume-download-client';
+import { downloadAtsTemplatePdfClient, downloadResumePdfClient } from '@/lib/resume-download-client';
 import { parseResumeFromPdf } from '@/app/actions/ai-resume-parser';
 import { trackEvent } from '@/lib/analytics-events';
 import { isGuestResumeId } from '@/lib/guest-resume';
 import { useWalkthrough } from '@/components/walkthrough/WalkthroughProvider';
 import type { ResumeData } from './types';
+import { mapResumeDataToMasterSchema } from '@/lib/resume-master-mapper';
+import { validateResumeTemplateBeforeDownload, type ResumeValidationWarning } from '@/lib/resume-template-validation';
+import type { ResumeTemplateVariantId } from '@/lib/resume-template-variants';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 function SaveStatusIndicator({ status }: { status: SaveStatus }) {
   let text = 'Saved';
@@ -58,13 +63,64 @@ export function EditorHeader() {
     isAtsMode, setIsAtsMode
   } = useResumeEditorStore();
   const isGuestMode = isGuestResumeId(resumeId);
+  const [atsVariantId, setAtsVariantId] = useState<ResumeTemplateVariantId>('ats-classic');
+  const [validationOpen, setValidationOpen] = useState(false);
+  const [validationWarnings, setValidationWarnings] = useState<ResumeValidationWarning[]>([]);
+  const [validationErrors, setValidationErrors] = useState<ResumeValidationWarning[]>([]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const stored = window.localStorage.getItem('fitcv:ats-template-variant') as ResumeTemplateVariantId | null;
+    if (stored) setAtsVariantId(stored);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    window.localStorage.setItem('fitcv:ats-template-variant', atsVariantId);
+  }, [atsVariantId]);
 
   const handleFieldChange = <T extends keyof ResumeData>(field: T, value: ResumeData[T]) => {
     setResumeData(prev => ({ ...prev, [field]: value }));
   };
 
+  const runAtsValidation = () => {
+    const mapped = mapResumeDataToMasterSchema(resumeData);
+    return validateResumeTemplateBeforeDownload(mapped, atsVariantId);
+  };
+
+  const atsValidationSnapshot = useMemo(() => {
+    if (!isAtsMode || !resumeData) return null;
+    return runAtsValidation();
+  }, [isAtsMode, resumeData, atsVariantId]);
+
+  const handleAtsExport = async (allowWarningsOverride = false) => {
+    const validation = runAtsValidation();
+    setValidationWarnings(validation.warnings);
+    setValidationErrors(validation.errors);
+    if (validation.errors.length > 0) {
+      setValidationOpen(true);
+      return;
+    }
+    if (validation.warnings.length > 0 && !allowWarningsOverride) {
+      setValidationOpen(true);
+      return;
+    }
+
+    await downloadAtsTemplatePdfClient(
+      mapResumeDataToMasterSchema(resumeData),
+      atsVariantId,
+      `${resumeData.title || resumeData.personalInfo.name || 'Resume'}-ATS`,
+      toast,
+      setIsExporting
+    );
+  };
+
   const handlePrint = async () => {
     if (!resumeData) return;
+    if (isAtsMode) {
+      await handleAtsExport();
+      return;
+    }
     if (!user || isGuestMode) {
       window.open(`/editor/${resumeId}?print=true`, '_blank');
       toast({
@@ -257,6 +313,43 @@ export function EditorHeader() {
               <ScanText className="mr-2 h-4 w-4" />
               ATS Simulation
             </Button>
+            {isAtsMode ? (
+              <Select value={atsVariantId} onValueChange={(value) => setAtsVariantId(value as ResumeTemplateVariantId)}>
+                <SelectTrigger className="h-9 w-[190px] rounded-xl">
+                  <SelectValue placeholder="ATS template" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ats-classic">ATS Classic</SelectItem>
+                  <SelectItem value="fresher-student">Fresher / Student</SelectItem>
+                  <SelectItem value="professional-2-5-years">Professional (2-5 Years)</SelectItem>
+                </SelectContent>
+              </Select>
+            ) : null}
+            {isAtsMode && atsValidationSnapshot ? (
+              <Badge
+                variant="outline"
+                className={cn(
+                  'hidden xl:inline-flex h-9 items-center rounded-xl px-3',
+                  atsValidationSnapshot.summary.totalErrors > 0
+                    ? 'border-red-500/40 text-red-600'
+                    : atsValidationSnapshot.summary.totalWarnings > 0
+                      ? 'border-amber-500/40 text-amber-600'
+                      : 'border-emerald-500/40 text-emerald-600'
+                )}
+                title="Live ATS pre-download validation status"
+              >
+                {atsValidationSnapshot.summary.totalErrors > 0
+                  ? `${atsValidationSnapshot.summary.totalErrors} issues`
+                  : atsValidationSnapshot.summary.totalWarnings > 0
+                    ? `${atsValidationSnapshot.summary.totalWarnings} warnings`
+                    : 'ATS Ready'}
+              </Badge>
+            ) : null}
+            {isAtsMode ? (
+              <Button variant="glass" size="sm" asChild className="h-9 rounded-xl px-3">
+                <Link href="/templates/ats">ATS Templates</Link>
+              </Button>
+            ) : null}
             
             <div className="w-[1px] h-6 bg-white/10 mx-1" />
 
@@ -316,6 +409,51 @@ export function EditorHeader() {
           </div>
         </div>
       </header>
+      <Dialog open={validationOpen} onOpenChange={setValidationOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>ATS Pre-download Check</DialogTitle>
+            <DialogDescription>
+              Fix blocking issues before export. Warnings can be reviewed and optionally ignored.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="rounded-lg border p-3">
+              <p className="text-sm font-semibold text-destructive">Errors ({validationErrors.length})</p>
+              <ScrollArea className="mt-2 h-44">
+                <ul className="space-y-2 pr-2">
+                  {validationErrors.length ? validationErrors.map((item, idx) => (
+                    <li key={`err-${idx}`} className="text-xs">{item.message}</li>
+                  )) : <li className="text-xs text-muted-foreground">No blocking errors.</li>}
+                </ul>
+              </ScrollArea>
+            </div>
+            <div className="rounded-lg border p-3">
+              <p className="text-sm font-semibold text-amber-600">Warnings ({validationWarnings.length})</p>
+              <ScrollArea className="mt-2 h-44">
+                <ul className="space-y-2 pr-2">
+                  {validationWarnings.length ? validationWarnings.map((item, idx) => (
+                    <li key={`warn-${idx}`} className="text-xs">{item.message}</li>
+                  )) : <li className="text-xs text-muted-foreground">No warnings.</li>}
+                </ul>
+              </ScrollArea>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setValidationOpen(false)}>Close</Button>
+            {validationErrors.length === 0 && validationWarnings.length > 0 ? (
+              <Button
+                onClick={async () => {
+                  setValidationOpen(false);
+                  await handleAtsExport(true);
+                }}
+              >
+                Export Anyway
+              </Button>
+            ) : null}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

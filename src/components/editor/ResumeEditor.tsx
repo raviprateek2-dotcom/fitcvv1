@@ -41,10 +41,13 @@ import { ProFeatureWrapper } from './ProFeatureWrapper';
 import { AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
 import { Badge } from '../ui/badge';
 import { EditorHeader } from './EditorHeader';
-import { downloadResumePdfClient } from '@/lib/resume-download-client';
+import { downloadAtsTemplatePdfClient, downloadResumePdfClient } from '@/lib/resume-download-client';
 import { buildGuestResumeSeed, isGuestResumeId, loadGuestResume, saveGuestResume } from '@/lib/guest-resume';
 import { ResumePreview as UnifiedResumePreview } from '@/components/resume/ResumePreview';
 import { buildUnifiedTemplateFromResumeData } from '@/lib/resume-template-mapper';
+import { mapResumeDataToMasterSchema } from '@/lib/resume-master-mapper';
+import { validateResumeTemplateBeforeDownload } from '@/lib/resume-template-validation';
+import type { ResumeTemplateVariantId } from '@/lib/resume-template-variants';
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 type EditorTab = 'content' | 'ai-review' | 'cover-letter' | 'design';
@@ -235,8 +238,37 @@ export function ResumeEditor({ resumeId }: { resumeId: string }) {
 
   const handleMobileExportPdf = useCallback(() => {
     if (!resumeData) return;
+    if (isAtsMode) {
+      const variantId = (typeof window !== 'undefined'
+        ? (window.localStorage.getItem('fitcv:ats-template-variant') as ResumeTemplateVariantId | null)
+        : null) ?? 'ats-classic';
+      const mapped = mapResumeDataToMasterSchema(resumeData);
+      const validation = validateResumeTemplateBeforeDownload(mapped, variantId);
+      if (validation.errors.length > 0) {
+        toast({
+          variant: 'destructive',
+          title: 'Fix resume issues before export',
+          description: `${validation.errors.length} blocking issues found in ATS check.`,
+        });
+        return;
+      }
+      if (validation.warnings.length > 0) {
+        toast({
+          title: 'ATS warnings detected',
+          description: `${validation.warnings.length} warnings found. Exporting anyway on mobile.`,
+        });
+      }
+      void downloadAtsTemplatePdfClient(
+        mapped,
+        variantId,
+        `${resumeData.title || resumeData.personalInfo.name || 'Resume'}-ATS`,
+        toast,
+        setIsExporting
+      );
+      return;
+    }
     void downloadResumePdfClient(resumeData, resumeId, toast, setIsExporting);
-  }, [resumeData, resumeId, toast, setIsExporting]);
+  }, [resumeData, resumeId, toast, setIsExporting, isAtsMode]);
 
   if ((isGuestMode && !guestReady) || (!isGuestMode && isResumeLoading) || !resumeData) {
     return <EditorLoadingSkeleton />;

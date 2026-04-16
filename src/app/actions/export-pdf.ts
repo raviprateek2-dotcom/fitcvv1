@@ -1,6 +1,9 @@
 'use server';
 
 import type { ResumeData } from '@/components/editor/types';
+import type { MasterResumeSchema } from '@/lib/resume-master-schema';
+import type { ResumeTemplateVariantId } from '@/lib/resume-template-variants';
+import { buildAtsResumeHtml } from '@/lib/ats-pdf-html';
 
 /**
  * Server-side PDF generation using Puppeteer.
@@ -81,4 +84,67 @@ export async function generateResumePdf(resumeData: ResumeData, resumeId: string
 
         return { success: false, error: message };
     }
+}
+
+/**
+ * ATS-template specific PDF export path.
+ * Renders controlled semantic HTML in Puppeteer and exports A4 PDF.
+ */
+export async function generateAtsTemplatePdf(
+  resume: MasterResumeSchema,
+  variantId: ResumeTemplateVariantId
+): Promise<{ success: boolean; pdfBase64?: string; error?: string }> {
+  try {
+    const puppeteer = await import('puppeteer');
+    const browser = await puppeteer.default.launch({
+      headless: true,
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--font-render-hinting=none',
+      ],
+    });
+
+    const page = await browser.newPage();
+    await page.setViewport({
+      width: 794,
+      height: 1123,
+      deviceScaleFactor: 2,
+    });
+
+    const html = buildAtsResumeHtml(resume, variantId);
+    await page.setContent(html, { waitUntil: 'networkidle0' });
+    await page.emulateMediaType('print');
+    await page.evaluate(() => new Promise((resolve) => setTimeout(resolve, 250)));
+
+    const pdfBuffer = await page.pdf({
+      format: 'A4',
+      printBackground: true,
+      preferCSSPageSize: true,
+      margin: {
+        top: '12mm',
+        right: '12mm',
+        bottom: '12mm',
+        left: '12mm',
+      },
+    });
+
+    await browser.close();
+
+    return {
+      success: true,
+      pdfBase64: Buffer.from(pdfBuffer).toString('base64'),
+    };
+  } catch (error: unknown) {
+    console.error('ATS PDF generation failed:', error);
+    const message = error instanceof Error ? error.message : 'Unknown error during ATS PDF generation';
+    if (message.includes('Cannot find module') || message.includes('puppeteer')) {
+      return {
+        success: false,
+        error: 'ATS PDF generation requires Puppeteer. Install it with: npm install puppeteer.',
+      };
+    }
+    return { success: false, error: message };
+  }
 }

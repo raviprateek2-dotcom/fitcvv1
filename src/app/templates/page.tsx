@@ -125,6 +125,11 @@ export default function TemplatesPage() {
           <p className="mt-3 text-muted-foreground">
             150 professionally crafted templates across 15 industries. Click any template to preview or start editing instantly.
           </p>
+          <div className="mt-4">
+            <Button variant="outline" asChild>
+              <Link href="/templates/ats">Open ATS Template Picker</Link>
+            </Button>
+          </div>
         </header>
 
         <section className="sticky top-16 z-20 mb-6 rounded-xl border bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/85">

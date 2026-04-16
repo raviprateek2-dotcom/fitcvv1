@@ -3,8 +3,11 @@
 import { generateResumePdf } from '@/app/actions/export-pdf';
 import { downloadBase64File } from '@/lib/file-utils';
 import type { ResumeData } from '@/components/editor/types';
+import type { MasterResumeSchema } from '@/lib/resume-master-schema';
+import type { ResumeTemplateVariantId } from '@/lib/resume-template-variants';
 import { celebrateFirstPdfDownload } from '@/lib/first-pdf-celebration';
 import { trackEvent } from '@/lib/analytics-events';
+import { generateAtsTemplatePdf } from '@/app/actions/export-pdf';
 
 type ToastFn = (opts: {
   title: string;
@@ -45,6 +48,46 @@ export async function downloadResumePdfClient(
     console.error('PDF export error:', error);
     window.open(`/editor/${resumeId}?print=true`, '_blank');
     trackEvent('pdf_export_fail', { reason: error instanceof Error ? error.message : 'runtime_error' });
+  } finally {
+    setExporting(false);
+  }
+}
+
+/** ATS template PDF download for schema-driven templates. */
+export async function downloadAtsTemplatePdfClient(
+  resume: MasterResumeSchema,
+  templateVariantId: ResumeTemplateVariantId,
+  filename: string,
+  toast: ToastFn,
+  setExporting: (v: boolean) => void
+) {
+  setExporting(true);
+  trackEvent('pdf_export_start', { source: 'ats_template', templateVariantId });
+  try {
+    const result = await generateAtsTemplatePdf(resume, templateVariantId);
+    if (result.success && result.pdfBase64) {
+      downloadBase64File(result.pdfBase64, filename.endsWith('.pdf') ? filename : `${filename}.pdf`, 'application/pdf');
+      toast({ title: 'PDF downloaded', description: filename.endsWith('.pdf') ? filename : `${filename}.pdf` });
+      trackEvent('pdf_export_success', { source: 'ats_template', templateVariantId });
+      return;
+    }
+    toast({
+      title: 'PDF export failed',
+      description: result.error ?? 'Unable to generate ATS PDF.',
+      variant: 'destructive',
+    });
+    trackEvent('pdf_export_fail', { source: 'ats_template', templateVariantId, reason: result.error ?? 'unknown' });
+  } catch (error: unknown) {
+    toast({
+      title: 'PDF export failed',
+      description: error instanceof Error ? error.message : 'Unexpected export error',
+      variant: 'destructive',
+    });
+    trackEvent('pdf_export_fail', {
+      source: 'ats_template',
+      templateVariantId,
+      reason: error instanceof Error ? error.message : 'runtime_error',
+    });
   } finally {
     setExporting(false);
   }
