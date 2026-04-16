@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { ChevronLeft, ChevronRight, Eye, Plus, RotateCcw } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Eye, Loader2, Plus, RotateCcw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useUser } from '@/firebase';
 import { trackEvent } from '@/lib/analytics-events';
@@ -26,7 +27,6 @@ import {
   trackTemplatesPreviewOpen,
   trackTemplatesUrlSync,
 } from '@/lib/templates-analytics';
-import { ResumePreview } from '@/components/resume/ResumePreview';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
@@ -36,6 +36,27 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { cn } from '@/lib/utils';
+
+function prefetchResumePreviewModule(): void {
+  void import('@/components/resume/ResumePreview');
+}
+
+const LazyResumePreview = dynamic(
+  () => import('@/components/resume/ResumePreview').then((mod) => mod.ResumePreview),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        className="flex min-h-[min(74vh,800px)] w-[635px] max-w-full flex-col items-center justify-center gap-3 rounded-lg border border-white/10 bg-white/5 text-white/70"
+        role="status"
+        aria-live="polite"
+      >
+        <Loader2 className="h-8 w-8 animate-spin" aria-hidden />
+        <span className="text-sm">Loading preview…</span>
+      </div>
+    ),
+  },
+);
 
 const categories: ProfessionCategory[] = [...new Set(resumeTemplates.map((template) => template.category))];
 const styleOptions: Array<TemplateStyle | 'All'> = ['All', 'Modern', 'Classic', 'Minimalist', 'Executive', 'Creative'];
@@ -367,6 +388,8 @@ export default function TemplatesCatalog() {
                         <CardFooter className="mt-auto grid grid-cols-2 gap-2 p-4 pt-0">
                           <Button
                             variant="outline"
+                            onMouseEnter={prefetchResumePreviewModule}
+                            onFocus={prefetchResumePreviewModule}
                             onClick={() => {
                               trackTemplatesPreviewOpen(template.id);
                               setPreviewId(template.id);
@@ -427,7 +450,7 @@ export default function TemplatesCatalog() {
                   <ChevronLeft className="h-4 w-4" aria-hidden />
                 </Button>
                 <div className="max-h-full overflow-auto rounded-lg bg-white p-2">
-                  <ResumePreview template={previewTemplate} scale={0.8} className="w-[635px]" />
+                  <LazyResumePreview template={previewTemplate} scale={0.8} className="w-[635px]" />
                 </div>
                 <Button
                   type="button"
