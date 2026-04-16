@@ -458,29 +458,29 @@ export default function InterviewPage() {
 
   return (
     <TooltipProvider>
-      <div className={cn(dmSans.className, 'min-h-screen bg-[#09090E] pb-24 text-[#F8F6F1] md:pb-0')}>
+      <div className={cn(dmSans.className, 'min-h-screen bg-background pb-24 text-foreground md:pb-0')}>
       <div className="mx-auto w-full max-w-7xl px-4 py-12 md:px-8 md:py-20">
         <motion.section
           {...motionSectionProps}
           transition={{ duration: 0.5 }}
           variants={FADE_UP}
-          className="rounded-3xl border border-amber-300/20 bg-gradient-to-b from-amber-200/10 to-transparent px-6 py-12 md:px-10 md:py-16"
+          className="rounded-3xl border border-border/60 bg-gradient-to-b from-primary/10 to-transparent px-6 py-12 md:px-10 md:py-16"
         >
-          <h1 className={cn(playfair.className, 'max-w-4xl text-4xl font-bold leading-tight text-amber-100 md:text-6xl')}>
+          <h1 className={cn(playfair.className, 'max-w-4xl text-4xl font-bold leading-tight text-foreground md:text-6xl')}>
             Ace Every Interview.
           </h1>
-          <p className="mt-5 max-w-3xl text-base text-slate-200/90 md:text-xl">
+          <p className="mt-5 max-w-3xl text-base text-muted-foreground md:text-xl">
             AI-powered mock interviews tailored to your role. Real questions. Instant feedback. Land the offer.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Button asChild className="bg-amber-400 px-7 py-6 text-base font-semibold text-[#1A1304] hover:bg-amber-300">
+            <Button asChild className="bg-primary px-7 py-6 text-base font-semibold text-primary-foreground hover:bg-primary/90">
               <Link href="#interview-lab">Start Free Practice →</Link>
             </Button>
-            <Button asChild variant="outline" className="border-amber-200/40 bg-transparent px-7 py-6 text-base text-amber-100 hover:bg-amber-100/10">
+            <Button asChild variant="outline" className="border-border bg-transparent px-7 py-6 text-base text-foreground hover:bg-accent">
               <Link href="#how-it-works">See how it works</Link>
             </Button>
           </div>
-          <p className="mt-6 text-sm text-amber-100/75">
+          <p className="mt-6 text-sm text-muted-foreground">
             10,000+ interviews practiced · Free to start · No credit card
           </p>
         </motion.section>
@@ -491,15 +491,15 @@ export default function InterviewPage() {
           transition={{ staggerChildren: 0.08, delayChildren: 0.05 }}
           className="mt-16"
         >
-          <h2 className={cn(playfair.className, 'text-3xl font-semibold text-amber-100 md:text-4xl')}>How it works</h2>
+          <h2 className={cn(playfair.className, 'text-3xl font-semibold text-foreground md:text-4xl')}>How it works</h2>
           <div className="mt-6 grid gap-4 md:grid-cols-3">
             {STEPS.map((step, idx) => (
               <motion.div key={step.title} variants={FADE_UP} transition={{ duration: 0.45, delay: idx * 0.08 }}>
-                <Card className="h-full border border-amber-200/20 bg-[#11121A]">
+                <Card className="h-full border border-border bg-card">
                   <CardContent className="p-6">
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-300">Step {idx + 1}</p>
-                    <h3 className="mt-2 text-xl font-semibold text-amber-50">{step.title}</h3>
-                    <p className="mt-3 text-sm text-slate-300">{step.text}</p>
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Step {idx + 1}</p>
+                    <h3 className="mt-2 text-xl font-semibold text-foreground">{step.title}</h3>
+                    <p className="mt-3 text-sm text-muted-foreground">{step.text}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -512,30 +512,30 @@ export default function InterviewPage() {
           {...motionSectionProps}
           transition={{ duration: 0.55 }}
           variants={FADE_UP}
-          className="mt-16 rounded-3xl border border-amber-200/20 bg-[#0F1017] p-4 md:p-6"
+          className="mt-16 rounded-3xl border border-border bg-card p-4 md:p-6"
         >
           <div className="mb-4 md:hidden">
             <Sheet open={isMobileConfigOpen} onOpenChange={setIsMobileConfigOpen}>
               <SheetTrigger asChild>
                 <Button
                   variant="outline"
-                  className="w-full border-amber-300/25 bg-transparent text-amber-100 hover:bg-amber-100/10"
+                  className="w-full border-border bg-transparent text-foreground hover:bg-accent"
                 >
                   <Settings2 className="mr-2 h-4 w-4" />
                   Configure Interview
                 </Button>
               </SheetTrigger>
-              <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto border-amber-300/20 bg-[#141624] text-slate-100">
+              <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto border-border bg-card text-foreground">
                 <SheetHeader>
-                  <SheetTitle className="text-amber-100">Interview setup</SheetTitle>
-                  <SheetDescription className="text-slate-300">
+                  <SheetTitle className="text-foreground">Interview setup</SheetTitle>
+                  <SheetDescription className="text-muted-foreground">
                     Pick your role, question type, and difficulty before you begin.
                   </SheetDescription>
                 </SheetHeader>
 
                 <div className="mt-6 space-y-5">
                   <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.18em] text-amber-300">Role</p>
+                    <p className="mb-2 text-xs uppercase tracking-[0.18em] text-primary">Role</p>
                     <div className="flex flex-wrap gap-2">
                       {ROLES.map((item) => (
                         <button
@@ -546,8 +546,8 @@ export default function InterviewPage() {
                           className={cn(
                             'rounded-full border px-3 py-1.5 text-xs transition',
                             state.selectedRole === item
-                              ? 'border-amber-300 bg-amber-300/15 text-amber-100'
-                              : 'border-amber-200/25 text-slate-200 hover:border-amber-200/45'
+                              ? 'border-primary bg-primary/10 text-foreground'
+                              : 'border-border text-muted-foreground hover:border-primary/40'
                           )}
                         >
                           {item}
@@ -557,7 +557,7 @@ export default function InterviewPage() {
                   </div>
 
                   <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.18em] text-amber-300">Question Type</p>
+                    <p className="mb-2 text-xs uppercase tracking-[0.18em] text-primary">Question Type</p>
                     <div className="flex flex-wrap gap-2">
                       {QUESTION_TYPES.map((item) => (
                         <button
@@ -568,8 +568,8 @@ export default function InterviewPage() {
                           className={cn(
                             'rounded-full border px-3 py-1.5 text-xs transition',
                             state.selectedType === item
-                              ? 'border-amber-300 bg-amber-300/15 text-amber-100'
-                              : 'border-amber-200/25 text-slate-200 hover:border-amber-200/45'
+                              ? 'border-primary bg-primary/10 text-foreground'
+                              : 'border-border text-muted-foreground hover:border-primary/40'
                           )}
                         >
                           {item}
@@ -579,7 +579,7 @@ export default function InterviewPage() {
                   </div>
 
                   <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.18em] text-amber-300">Difficulty</p>
+                    <p className="mb-2 text-xs uppercase tracking-[0.18em] text-primary">Difficulty</p>
                     <div className="flex gap-2">
                       {DIFFICULTIES.map((item) => (
                         <button
@@ -590,8 +590,8 @@ export default function InterviewPage() {
                           className={cn(
                             'rounded-full border px-3 py-1.5 text-xs transition',
                             state.selectedDifficulty === item
-                              ? 'border-amber-300 bg-amber-300/15 text-amber-100'
-                              : 'border-amber-200/25 text-slate-200 hover:border-amber-200/45'
+                              ? 'border-primary bg-primary/10 text-foreground'
+                              : 'border-border text-muted-foreground hover:border-primary/40'
                           )}
                         >
                           {item}
@@ -604,9 +604,9 @@ export default function InterviewPage() {
                     aria-label="Start interview from mobile configuration drawer"
                     onClick={requestFirstQuestion}
                     disabled={isLoading}
-                    className="w-full bg-amber-400 py-6 text-base font-semibold text-[#1A1304] hover:bg-amber-300"
+                    className="w-full bg-primary py-6 text-base font-semibold text-primary-foreground hover:bg-primary/90"
                   >
-                    {isLoading && state.sessionState === 'idle' ? <Loader2 className="mr-2 h-4 w-4 animate-spin text-[#1A1304]" /> : null}
+                    {isLoading && state.sessionState === 'idle' ? <Loader2 className="mr-2 h-4 w-4 animate-spin text-primary-foreground" /> : null}
                     Start Interview
                   </Button>
                 </div>
@@ -615,12 +615,12 @@ export default function InterviewPage() {
           </div>
 
           <div className="grid gap-4 xl:grid-cols-[330px_1fr_260px]">
-            <aside className="hidden rounded-2xl border border-amber-200/20 bg-[#141624] p-5 md:block">
-              <h3 className={cn(playfair.className, 'text-2xl font-semibold text-amber-100')}>Interview Lab</h3>
-              <p className="mt-1 text-sm text-slate-300">Configure your role and session style.</p>
+            <aside className="hidden rounded-2xl border border-border bg-card p-5 md:block">
+              <h3 className={cn(playfair.className, 'text-2xl font-semibold text-foreground')}>Interview Lab</h3>
+              <p className="mt-1 text-sm text-muted-foreground">Configure your role and session style.</p>
 
               <div className="mt-5">
-                <p className="mb-2 text-xs uppercase tracking-[0.18em] text-amber-300">Role</p>
+                <p className="mb-2 text-xs uppercase tracking-[0.18em] text-primary">Role</p>
                 <div className="flex flex-wrap gap-2">
                   {ROLES.map((item, idx) => (
                     <button
@@ -631,8 +631,8 @@ export default function InterviewPage() {
                       className={cn(
                         'rounded-full border px-3 py-1.5 text-xs transition',
                         state.selectedRole === item
-                          ? 'border-amber-300 bg-amber-300/15 text-amber-100'
-                          : 'border-amber-200/25 text-slate-200 hover:border-amber-200/45'
+                          ? 'border-primary bg-primary/10 text-foreground'
+                          : 'border-border text-muted-foreground hover:border-primary/40'
                       )}
                     >
                       {item}
@@ -642,7 +642,7 @@ export default function InterviewPage() {
               </div>
 
               <div className="mt-5">
-                <p className="mb-2 text-xs uppercase tracking-[0.18em] text-amber-300">Question Type</p>
+                <p className="mb-2 text-xs uppercase tracking-[0.18em] text-primary">Question Type</p>
                 <div className="flex flex-wrap gap-2">
                   {QUESTION_TYPES.map((item) => {
                     const isPro = item === 'Salary Negotiation';
@@ -656,16 +656,16 @@ export default function InterviewPage() {
                             className={cn(
                               'rounded-full border px-3 py-1.5 text-xs transition',
                               state.selectedType === item
-                                ? 'border-amber-300 bg-amber-300/15 text-amber-100'
-                                : 'border-amber-200/25 text-slate-200 hover:border-amber-200/45'
+                                ? 'border-primary bg-primary/10 text-foreground'
+                                : 'border-border text-muted-foreground hover:border-primary/40'
                             )}
                           >
                             <span>{item}</span>
-                            {isPro ? <Badge className="ml-2 bg-amber-400 text-[10px] text-[#1A1304]">Pro</Badge> : null}
+                            {isPro ? <Badge className="ml-2 bg-primary text-[10px] text-primary-foreground">Pro</Badge> : null}
                           </button>
                         </TooltipTrigger>
                         {isPro ? (
-                          <TooltipContent className="border-amber-300/30 bg-[#171923] text-amber-50">
+                          <TooltipContent className="border-border bg-card text-foreground">
                             Unlock with Pro — ₹299/month
                           </TooltipContent>
                         ) : null}
@@ -676,7 +676,7 @@ export default function InterviewPage() {
               </div>
 
               <div className="mt-5">
-                <p className="mb-2 text-xs uppercase tracking-[0.18em] text-amber-300">Difficulty</p>
+                <p className="mb-2 text-xs uppercase tracking-[0.18em] text-primary">Difficulty</p>
                 <div className="flex gap-2">
                   {DIFFICULTIES.map((item) => {
                     const isPro = item === 'Hard';
@@ -690,16 +690,16 @@ export default function InterviewPage() {
                             className={cn(
                               'rounded-full border px-3 py-1.5 text-xs transition',
                               state.selectedDifficulty === item
-                                ? 'border-amber-300 bg-amber-300/15 text-amber-100'
-                                : 'border-amber-200/25 text-slate-200 hover:border-amber-200/45'
+                                ? 'border-primary bg-primary/10 text-foreground'
+                                : 'border-border text-muted-foreground hover:border-primary/40'
                             )}
                           >
                             <span>{item}</span>
-                            {isPro ? <Badge className="ml-2 bg-amber-400 text-[10px] text-[#1A1304]">Pro</Badge> : null}
+                            {isPro ? <Badge className="ml-2 bg-primary text-[10px] text-primary-foreground">Pro</Badge> : null}
                           </button>
                         </TooltipTrigger>
                         {isPro ? (
-                          <TooltipContent className="border-amber-300/30 bg-[#171923] text-amber-50">
+                          <TooltipContent className="border-border bg-card text-foreground">
                             Unlock with Pro — ₹299/month
                           </TooltipContent>
                         ) : null}
@@ -713,21 +713,21 @@ export default function InterviewPage() {
                 aria-label="Start interview"
                 onClick={requestFirstQuestion}
                 disabled={isLoading}
-                className="mt-8 w-full bg-amber-400 py-6 text-base font-semibold text-[#1A1304] hover:bg-amber-300"
+                className="mt-8 w-full bg-primary py-6 text-base font-semibold text-primary-foreground hover:bg-primary/90"
               >
-                {isLoading && state.sessionState === 'idle' ? <Loader2 className="mr-2 h-4 w-4 animate-spin text-[#1A1304]" /> : null}
+                {isLoading && state.sessionState === 'idle' ? <Loader2 className="mr-2 h-4 w-4 animate-spin text-primary-foreground" /> : null}
                 Start Interview
               </Button>
             </aside>
 
-            <div className="relative rounded-2xl border border-amber-200/20 bg-[#0C0D13] p-6 md:p-8">
-              <div className="mb-4 rounded-xl border border-amber-300/15 bg-[#10121A] p-4">
+            <div className="relative rounded-2xl border border-border bg-card p-6 md:p-8">
+              <div className="mb-4 rounded-xl border border-border bg-background/40 p-4">
                 <div className="flex items-center justify-between gap-3">
                   <div>
-                    <p className="text-sm font-medium text-amber-100">Question {Math.max(state.questionCount, 0)} of 5</p>
-                    <p className="text-xs text-slate-400">{state.selectedRole} · {state.selectedType} · {state.selectedDifficulty}</p>
+                    <p className="text-sm font-medium text-foreground">Question {Math.max(state.questionCount, 0)} of 5</p>
+                    <p className="text-xs text-muted-foreground">{state.selectedRole} · {state.selectedType} · {state.selectedDifficulty}</p>
                   </div>
-                  <Badge variant="outline" className="border-amber-300/30 text-amber-200">Live practice</Badge>
+                  <Badge variant="outline" className="border-border text-primary">Live practice</Badge>
                 </div>
                 <Progress value={progressValue} className="mt-3 h-2 bg-white/10" />
               </div>
@@ -737,13 +737,13 @@ export default function InterviewPage() {
                   ref={logRef}
                   role="log"
                   aria-live="polite"
-                  className="h-full min-h-[420px] space-y-4 overflow-y-auto rounded-xl border border-dashed border-amber-200/20 bg-[#0A0B11] p-4"
+                  className="h-full min-h-[420px] space-y-4 overflow-y-auto rounded-xl border border-dashed border-border bg-background/50 p-4"
                 >
                 {state.messages.length === 0 ? (
                   <div className="flex h-full min-h-[260px] items-center justify-center text-center">
                     <div>
-                      <p className="text-lg font-medium text-amber-100">Configure your session and hit Start</p>
-                      <p className="mt-2 text-sm text-slate-300">
+                      <p className="text-lg font-medium text-foreground">Configure your session and hit Start</p>
+                      <p className="mt-2 text-sm text-muted-foreground">
                         Your AI interviewer will ask one sharp question at a time and score your answer quality.
                       </p>
                     </div>
@@ -752,18 +752,18 @@ export default function InterviewPage() {
                   state.messages.map((message, index) => {
                     if (message.role === 'ai') {
                       return (
-                        <div key={`ai-${index}`} className="max-w-3xl rounded-2xl border border-amber-300/15 bg-[#171923] p-4">
-                          <p className="mb-1 text-xs uppercase tracking-[0.18em] text-amber-300">AI Interviewer</p>
-                          <p className="text-sm leading-relaxed text-slate-100">{message.content}</p>
+                        <div key={`ai-${index}`} className="max-w-3xl rounded-2xl border border-border bg-card p-4">
+                          <p className="mb-1 text-xs uppercase tracking-[0.18em] text-primary">AI Interviewer</p>
+                          <p className="text-sm leading-relaxed text-foreground">{message.content}</p>
                         </div>
                       );
                     }
 
                     if (message.role === 'user') {
                       return (
-                        <div key={`user-${index}`} className="ml-auto max-w-3xl rounded-2xl border border-amber-200/15 bg-amber-200/8 p-4">
-                          <p className="mb-1 text-xs uppercase tracking-[0.18em] text-amber-300">You</p>
-                          <p className="text-sm leading-relaxed text-slate-100">{message.content}</p>
+                        <div key={`user-${index}`} className="ml-auto max-w-3xl rounded-2xl border border-border bg-accent/30 p-4">
+                          <p className="mb-1 text-xs uppercase tracking-[0.18em] text-primary">You</p>
+                          <p className="text-sm leading-relaxed text-foreground">{message.content}</p>
                         </div>
                       );
                     }
@@ -772,7 +772,7 @@ export default function InterviewPage() {
                       <div key={`feedback-${index}`} className="max-w-3xl rounded-2xl border border-emerald-300/15 bg-[#121A18] p-4">
                         <div className="flex items-center justify-between gap-4">
                           <p className="text-xs uppercase tracking-[0.18em] text-emerald-300">Feedback</p>
-                          <Badge className="bg-emerald-300 text-[#09110E]">Score {message.content.score}/10</Badge>
+                          <Badge className="bg-primary text-primary-foreground">Score {message.content.score}/10</Badge>
                         </div>
                         <div className="mt-4 grid gap-3 md:grid-cols-3">
                           {[
@@ -781,7 +781,7 @@ export default function InterviewPage() {
                             ['Relevance', message.content.relevance],
                           ].map(([label, value]) => (
                             <div key={label}>
-                              <div className="mb-1 flex items-center justify-between text-xs text-slate-300">
+                              <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
                                 <span>{label}</span>
                                 <span>{value}/10</span>
                               </div>
@@ -789,28 +789,28 @@ export default function InterviewPage() {
                             </div>
                           ))}
                         </div>
-                        <p className="mt-4 text-sm leading-relaxed text-slate-100">{message.content.summary}</p>
+                        <p className="mt-4 text-sm leading-relaxed text-foreground">{message.content.summary}</p>
                         <div className="mt-4 grid gap-3 md:grid-cols-2">
                           <div className="rounded-xl border border-white/10 bg-black/15 p-3">
                             <p className="text-xs uppercase tracking-[0.18em] text-emerald-300">Strength</p>
-                            <p className="mt-2 text-sm text-slate-200">{message.content.strength}</p>
+                            <p className="mt-2 text-sm text-muted-foreground">{message.content.strength}</p>
                           </div>
                           <div className="rounded-xl border border-white/10 bg-black/15 p-3">
-                            <p className="text-xs uppercase tracking-[0.18em] text-amber-300">Improve</p>
-                            <p className="mt-2 text-sm text-slate-200">{message.content.improvement}</p>
+                            <p className="text-xs uppercase tracking-[0.18em] text-primary">Improve</p>
+                            <p className="mt-2 text-sm text-muted-foreground">{message.content.improvement}</p>
                           </div>
                         </div>
                         <button
                           type="button"
                           aria-label="Toggle better answer example"
                           onClick={() => setExpandedBetterAnswer(expandedBetterAnswer === index ? null : index)}
-                          className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-amber-200"
+                          className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-primary"
                         >
                           Better answer
                           <ChevronDown className={cn('h-4 w-4 transition-transform', expandedBetterAnswer === index && 'rotate-180')} />
                         </button>
                         {expandedBetterAnswer === index ? (
-                          <div className="mt-3 rounded-xl border border-amber-200/15 bg-[#19150D] p-3 text-sm text-slate-100">
+                          <div className="mt-3 rounded-xl border border-border bg-accent/20 p-3 text-sm text-foreground">
                             {message.content.betterAnswer}
                           </div>
                         ) : null}
@@ -820,43 +820,43 @@ export default function InterviewPage() {
                 )}
 
                 {isLoading ? (
-                  <div className="max-w-3xl rounded-2xl border border-amber-300/15 bg-[#171923] p-4">
-                    <p className="mb-1 text-xs uppercase tracking-[0.18em] text-amber-300">AI Interviewer</p>
+                  <div className="max-w-3xl rounded-2xl border border-border bg-card p-4">
+                    <p className="mb-1 text-xs uppercase tracking-[0.18em] text-primary">AI Interviewer</p>
                     <div className="flex gap-2">
-                      <span className="h-2.5 w-2.5 animate-bounce rounded-full bg-amber-300 [animation-delay:-0.2s]" />
-                      <span className="h-2.5 w-2.5 animate-bounce rounded-full bg-amber-300 [animation-delay:-0.1s]" />
-                      <span className="h-2.5 w-2.5 animate-bounce rounded-full bg-amber-300" />
+                      <span className="h-2.5 w-2.5 animate-bounce rounded-full bg-primary [animation-delay:-0.2s]" />
+                      <span className="h-2.5 w-2.5 animate-bounce rounded-full bg-primary [animation-delay:-0.1s]" />
+                      <span className="h-2.5 w-2.5 animate-bounce rounded-full bg-primary" />
                     </div>
                   </div>
                 ) : null}
 
                 {state.sessionState === 'done' ? (
-                  <div className="max-w-3xl rounded-2xl border border-amber-300/20 bg-[#18150D] p-5">
+                  <div className="max-w-3xl rounded-2xl border border-border bg-card p-5">
                     <div className="flex items-center justify-between gap-3">
                       <div>
-                        <p className="text-xs uppercase tracking-[0.18em] text-amber-300">Session Summary</p>
-                        <h4 className="mt-1 text-xl font-semibold text-amber-100">Average score: {averageScore.toFixed(1)}/10</h4>
+                        <p className="text-xs uppercase tracking-[0.18em] text-primary">Session Summary</p>
+                        <h4 className="mt-1 text-xl font-semibold text-foreground">Average score: {averageScore.toFixed(1)}/10</h4>
                       </div>
-                      <Sparkles className="h-5 w-5 text-amber-300" />
+                      <Sparkles className="h-5 w-5 text-primary" />
                     </div>
-                    <p className="mt-4 text-sm text-slate-200">Top improvement tip: {topImprovementTip}</p>
+                    <p className="mt-4 text-sm text-muted-foreground">Top improvement tip: {topImprovementTip}</p>
                     <div className="mt-4 flex flex-col gap-3 sm:flex-row">
                       <Button
                         aria-label="Share your interview score"
                         onClick={handleShareScore}
                         variant="outline"
-                        className="border-amber-300/25 text-amber-100 hover:bg-amber-100/10"
+                        className="border-border text-foreground hover:bg-accent"
                       >
                         <Share2 className="mr-2 h-4 w-4" />
                         Share your score
                       </Button>
                     </div>
-                    <div className="mt-4 rounded-2xl border border-amber-300/20 bg-[#141624] p-4">
-                      <p className="text-sm font-semibold text-amber-100">📁 Save this session to review later</p>
-                      <p className="mt-2 text-sm text-slate-300">
+                    <div className="mt-4 rounded-2xl border border-border bg-background/40 p-4">
+                      <p className="text-sm font-semibold text-foreground">📁 Save this session to review later</p>
+                      <p className="mt-2 text-sm text-muted-foreground">
                         Pro users get full session history, answer transcripts, and improvement tracking.
                       </p>
-                      <Button asChild className="mt-4 bg-amber-400 text-[#1A1304] hover:bg-amber-300">
+                      <Button asChild className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90">
                         <Link href="/pricing">Unlock Session History →</Link>
                       </Button>
                     </div>
@@ -864,7 +864,7 @@ export default function InterviewPage() {
                       aria-label="Start over interview session"
                       onClick={resetFreeSession}
                       variant="outline"
-                      className="mt-4 border-amber-300/25 text-amber-100 hover:bg-amber-100/10"
+                      className="mt-4 border-border text-foreground hover:bg-accent"
                     >
                       <RotateCcw className="mr-2 h-4 w-4" />
                       Start Over
@@ -887,8 +887,8 @@ export default function InterviewPage() {
                 ) : null}
                 </div>
 
-                <div className="mt-4 rounded-xl border border-amber-200/15 bg-[#10121A] p-4">
-                <p className="mb-2 text-xs uppercase tracking-[0.18em] text-amber-300">Your answer</p>
+                <div className="mt-4 rounded-xl border border-border bg-background/40 p-4">
+                <p className="mb-2 text-xs uppercase tracking-[0.18em] text-primary">Your answer</p>
                 <Textarea
                   ref={textareaRef}
                   aria-label="Type your interview answer"
@@ -902,19 +902,19 @@ export default function InterviewPage() {
                   }}
                   disabled={isLoading || state.sessionState === 'idle' || state.sessionState === 'done' || showUpgradeGate}
                   placeholder="Type your answer here. Be specific, structured, and persuasive."
-                  className="min-h-[96px] resize-none border-amber-200/15 bg-[#0A0B11] text-slate-100 placeholder:text-slate-500"
+                  className="min-h-[96px] resize-none border-border bg-background text-foreground placeholder:text-muted-foreground"
                 />
                 <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <p className="text-xs text-slate-400">Cmd+Enter to send</p>
+                  <p className="text-xs text-muted-foreground">Cmd+Enter to send</p>
                   <div className="flex items-center gap-3">
-                    <p className="hidden text-xs text-amber-200 md:block">Tip: {tipText}</p>
+                    <p className="hidden text-xs text-primary md:block">Tip: {tipText}</p>
                     <Button
                       aria-label="Send interview answer"
                       onClick={() => void handleAnswerSubmit()}
                       disabled={isLoading || !draftAnswer.trim() || state.sessionState === 'idle' || state.sessionState === 'done' || showUpgradeGate}
-                      className="bg-amber-400 text-[#1A1304] hover:bg-amber-300"
+                      className="bg-primary text-primary-foreground hover:bg-primary/90"
                     >
-                      {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin text-[#1A1304]" /> : <Send className="mr-2 h-4 w-4" />}
+                      {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin text-primary-foreground" /> : <Send className="mr-2 h-4 w-4" />}
                       Send
                     </Button>
                   </div>
@@ -923,23 +923,23 @@ export default function InterviewPage() {
               </div>
 
               {showUpgradeGate ? (
-                <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-[#09090E]/70 p-6">
-                  <div className="w-full max-w-lg rounded-3xl border border-amber-300/30 bg-[#141624] p-6 text-center shadow-2xl">
-                    <Lock className="mx-auto h-8 w-8 text-amber-300" />
-                    <h4 className={cn(playfair.className, 'mt-4 text-3xl font-semibold text-amber-100')}>
+                <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-background/70 p-6">
+                  <div className="w-full max-w-lg rounded-3xl border border-border bg-card p-6 text-center shadow-2xl">
+                    <Lock className="mx-auto h-8 w-8 text-primary" />
+                    <h4 className={cn(playfair.className, 'mt-4 text-3xl font-semibold text-foreground')}>
                       You&apos;ve used your 3 free questions this session.
                     </h4>
-                    <p className="mt-3 text-sm text-slate-300">
+                    <p className="mt-3 text-sm text-muted-foreground">
                       Upgrade to Pro to continue — unlimited interviews, deeper feedback, session history.
                     </p>
                     <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
-                      <Button asChild className="bg-amber-400 text-[#1A1304] hover:bg-amber-300">
+                      <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90">
                         <Link href="/pricing">Upgrade to Pro — ₹299/month</Link>
                       </Button>
                       <Button
                         variant="outline"
                         onClick={resetFreeSession}
-                        className="border-amber-300/30 text-amber-100 hover:bg-amber-100/10"
+                        className="border-border text-foreground hover:bg-accent"
                       >
                         Start a new free session
                       </Button>
@@ -949,17 +949,17 @@ export default function InterviewPage() {
               ) : null}
             </div>
 
-            <aside className="hidden rounded-2xl border border-amber-200/20 bg-[#11131B] p-5 xl:block">
+            <aside className="hidden rounded-2xl border border-border bg-card p-5 xl:block">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.18em] text-amber-300">Quick Tips</p>
-                  <h4 className="mt-1 text-lg font-semibold text-amber-100">Live coaching cues</h4>
+                  <p className="text-xs uppercase tracking-[0.18em] text-primary">Quick Tips</p>
+                  <h4 className="mt-1 text-lg font-semibold text-foreground">Live coaching cues</h4>
                 </div>
                 <button
                   type="button"
                   aria-label={tipsCollapsed ? 'Expand tips sidebar' : 'Collapse tips sidebar'}
                   onClick={() => setTipsCollapsed((value) => !value)}
-                  className="rounded-full border border-amber-300/20 p-2 text-amber-200"
+                  className="rounded-full border border-border p-2 text-primary"
                 >
                   {tipsCollapsed ? <PanelRightOpen className="h-4 w-4" /> : <PanelRightClose className="h-4 w-4" />}
                 </button>
@@ -967,7 +967,7 @@ export default function InterviewPage() {
               {!tipsCollapsed ? (
                 <div className="mt-5 space-y-3">
                   {quickTips.map((tip) => (
-                    <div key={tip} className="rounded-xl border border-amber-200/15 bg-[#0A0B11] p-3 text-sm text-slate-200">
+                    <div key={tip} className="rounded-xl border border-border bg-background/50 p-3 text-sm text-muted-foreground">
                       {tip}
                     </div>
                   ))}
@@ -982,13 +982,13 @@ export default function InterviewPage() {
           transition={{ staggerChildren: 0.08 }}
           className="mt-16"
         >
-          <h2 className={cn(playfair.className, 'text-3xl font-semibold text-amber-100 md:text-4xl')}>Why candidates convert faster</h2>
+          <h2 className={cn(playfair.className, 'text-3xl font-semibold text-foreground md:text-4xl')}>Why candidates convert faster</h2>
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {FEATURES.map((feature, idx) => (
               <motion.div key={feature} variants={FADE_UP} transition={{ duration: 0.45, delay: idx * 0.08 }}>
-                <Card className="h-full border border-amber-200/20 bg-[#10121C]">
+                <Card className="h-full border border-border bg-card">
                   <CardContent className="p-6">
-                    <p className="text-base font-medium text-slate-100">{feature}</p>
+                    <p className="text-base font-medium text-foreground">{feature}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -1001,14 +1001,14 @@ export default function InterviewPage() {
           transition={{ staggerChildren: 0.08 }}
           className="mt-16"
         >
-          <h2 className={cn(playfair.className, 'text-3xl font-semibold text-amber-100 md:text-4xl')}>People who practiced, then converted</h2>
+          <h2 className={cn(playfair.className, 'text-3xl font-semibold text-foreground md:text-4xl')}>People who practiced, then converted</h2>
           <div className="mt-6 grid gap-4 md:grid-cols-3">
             {TESTIMONIALS.map((testimonial, idx) => (
               <motion.div key={testimonial.person} variants={FADE_UP} transition={{ duration: 0.45, delay: idx * 0.08 }}>
-                <Card className="h-full border border-amber-200/20 bg-[#11131E]">
+                <Card className="h-full border border-border bg-card">
                   <CardContent className="p-6">
-                    <p className="text-sm leading-relaxed text-slate-200">“{testimonial.quote}”</p>
-                    <p className="mt-4 text-xs font-semibold uppercase tracking-[0.14em] text-amber-300">{testimonial.person}</p>
+                    <p className="text-sm leading-relaxed text-muted-foreground">“{testimonial.quote}”</p>
+                    <p className="mt-4 text-xs font-semibold uppercase tracking-[0.14em] text-primary">{testimonial.person}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -1020,20 +1020,20 @@ export default function InterviewPage() {
           {...motionSectionProps}
           transition={{ duration: 0.5 }}
           variants={FADE_UP}
-          className="mt-16 rounded-3xl border border-amber-300/20 bg-gradient-to-r from-[#1B1608] to-[#111219] p-6 md:p-8"
+          className="mt-16 rounded-3xl border border-border bg-gradient-to-r from-primary/10 to-transparent p-6 md:p-8"
         >
-          <h3 className={cn(playfair.className, 'text-3xl font-semibold text-amber-100')}>Simple pricing while you scale</h3>
+          <h3 className={cn(playfair.className, 'text-3xl font-semibold text-foreground')}>Simple pricing while you scale</h3>
           <div className="mt-4 grid gap-4 md:grid-cols-2">
-            <div className="rounded-xl border border-amber-100/20 bg-black/20 p-4">
-              <p className="text-lg font-semibold text-amber-100">Free</p>
-              <p className="mt-1 text-sm text-slate-200">3 mock interviews/month, basic feedback</p>
+            <div className="rounded-xl border border-border bg-background/30 p-4">
+              <p className="text-lg font-semibold text-foreground">Free</p>
+              <p className="mt-1 text-sm text-muted-foreground">3 mock interviews/month, basic feedback</p>
             </div>
-            <div className="rounded-xl border border-amber-300/40 bg-amber-200/10 p-4">
-              <p className="text-lg font-semibold text-amber-100">Pro (₹299/mo)</p>
-              <p className="mt-1 text-sm text-slate-200">Unlimited interviews, deep scoring, session history, salary negotiation mode</p>
+            <div className="rounded-xl border border-primary/40 bg-primary/10 p-4">
+              <p className="text-lg font-semibold text-foreground">Pro (₹299/mo)</p>
+              <p className="mt-1 text-sm text-muted-foreground">Unlimited interviews, deep scoring, session history, salary negotiation mode</p>
             </div>
           </div>
-          <Button asChild className="mt-5 bg-amber-400 px-7 py-6 text-base font-semibold text-[#1A1304] hover:bg-amber-300">
+          <Button asChild className="mt-5 bg-primary px-7 py-6 text-base font-semibold text-primary-foreground hover:bg-primary/90">
             <Link href="/pricing">Upgrade to Pro — ₹299/month</Link>
           </Button>
         </motion.section>
@@ -1042,14 +1042,14 @@ export default function InterviewPage() {
           {...motionSectionProps}
           transition={{ duration: 0.5 }}
           variants={FADE_UP}
-          className="mt-16 rounded-3xl border border-amber-200/20 bg-[#11131B] p-6 md:p-8"
+          className="mt-16 rounded-3xl border border-border bg-card p-6 md:p-8"
         >
-          <h2 className={cn(playfair.className, 'text-3xl font-semibold text-amber-100 md:text-4xl')}>FAQ</h2>
+          <h2 className={cn(playfair.className, 'text-3xl font-semibold text-foreground md:text-4xl')}>FAQ</h2>
           <Accordion type="single" collapsible className="mt-4">
             {FAQ_ITEMS.map((item, index) => (
-              <AccordionItem key={item.question} value={`q${index + 1}`} className="border-amber-200/20">
-                <AccordionTrigger className="text-left text-amber-50">{item.question}</AccordionTrigger>
-                <AccordionContent className="text-slate-300">{item.answer}</AccordionContent>
+              <AccordionItem key={item.question} value={`q${index + 1}`} className="border-border">
+                <AccordionTrigger className="text-left text-foreground">{item.question}</AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">{item.answer}</AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>
@@ -1059,25 +1059,25 @@ export default function InterviewPage() {
           {...motionSectionProps}
           transition={{ duration: 0.5 }}
           variants={FADE_UP}
-          className="mt-16 rounded-3xl border border-amber-300/30 bg-gradient-to-r from-amber-200/10 to-transparent p-8 text-center md:p-10"
+          className="mt-16 rounded-3xl border border-border bg-gradient-to-r from-primary/10 to-transparent p-8 text-center md:p-10"
         >
-          <h2 className={cn(playfair.className, 'text-3xl font-semibold text-amber-100 md:text-5xl')}>
+          <h2 className={cn(playfair.className, 'text-3xl font-semibold text-foreground md:text-5xl')}>
             Your next interview is closer than you think.
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-sm text-slate-200 md:text-base">
+          <p className="mx-auto mt-4 max-w-2xl text-sm text-muted-foreground md:text-base">
             Start practicing free today. No signup needed for your first session.
           </p>
-          <Button asChild className="mt-7 bg-amber-400 px-8 py-6 text-base font-semibold text-[#1A1304] hover:bg-amber-300">
+          <Button asChild className="mt-7 bg-primary px-8 py-6 text-base font-semibold text-primary-foreground hover:bg-primary/90">
             <Link href="#interview-lab">Launch Interview Lab →</Link>
           </Button>
         </motion.section>
       </div>
 
       {isMidSession ? (
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-amber-300/20 bg-[#11131B]/95 px-4 py-3 backdrop-blur md:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 px-4 py-3 backdrop-blur md:hidden">
           <div className="flex items-center justify-between gap-3">
-            <p className="text-sm text-amber-100">🔥 You&apos;re on a roll — Go Pro for unlimited practice</p>
-            <Button asChild className="shrink-0 bg-amber-400 px-4 text-[#1A1304] hover:bg-amber-300">
+            <p className="text-sm text-foreground">🔥 You&apos;re on a roll — Go Pro for unlimited practice</p>
+            <Button asChild className="shrink-0 bg-primary px-4 text-primary-foreground hover:bg-primary/90">
               <Link href="/pricing">Upgrade ₹299/mo</Link>
             </Button>
           </div>
@@ -1085,10 +1085,10 @@ export default function InterviewPage() {
       ) : null}
 
       <Dialog open={showExitIntent} onOpenChange={setShowExitIntent}>
-        <DialogContent className="max-w-md border-amber-300/20 bg-[#11131B] text-slate-100">
+        <DialogContent className="max-w-md border-border bg-card text-foreground">
           <DialogHeader>
-            <DialogTitle className="text-amber-100">Wait — you&apos;re in the middle of an interview!</DialogTitle>
-            <DialogDescription className="text-slate-300">
+            <DialogTitle className="text-foreground">Wait — you&apos;re in the middle of an interview!</DialogTitle>
+            <DialogDescription className="text-muted-foreground">
               Real interviews don&apos;t pause. Finish this session to get your full feedback report.
             </DialogDescription>
           </DialogHeader>
@@ -1099,7 +1099,7 @@ export default function InterviewPage() {
                 setExitIntentDismissed(true);
                 textareaRef.current?.focus();
               }}
-              className="bg-amber-400 text-[#1A1304] hover:bg-amber-300"
+              className="bg-primary text-primary-foreground hover:bg-primary/90"
             >
               Continue Interview
             </Button>
@@ -1109,7 +1109,7 @@ export default function InterviewPage() {
                 setShowExitIntent(false);
                 setExitIntentDismissed(true);
               }}
-              className="border-amber-300/25 text-amber-100 hover:bg-amber-100/10"
+              className="border-border text-foreground hover:bg-accent"
             >
               Leave anyway
             </Button>
