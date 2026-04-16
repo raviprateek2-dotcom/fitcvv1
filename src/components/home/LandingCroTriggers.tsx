@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import { trackEvent } from '@/lib/analytics-events';
 import { LANDING_CRO_ANALYTICS_EVENTS } from '@/lib/landing-cro-spec';
-import { useLandingFinalCtaVisible } from '@/hooks/use-landing-final-cta-visible';
+import { useLandingFinalCtaVisible } from '@/components/home/LandingFinalCtaVisibility';
 import { landingAbParams } from '@/lib/landing-ab-config';
 
 const SCROLL_DEPTHS = [25, 50, 75, 100] as const;

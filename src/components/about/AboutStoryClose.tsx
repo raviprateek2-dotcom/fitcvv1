@@ -5,6 +5,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { aboutContainerVariants, aboutItemVariants, aboutViewport } from '@/components/about/about-motion';
+import { trackAboutCta } from '@/lib/about-analytics';
 
 export function AboutStoryClose() {
   const reduceMotion = useReducedMotion();
@@ -34,13 +35,33 @@ export function AboutStoryClose() {
           </p>
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Button asChild size="lg" variant="neuro" className="rounded-full px-8 group w-full sm:w-auto">
-              <Link href="/templates">
+              <Link
+                href="/templates"
+                onClick={() =>
+                  trackAboutCta({
+                    section_id: 'about-close',
+                    destination: '/templates',
+                    cta_id: 'primary_start_resume',
+                  })
+                }
+              >
                 Start building your resume
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform motion-reduce:transition-none" />
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="rounded-full w-full sm:w-auto">
-              <Link href="/templates/ats">Browse ATS layouts</Link>
+              <Link
+                href="/templates/ats"
+                onClick={() =>
+                  trackAboutCta({
+                    section_id: 'about-close',
+                    destination: '/templates/ats',
+                    cta_id: 'secondary_ats_layouts',
+                  })
+                }
+              >
+                Browse ATS layouts
+              </Link>
             </Button>
           </div>
         </motion.div>

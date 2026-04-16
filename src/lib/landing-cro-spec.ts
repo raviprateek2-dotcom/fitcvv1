@@ -41,6 +41,7 @@ export const LANDING_CRO_GA4_DIMENSIONS = [
   'target',
   'action',
   'section_id',
+  'cta_id',
 ] as const;
 
 export const LANDING_CRO_AB_TEST_PLAN_V1 = [

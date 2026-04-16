@@ -5,6 +5,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { BarChart3, Layers, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { aboutContainerVariants, aboutItemVariants, aboutViewport } from '@/components/about/about-motion';
+import { trackAboutCta } from '@/lib/about-analytics';
 
 const proof = [
   {
@@ -13,6 +14,7 @@ const proof = [
     line: 'See gaps against the posting — then tighten bullets with intent.',
     href: '/templates',
     cta: 'Start with templates',
+    ctaId: 'proof_templates',
   },
   {
     icon: Sparkles,
@@ -20,6 +22,7 @@ const proof = [
     line: 'Suggestions you can accept, rewrite, or ignore — not a mystery rewrite.',
     href: '/#features',
     cta: 'See AI tools',
+    ctaId: 'proof_home_features',
   },
   {
     icon: Layers,
@@ -27,6 +30,7 @@ const proof = [
     line: 'Readable structure for humans and parsers — without looking like a robot wrote it.',
     href: '/templates/ats',
     cta: 'ATS layouts',
+    ctaId: 'proof_ats_layouts',
   },
 ] as const;
 
@@ -70,7 +74,18 @@ export function AboutStoryProof() {
                   <h3 className="mt-5 font-headline text-xl font-bold">{item.title}</h3>
                   <p className="mt-2 text-sm text-muted-foreground leading-relaxed flex-grow">{item.line}</p>
                   <Button asChild variant="outline" size="sm" className="mt-6 rounded-full w-full md:w-auto self-start">
-                    <Link href={item.href}>{item.cta}</Link>
+                    <Link
+                      href={item.href}
+                      onClick={() =>
+                        trackAboutCta({
+                          section_id: 'about-proof',
+                          destination: item.href,
+                          cta_id: item.ctaId,
+                        })
+                      }
+                    >
+                      {item.cta}
+                    </Link>
                   </Button>
                 </div>
               </motion.div>

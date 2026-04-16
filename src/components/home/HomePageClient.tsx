@@ -41,6 +41,7 @@ import { LandingStickyCta } from '@/components/home/LandingStickyCta';
 import { LandingTrustStrip } from '@/components/home/LandingTrustStrip';
 import { LandingDesktopScrollCta } from '@/components/home/LandingDesktopScrollCta';
 import { LandingCroTriggers } from '@/components/home/LandingCroTriggers';
+import { LandingFinalCtaVisibilityProvider } from '@/components/home/LandingFinalCtaVisibility';
 
 const sectionVariants: Variants = {
     hidden: { opacity: 0, y: 30 },
@@ -151,6 +152,7 @@ export function HomePageClient() {
     const scale = useTransform(scrollYProgress, [0, 0.2], [0.8, 1]);
 
     return (
+        <LandingFinalCtaVisibilityProvider>
         <>
             <TrustMarquee />
             <LandingTrustStrip />
@@ -417,5 +419,6 @@ export function HomePageClient() {
             <LandingDesktopScrollCta />
             <LandingCroTriggers />
         </>
+        </LandingFinalCtaVisibilityProvider>
     );
 }

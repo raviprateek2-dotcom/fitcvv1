@@ -64,6 +64,11 @@ export const GA4_ABOUT_STORY_FUNNEL_V1 = {
       explorationTip:
         'Build a funnel ordered by `section_id` (about-hook → about-close). Large drop-offs between adjacent sections indicate copy/layout friction.',
     },
+    {
+      name: 'about_cta_click',
+      params: ['page=about', 'section_id', 'cta_id', 'destination', 'hero_primary_ab', 'hero_secondary_ab'],
+      explorationTip: 'Correlate proof/close clicks with prior `about_section_view` on `about-proof` and `about-close`.',
+    },
   ],
   sectionOrder: [
     'about-hook',
